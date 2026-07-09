@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Travel & Tourism — Kredo Plus</title>
+
+<!-- Tailwind CDN: ビルド不要、そのままブラウザ / Live Server で確認できます -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#241E1A',
+          cream: '#FFFFFF',
+          paper: '#FFFFFF',
+          brand: {
+            50: '#F1F0FF',
+            100: '#E3E0FF',
+            300: '#A7A0FF',
+            500: '#5A4CFF',
+            600: '#4736F0',
+            700: '#372AC2',
+          },
+          clay: {
+            400: '#E08A5B',
+            500: '#CE7043',
+            600: '#B15A32',
+          },
+        },
+        fontFamily: {
+          display: ['"Poppins"', '"Noto Sans JP"', 'sans-serif'],
+          body: ['"Noto Sans JP"', 'sans-serif'],
+          mono: ['"IBM Plex Mono"', 'monospace'],
+        },
+        boxShadow: {
+          card: '0 1px 2px rgba(36,30,26,0.06), 0 8px 24px -12px rgba(36,30,26,0.18)',
+          cardHover: '0 4px 8px rgba(36,30,26,0.08), 0 20px 40px -16px rgba(36,30,26,0.28)',
+          pop: '0 24px 60px -12px rgba(36,30,26,0.35)',
+        }
+      }
+    }
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&family=Poppins:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<!-- fontawesome cdn -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<style>
+  body { font-family: 'Noto Sans JP', sans-serif; background: #FFFFFF; }
+  .font-display { font-family: 'Poppins', 'Noto Sans JP', sans-serif; }
+  .font-mono { font-family: 'IBM Plex Mono', monospace; }
+
+  /* signature: 手書き風の下線が AREA の選択状態にじわっと伸びる */
+  /* --cat-color をエリアごとに変えることで、下線・選択時の文字色・バッジ色を全部統一する */
+  .cat-link { position: relative; --cat-color: #2f5fdb; }
+  .cat-link::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    width: 3px;
+    height: 0%;
+    background: var(--cat-color);
+    border-radius: 2px;
+    transform: translateY(-50%);
+    transition: height .25s ease;
+  }
+  .cat-link.active::before,
+  .cat-link:hover::before { height: 70%; }
+  .cat-link.active { color: var(--cat-color); font-weight: 600; }
+
+  .food-card { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; }
+  .food-card:hover { transform: translateY(-4px); }
+
+  .heart-btn i { transition: transform .2s ease; }
+  .heart-btn.liked i { transform: scale(1.15); }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: #E3E0FF; border-radius: 8px; }
+
+  @keyframes riseIn {
+    from { opacity: 0; transform: translateY(14px) scale(.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .rise-in { animation: riseIn .45s cubic-bezier(.2,.8,.2,1) both; }
+
+  #detailModal { transition: opacity .2s ease; }
+  #detailModal .modal-panel { transition: transform .28s cubic-bezier(.2,.8,.2,1), opacity .28s ease; }
+</style>
+</head>
+
+<body class="text-ink pb-24">
+
+<div class="min-h-screen flex flex-col">
+
+  <!-- Top bar -->
+  <header class="sticky top-0 z-30 bg-paper/90 backdrop-blur border-b border-ink/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <button class="md:hidden -ml-1 p-2 rounded-lg hover:bg-ink/5" onclick="document.getElementById('sidebar').classList.toggle('hidden')" aria-label="メニューを開く">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <span class="font-display font-bold text-2xl tracking-tight text-brand-600">Kredo <span class="italic font-medium">Plus</span></span>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button class="relative p-2 rounded-full hover:bg-ink/5" aria-label="通知">
+          <i class="fa-regular fa-bell text-[20px]"></i>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-clay-500"></span>
+        </button>
+        <img src="https://i.pravatar.cc/64?img=12" class="w-9 h-9 rounded-full object-cover ring-2 ring-brand-100" alt="ユーザーアバター">
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6">
+    <!-- Hero -->
+    <div class="relative h-52 sm:h-64 rounded-3xl overflow-hidden shadow-card">
+      <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=1600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="セブのホエールシャーク">
+      <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/25 to-transparent"></div>
+      <div class="relative h-full flex flex-col justify-end p-6 sm:p-8">
+        <h1 class="font-display text-4xl sm:text-5xl font-bold text-white">Travel & Tourism</h1>
+        <p class="text-white/85 mt-1 text-sm sm:text-base">セブの海・自然・カルチャーを、まるごと満喫しよう。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 flex gap-6">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="hidden md:block w-60 shrink-0">
+      <div class="sticky top-24">
+        <label class="relative block mb-6">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-ink/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="観光地・体験を検索" class="w-full bg-paper border border-ink/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-ink/40 focus:outline-none focus:ring-2 focus:ring-brand-300">
+        </label>
+
+        <p class="font-mono text-[11px] tracking-[0.18em] text-ink/40 mb-3 pl-1">AREA</p>
+        <nav class="flex flex-col gap-1 pl-5" id="areaNav">
+          <a href="itpark.html" style="--cat-color:#2f5fdb" class="cat-link flex items-center justify-between py-2 text-sm text-ink/70 hover:text-ink">IT Park</a>
+          <a href="north-area.html" style="--cat-color:#e05237" class="cat-link flex items-center justify-between py-2 text-sm text-ink/70 hover:text-ink">North Area</a>
+          <a href="south-area.html" style="--cat-color:#f5b52e" class="cat-link flex items-center justify-between py-2 text-sm text-ink/70 hover:text-ink">South Area</a>
+          <a href="travel.html" style="--cat-color:#7C6BA6" class="cat-link active flex items-center justify-between py-2 text-sm text-ink/70 hover:text-ink">All Areas</a>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="flex-1 min-w-0">
+
+      <!-- Grid -->
+      <div id="foodGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-center gap-2 mt-8" id="pagination"></div>
+    </main>
+  </div>
+</div>
+
+<!-- Detail modal -->
+<div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-ink/40 backdrop-blur-sm">
+  <div class="modal-panel bg-paper rounded-2xl w-full max-w-2xl overflow-hidden shadow-pop opacity-0 translate-y-3">
+    <div class="relative h-64">
+      <img id="modalImg" src="" class="w-full h-full object-cover" alt="">
+      <span id="modalTag" class="absolute top-3 left-3 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full"></span>
+      <button onclick="closeModal()" class="absolute top-3 right-3 bg-ink/50 hover:bg-ink/70 text-white w-7 h-7 rounded-full flex items-center justify-center" aria-label="閉じる">✕</button>
+    </div>
+    <div class="p-5">
+      <h3 id="modalTitle" class="font-display font-semibold text-lg mb-1"></h3>
+      <p id="modalDesc" class="text-sm text-ink/60 mb-4"></p>
+      <div class="flex items-center gap-2">
+        <img id="modalAvatar" src="" class="w-8 h-8 rounded-full object-cover" alt="">
+        <div class="leading-tight">
+          <p id="modalName" class="text-sm font-semibold"></p>
+          <p id="modalTime" class="text-xs text-ink/40"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---- AREAごとの色 ----
+  const areaColors = {
+    'IT Park': '#2f5fdb',
+    'North Area': '#e05237',
+    'South Area': '#f5b52e',
+    'Others': '#7C6BA6',
+  };
+  function colorOf(tag){ return areaColors[tag] || '#2f5fdb'; }
+
+  // ---- テストデータ（セブの観光スポット） ----
+  const items = [
+    // ---- IT Park (市街地・都会エリア) ----
+    { tag: 'IT Park', title: 'IT Park Night Market', desc: 'Trendy bars, restaurants, and live music right in the city center.', name: 'Mika S.', time: '2時間前', img: 'https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=25' },
+    { tag: 'IT Park', title: 'Crown Regency Sky Experience', desc: 'Adrenaline-pumping edge coaster and sky walk above the city.', name: 'Leo T.', time: '5時間前', img: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=11' },
+
+    // ---- North Area (北部：シラオガーデン、テンプルオブリアなど) ----
+    { tag: 'North Area', title: 'Sirao Flower Garden', desc: 'Colorful flower fields in the highlands, Cebu\'s little Amsterdam.', name: 'Grace P.', time: '1日前', img: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=32' },
+    { tag: 'North Area', title: 'Temple of Leah', desc: 'A grand Roman-inspired temple overlooking the city, built as a symbol of love.', name: 'Carlo M.', time: '2日前', img: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=14' },
+    { tag: 'North Area', title: 'Bantayan Island Beach', desc: 'Powdery white sand and calm turquoise waters, perfect for a day trip.', name: 'Ella R.', time: '3日前', img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=5' },
+
+    // ---- South Area (南部：オスロブのジンベイザメ、カワサン滝など) ----
+    { tag: 'South Area', title: 'Whale Shark Watching, Oslob', desc: 'Swim alongside gentle giants in the clear waters of Oslob.', name: 'Dave K.', time: '3時間前', img: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=51' },
+    { tag: 'South Area', title: 'Kawasan Falls Canyoneering', desc: 'Cliff jumps and turquoise waterfalls through a full-day canyoneering trail.', name: 'Trisha K.', time: '6時間前', img: 'https://images.unsplash.com/photo-1546587348-d12660c30c50?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=37' },
+    { tag: 'South Area', title: 'Osmeña Peak Sunrise Trek', desc: 'The "Little Batanes" of Cebu — rolling hills perfect for sunrise hikes.', name: 'Miguel A.', time: '1日前', img: 'https://images.unsplash.com/photo-1500534623283-312aade485b7?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=29' },
+    { tag: 'South Area', title: 'Moalboal Sardine Run', desc: 'Snorkel or dive through millions of sardines just meters from shore.', name: 'Nina S.', time: '2日前', img: 'https://images.unsplash.com/photo-1544552866-d3ed42536cfd?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=48' },
+
+    // ---- Others ----
+    { tag: 'Others', title: 'Cebu Heritage Walking Tour', desc: 'Explore Magellan\'s Cross, Basilica del Sto. Niño, and Fort San Pedro.', name: 'Angela F.', time: '4日前', img: 'https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=22' },
+  ];
+
+  const PAGE_SIZE = 9;
+  let currentPage = 1;
+
+  function renderGrid(page){
+    const grid = document.getElementById('foodGrid');
+    grid.innerHTML = '';
+    const start = (page - 1) * PAGE_SIZE;
+    const pageItems = items.slice(start, start + PAGE_SIZE);
+
+    pageItems.forEach((it, idx) => {
+      const card = document.createElement('article');
+      card.className = 'food-card rise-in bg-paper rounded-2xl overflow-hidden shadow-card cursor-pointer';
+      card.style.animationDelay = (idx * 0.05) + 's';
+      card.innerHTML = `
+        <div class="relative h-40">
+          <img src="${it.img}" class="w-full h-full object-cover" alt="${it.title}" loading="lazy">
+          <span class="absolute top-2.5 left-2.5 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full" style="background:${colorOf(it.tag)}">${it.tag}</span>
+        </div>
+        <div class="p-4">
+          <h3 class="font-display font-semibold text-base mb-1 truncate">${it.title}</h3>
+          <p class="text-sm text-ink/55 line-clamp-2 mb-3">${it.desc}</p>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 min-w-0">
+              <img src="${it.avatar}" class="w-6 h-6 rounded-full object-cover shrink-0" alt="${it.name}">
+              <div class="leading-tight min-w-0">
+                <p class="text-xs font-semibold truncate">${it.name}</p>
+                <p class="text-[11px] text-ink/40">${it.time}</p>
+              </div>
+            </div>
+            <button class="heart-btn shrink-0 p-1.5 rounded-full hover:bg-clay-400/10" aria-label="お気に入り" onclick="event.stopPropagation(); this.classList.toggle('liked'); this.querySelector('i').classList.toggle('fa-regular'); this.querySelector('i').classList.toggle('fa-solid');">
+              <i class="fa-regular fa-heart text-[18px] text-[#CE7043]"></i>
+            </button>
+          </div>
+        </div>
+      `;
+      card.addEventListener('click', () => openModal(it));
+      grid.appendChild(card);
+    });
+  }
+
+  function renderPagination(){
+    const totalPages = Math.ceil(items.length / PAGE_SIZE);
+    const wrap = document.getElementById('pagination');
+    wrap.innerHTML = '';
+
+    for(let p = 1; p <= totalPages; p++){
+      const btn = document.createElement('button');
+      btn.textContent = p;
+      btn.className = 'w-9 h-9 rounded-lg text-sm font-semibold transition ' +
+        (p === currentPage ? 'bg-brand-600 text-white' : 'bg-paper border border-ink/10 text-ink/60 hover:border-brand-300');
+      btn.onclick = () => { currentPage = p; renderGrid(currentPage); renderPagination(); window.scrollTo({top:0, behavior:'smooth'}); };
+      wrap.appendChild(btn);
+    }
+
+    if (totalPages > 1) {
+      const next = document.createElement('button');
+      next.textContent = 'Next';
+      next.className = 'ml-1 px-4 h-9 rounded-lg text-sm font-semibold bg-paper border border-ink/10 text-ink/60 hover:border-brand-300 disabled:opacity-40';
+      next.disabled = currentPage === totalPages;
+      next.onclick = () => { if(currentPage < totalPages){ currentPage++; renderGrid(currentPage); renderPagination(); window.scrollTo({top:0, behavior:'smooth'}); } };
+      wrap.appendChild(next);
+    }
+  }
+
+  function openModal(it){
+    document.getElementById('modalImg').src = it.img;
+    document.getElementById('modalImg').alt = it.title;
+    document.getElementById('modalTag').textContent = it.tag;
+    document.getElementById('modalTag').style.background = colorOf(it.tag);
+    document.getElementById('modalTitle').textContent = it.title;
+    document.getElementById('modalDesc').textContent = it.desc;
+    document.getElementById('modalAvatar').src = it.avatar;
+    document.getElementById('modalName').textContent = it.name;
+    document.getElementById('modalTime').textContent = it.time;
+
+    const modal = document.getElementById('detailModal');
+    const panel = modal.querySelector('.modal-panel');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    requestAnimationFrame(() => {
+      panel.classList.remove('opacity-0', 'translate-y-3');
+    });
+  }
+
+  function closeModal(){
+    const modal = document.getElementById('detailModal');
+    const panel = modal.querySelector('.modal-panel');
+    panel.classList.add('opacity-0', 'translate-y-3');
+    setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 200);
+  }
+
+  document.getElementById('detailModal').addEventListener('click', (e) => {
+    if(e.target.id === 'detailModal') closeModal();
+  });
+
+  renderGrid(currentPage);
+  renderPagination();
+
+  // モバイルではサイドバーを初期表示
+  if(window.innerWidth >= 768){ document.getElementById('sidebar').classList.remove('hidden'); }
+</script>
+
+<!-- Back to top -->
+<button id="backToTop" onclick="window.scrollTo({top:0, behavior:'smooth'})" aria-label="上に戻る"
+  class="fixed right-5 bottom-24 z-40 w-11 h-11 rounded-full bg-brand-600 text-white shadow-pop flex items-center justify-center opacity-0 pointer-events-none translate-y-2 transition-all duration-300 hover:bg-brand-700">
+  <i class="fa-solid fa-arrow-up text-[16px]"></i>
+</button>
+<script>
+  const backToTop = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {
+      backToTop.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
+    } else {
+      backToTop.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+    }
+  });
+</script>
+
+<!-- footer nav: Kredoロゴと同じ配色・フォントに統一 -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<nav class="fixed bottom-0 w-full z-50 bg-white shadow-[0_-4px_20px_-4px_rgba(30,58,138,0.15)] flex justify-around items-center h-20 px-4 pb-2 border-t border-slate-100">
+  <a href="travel.html" class="flex flex-col items-center justify-center gap-1 text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
+    <i class="fa-solid fa-house text-[20px]"></i>
+    <span class="text-[10px] font-bold tracking-wide" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Home</span>
+  </a>
+
+  <a href="#" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
+    <div class="w-14 h-14 -mt-8 rounded-full flex items-center justify-center shadow-[0_12px_32px_-12px_rgba(30,58,138,0.35)] border-4 border-white"
+         style="background: linear-gradient(135deg, #2f5fdb 0%, #e05237 33%, #f5b52e 66%, #5eab35 100%);">
+      <i class="fa-solid fa-plus text-white text-[20px]"></i>
+    </div>
+    <span class="text-[10px] font-bold tracking-wide mt-1" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Post</span>
+  </a>
+
+  <a href="#" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
+    <i class="fa-solid fa-user text-[20px]"></i>
+    <span class="text-[10px] font-bold tracking-wide" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Profile</span>
+  </a>
+</nav>
+
+</body>
+</html>
