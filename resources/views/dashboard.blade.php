@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
-@section('intro')
-@endsection
+@section('intro', true)
 
 @section('content')
 
@@ -162,7 +161,7 @@
                     <p class="mt-3 text-sm text-slate-500 leading-relaxed">TOEIC・IELTS対策を中心に、語彙・文法・リスニング・リーディングを効率的に学習。</p>
 
                     <div class="mt-6 flex items-end justify-between gap-2">
-                        <a href="#" class="inline-flex items-center gap-2 text-sm font-semibold text-orange-600 border border-orange-600/50 rounded-full px-5 py-2 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all duration-200 shrink-0">
+                        <a href="{{ route('english.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-orange-600 border border-orange-600/50 rounded-full px-5 py-2 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all duration-200 shrink-0">
                             詳しく見る
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
                         </a>
@@ -516,4 +515,5 @@
             </div>
         </div>
     </section>
-</x-app-layout>
+
+@endsection
