@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-@section('intro', true)
+@section('intro')
+@endsection
 
 @section('content')
 
@@ -106,12 +107,10 @@
                     <p class="mt-3 text-sm text-slate-500 leading-relaxed">シャワーの利用方法や混雑状況をチェックして、快適にご利用いただけます。</p>
 
                     <div class="mt-6 flex items-end justify-between gap-2">
-                        <a href="#" class="inline-flex items-center gap-2 text-sm font-semibold text-brand-blue border border-brand-blue/40 rounded-full px-5 py-2 hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-all duration-200 shrink-0">
+                        <button class="inline-flex items-center gap-2 text-sm font-semibold text-brand-blue border border-brand-blue/40 rounded-full px-5 py-2 hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-all duration-200 shrink-0">
                             詳しく見る
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M9 6l6 6-6 6"/>
-                            </svg>
-                        </a>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                        </button>
 
                         <!-- Penguin: enjoying a shower -->
                         <svg width="92" height="104" viewBox="0 0 92 104" fill="none" aria-hidden="true" class="shrink-0 -mb-1">
