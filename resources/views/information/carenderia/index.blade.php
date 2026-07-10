@@ -1,0 +1,544 @@
+<!--
+  Carinderia 一覧ページ (resources/views/information/carenderia/index.blade.php)
+  - ヘッダーは共通ファイル(layouts.header)からインクルード
+  - もしチーム側でマスターレイアウトの仕組みを使う場合は、
+    DOCTYPEからbodyまでの部分をレイアウト側に譲り、このファイルは
+    レイアウト継承の形に変更してください。
+-->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kredo Plus — Marketplace</title>
+
+<!-- Tailwind CDN: ビルド不要、そのままブラウザ / Live Server で確認できます -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#241E1A',
+          cream: '#FFFFFF',
+          paper: '#FFFFFF',
+          brand: {
+            50: '#F1F0FF',
+            100: '#E3E0FF',
+            300: '#A7A0FF',
+            500: '#5A4CFF',
+            600: '#4736F0',
+            700: '#372AC2',
+          },
+          clay: {
+            400: '#E08A5B',
+            500: '#CE7043',
+            600: '#B15A32',
+          },
+        },
+        fontFamily: {
+          display: ['"Poppins"', '"Noto Sans JP"', 'sans-serif'],
+          body: ['"Noto Sans JP"', 'sans-serif'],
+          mono: ['"IBM Plex Mono"', 'monospace'],
+        },
+        boxShadow: {
+          card: '0 1px 2px rgba(36,30,26,0.06), 0 8px 24px -12px rgba(36,30,26,0.18)',
+          cardHover: '0 4px 8px rgba(36,30,26,0.08), 0 20px 40px -16px rgba(36,30,26,0.28)',
+          pop: '0 24px 60px -12px rgba(36,30,26,0.35)',
+        }
+      }
+    }
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&family=Poppins:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+  body { font-family: 'Noto Sans JP', sans-serif; background: #FFFFFF; }
+  .font-display { font-family: 'Poppins', 'Noto Sans JP', sans-serif; }
+  .font-mono { font-family: 'IBM Plex Mono', monospace; }
+
+  /* signature: 手書き風の下線が STORE カテゴリの選択状態にじわっと伸びる */
+  .cat-link { position: relative; }
+  .cat-link::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    width: 3px;
+    height: 0%;
+    background: #2f5fdb;
+    border-radius: 2px;
+    transform: translateY(-50%);
+    transition: height .25s ease;
+  }
+  .cat-link.active::before,
+  .cat-link:hover::before { height: 70%; }
+
+  .food-card { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; }
+  .food-card:hover { transform: translateY(-4px); }
+
+  .heart-btn i { transition: transform .2s ease; }
+  .heart-btn.liked i { transform: scale(1.15); }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: #E3E0FF; border-radius: 8px; }
+
+  @keyframes riseIn {
+    from { opacity: 0; transform: translateY(14px) scale(.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .rise-in { animation: riseIn .45s cubic-bezier(.2,.8,.2,1) both; }
+
+  #detailModal { transition: opacity .2s ease; }
+  #detailModal .modal-panel { transition: transform .28s cubic-bezier(.2,.8,.2,1), opacity .28s ease; }
+
+  #commentList::-webkit-scrollbar { width: 6px; }
+  #commentList::-webkit-scrollbar-thumb { background: #E3E0FF; border-radius: 6px; }
+</style>
+</head>
+
+<body class="text-ink">
+
+<div class="min-h-screen flex flex-col">
+
+  {{-- ヘッダーは共通ファイルからインクルード --}}
+  {{-- @include('layouts.header') --}}
+
+  {{-- デモ用: ログイン中のユーザーを切り替えるセレクター(本来はログイン情報から取得。Laravel連携後は削除予定) --}}
+  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-3 flex justify-end">
+    <label class="flex items-center gap-2 text-xs text-ink/50 bg-ink/[0.03] px-3 py-1.5 rounded-full">
+      <i class="fa-regular fa-user text-[12px]"></i>
+      <span class="font-mono">Login as</span>
+      <select id="currentUserSelect" class="bg-transparent font-semibold text-ink outline-none cursor-pointer">
+        <option value="Guest">Guest(誰でもない人)</option>
+        <option value="Mateo L.">Mateo L.</option>
+        <option value="Sophia C.">Sophia C.</option>
+        <option value="Juan R.">Juan R.</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6">
+    <!-- Hero -->
+    <div class="relative h-52 sm:h-64 rounded-3xl overflow-hidden shadow-card">
+      <img src="https://images.unsplash.com/photo-1544148103-0773bf10d330?q=80&w=1600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="カリンデリアの食卓">
+      <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/25 to-transparent"></div>
+      <div class="relative h-full flex flex-col justify-end p-6 sm:p-8">
+        <h1 class="font-display text-4xl sm:text-5xl font-bold text-white">Carinderia</h1>
+        <p class="text-white/85 mt-1 text-sm sm:text-base">Simple, delicious, and close to home. Bringing you the flavors of your neighborhood carinderia.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 flex gap-6">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="hidden md:block w-60 shrink-0">
+      <div class="sticky top-24">
+        <label class="relative block mb-6">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-ink/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="タイトル・コメントを検索" class="w-full bg-paper border border-ink/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-ink/40 focus:outline-none focus:ring-2 focus:ring-brand-300">
+        </label>
+
+        <p class="font-mono text-[11px] tracking-[0.18em] text-ink/40 mb-3 pl-1">STORE</p>
+        <nav class="flex flex-col gap-1 pl-5">
+          <a href="{{ route('carenderia.index') }}" class="cat-link active flex items-center justify-between py-2 text-sm font-semibold" style="color:#2f5fdb">Carinderia</a>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="flex-1 min-w-0">
+
+      <!-- Toolbar: 件数表示 + 並び替え -->
+      <div class="flex items-center justify-between mb-4">
+        <p id="resultCount" class="text-sm text-ink/50"></p>
+        <label class="relative">
+          <select id="sortSelect" class="appearance-none bg-paper border border-ink/10 rounded-lg pl-3 pr-8 py-2 text-sm font-medium text-ink focus:outline-none focus:ring-2 focus:ring-brand-300 cursor-pointer">
+            <option value="new">Newest</option>
+            <option value="likes">Most Liked</option>
+          </select>
+          <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-ink/40 text-[11px] pointer-events-none"></i>
+        </label>
+      </div>
+
+      <!-- Grid -->
+      <div id="foodGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-center gap-2 mt-8" id="pagination"></div>
+    </main>
+  </div>
+</div>
+
+<!-- Detail modal -->
+<div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-ink/40 backdrop-blur-sm">
+  <div class="modal-panel bg-paper rounded-2xl w-full max-w-3xl overflow-hidden shadow-pop opacity-0 translate-y-3 flex flex-col md:flex-row md:h-[520px]">
+
+    <!-- 左: 写真(固定) -->
+    <div class="relative w-full md:w-1/2 h-64 md:h-full shrink-0">
+      <img id="modalImg" src="" class="w-full h-full object-cover" alt="">
+      <span id="modalTag" class="absolute top-3 left-3 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full" style="background:#2f5fdb"></span>
+      <span id="modalPrice" class="absolute bottom-3 right-3 bg-paper/95 font-mono font-semibold text-sm px-2.5 py-1 rounded-lg"></span>
+      <button onclick="closeModal()" class="md:hidden absolute top-3 right-3 bg-ink/50 hover:bg-ink/70 text-white w-7 h-7 rounded-full flex items-center justify-center" aria-label="閉じる">✕</button>
+    </div>
+
+    <!-- 右: ヘッダー + コメント + アクション -->
+    <div class="w-full md:w-1/2 flex flex-col min-h-0">
+
+      <!-- ヘッダー: 投稿者 + 編集/削除ボタン -->
+      <div class="flex items-center justify-between gap-2 px-4 py-3 border-b border-ink/10 shrink-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <img id="modalAvatar" src="" class="w-8 h-8 rounded-full object-cover shrink-0" alt="">
+          <div class="leading-tight min-w-0">
+            <p id="modalName" class="text-sm font-semibold truncate"></p>
+            <p id="modalTime" class="text-xs text-ink/40"></p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1 shrink-0">
+          <!-- 投稿主だけに表示される操作ボタン(アイコンのみ) -->
+          <div id="ownerActions" class="hidden items-center gap-1">
+            <button id="modalEditBtn" class="w-8 h-8 flex items-center justify-center rounded-full text-brand-600 hover:bg-brand-50 transition-colors active:scale-90" aria-label="編集">
+              <i class="fa-solid fa-edit text-[15px]"></i>
+            </button>
+            <button id="modalDeleteBtn" class="w-8 h-8 flex items-center justify-center rounded-full text-red-600 hover:bg-red-50 transition-colors active:scale-90" aria-label="削除">
+              <i class="fa-solid fa-trash text-[14px]"></i>
+            </button>
+          </div>
+          <button onclick="closeModal()" class="hidden md:flex w-8 h-8 items-center justify-center rounded-full text-ink/40 hover:bg-ink/5 hover:text-ink transition-colors" aria-label="閉じる">
+            <i class="fa-solid fa-xmark text-[16px]"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- スクロール領域: タイトル・説明・コメント一覧 -->
+      <div class="flex-1 overflow-y-auto px-4 py-3 min-h-0">
+        <h3 id="modalTitle" class="font-display font-semibold text-lg mb-1"></h3>
+        <p id="modalDesc" class="text-sm text-ink/60 mb-4"></p>
+
+        <p class="text-xs font-mono tracking-[0.1em] text-ink/40 mb-2">COMMENTS</p>
+        <div id="commentList" class="space-y-3"></div>
+      </div>
+
+      <!-- アクションバー: ♡ 💬 保存(左) / 🌐マップ(右) -->
+      <div class="px-4 pt-2 pb-1 border-t border-ink/10 shrink-0">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <button id="modalLikeBtn" class="heart-btn text-ink hover:text-clay-500 transition-colors active:scale-90" aria-label="いいね">
+              <i class="fa-regular fa-heart text-[22px]"></i>
+            </button>
+            <button onclick="document.getElementById('commentInput').focus()" class="text-ink hover:text-brand-600 transition-colors active:scale-90" aria-label="コメント">
+              <i class="fa-regular fa-comment text-[22px]"></i>
+            </button>
+            <button id="modalSaveBtn" class="save-btn text-ink hover:text-brand-600 transition-colors active:scale-90" aria-label="保存">
+              <i class="fa-regular fa-bookmark text-[22px]"></i>
+            </button>
+          </div>
+          <a id="modalMapLink" href="#" target="_blank" class="text-ink hover:text-brand-600 transition-colors active:scale-90" aria-label="マップで見る">
+            <i class="fa-solid fa-globe text-[22px]"></i>
+          </a>
+        </div>
+        <p id="modalLikeCount" class="text-xs font-semibold mt-1.5 mb-2"></p>
+      </div>
+
+      <!-- コメント投稿フォーム -->
+      <form id="commentForm" class="flex items-center gap-2 px-4 py-3 border-t border-ink/10 shrink-0">
+        <input type="text" id="commentInput" class="flex-1 border border-ink/10 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300" placeholder="コメントを書く...">
+        <button type="submit" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-brand-600 text-white hover:bg-brand-700 transition-colors active:scale-90">
+          <i class="fa-solid fa-paper-plane text-sm"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---- テストデータ（自由に増減・編集OK） ----
+  const items = @json($posts);
+
+  const PAGE_SIZE = 21;
+  let currentPage = 1;
+  let sortMode = 'new'; // 'new' | 'likes'
+  let searchQuery = '';
+
+  function money(v){ return v + ' PHP'; }
+
+  // ---- 検索語をHTML内で安全に太字ハイライトする ----
+  function escapeRegExp(str){
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+  function highlightMatch(text, query){
+    if (!query) return text;
+    const re = new RegExp('(' + escapeRegExp(query) + ')', 'ig');
+    return text.replace(re, '<strong class="bg-brand-50 text-brand-600 rounded px-0.5">$1</strong>');
+  }
+
+  // ---- タイトル or コメント内容に検索語が含まれるかで絞り込み ----
+  function getFilteredItems(){
+    let list = items;
+
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(it => {
+        const titleMatch = it.title.toLowerCase().includes(q);
+        const commentMatch = (it.comments || []).some(c => c.text.toLowerCase().includes(q));
+        return titleMatch || commentMatch;
+      });
+    }
+
+    if (sortMode === 'likes') {
+      // いいねの多い順(元の配列は壊さないようコピーしてから並び替え)
+      return [...list].sort((a, b) => b.likes - a.likes);
+    }
+    return list; // 新着順 = 配列に入っている順番のまま
+  }
+
+  function renderGrid(page){
+    const sorted = getFilteredItems();
+    document.getElementById('resultCount').textContent = `${sorted.length} stores found`;
+
+    const grid = document.getElementById('foodGrid');
+    grid.innerHTML = '';
+    const start = (page - 1) * PAGE_SIZE;
+    const pageItems = sorted.slice(start, start + PAGE_SIZE);
+
+    pageItems.forEach((it, idx) => {
+      // 検索中、タイトルに一致しなくてもコメントに一致していれば、そのコメントを抜粋して表示する
+      const q = searchQuery.toLowerCase();
+      const matchedComment = searchQuery
+        ? (it.comments || []).find(c => c.text.toLowerCase().includes(q))
+        : null;
+
+      const titleHtml = searchQuery ? highlightMatch(it.title, searchQuery) : it.title;
+
+      const card = document.createElement('article');
+      card.className = 'food-card rise-in bg-paper rounded-2xl overflow-hidden shadow-card cursor-pointer';
+      card.style.animationDelay = (idx * 0.05) + 's';
+      card.innerHTML = `
+        <div class="relative h-40">
+          <img src="${it.img}" class="w-full h-full object-cover" alt="${it.title}" loading="lazy">
+          <span class="absolute top-2.5 left-2.5 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full" style="background:#2f5fdb">${it.tag}</span>
+          <span class="absolute bottom-2.5 right-2.5 bg-paper/95 font-mono font-semibold text-xs px-2.5 py-1 rounded-lg">${money(it.price)}</span>
+        </div>
+        <div class="p-4">
+          <h3 class="font-display font-semibold text-base mb-1 truncate">${titleHtml}</h3>
+          <p class="text-sm text-ink/55 line-clamp-2 mb-3">${it.desc}</p>
+          ${matchedComment ? `
+          <p class="text-xs text-ink/50 mb-3 flex items-start gap-1.5 bg-ink/[0.03] rounded-lg px-2.5 py-2">
+            <i class="fa-regular fa-comment mt-0.5 shrink-0"></i>
+            <span class="line-clamp-2">${highlightMatch(matchedComment.text, searchQuery)}</span>
+          </p>` : ''}
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 min-w-0">
+              <img src="${it.avatar}" class="w-6 h-6 rounded-full object-cover shrink-0" alt="${it.name}">
+              <div class="leading-tight min-w-0">
+                <p class="text-xs font-semibold truncate">${it.name}</p>
+                <p class="text-[11px] text-ink/40">${it.time}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-0.5 shrink-0">
+              <button class="heart-btn p-1.5 rounded-full hover:bg-clay-400/10 flex items-center gap-1" aria-label="お気に入り" onclick="event.stopPropagation(); this.classList.toggle('liked'); this.querySelector('i').classList.toggle('fa-regular'); this.querySelector('i').classList.toggle('fa-solid');">
+                <i class="fa-regular fa-heart text-[17px] text-[#CE7043]"></i>
+                <span class="text-xs text-ink/40 font-mono">${it.likes}</span>
+              </button>
+              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.mapQuery || it.title)}" target="_blank" onclick="event.stopPropagation()" class="p-1.5 rounded-full hover:bg-brand-50 text-ink/60 hover:text-brand-600 transition-colors" aria-label="マップで見る">
+                <i class="fa-solid fa-globe text-[15px]"></i>
+              </a>
+              <button class="save-btn p-1.5 rounded-full hover:bg-brand-50 text-ink/60 hover:text-brand-600 transition-colors" aria-label="保存" onclick="event.stopPropagation(); this.classList.toggle('saved'); this.querySelector('i').classList.toggle('fa-regular'); this.querySelector('i').classList.toggle('fa-solid');">
+                <i class="fa-regular fa-bookmark text-[15px]"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      card.addEventListener('click', () => openModal(it));
+      grid.appendChild(card);
+    });
+  }
+
+  function renderPagination(){
+    const totalPages = Math.ceil(getFilteredItems().length / PAGE_SIZE);
+    const wrap = document.getElementById('pagination');
+    wrap.innerHTML = '';
+
+    for(let p = 1; p <= totalPages; p++){
+      const btn = document.createElement('button');
+      btn.textContent = p;
+      btn.className = 'w-9 h-9 rounded-lg text-sm font-semibold transition ' +
+        (p === currentPage ? 'bg-brand-600 text-white' : 'bg-paper border border-ink/10 text-ink/60 hover:border-brand-300');
+      btn.onclick = () => { currentPage = p; renderGrid(currentPage); renderPagination(); window.scrollTo({top:0, behavior:'smooth'}); };
+      wrap.appendChild(btn);
+    }
+
+    const next = document.createElement('button');
+    next.textContent = 'Next';
+    next.className = 'ml-1 px-4 h-9 rounded-lg text-sm font-semibold bg-paper border border-ink/10 text-ink/60 hover:border-brand-300 disabled:opacity-40';
+    next.disabled = currentPage === totalPages;
+    next.onclick = () => { if(currentPage < totalPages){ currentPage++; renderGrid(currentPage); renderPagination(); window.scrollTo({top:0, behavior:'smooth'}); } };
+    wrap.appendChild(next);
+  }
+
+  // ---- デモ用: 現在ログインしている(ふりをする)ユーザー ----
+  let currentUser = 'Guest';
+  const userSelect = document.getElementById('currentUserSelect');
+  userSelect.addEventListener('change', (e) => {
+    currentUser = e.target.value;
+  });
+
+  // ---- コメント描画(投稿に紐づくcomments配列を表示、増えたら欄内スクロール) ----
+  function renderComments(it){
+    if (!it.comments) it.comments = [];
+    const list = document.getElementById('commentList');
+    list.innerHTML = '';
+
+    if (it.comments.length === 0) {
+      list.innerHTML = `<p class="text-xs text-ink/30 italic">まだコメントはありません</p>`;
+    } else {
+      it.comments.forEach(c => {
+        const row = document.createElement('div');
+        row.className = 'flex items-start gap-2';
+        row.innerHTML = `
+          <div class="w-6 h-6 rounded-full bg-brand-100 flex items-center justify-center text-[10px] font-semibold text-brand-600 shrink-0">${c.name[0]}</div>
+          <div class="text-xs leading-snug">
+            <span class="font-semibold">${c.name}</span>
+            <span class="text-ink/70"> ${c.text}</span>
+          </div>
+        `;
+        list.appendChild(row);
+      });
+    }
+    list.scrollTop = list.scrollHeight; // 最新コメントが見えるよう自動スクロール
+  }
+
+  function openModal(it){
+    document.getElementById('modalImg').src = it.img;
+    document.getElementById('modalTag').textContent = it.tag;
+    document.getElementById('modalPrice').textContent = money(it.price);
+    document.getElementById('modalTitle').textContent = it.title;
+    document.getElementById('modalDesc').textContent = it.desc;
+    document.getElementById('modalAvatar').src = it.avatar;
+    document.getElementById('modalName').textContent = it.name;
+    document.getElementById('modalTime').textContent = it.time;
+    document.getElementById('modalLikeCount').textContent = `${it.likes}件のいいね`;
+
+    // マップリンク(とりあえず "Orange UCMA" を仮の検索クエリとして設定)
+    document.getElementById('modalMapLink').href =
+      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.mapQuery || it.title)}`;
+
+    // いいね・保存ボタン(見た目だけのトグル)
+    const likeIcon = document.querySelector('#modalLikeBtn i');
+    likeIcon.className = 'fa-regular fa-heart text-[22px]';
+    document.getElementById('modalLikeBtn').onclick = function(){
+      this.classList.toggle('liked');
+      likeIcon.classList.toggle('fa-regular');
+      likeIcon.classList.toggle('fa-solid');
+      likeIcon.classList.toggle('text-clay-500');
+    };
+    const saveIcon = document.querySelector('#modalSaveBtn i');
+    saveIcon.className = 'fa-regular fa-bookmark text-[22px]';
+    document.getElementById('modalSaveBtn').onclick = function(){
+      this.classList.toggle('saved');
+      saveIcon.classList.toggle('fa-regular');
+      saveIcon.classList.toggle('fa-solid');
+      saveIcon.classList.toggle('text-brand-600');
+    };
+
+    // 投稿主(it.name)と今のログインユーザーが一致する時だけ、編集・削除ボタンを表示
+    const isOwner = (it.name === currentUser);
+    const ownerActions = document.getElementById('ownerActions');
+    ownerActions.classList.toggle('hidden', !isOwner);
+    ownerActions.classList.toggle('flex', isOwner);
+
+    document.getElementById('modalEditBtn').onclick = () => {
+      alert(`「${it.title}」の編集画面へ移動します(edit-post.htmlに接続予定)`);
+    };
+    document.getElementById('modalDeleteBtn').onclick = () => {
+      if (confirm(`「${it.title}」を削除しますか？この操作は取り消せません。`)) {
+        alert('削除しました(デモ)');
+        closeModal();
+      }
+    };
+
+    // コメント表示 + 投稿フォームの紐付け
+    renderComments(it);
+    document.getElementById('commentForm').onsubmit = (e) => {
+      e.preventDefault();
+      const input = document.getElementById('commentInput');
+      const text = input.value.trim();
+      if (!text) return;
+      if (!it.comments) it.comments = [];
+      it.comments.push({ name: currentUser === 'Guest' ? 'ゲスト' : currentUser, text });
+      input.value = '';
+      renderComments(it);
+    };
+
+    const modal = document.getElementById('detailModal');
+    const panel = modal.querySelector('.modal-panel');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    requestAnimationFrame(() => {
+      panel.classList.remove('opacity-0', 'translate-y-3');
+    });
+  }
+
+  function closeModal(){
+    const modal = document.getElementById('detailModal');
+    const panel = modal.querySelector('.modal-panel');
+    panel.classList.add('opacity-0', 'translate-y-3');
+    setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 200);
+  }
+
+  document.getElementById('detailModal').addEventListener('click', (e) => {
+    if(e.target.id === 'detailModal') closeModal();
+  });
+
+  document.getElementById('sortSelect').addEventListener('change', (e) => {
+    sortMode = e.target.value;
+    currentPage = 1;
+    renderGrid(currentPage);
+    renderPagination();
+  });
+
+  // 検索ボックス:タイトル or コメント内容に一致したものだけ表示
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    searchQuery = e.target.value.trim();
+    currentPage = 1;
+    renderGrid(currentPage);
+    renderPagination();
+  });
+
+  renderGrid(currentPage);
+  renderPagination();
+
+  // モバイルではサイドバーを初期表示
+  if(window.innerWidth >= 768){ document.getElementById('sidebar').classList.remove('hidden'); }
+</script>
+
+<!-- footer nav: Kredoロゴと同じ配色・フォントに統一 -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<nav class="fixed bottom-0 w-full z-50 bg-white shadow-[0_-4px_20px_-4px_rgba(30,58,138,0.15)] flex justify-around items-center h-20 px-4 pb-2 border-t border-slate-100">
+  <a href="{{ route('carenderia.index') }}" class="flex flex-col items-center justify-center gap-1 text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
+    <i class="fa-solid fa-house text-[20px]"></i>
+    <span class="text-[10px] font-bold tracking-wide" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Home</span>
+  </a>
+
+  <a href="#" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
+    <div class="w-14 h-14 -mt-8 rounded-full flex items-center justify-center shadow-[0_12px_32px_-12px_rgba(30,58,138,0.35)] border-4 border-white"
+         style="background: linear-gradient(135deg, #2f5fdb 0%, #e05237 33%, #f5b52e 66%, #5eab35 100%);">
+      <i class="fa-solid fa-plus text-white text-[20px]"></i>
+    </div>
+    <span class="text-[10px] font-bold tracking-wide mt-1" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Post</span>
+  </a>
+
+  <a href="#" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
+    <i class="fa-solid fa-user text-[20px]"></i>
+    <span class="text-[10px] font-bold tracking-wide" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Profile</span>
+  </a>
+</nav>
+
+</body>
+</html>

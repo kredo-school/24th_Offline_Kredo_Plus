@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>others</title>
+
+<!-- Tailwind CDN: ビルド不要、そのままブラウザ / Live Server で確認できます -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#241E1A',
+          cream: '#FFFFFF',
+          paper: '#FFFFFF',
+          brand: {
+            50: '#F1F0FF',
+            100: '#E3E0FF',
+            300: '#A7A0FF',
+            500: '#5A4CFF',
+            600: '#4736F0',
+            700: '#372AC2',
+          },
+          clay: {
+            400: '#E08A5B',
+            500: '#CE7043',
+            600: '#B15A32',
+          },
+        },
+        fontFamily: {
+          display: ['"Poppins"', '"Noto Sans JP"', 'sans-serif'],
+          body: ['"Noto Sans JP"', 'sans-serif'],
+          mono: ['"IBM Plex Mono"', 'monospace'],
+        },
+        boxShadow: {
+          card: '0 1px 2px rgba(36,30,26,0.06), 0 8px 24px -12px rgba(36,30,26,0.18)',
+          cardHover: '0 4px 8px rgba(36,30,26,0.08), 0 20px 40px -16px rgba(36,30,26,0.28)',
+          pop: '0 24px 60px -12px rgba(36,30,26,0.35)',
+        }
+      }
+    }
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&family=Poppins:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<!-- fontawesome cdn -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+<style>
+  body { font-family: 'Noto Sans JP', sans-serif; background: #FFFFFF; }
+  .font-display { font-family: 'Poppins', 'Noto Sans JP', sans-serif; }
+  .font-mono { font-family: 'IBM Plex Mono', monospace; }
+
+  /* signature: 手書き風の下線が STORE カテゴリの選択状態にじわっと伸びる */
+  /* --cat-color をカテゴリごとに変えることで、下線・選択時の文字色・バッジ色を全部統一する */
+  .cat-link { position: relative; --cat-color: #4736F0; }
+  .cat-link::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    width: 3px;
+    height: 0%;
+    background: var(--cat-color);
+    border-radius: 2px;
+    transform: translateY(-50%);
+    transition: height .25s ease;
+  }
+
+  .cat-link.active::before,
+  .cat-link:hover::before { height: 70%; }
+
+  .cat-link.active { color: var(--cat-color); font-weight: 600; }
+
+  .food-card { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; }
+  .food-card:hover { transform: translateY(-4px); }
+
+  .heart-btn svg { transition: transform .2s ease, fill .2s ease, stroke .2s ease; }
+  .heart-btn.liked svg { fill: #CE7043; stroke: #CE7043; transform: scale(1.15); }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: #E3E0FF; border-radius: 8px; }
+
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+  @keyframes riseIn {
+    from { opacity: 0; transform: translateY(14px) scale(.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .rise-in { animation: riseIn .45s cubic-bezier(.2,.8,.2,1) both; }
+
+  #detailModal { transition: opacity .2s ease; }
+  #detailModal .modal-panel { transition: transform .28s cubic-bezier(.2,.8,.2,1), opacity .28s ease; }
+</style>
+</head>
+
+<body class="text-ink">
+
+<div class="min-h-screen flex flex-col">
+
+  <!-- Top bar -->
+  <header class="sticky top-0 z-30 bg-paper/90 backdrop-blur border-b border-ink/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <button class="md:hidden -ml-1 p-2 rounded-lg hover:bg-ink/5" onclick="document.getElementById('sidebar').classList.toggle('hidden')" aria-label="メニューを開く">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <span class="font-display font-bold text-2xl tracking-tight text-brand-600">Kredo <span class="italic font-medium">Plus</span></span>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button class="relative p-2 rounded-full hover:bg-ink/5" aria-label="通知">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-clay-500"></span>
+        </button>
+        <img src="https://i.pravatar.cc/64?img=12" class="w-9 h-9 rounded-full object-cover ring-2 ring-brand-100" alt="ユーザーアバター">
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6">
+    <!-- Hero -->
+    <div class="relative h-52 sm:h-64 rounded-3xl overflow-hidden shadow-card">
+      <img src="https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover">
+      <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/25 to-transparent"></div>
+      <div class="relative h-full flex flex-col justify-end p-6 sm:p-8">
+        <h1 class="font-display text-4xl sm:text-5xl font-bold text-white">Other</h1>
+        <p class="text-white/85 mt-1 text-sm sm:text-base">atodekanngaemasu....</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 flex gap-6">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="hidden md:block w-60 shrink-0">
+      <div class="sticky top-24">
+        <label class="relative block mb-6">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-ink/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="ストアを検索" class="w-full bg-paper border border-ink/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-ink/40 focus:outline-none focus:ring-2 focus:ring-brand-300">
+        </label>
+
+        <p class="font-mono text-[11px] tracking-[0.18em] text-ink/40 mb-3 pl-1">STORE</p>
+        <nav class="flex flex-col gap-1 pl-5" id="storeNav">
+          <a href="#" data-tag="Laundry" style="--cat-color:#2f5fdb" class="cat-link active flex items-center justify-between py-2 text-sm text-ink/70 hover:text-ink">Laundry</a>
+          <a href="#" data-tag="Money Exchange" style="--cat-color:#e05237" class="cat-link flex items-center justify-between py-2 text-sm text-ink/70 hover:text-ink">Money Exchange</a>
+          <a href="#" data-tag="SIM Card" style="--cat-color:#f5b52e" class="cat-link flex items-center justify-between py-2 text-sm text-ink/70 hover:text-ink">SIM</a>
+          <a href="#" data-tag="Hospital" style="--cat-color:#5eab35" class="cat-link flex items-center justify-between py-2 text-sm text-ink/70 hover:text-ink">Hospital</a>
+          <a href="#" data-tag="Others" style="--cat-color:#7c6ba6" class="cat-link flex items-center justify-between py-2 text-sm text-ink/70 hover:text-ink">Others</a>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="flex-1 min-w-0">
+
+      <!-- Grid -->
+      <div id="foodGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-center gap-2 mt-8" id="pagination"></div>
+    </main>
+  </div>
+</div>
+
+<!-- Detail modal -->
+<div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-ink/40 backdrop-blur-sm">
+  <div class="modal-panel bg-paper rounded-2xl w-full max-w-2xl overflow-hidden shadow-pop opacity-0 translate-y-3">
+    <div class="relative h-64">
+      <img id="modalImg" src="" class="w-full h-full object-cover" alt="">
+      <span id="modalTag" class="absolute top-3 left-3 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full"></span>
+      <span id="modalPrice" class="absolute bottom-3 right-3 bg-paper/95 font-mono font-semibold text-sm px-2.5 py-1 rounded-lg"></span>
+      <button onclick="closeModal()" class="absolute top-3 right-3 bg-ink/50 hover:bg-ink/70 text-white w-7 h-7 rounded-full flex items-center justify-center" aria-label="閉じる">✕</button>
+    </div>
+    <div class="p-5">
+      <h3 id="modalTitle" class="font-display font-semibold text-lg mb-1"></h3>
+      <p id="modalDesc" class="text-sm text-ink/60 mb-4"></p>
+      <div class="flex items-center gap-2">
+        <img id="modalAvatar" src="" class="w-8 h-8 rounded-full object-cover" alt="">
+        <div class="leading-tight">
+          <p id="modalName" class="text-sm font-semibold"></p>
+          <p id="modalTime" class="text-xs text-ink/40"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---- カテゴリごとの色（Kredoロゴと同じ4色 + 5つ目以降は近しい色を追加） ----
+  const categoryColors = {
+    'Laundry': '#2f5fdb',        // Kredo Blue
+    'Money Exchange': '#e05237', // Kredo Red
+    'SIM Card': '#f5b52e',       // Kredo Yellow
+    'Hospital': '#5eab35',       // Kredo Green
+    'Others': '#7c6ba6',         // 5つ目以降用の予備カラー(パープル)
+  };
+  function colorOf(tag){ return categoryColors[tag] || '#2f5fdb'; }
+
+  // ---- テストデータ（自由に増減・編集OK） ----
+const items = [
+  // ---- Laundry ----
+  { tag: 'Laundry', title: 'Quick Dry Laundry Shop', desc: 'Fast wash & dry service, ready in 3 hours. Includes folding.', price: 120, name: 'Rica M.', time: '1時間前', img: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=45' },
+  { tag: 'Laundry', title: 'Coin Laundry near Dorm', desc: 'Self-service coin laundry, open 24/7 for busy students.', price: 90, name: 'Josh T.', time: '4時間前', img: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=33' },
+  { tag: 'Laundry', title: 'Premium Fabric Care', desc: 'Gentle wash for delicate fabrics, with fragrance options.', price: 150, name: 'Bea L.', time: '1日前', img: 'https://images.unsplash.com/photo-1489274495757-95c7c837b101?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=21' },
+
+  // ---- Money Exchange ----
+  { tag: 'Money Exchange', title: 'Best Rate USD to PHP', desc: 'Trusted money changer with daily updated rates, no hidden fees.', price: 0, name: 'Carlo D.', time: '30分前', img: 'https://images.unsplash.com/photo-1580519542036-c47de6196ba5?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=14' },
+  { tag: 'Money Exchange', title: 'Campus Forex Corner', desc: 'Exchange JPY, KRW, USD right beside the school gate.', price: 0, name: 'Nina S.', time: '3時間前', img: 'https://images.unsplash.com/photo-1621981386829-9b458a2cddde?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=48' },
+
+  // ---- SIM Card ----
+  { tag: 'SIM Card', title: 'Prepaid SIM Starter Pack', desc: 'Includes free load and data bundle for new students.', price: 100, name: 'Miguel A.', time: '2時間前', img: 'https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=39' },
+  { tag: 'SIM Card', title: 'Unli Data SIM Deal', desc: 'Best unlimited data plans compared, activated on the spot.', price: 250, name: 'Trisha K.', time: '6時間前', img: 'https://images.unsplash.com/photo-1556656793-08538906a9f8?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=17' },
+
+  // ---- Hospital ----
+  { tag: 'Hospital', title: 'Student Health Clinic', desc: 'Walk-in clinic with English-speaking staff near campus.', price: 300, name: 'Dr. Reyes', time: '5時間前', img: 'https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=60' },
+  { tag: 'Hospital', title: 'Emergency Care 24/7', desc: 'Reliable hospital with fast admission for international students.', price: 500, name: 'Angela F.', time: '1日前', img: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=800&auto=format&fit=crop', avatar: 'https://i.pravatar.cc/64?img=22' },
+];
+
+  const PAGE_SIZE = 21;
+  let currentPage = 1;
+
+  function money(v){ return v + ' PHP'; }
+
+  function renderGrid(page){
+    const grid = document.getElementById('foodGrid');
+    grid.innerHTML = '';
+    const start = (page - 1) * PAGE_SIZE;
+    const pageItems = items.slice(start, start + PAGE_SIZE);
+
+    pageItems.forEach((it, idx) => {
+      const card = document.createElement('article');
+      card.className = 'food-card rise-in bg-paper rounded-2xl overflow-hidden shadow-card cursor-pointer';
+      card.style.animationDelay = (idx * 0.05) + 's';
+      card.innerHTML = `
+        <div class="relative h-40">
+          <img src="${it.img}" class="w-full h-full object-cover" alt="${it.title}" loading="lazy">
+          <span class="absolute top-2.5 left-2.5 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full" style="background:${colorOf(it.tag)}">${it.tag}</span>
+         
+        </div>
+        <div class="p-4">
+          <h3 class="font-display font-semibold text-base mb-1 truncate">${it.title}</h3>
+          <p class="text-sm text-ink/55 line-clamp-2 mb-3">${it.desc}</p>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 min-w-0">
+              <img src="${it.avatar}" class="w-6 h-6 rounded-full object-cover shrink-0" alt="${it.name}">
+              <div class="leading-tight min-w-0">
+                <p class="text-xs font-semibold truncate">${it.name}</p>
+                <p class="text-[11px] text-ink/40">${it.time}</p>
+              </div>
+            </div>
+            <button class="heart-btn shrink-0 p-1.5 rounded-full hover:bg-clay-400/10" aria-label="お気に入り" onclick="event.stopPropagation(); this.classList.toggle('liked'); this.querySelector('i').classList.toggle('fa-regular'); this.querySelector('i').classList.toggle('fa-solid');">
+            <i class="fa-regular fa-heart text-[18px] text-[#CE7043]"></i>
+            </button>
+          </div>
+        </div>
+      `;
+      card.addEventListener('click', () => openModal(it));
+      grid.appendChild(card);
+    });
+  }
+
+  function renderPagination(){
+    const totalPages = Math.ceil(items.length / PAGE_SIZE);
+    const wrap = document.getElementById('pagination');
+    wrap.innerHTML = '';
+
+    for(let p = 1; p <= totalPages; p++){
+      const btn = document.createElement('button');
+      btn.textContent = p;
+      btn.className = 'w-9 h-9 rounded-lg text-sm font-semibold transition ' +
+        (p === currentPage ? 'bg-brand-600 text-white' : 'bg-paper border border-ink/10 text-ink/60 hover:border-brand-300');
+      btn.onclick = () => { currentPage = p; renderGrid(currentPage); renderPagination(); window.scrollTo({top:0, behavior:'smooth'}); };
+      wrap.appendChild(btn);
+    }
+
+    const next = document.createElement('button');
+    next.textContent = 'Next';
+    next.className = 'ml-1 px-4 h-9 rounded-lg text-sm font-semibold bg-paper border border-ink/10 text-ink/60 hover:border-brand-300 disabled:opacity-40';
+    next.disabled = currentPage === totalPages;
+    next.onclick = () => { if(currentPage < totalPages){ currentPage++; renderGrid(currentPage); renderPagination(); window.scrollTo({top:0, behavior:'smooth'}); } };
+    wrap.appendChild(next);
+  }
+
+  function openModal(it){
+    document.getElementById('modalImg').src = it.img;
+    document.getElementById('modalTag').textContent = it.tag;
+    document.getElementById('modalTag').style.background = colorOf(it.tag);
+    document.getElementById('modalPrice').textContent = money(it.price);
+    document.getElementById('modalTitle').textContent = it.title;
+    document.getElementById('modalDesc').textContent = it.desc;
+    document.getElementById('modalAvatar').src = it.avatar;
+    document.getElementById('modalName').textContent = it.name;
+    document.getElementById('modalTime').textContent = it.time;
+
+    const modal = document.getElementById('detailModal');
+    const panel = modal.querySelector('.modal-panel');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    requestAnimationFrame(() => {
+      panel.classList.remove('opacity-0', 'translate-y-3');
+    });
+  }
+
+  function closeModal(){
+    const modal = document.getElementById('detailModal');
+    const panel = modal.querySelector('.modal-panel');
+    panel.classList.add('opacity-0', 'translate-y-3');
+    setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 200);
+  }
+
+  document.getElementById('detailModal').addEventListener('click', (e) => {
+    if(e.target.id === 'detailModal') closeModal();
+  });
+
+  // STOREサイドバーのカテゴリ選択（クリックで active 切り替え）
+  document.querySelectorAll('#storeNav .cat-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.querySelectorAll('#storeNav .cat-link').forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+    });
+  });
+
+  renderGrid(currentPage);
+  renderPagination();
+
+  // モバイルではサイドバーを初期表示
+  if(window.innerWidth >= 768){ document.getElementById('sidebar').classList.remove('hidden'); }
+</script>
+<!-- Back to top -->
+<button id="backToTop" onclick="window.scrollTo({top:0, behavior:'smooth'})" aria-label="上に戻る"
+  class="fixed right-5 bottom-24 z-40 w-11 h-11 rounded-full bg-brand-600 text-white shadow-pop flex items-center justify-center opacity-0 pointer-events-none translate-y-2 transition-all duration-300 hover:bg-brand-700">
+  <i class="fa-solid fa-arrow-up text-[16px]"></i>
+</button>
+<!-- footer nav: Kredoロゴと同じ配色・フォントに統一 -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<nav class="fixed bottom-0 w-full z-50 bg-white shadow-[0_-4px_20px_-4px_rgba(30,58,138,0.15)] flex justify-around items-center h-20 px-4 pb-2 border-t border-slate-100">
+  <a href="other.html" class="flex flex-col items-center justify-center gap-1 text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
+    <i class="fa-solid fa-house text-[20px]"></i>
+    <span class="text-[10px] font-bold tracking-wide" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Home</span>
+  </a>
+
+  <a href="#" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
+    <div class="w-14 h-14 -mt-8 rounded-full flex items-center justify-center shadow-[0_12px_32px_-12px_rgba(30,58,138,0.35)] border-4 border-white"
+         style="background: linear-gradient(135deg, #2f5fdb 0%, #e05237 33%, #f5b52e 66%, #5eab35 100%);">
+      <i class="fa-solid fa-plus text-white text-[20px]"></i>
+    </div>
+    <span class="text-[10px] font-bold tracking-wide mt-1" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Post</span>
+  </a>
+
+  <a href="#" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
+    <i class="fa-solid fa-user text-[20px]"></i>
+    <span class="text-[10px] font-bold tracking-wide" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Profile</span>
+  </a>
+</nav>
+</body>
+</html>
