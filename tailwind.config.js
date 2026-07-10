@@ -21,10 +21,25 @@ export default {
                     green: '#5eab35',
                     yellow: '#f5b52e',
                 },
+                // English hub (warm terracotta palette, sampled from the design mockup)
+                primary: '#974018',
+                'on-primary': '#ffffff',
+                'primary-container': '#f4e8df',
+                'on-surface': '#241814',
+                'on-surface-variant': '#6b5d57',
+                'surface-container-lowest': '#ffffff',
+                'outline-variant': '#ede0d8',
             },
             fontFamily: {
                 sans: ['"Noto Sans JP"', ...defaultTheme.fontFamily.sans],
                 display: ['"Poppins"', '"Noto Sans JP"', ...defaultTheme.fontFamily.sans],
+            },
+            maxWidth: {
+                'container-max': '1140px',
+            },
+            spacing: {
+                'margin-mobile': '1.25rem',
+                'margin-desktop': '2rem',
             },
             boxShadow: {
                 card: '0 12px 32px -12px rgba(30, 58, 138, 0.22)',
