@@ -12,7 +12,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&family=Poppins:wght@600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/app.css', 'resources/js/english/app.js', 'resources/js/app.js'])
 
         <style>
             .material-symbols-outlined {
@@ -285,7 +285,7 @@
             }
         </style>
     </head>
-    <body class="font-sans bg-white text-slate-800 antialiased" x-data="{ mobileOpen: false }">
+    <body class="font-sans bg-white text-slate-800 antialiased min-h-screen flex flex-col" x-data="{ mobileOpen: false }">
 
         @hasSection('intro')
             <!-- Opening -->
@@ -394,7 +394,7 @@
         @endif
 
         <!-- Page Content -->
-        <main>
+        <main class="flex-1">
             @yield('content')
         </main>
 

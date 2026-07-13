@@ -1,27 +1,32 @@
-@props(['icon', 'title', 'description', 'href' => '#', 'progress' => null, 'actionLabel' => '学習を開始する'])
+@props(['icon' => 'star', 'title' => '', 'description' => '', 'href' => '#', 'progress' => null, 'badge' => null, 'actionLabel' => null])
 
-<a href="{{ $href }}" class="flex flex-col bg-white rounded-[20px] shadow-sm hover:shadow-md transition-all duration-300 p-5 no-underline text-inherit">
-    <div class="flex items-center gap-3 mb-2">
-        <div class="w-11 h-11 shrink-0 bg-primary-container rounded-xl flex items-center justify-center">
+<a href="{{ $href }}" class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-6 flex flex-col gap-3 group no-underline text-inherit">
+    <div class="flex items-center gap-3">
+        <div class="w-11 h-11 shrink-0 bg-primary/10 rounded-[0.75rem] flex items-center justify-center">
             <span class="material-symbols-outlined text-primary text-xl">{{ $icon }}</span>
         </div>
-        <h3 class="font-bold text-on-surface">{{ $title }}</h3>
+        <h3 class="font-headline-md text-base text-on-surface font-bold">{{ $title }}</h3>
+        @if($badge)
+        <span class="ml-auto shrink-0 bg-primary text-on-primary text-[10px] font-bold px-2.5 py-1 rounded-[0.75rem] uppercase tracking-wider">{{ $badge }}</span>
+        @endif
     </div>
 
-    <p class="text-sm text-on-surface-variant mb-4">{{ $description }}</p>
+    <p class="text-caption text-on-surface-variant">{{ $description }}</p>
 
-    @if (! is_null($progress))
-        <div class="flex items-center justify-between text-xs text-on-surface-variant mb-1.5">
+    @if($progress !== null)
+    <div class="mt-auto pt-1">
+        <div class="flex justify-between text-caption text-on-surface-variant mb-1">
             <span>進捗</span>
-            <span class="font-bold text-on-surface">{{ $progress }}%</span>
+            <span>{{ $progress }}%</span>
         </div>
-        <div class="w-full h-1.5 bg-primary-container rounded-full overflow-hidden mb-4">
-            <div class="h-full bg-primary rounded-full" style="width: {{ min(100, max(0, $progress)) }}%"></div>
+        <div class="w-full bg-surface-container-high rounded-[0.75rem] h-1.5 overflow-hidden">
+            <div class="bg-primary h-full rounded-[0.75rem]" style="width: {{ $progress }}%"></div>
         </div>
+    </div>
     @endif
 
-    <span class="mt-auto pt-3 border-t border-outline-variant inline-flex items-center gap-1 text-primary text-sm font-bold">
-        {{ $actionLabel }}
+    <div class="flex items-center gap-1 text-primary text-label-md font-semibold {{ $progress === null ? 'mt-auto' : '' }} group-hover:gap-2 transition-all">
+        <span>{{ $actionLabel ?? ($progress !== null ? '学習を開始する' : '詳しく見る') }}</span>
         <span class="material-symbols-outlined text-sm">arrow_forward</span>
-    </span>
+    </div>
 </a>
