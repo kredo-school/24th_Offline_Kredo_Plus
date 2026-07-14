@@ -3,6 +3,48 @@
 @section('intro', true)
 
 @section('content')
+    {{-- シャワーページにアクセスする際に性別登録のmodalが表示される（未登録の場合） --}}
+    @if (session('showGenderModal'))
+        <div x-data="{ open: true }" x-show="open" x-cloak
+            class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+            <div class="relative bg-white rounded-[24px] shadow-card p-8 w-full max-w-sm overflow-hidden">
+                {{-- 上部のグラデーションライン（他カードと統一） --}}
+                <div class="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-400 to-brand-blue"></div>
+
+                <h2 class="font-display font-bold text-xl text-slate-800">お住まいの寮を選択してください</h2>
+                <p class="mt-2 text-sm text-slate-500 leading-relaxed">※登録後は変更できません</p>
+
+                <form method="POST" action="{{ route('gender.store') }}" class="mt-6">
+                    @csrf
+                    <div class="flex gap-3">
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="gender" value="male" required class="peer sr-only">
+                            <div class="text-center border-2 border-slate-200 rounded-2xl py-4 text-sm font-semibold text-slate-600 transition-all peer-checked:border-brand-blue peer-checked:bg-sky-50 peer-checked:text-brand-blue">
+                                男子寮
+                            </div>
+                        </label>
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="gender" value="female" required class="peer sr-only">
+                            <div class="text-center border-2 border-slate-200 rounded-2xl py-4 text-sm font-semibold text-slate-600 transition-all peer-checked:border-brand-blue peer-checked:bg-sky-50 peer-checked:text-brand-blue">
+                                女子寮
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="mt-7 flex justify-end gap-3">
+                        <button type="button" @click="open = false"
+                                class="text-sm font-semibold text-slate-400 px-5 py-2.5 rounded-full hover:bg-slate-100 transition-colors">
+                            キャンセル
+                        </button>
+                        <button type="submit"
+                                class="inline-flex items-center gap-2 bg-brand-blue text-white text-sm font-semibold px-6 py-2.5 rounded-full hover:bg-indigo-700 transition-colors shadow-soft">
+                            登録する
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
 
     <!-- Hero -->
     <section class="relative overflow-hidden bg-gradient-to-b from-sky-100 via-sky-50 to-white">
@@ -106,7 +148,7 @@
                     <p class="mt-3 text-sm text-slate-500 leading-relaxed">シャワーの利用方法や混雑状況をチェックして、快適にご利用いただけます。</p>
 
                     <div class="mt-6 flex items-end justify-between gap-2">
-                        <a href="#" class="inline-flex items-center gap-2 text-sm font-semibold text-brand-blue border border-brand-blue/40 rounded-full px-5 py-2 hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-all duration-200 shrink-0">
+                        <a href="{{route('shower.entry')}}" class="inline-flex items-center gap-2 text-sm font-semibold text-brand-blue border border-brand-blue/40 rounded-full px-5 py-2 hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-all duration-200 shrink-0">
                             詳しく見る
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M9 6l6 6-6 6"/>
