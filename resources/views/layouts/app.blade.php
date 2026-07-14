@@ -283,6 +283,8 @@
                 [class*="intro-"], [class*="pg-"], [class*="ot-"], [class*="adv-"] { animation: none !important; }
                 * { transition: none !important; }
             }
+
+            [x-cloak] { display: none !important; }
         </style>
     </head>
     <body class="font-sans bg-white text-slate-800 antialiased min-h-screen flex flex-col" x-data="{ mobileOpen: false }">

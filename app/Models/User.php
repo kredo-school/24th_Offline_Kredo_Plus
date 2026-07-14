@@ -34,6 +34,8 @@ class User extends Authenticatable
         'study_streak',
         'last_study_date',
         'total_study_time',
+        'gender',
+        'gender_locked',
     ];
 
     /**
@@ -60,6 +62,7 @@ class User extends Authenticatable
             'total_xp' => 'integer',
             'study_streak' => 'integer',
             'total_study_time' => 'integer',
+            'gender_locked' => 'boolean',
         ];
     }
 
@@ -129,5 +132,11 @@ class User extends Authenticatable
     public function getCurrentLevelXpAttribute(): int
     {
         return (int) ($this->total_xp % 500);
+    }
+
+    // シャワーリレーション
+    public function hasGender(): bool
+    {
+        return !is_null($this->gender);
     }
 }
