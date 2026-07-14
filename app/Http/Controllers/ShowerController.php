@@ -19,11 +19,11 @@ class ShowerController extends Controller
 
     public function male()
     {
-        return view('components.showers.males.home');
+        return view('showers.males.home');
     }
 
     public function female()
     {
-        return view('components.showers.females.home');
+        return view('showers.females.home');
     }
 }
