@@ -16,11 +16,4 @@ class TypingSlide extends Model
         'content',
         'sort_order',
     ];
-
-    // ===== リレーション =====
-
-    public function material()
-    {
-        return $this->belongsTo(TypingMaterial::class, 'material_id');
-    }
 }

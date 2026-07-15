@@ -2,7 +2,6 @@
 
 namespace App\Models\English;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class UserSectionProgress extends Model
@@ -31,28 +30,4 @@ class UserSectionProgress extends Model
         'is_completed' => 'boolean',
         'completed_at' => 'datetime',
     ];
-
-    // ===== リレーション =====
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    // ===== スコープ =====
-
-    public function scopeCompleted($query)
-    {
-        return $query->where('is_completed', true);
-    }
-
-    /**
-     * ユーザー × セクション種別 × キーで検索（updateOrCreate の条件に使用）
-     */
-    public function scopeForSection($query, int $userId, string $sectionType, string $sectionKey)
-    {
-        return $query->where('user_id', $userId)
-                     ->where('section_type', $sectionType)
-                     ->where('section_key', $sectionKey);
-    }
 }

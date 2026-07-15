@@ -2,7 +2,6 @@
 
 namespace App\Models\English;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class StudyLog extends Model
@@ -28,32 +27,4 @@ class StudyLog extends Model
     protected $casts = [
         'studied_date' => 'date',
     ];
-
-    // ===== リレーション =====
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    // ===== スコープ =====
-
-    public function scopeThisWeek($query)
-    {
-        return $query->whereBetween('studied_date', [
-            now()->startOfWeek(),
-            now()->endOfWeek(),
-        ]);
-    }
-
-    public function scopeThisMonth($query)
-    {
-        return $query->whereMonth('studied_date', now()->month)
-                     ->whereYear('studied_date', now()->year);
-    }
-
-    public function scopeForUser($query, int $userId)
-    {
-        return $query->where('user_id', $userId);
-    }
 }

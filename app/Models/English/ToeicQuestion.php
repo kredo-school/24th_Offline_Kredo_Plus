@@ -33,11 +33,6 @@ class ToeicQuestion extends Model
         return $this->belongsTo(ToeicPassage::class, 'passage_id');
     }
 
-    public function answerLogs()
-    {
-        return $this->hasMany(ToeicAnswerLog::class, 'question_id');
-    }
-
     // ===== スコープ =====
 
     public function scopeForPart($query, int $part)

@@ -33,11 +33,6 @@ class TypingMaterial extends Model
         return $this->hasMany(TypingSlide::class, 'material_id')->orderBy('step_number');
     }
 
-    public function records()
-    {
-        return $this->hasMany(TypingRecord::class, 'material_id');
-    }
-
     // ===== スコープ =====
 
     /**
@@ -48,10 +43,5 @@ class TypingMaterial extends Model
         return $query->whereHas('category', function ($q) use ($categorySlug) {
             $q->where('slug', $categorySlug);
         })->when($level, fn($q) => $q->where('level', $level));
-    }
-
-    public function scopeOrdered($query)
-    {
-        return $query->orderBy('sort_order');
     }
 }
