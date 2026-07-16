@@ -31,27 +31,12 @@ class ToeicController extends Controller
     {
         $userId = Auth::id();
 
-        // 完了済みセクションを取得（スライド + 問題）
-        $completedSlides    = UserSectionProgress::where('user_id', $userId)
-            ->where('section_type', UserSectionProgress::TYPE_TOEIC_SLIDES)
-            ->where('is_completed', true)
-            ->pluck('section_key')
-            ->toArray();
-
-        $completedQuestions = UserSectionProgress::where('user_id', $userId)
-            ->where('section_type', UserSectionProgress::TYPE_TOEIC_QUESTIONS)
-            ->where('is_completed', true)
-            ->pluck('section_key')
-            ->toArray();
-
         $partMeta = config('english.toeic_part_meta');
 
-        $parts = collect($partMeta)->map(function ($meta, $partNum) use ($completedSlides, $completedQuestions) {
-            $key         = "part_{$partNum}";
-            $slidesDone  = in_array($key, $completedSlides);
-            $questionsDone = in_array($key, $completedQuestions);
-            $progress    = $meta['available']
-                ? (int) round((($slidesDone ? 1 : 0) + ($questionsDone ? 1 : 0)) / 2 * 100)
+        // 進捗ゲージ = DBに登録された全問題のうち回答済みユニーク問題数の割合（スライド閲覧状況は含めない）
+        $parts = collect($partMeta)->map(function ($meta, $partNum) use ($userId) {
+            $progress = $meta['available']
+                ? $this->toeicQuestionsCoveragePercent($userId, $partNum)
                 : 0;
 
             return array_merge($meta, [
@@ -61,6 +46,36 @@ class ToeicController extends Controller
         })->values()->all();
 
         return view('english.toeic.index', compact('parts'));
+    }
+
+    /**
+     * DBに登録された当該Partの全問題のうち、ユーザーが一度でも回答したユニーク問題数の割合（%）。
+     * 全問に一度でも解答すると100%になる。
+     */
+    private function toeicQuestionsCoveragePercent(int $userId, int $part): int
+    {
+        $total = ToeicQuestion::forPart($part)->count();
+
+        if ($total === 0) {
+            return 0;
+        }
+
+        $answered = count($this->toeicAnsweredQuestionIds($userId, $part));
+
+        return (int) round(min($answered, $total) / $total * 100);
+    }
+
+    /**
+     * ユーザーが過去のセッションを通じて一度でも回答したことのある問題IDの一覧。
+     */
+    private function toeicAnsweredQuestionIds(int $userId, int $part): array
+    {
+        $resultIds = ToeicResult::where('user_id', $userId)->where('part', $part)->pluck('id');
+
+        return ToeicAnswerLog::whereIn('result_id', $resultIds)
+            ->distinct()
+            ->pluck('question_id')
+            ->all();
     }
 
     /**
@@ -119,7 +134,8 @@ class ToeicController extends Controller
      * TOEIC 問題（全問ロード方式）(S04)
      * GET /english/toeic/{part}/practice
      *
-     * Part 5 は問題プールからランダムで10問を抽出して出題する（セッション中は順序固定）。
+     * Part 5 は問題プールから10問を抽出して出題する（セッション中は順序固定）。
+     * 未回答の問題があればそれを優先的に抽出し、全問回答済みの場合は完全ランダムに抽出する。
      * Part 6 / 7 は長文（passage）に紐づく問題を全問、sort_order順に出題する。
      */
     public function practice(int $part)
@@ -144,9 +160,23 @@ class ToeicController extends Controller
 
             abort_if($pool->isEmpty(), 404);
 
-            $questions = $part === 5
-                ? $pool->shuffle()->take(10)->values()
-                : $pool;
+            if ($part === 5) {
+                // 未回答の問題を優先して出題し、全問回答済みなら完全ランダムに戻す
+                $answeredIds = $this->toeicAnsweredQuestionIds(Auth::id(), $part);
+                $unanswered  = $pool->whereNotIn('id', $answeredIds)->values();
+
+                $questions = $unanswered->isNotEmpty()
+                    ? $unanswered->shuffle()->take(10)->values()
+                    : $pool->shuffle()->take(10)->values();
+
+                if ($questions->count() < 10) {
+                    $needed  = 10 - $questions->count();
+                    $fillers = $pool->whereNotIn('id', $questions->pluck('id'))->shuffle()->take($needed);
+                    $questions = $questions->concat($fillers)->values();
+                }
+            } else {
+                $questions = $pool;
+            }
 
             session([$sessionKey => $questions->pluck('id')->all()]);
         }
@@ -256,10 +286,12 @@ class ToeicController extends Controller
             // StudyLog 記録（total_study_time + streak も内部で更新）
             $this->studyLogService->log($user, 'toeic', $result->id, $xp, 0);
 
-            // セクション進捗を完了に更新
+            // セクション進捗を更新（DBに登録された全問題に一度でも解答したら完了とする）
+            $isFullyCovered = $this->toeicQuestionsCoveragePercent($user->id, $part) >= 100;
+
             UserSectionProgress::updateOrCreate(
                 ['user_id' => $user->id, 'section_type' => UserSectionProgress::TYPE_TOEIC_QUESTIONS, 'section_key' => "part_{$part}"],
-                ['is_completed' => true, 'completed_at' => now()]
+                ['is_completed' => $isFullyCovered, 'completed_at' => $isFullyCovered ? now() : null]
             );
 
             // セッションに結果IDを保存してからクリア
