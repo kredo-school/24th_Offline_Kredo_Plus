@@ -80,12 +80,8 @@ class IeltsController extends Controller
         $userId     = Auth::id();
         $sectionKey = "{$part}_{$topic}_{$score}";
 
-        $sectionProgress = UserSectionProgress::where('user_id', $userId)
-            ->where('section_type', UserSectionProgress::TYPE_IELTS_SLIDES)
-            ->where('section_key', $sectionKey)
-            ->first();
-
-        $canSkip = $sectionProgress && $sectionProgress->is_completed;
+        // 初回閲覧時でもタイピングへスキップ可能
+        $canSkip = true;
 
         UserSectionProgress::updateOrCreate(
             ['user_id' => $userId, 'section_type' => UserSectionProgress::TYPE_IELTS_SLIDES, 'section_key' => $sectionKey],
