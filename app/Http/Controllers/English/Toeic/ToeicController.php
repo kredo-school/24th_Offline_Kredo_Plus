@@ -136,9 +136,8 @@ class ToeicController extends Controller
      *
      * Part 5 は問題プールから10問を抽出して出題する（セッション中は順序固定）。
      * 未回答の問題があればそれを優先的に抽出し、全問回答済みの場合は完全ランダムに抽出する。
-     * Part 6 は長文（passage）2つ分（計8問）を1セッションで出題する。
+     * Part 6 / 7 は長文（passage）2つ分を1セッションで出題する。
      * 未回答の問題を含むパッセージを優先し、全問回答済みの場合は完全ランダムに2パッセージ選ぶ。
-     * Part 7 は長文（passage）に紐づく問題を全問、sort_order順に出題する。
      */
     public function practice(int $part)
     {
@@ -176,8 +175,8 @@ class ToeicController extends Controller
                     $fillers = $pool->whereNotIn('id', $questions->pluck('id'))->shuffle()->take($needed);
                     $questions = $questions->concat($fillers)->values();
                 }
-            } elseif ($part === 6) {
-                // 未回答の問題を含むパッセージを優先し、パッセージ2つ分（計8問）を出題する
+            } elseif (in_array($part, [6, 7], true)) {
+                // 未回答の問題を含むパッセージを優先し、パッセージ2つ分を出題する
                 $answeredIds          = $this->toeicAnsweredQuestionIds(Auth::id(), $part);
                 $allPassageIds        = $pool->pluck('passage_id')->unique()->values();
                 $incompletePassageIds = $pool->whereNotIn('id', $answeredIds)->pluck('passage_id')->unique()->values();
@@ -194,8 +193,6 @@ class ToeicController extends Controller
                 $questions = $pool->whereIn('passage_id', $selectedPassageIds->all())
                     ->sortBy('sort_order')
                     ->values();
-            } else {
-                $questions = $pool;
             }
 
             session([$sessionKey => $questions->pluck('id')->all()]);
