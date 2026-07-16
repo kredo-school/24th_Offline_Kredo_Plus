@@ -16,14 +16,4 @@ class ToeicSlide extends Model
         'content',
         'sort_order',
     ];
-
-    // ===== スコープ =====
-
-    /**
-     * Partでフィルタしてステップ順に取得
-     */
-    public function scopeForPart($query, int $part)
-    {
-        return $query->where('part', $part)->orderBy('step_number');
-    }
 }

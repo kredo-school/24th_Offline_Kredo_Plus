@@ -18,18 +18,4 @@ class ToeicQuestionOption extends Model
     protected $casts = [
         'is_correct' => 'boolean',
     ];
-
-    // ===== リレーション =====
-
-    public function question()
-    {
-        return $this->belongsTo(ToeicQuestion::class, 'question_id');
-    }
-
-    // ===== スコープ =====
-
-    public function scopeCorrect($query)
-    {
-        return $query->where('is_correct', true);
-    }
 }
