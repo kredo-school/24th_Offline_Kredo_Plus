@@ -97,13 +97,8 @@ class ToeicController extends Controller
         $userId      = Auth::id();
         $sectionKey  = "part_{$part}";
 
-        // 閲覧済みセクションを確認（スキップボタン表示判定）
-        $sectionProgress = UserSectionProgress::where('user_id', $userId)
-            ->where('section_type', UserSectionProgress::TYPE_TOEIC_SLIDES)
-            ->where('section_key', $sectionKey)
-            ->first();
-
-        $canSkip = $sectionProgress && $sectionProgress->is_completed;
+        // 初回閲覧時でも問題へスキップ可能
+        $canSkip = true;
 
         // 最終閲覧ステップを更新
         UserSectionProgress::updateOrCreate(
