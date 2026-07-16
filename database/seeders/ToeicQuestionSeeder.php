@@ -273,12 +273,12 @@ class ToeicQuestionSeeder extends Seeder
             ],
             [
                 'question_text' => 'The seminar has been rescheduled _____ of a venue conflict.',
-                'explanation'   => '"because of" は前置詞として名詞句 "a venue conflict" を受ける。',
+                'explanation'   => '文中に "of" が既にあるため、空欄には "because" のみが入る。"because of" を選ぶと "because of of a venue conflict" となり "of" が重複してしまう。',
                 'difficulty'    => 'easy',
                 'xp'            => 30,
                 'options'       => [
-                    ['label' => 'A', 'text' => 'because',    'is_correct' => false],
-                    ['label' => 'B', 'text' => 'because of', 'is_correct' => true],
+                    ['label' => 'A', 'text' => 'because',    'is_correct' => true],
+                    ['label' => 'B', 'text' => 'because of', 'is_correct' => false],
                     ['label' => 'C', 'text' => 'due',        'is_correct' => false],
                     ['label' => 'D', 'text' => 'since',       'is_correct' => false],
                 ],
@@ -885,6 +885,222 @@ class ToeicQuestionSeeder extends Seeder
                     ],
                 ],
             ],
+            // ── 文書5：価格改定のお知らせレター ──
+            [
+                'title'     => '価格改定のお知らせレター',
+                'documents' => [[
+                    'heading' => 'Letter to Valued Customers',
+                    'body'    => "Dear Valued Customer,\n\nWe would like to inform you that, due to rising material costs, our product prices (1)_____ by approximately 5% starting next month.\n\nWe understand this change may affect your purchasing decisions. (2)_____, we remain committed to providing the highest quality products and services.\n\nThis adjustment allows us (3)_____ maintain the quality standards our customers have come to expect.\n\n(4)_____\n\nThank you for your continued support and understanding.\n\nSincerely,\nCustomer Relations Department",
+                ]],
+                'questions' => [
+                    [
+                        'question_text' => '空欄(1)に入る最も適切な語句を選びなさい。',
+                        'explanation'   => '来月から始まる未来の予定を表す "will increase" が正解。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'will increase',   'is_correct' => true],
+                            ['label' => 'B', 'text' => 'increased',       'is_correct' => false],
+                            ['label' => 'C', 'text' => 'have increased',  'is_correct' => false],
+                            ['label' => 'D', 'text' => 'increasing',      'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => '空欄(2)に入る最も適切な接続副詞を選びなさい。',
+                        'explanation'   => '値上げという悪い知らせの後に逆接で安心材料を伝える "However"（しかしながら）が正解。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'However',     'is_correct' => true],
+                            ['label' => 'B', 'text' => 'Therefore',   'is_correct' => false],
+                            ['label' => 'C', 'text' => 'In addition', 'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Otherwise',   'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => '空欄(3)に入る最も適切な語句を選びなさい。',
+                        'explanation'   => '"allow + 人 + to do"（〜が…することを可能にする）の形で不定詞 "to maintain" が正解。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'maintain',    'is_correct' => false],
+                            ['label' => 'B', 'text' => 'maintaining', 'is_correct' => false],
+                            ['label' => 'C', 'text' => 'to maintain', 'is_correct' => true],
+                            ['label' => 'D', 'text' => 'maintained',  'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => '空欄(4)に入れるのに最も適切な文を選びなさい。',
+                        'explanation'   => '価格改定の説明の後、問い合わせ窓口を案内する文が結びの感謝の一文の前に自然につながる。',
+                        'difficulty'    => 'hard', 'xp' => 50,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'If you have any questions regarding this change, please contact our customer service team.', 'is_correct' => true],
+                            ['label' => 'B', 'text' => 'The new product line will be available starting next month.', 'is_correct' => false],
+                            ['label' => 'C', 'text' => 'Please remember to renew your annual subscription before it expires.', 'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Our office will be closed for the national holiday next Friday.', 'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+            // ── 文書6：新規オープンセール広告 ──
+            [
+                'title'     => '新規オープンセール広告',
+                'documents' => [[
+                    'heading' => 'Advertisement — Grand Opening Sale',
+                    'body'    => "Come celebrate the grand opening of TechWorld Electronics this Saturday! We (1)_____ offering discounts of up to 40% on all merchandise throughout the weekend.\n\nCustomers who arrive early will receive a free gift bag. (2)_____, the first 50 customers will be entered into a raffle for a chance to win a new laptop.\n\nDon't miss this opportunity (3)_____ upgrade your devices at unbeatable prices.\n\n(4)_____\n\nVisit us at 120 Main Street or shop online at techworld.com.",
+                ]],
+                'questions' => [
+                    [
+                        'question_text' => '空欄(1)に入る最も適切な語句を選びなさい。',
+                        'explanation'   => '今週末にかけて継続する未来の予定を表す未来進行形 "will be" が正解。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'will be',     'is_correct' => true],
+                            ['label' => 'B', 'text' => 'have been',   'is_correct' => false],
+                            ['label' => 'C', 'text' => 'was',         'is_correct' => false],
+                            ['label' => 'D', 'text' => 'being',       'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => '空欄(2)に入る最も適切な接続副詞を選びなさい。',
+                        'explanation'   => '前文の特典情報にさらに情報を加える "In addition"（さらに）が正解。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'In addition',  'is_correct' => true],
+                            ['label' => 'B', 'text' => 'However',      'is_correct' => false],
+                            ['label' => 'C', 'text' => 'Otherwise',    'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Nevertheless', 'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => '空欄(3)に入る最も適切な語句を選びなさい。',
+                        'explanation'   => '"opportunity to do"（〜する機会）の形で不定詞 "to upgrade" が正解。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'upgrade',    'is_correct' => false],
+                            ['label' => 'B', 'text' => 'upgrading',  'is_correct' => false],
+                            ['label' => 'C', 'text' => 'to upgrade', 'is_correct' => true],
+                            ['label' => 'D', 'text' => 'upgraded',   'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => '空欄(4)に入れるのに最も適切な文を選びなさい。',
+                        'explanation'   => '広告全体の呼びかけの流れを受けて、SNSでの継続的な情報発信を案内する文が自然につながる。',
+                        'difficulty'    => 'hard', 'xp' => 50,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Follow us on social media for updates on future promotions and events.', 'is_correct' => true],
+                            ['label' => 'B', 'text' => 'All returns must be made within thirty days of purchase.', 'is_correct' => false],
+                            ['label' => 'C', 'text' => 'The company was founded over twenty years ago.', 'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Employees are required to wear uniforms during business hours.', 'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+            // ── 文書7：駐車場工事に関するお知らせ ──
+            [
+                'title'     => '駐車場工事に関するお知らせ',
+                'documents' => [[
+                    'heading' => 'Notice to All Employees — Parking Lot Resurfacing',
+                    'body'    => "This is to notify all employees that the north parking lot (1)_____ be closed for resurfacing from August 5 to August 9.\n\nDuring this period, employees are asked to park in the visitor lot on Elm Street. (2)_____, additional shuttle service will be provided every 15 minutes between 7 A.M. and 6 P.M.\n\nThe resurfacing project is being undertaken (3)_____ improve safety and extend the lifespan of the parking surface.\n\n(4)_____\n\nWe appreciate your patience during this necessary maintenance work.",
+                ]],
+                'questions' => [
+                    [
+                        'question_text' => '空欄(1)に入る最も適切な語句を選びなさい。',
+                        'explanation'   => '来月の予定を表す未来の助動詞 "will"（〜される予定）が正解。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'will', 'is_correct' => true],
+                            ['label' => 'B', 'text' => 'is',   'is_correct' => false],
+                            ['label' => 'C', 'text' => 'was',  'is_correct' => false],
+                            ['label' => 'D', 'text' => 'has',  'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => '空欄(2)に入る最も適切な接続副詞を選びなさい。',
+                        'explanation'   => '駐車場案内に加えてシャトル情報を追加する "In addition"（さらに）が正解。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'In addition', 'is_correct' => true],
+                            ['label' => 'B', 'text' => 'However',     'is_correct' => false],
+                            ['label' => 'C', 'text' => 'Otherwise',   'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Despite',     'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => '空欄(3)に入る最も適切な語句を選びなさい。',
+                        'explanation'   => '目的を表す不定詞 "to improve"（改善するために）が正解。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'for',  'is_correct' => false],
+                            ['label' => 'B', 'text' => 'to',   'is_correct' => true],
+                            ['label' => 'C', 'text' => 'so',   'is_correct' => false],
+                            ['label' => 'D', 'text' => 'that', 'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => '空欄(4)に入れるのに最も適切な文を選びなさい。',
+                        'explanation'   => '工事案内の後、問い合わせ先を案内する文が結びの感謝の一文の前に自然につながる。',
+                        'difficulty'    => 'hard', 'xp' => 50,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Please contact the Facilities Office if you have any questions about parking arrangements.', 'is_correct' => true],
+                            ['label' => 'B', 'text' => 'The company picnic has been rescheduled to next month.', 'is_correct' => false],
+                            ['label' => 'C', 'text' => 'All invoices must be paid within thirty days of receipt.', 'is_correct' => false],
+                            ['label' => 'D', 'text' => 'The rooftop garden will open to tenants this summer.', 'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+            // ── 文書8：新製品発表に関する記事 ──
+            [
+                'title'     => '新製品発表に関する記事',
+                'documents' => [[
+                    'heading' => 'Article — Local Manufacturer Launches New Product',
+                    'body'    => "Bright Wave Appliances, a home appliance manufacturer headquartered in Denver, (1)_____ launch its newest line of energy-efficient refrigerators next month.\n\nThe new models are designed to reduce electricity consumption by up to 30 percent compared to previous versions. (2)_____, the company has redesigned the interior layout to increase storage capacity.\n\nIndustry analysts believe the launch comes at a time (3)_____ consumers are increasingly prioritizing sustainability.\n\n(4)_____\n\nThe refrigerators will be available at major retailers nationwide starting next month.",
+                ]],
+                'questions' => [
+                    [
+                        'question_text' => '空欄(1)に入る最も適切な語句を選びなさい。',
+                        'explanation'   => '来月の予定を表す未来形の助動詞 "will" が正解。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'will', 'is_correct' => true],
+                            ['label' => 'B', 'text' => 'has',  'is_correct' => false],
+                            ['label' => 'C', 'text' => 'had',  'is_correct' => false],
+                            ['label' => 'D', 'text' => 'is',   'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => '空欄(2)に入る最も適切な接続副詞を選びなさい。',
+                        'explanation'   => '省エネ性能に加えて収納力の改善という情報を追加する "In addition"（さらに）が正解。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'In addition', 'is_correct' => true],
+                            ['label' => 'B', 'text' => 'However',     'is_correct' => false],
+                            ['label' => 'C', 'text' => 'Otherwise',   'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Despite',     'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => '空欄(3)に入る最も適切な語句を選びなさい。',
+                        'explanation'   => '"a time when 〜"（〜という時期に）という時を表す関係副詞 "when" が正解。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'which', 'is_correct' => false],
+                            ['label' => 'B', 'text' => 'when',  'is_correct' => true],
+                            ['label' => 'C', 'text' => 'where', 'is_correct' => false],
+                            ['label' => 'D', 'text' => 'that',  'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => '空欄(4)に入れるのに最も適切な文を選びなさい。',
+                        'explanation'   => '記事全体の前向きな論調に沿い、今後の需要見通しを述べる文が自然につながる。',
+                        'difficulty'    => 'hard', 'xp' => 50,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'The company expects strong demand given the growing consumer interest in eco-friendly products.', 'is_correct' => true],
+                            ['label' => 'B', 'text' => 'The firm\'s stock price fell sharply last quarter.', 'is_correct' => false],
+                            ['label' => 'C', 'text' => 'Employees will be required to relocate immediately.', 'is_correct' => false],
+                            ['label' => 'D', 'text' => 'The company was founded over fifty years ago.', 'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $sortOrder = 1;
@@ -905,7 +1121,7 @@ class ToeicQuestionSeeder extends Seeder
     }
 
     // ──────────────────────────────────────────────────────────────
-    //  Part 7：読解（シングル3セット + ダブル1セット + トリプル1セット = 23問）
+    //  Part 7：読解（シングル7セット + ダブル2セット + トリプル1セット = 39問）
     // ──────────────────────────────────────────────────────────────
 
     private function createPart7Questions(): void
@@ -1254,6 +1470,240 @@ class ToeicQuestionSeeder extends Seeder
                     ['label' => 'B', 'text' => 'Her own office', 'is_correct' => false],
                     ['label' => 'C', 'text' => 'The Willow Room at the Grand Hotel', 'is_correct' => true],
                     ['label' => 'D', 'text' => 'An online meeting', 'is_correct' => false],
+                ],
+            ],
+        ];
+        foreach ($questions as $data) { $this->createQuestion($data, 7, $sortOrder, $passage->id); $sortOrder++; }
+
+        // ── シングルパッセージ5：求人広告（マーケティング担当者募集） ──
+        $passage = ToeicPassage::create([
+            'part' => 7, 'passage_type' => 'single', 'sort_order' => 7,
+            'title' => '求人広告（マーケティング担当者募集）',
+            'documents' => [[
+                'heading' => 'Advertisement',
+                'body' => "Northfield Marketing Group is seeking a Marketing Coordinator to join our growing team in Seattle. The ideal candidate will have at least two years of experience in digital marketing and strong writing skills.\n\nResponsibilities include managing social media accounts, drafting promotional content, and analyzing campaign performance. This is a full-time position with a competitive salary and benefits package, including health insurance and paid vacation.\n\nInterested applicants should submit a resume and cover letter to careers@northfieldmarketing.example.com by July 25. Only candidates selected for an interview will be contacted.",
+            ]],
+        ]);
+        $questions = [
+            [
+                'question_text' => 'What is the purpose of the advertisement?',
+                'explanation'   => '求人広告全体がマーケティング担当者の募集内容。',
+                'difficulty' => 'easy', 'xp' => 30,
+                'options' => [
+                    ['label' => 'A', 'text' => 'To announce a company merger', 'is_correct' => false],
+                    ['label' => 'B', 'text' => 'To recruit a new employee', 'is_correct' => true],
+                    ['label' => 'C', 'text' => 'To promote a marketing campaign', 'is_correct' => false],
+                    ['label' => 'D', 'text' => 'To advertise a training course', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'According to the advertisement, what is required for the position?',
+                'explanation'   => '"at least two years of experience in digital marketing" と明記されている。',
+                'difficulty' => 'medium', 'xp' => 40,
+                'options' => [
+                    ['label' => 'A', 'text' => 'A graduate degree', 'is_correct' => false],
+                    ['label' => 'B', 'text' => 'At least two years of digital marketing experience', 'is_correct' => true],
+                    ['label' => 'C', 'text' => 'Fluency in a foreign language', 'is_correct' => false],
+                    ['label' => 'D', 'text' => 'Prior management experience', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'What should interested applicants do?',
+                'explanation'   => '"submit a resume and cover letter to careers@..." と明記されている。',
+                'difficulty' => 'medium', 'xp' => 40,
+                'options' => [
+                    ['label' => 'A', 'text' => 'Visit the company office in person', 'is_correct' => false],
+                    ['label' => 'B', 'text' => 'Call the HR department', 'is_correct' => false],
+                    ['label' => 'C', 'text' => 'Submit a resume and cover letter by e-mail', 'is_correct' => true],
+                    ['label' => 'D', 'text' => 'Attend a job fair', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'What can be inferred about the hiring process?',
+                'explanation'   => '"Only candidates selected for an interview will be contacted" から、全員には連絡がないと分かる。',
+                'difficulty' => 'hard', 'xp' => 50,
+                'options' => [
+                    ['label' => 'A', 'text' => 'All applicants will be interviewed', 'is_correct' => false],
+                    ['label' => 'B', 'text' => 'Only shortlisted applicants will be contacted', 'is_correct' => true],
+                    ['label' => 'C', 'text' => 'The position is part-time', 'is_correct' => false],
+                    ['label' => 'D', 'text' => 'The deadline has already passed', 'is_correct' => false],
+                ],
+            ],
+        ];
+        foreach ($questions as $data) { $this->createQuestion($data, 7, $sortOrder, $passage->id); $sortOrder++; }
+
+        // ── シングルパッセージ6：社内メモ（リモートワーク制度の変更） ──
+        $passage = ToeicPassage::create([
+            'part' => 7, 'passage_type' => 'single', 'sort_order' => 8,
+            'title' => '社内メモ（リモートワーク制度の変更）',
+            'documents' => [[
+                'heading' => 'Memo — To: All Staff / From: Human Resources',
+                'body' => "Effective August 1, employees will be permitted to work remotely up to two days per week, subject to manager approval. This policy replaces the previous requirement of full-time in-office attendance.\n\nEmployees wishing to participate should submit a remote work request form to their supervisor at least one week in advance. Requests will be reviewed based on team workload and project deadlines.\n\nPlease note that certain roles, such as those requiring on-site equipment access, may not be eligible for this arrangement. For questions, contact the HR department.",
+            ]],
+        ]);
+        $questions = [
+            [
+                'question_text' => 'What is the main purpose of the memo?',
+                'explanation'   => 'リモートワーク制度の導入を知らせる内容。',
+                'difficulty' => 'easy', 'xp' => 30,
+                'options' => [
+                    ['label' => 'A', 'text' => 'To announce a new remote work policy', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'To cancel all remote work arrangements', 'is_correct' => false],
+                    ['label' => 'C', 'text' => 'To introduce a new HR manager', 'is_correct' => false],
+                    ['label' => 'D', 'text' => 'To request feedback on office design', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'What must employees do before working remotely?',
+                'explanation'   => '"submit a remote work request form... at least one week in advance" と明記されている。',
+                'difficulty' => 'medium', 'xp' => 40,
+                'options' => [
+                    ['label' => 'A', 'text' => 'Purchase their own equipment', 'is_correct' => false],
+                    ['label' => 'B', 'text' => 'Submit a request form in advance', 'is_correct' => true],
+                    ['label' => 'C', 'text' => 'Complete a training course', 'is_correct' => false],
+                    ['label' => 'D', 'text' => 'Resign from their current position', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'According to the memo, who might not be eligible for remote work?',
+                'explanation'   => '"roles requiring on-site equipment access, may not be eligible" と明記されている。',
+                'difficulty' => 'medium', 'xp' => 40,
+                'options' => [
+                    ['label' => 'A', 'text' => 'Employees who requested it late', 'is_correct' => false],
+                    ['label' => 'B', 'text' => 'Employees in roles requiring on-site equipment', 'is_correct' => true],
+                    ['label' => 'C', 'text' => 'New employees only', 'is_correct' => false],
+                    ['label' => 'D', 'text' => 'Employees without a manager', 'is_correct' => false],
+                ],
+            ],
+        ];
+        foreach ($questions as $data) { $this->createQuestion($data, 7, $sortOrder, $passage->id); $sortOrder++; }
+
+        // ── ダブルパッセージ2：出張日程確認（メール＋旅程表） ──
+        $passage = ToeicPassage::create([
+            'part' => 7, 'passage_type' => 'double', 'sort_order' => 9,
+            'title' => '出張日程確認（メール＋旅程表）',
+            'documents' => [
+                [
+                    'heading' => 'E-mail',
+                    'body' => "To: Daniel Osei\nFrom: Travel Department\nSubject: Business Trip Itinerary — Chicago Conference\n\nDear Mr. Osei,\n\nAttached is your finalized itinerary for the upcoming trip to Chicago for the National Sales Conference. Please review the details carefully and confirm your flight preferences by June 20.\n\nNote that your hotel reservation includes breakfast, and a shuttle service to the conference venue will be available each morning at 7:30 A.M.\n\nIf you need to make any changes, please contact our office as soon as possible.\n\nBest regards,\nTravel Department",
+                ],
+                [
+                    'heading' => 'Itinerary',
+                    'body' => "BUSINESS TRIP ITINERARY — Daniel Osei\nDestination: Chicago, IL\nConference: National Sales Conference\n\nDeparture: June 24, 8:15 A.M., Flight 220\nReturn: June 27, 6:40 P.M., Flight 335\nHotel: Lakeshore Grand Hotel (June 24–27)\nConference Venue: Chicago Convention Center\nShuttle Departure: 7:30 A.M. daily from hotel lobby",
+                ],
+            ],
+        ]);
+        $questions = [
+            [
+                'question_text' => 'Why was the e-mail sent to Mr. Osei?',
+                'explanation'   => '出張の確定旅程を伝えるメール。',
+                'difficulty' => 'easy', 'xp' => 30,
+                'options' => [
+                    ['label' => 'A', 'text' => 'To cancel his business trip', 'is_correct' => false],
+                    ['label' => 'B', 'text' => 'To provide his finalized travel itinerary', 'is_correct' => true],
+                    ['label' => 'C', 'text' => 'To request a hotel refund', 'is_correct' => false],
+                    ['label' => 'D', 'text' => 'To offer him a promotion', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'What is Mr. Osei asked to do by June 20?',
+                'explanation'   => '"confirm your flight preferences by June 20" と明記されている。',
+                'difficulty' => 'easy', 'xp' => 30,
+                'options' => [
+                    ['label' => 'A', 'text' => 'Book his own flight', 'is_correct' => false],
+                    ['label' => 'B', 'text' => 'Confirm his flight preferences', 'is_correct' => true],
+                    ['label' => 'C', 'text' => 'Submit an expense report', 'is_correct' => false],
+                    ['label' => 'D', 'text' => 'Cancel his hotel reservation', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'According to the itinerary, what time does the shuttle depart each morning?',
+                'explanation'   => '旅程表に "Shuttle Departure: 7:30 A.M. daily" とある。',
+                'difficulty' => 'easy', 'xp' => 30,
+                'options' => [
+                    ['label' => 'A', 'text' => '6:40 A.M.', 'is_correct' => false],
+                    ['label' => 'B', 'text' => '7:30 A.M.', 'is_correct' => true],
+                    ['label' => 'C', 'text' => '8:15 A.M.', 'is_correct' => false],
+                    ['label' => 'D', 'text' => '9:00 A.M.', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'How many nights will Mr. Osei stay at the hotel?',
+                'explanation'   => '旅程表よりJune24〜27の宿泊のため3泊。メールと旅程表を照合するクロスリファレンス問題。',
+                'difficulty' => 'hard', 'xp' => 60,
+                'options' => [
+                    ['label' => 'A', 'text' => 'Two', 'is_correct' => false],
+                    ['label' => 'B', 'text' => 'Three', 'is_correct' => true],
+                    ['label' => 'C', 'text' => 'Four', 'is_correct' => false],
+                    ['label' => 'D', 'text' => 'Five', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => "What amenity is included with Mr. Osei's hotel reservation?",
+                'explanation'   => 'メールに "your hotel reservation includes breakfast" とある。',
+                'difficulty' => 'medium', 'xp' => 40,
+                'options' => [
+                    ['label' => 'A', 'text' => 'Airport pickup', 'is_correct' => false],
+                    ['label' => 'B', 'text' => 'Breakfast', 'is_correct' => true],
+                    ['label' => 'C', 'text' => 'A rental car', 'is_correct' => false],
+                    ['label' => 'D', 'text' => 'Conference registration', 'is_correct' => false],
+                ],
+            ],
+        ];
+        foreach ($questions as $data) { $this->createQuestion($data, 7, $sortOrder, $passage->id); $sortOrder++; }
+
+        // ── シングルパッセージ7：レストランのオンラインレビュー ──
+        $passage = ToeicPassage::create([
+            'part' => 7, 'passage_type' => 'single', 'sort_order' => 10,
+            'title' => 'レストランのオンラインレビュー',
+            'documents' => [[
+                'heading' => 'Online Review — Harbor View Bistro',
+                'body' => "I visited Harbor View Bistro last weekend for my anniversary dinner, and the experience exceeded my expectations. The seafood pasta was outstanding, and the staff were attentive without being intrusive.\n\nThe only drawback was the noise level; the dining room was quite loud due to its popularity, making conversation difficult at times. I would recommend requesting a table on the outdoor patio if you prefer a quieter atmosphere.\n\nOverall, I would rate this restaurant 4 out of 5 stars and plan to return for special occasions in the future.",
+            ]],
+        ]);
+        $questions = [
+            [
+                'question_text' => 'What is the purpose of the review?',
+                'explanation'   => 'レビュー全体が食事体験の感想を述べる内容。',
+                'difficulty' => 'easy', 'xp' => 30,
+                'options' => [
+                    ['label' => 'A', 'text' => 'To complain about poor service', 'is_correct' => false],
+                    ['label' => 'B', 'text' => 'To share an opinion about a dining experience', 'is_correct' => true],
+                    ['label' => 'C', 'text' => 'To advertise a new restaurant', 'is_correct' => false],
+                    ['label' => 'D', 'text' => 'To request a refund', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'According to the review, what did the writer dislike about the restaurant?',
+                'explanation'   => '"The only drawback was the noise level" と明記されている。',
+                'difficulty' => 'medium', 'xp' => 40,
+                'options' => [
+                    ['label' => 'A', 'text' => 'The food quality', 'is_correct' => false],
+                    ['label' => 'B', 'text' => "The staff's attitude", 'is_correct' => false],
+                    ['label' => 'C', 'text' => 'The noise level', 'is_correct' => true],
+                    ['label' => 'D', 'text' => 'The price', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'What does the writer suggest for a quieter experience?',
+                'explanation'   => '"I would recommend requesting a table on the outdoor patio" とある。',
+                'difficulty' => 'medium', 'xp' => 40,
+                'options' => [
+                    ['label' => 'A', 'text' => 'Visiting during lunch hours', 'is_correct' => false],
+                    ['label' => 'B', 'text' => 'Requesting a table on the outdoor patio', 'is_correct' => true],
+                    ['label' => 'C', 'text' => 'Making a reservation in advance', 'is_correct' => false],
+                    ['label' => 'D', 'text' => 'Avoiding weekends', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'What rating did the writer give the restaurant?',
+                'explanation'   => '"I would rate this restaurant 4 out of 5 stars" と明記されている。',
+                'difficulty' => 'easy', 'xp' => 30,
+                'options' => [
+                    ['label' => 'A', 'text' => '3 out of 5', 'is_correct' => false],
+                    ['label' => 'B', 'text' => '4 out of 5', 'is_correct' => true],
+                    ['label' => 'C', 'text' => '5 out of 5', 'is_correct' => false],
+                    ['label' => 'D', 'text' => '2 out of 5', 'is_correct' => false],
                 ],
             ],
         ];
