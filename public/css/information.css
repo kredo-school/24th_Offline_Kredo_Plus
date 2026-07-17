@@ -1,0 +1,325 @@
+<style> :root {
+    --ink: #241E1A;
+    --brand-300: #A7A0FF;
+    --brand-600: #4736F0;
+    --brand-700: #372AC2;
+    --clay-400: #E08A5B;
+    --clay-500: #CE7043;
+    --clay-600: #B15A32;
+}
+
+.rc-edit-wrapper * {
+    box-sizing: border-box;
+}
+
+.rc-edit-wrapper {
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--ink);
+}
+
+/* ページ内バー(戻る・タイトル・削除) */
+.rc-bar {
+    background: #fff;
+    border-bottom: 1px solid rgba(36, 30, 26, 0.1);
+}
+
+.rc-bar-inner {
+    max-width: 768px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.rc-bar-left {
+    display: flex;
+    align-items: center;
+}
+
+.rc-back-link {
+    padding: .5rem;
+    margin-left: -.5rem;
+    border-radius: .5rem;
+    color: var(--ink);
+    text-decoration: none;
+}
+
+.rc-back-link:hover {
+    background: rgba(36, 30, 26, 0.05);
+}
+
+.rc-page-title {
+    font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--brand-600);
+    margin-left: .75rem;
+}
+
+.rc-delete-btn {
+    padding: .5rem;
+    border-radius: 999px;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.rc-delete-btn:hover {
+    background: rgba(36, 30, 26, 0.05);
+}
+
+.rc-delete-btn i {
+    color: var(--clay-500);
+    font-size: 18px;
+}
+
+.rc-main {
+    max-width: 768px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 10rem;
+    /* 下の固定フッターナビに隠れないよう余白 */
+}
+
+.rc-error-box {
+    margin-bottom: 1.5rem;
+    background: rgba(224, 138, 91, 0.1);
+    border: 1px solid rgba(224, 138, 91, 0.3);
+    color: var(--clay-600);
+    font-size: .875rem;
+    border-radius: .75rem;
+    padding: .75rem 1rem;
+}
+
+.rc-error-box p {
+    font-weight: 600;
+    margin: 0 0 .25rem;
+}
+
+.rc-error-box ul {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.rc-status-box {
+    margin-bottom: 1.5rem;
+    background: var(--ink);
+    color: #fff;
+    border-radius: .75rem;
+    padding: .75rem 1rem;
+    font-size: .875rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.rc-status-box i {
+    color: var(--brand-300);
+}
+
+.rc-main form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.rc-field-label {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: .1em;
+    font-size: .75rem;
+    color: rgba(36, 30, 26, 0.4);
+    margin-bottom: .5rem;
+}
+
+.rc-image-box {
+    position: relative;
+    display: block;
+    height: 12rem;
+    border-radius: 1rem;
+    border: 2px dashed rgba(36, 30, 26, 0.15);
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.rc-image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.rc-image-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(36, 30, 26, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s ease;
+}
+
+.rc-image-box:hover .rc-image-overlay {
+    background: rgba(36, 30, 26, 0.4);
+}
+
+.rc-image-overlay-inner {
+    opacity: 0;
+    transition: opacity .2s ease;
+    background: rgba(255, 255, 255, 0.95);
+    padding: .5rem 1rem;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .875rem;
+    font-weight: 600;
+}
+
+.rc-image-box:hover .rc-image-overlay-inner {
+    opacity: 1;
+}
+
+.rc-image-overlay-inner i {
+    color: var(--brand-600);
+}
+
+.rc-hidden-file {
+    display: none;
+}
+
+.rc-cat-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.rc-cat-radio {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.rc-cat-chip {
+    display: inline-block;
+    padding: .5rem 1rem;
+    border-radius: 999px;
+    font-size: .875rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: rgba(36, 30, 26, 0.05);
+    color: rgba(36, 30, 26, 0.6);
+    border: 1px solid transparent;
+}
+
+.rc-cat-radio:checked+.rc-cat-chip {
+    background: var(--chip-color);
+    color: #fff;
+    box-shadow: 0 4px 10px -4px rgba(0, 0, 0, 0.35);
+}
+
+.rc-cat-radio:focus+.rc-cat-chip {
+    outline: 2px solid var(--chip-color);
+}
+
+.rc-field-input {
+    width: 100%;
+    background: #fff;
+    border: 1px solid rgba(36, 30, 26, 0.1);
+    border-radius: .75rem;
+    padding: .7rem 1rem;
+    font-size: .9rem;
+    font-family: inherit;
+    color: var(--ink);
+}
+
+.rc-field-input:focus {
+    outline: none;
+    border-color: var(--brand-600);
+    box-shadow: 0 0 0 3px rgba(90, 76, 255, 0.15);
+}
+
+textarea.rc-field-input {
+    resize: none;
+}
+
+.rc-save-btn {
+    width: 100%;
+    padding: .9rem;
+    background: var(--brand-600);
+    color: #fff;
+    border: none;
+    border-radius: .75rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+}
+
+.rc-save-btn:hover {
+    background: var(--brand-700);
+}
+
+/* フッターナビ */
+.rc-footer-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 50;
+    background: #fff;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 5rem;
+    padding: 0 1rem .5rem;
+    box-shadow: 0 -4px 20px -4px rgba(30, 58, 138, 0.15);
+}
+
+.rc-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .25rem;
+    color: #94a3b8;
+    text-decoration: none;
+    padding: .25rem 1rem;
+}
+
+.rc-nav-item.active {
+    color: #2f5fdb;
+}
+
+.rc-nav-item span {
+    font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .02em;
+}
+
+.rc-nav-post-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-top: -2rem;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid #fff;
+    background: linear-gradient(135deg, #2f5fdb 0%, #e05237 33%, #f5b52e 66%, #5eab35 100%);
+}
+
+.rc-nav-post-icon i {
+    color: #fff;
+    font-size: 20px;
+}
+
+</style>
+
