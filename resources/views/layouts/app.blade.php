@@ -18,6 +18,9 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
         <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
+        <!-- Scripts -->
+        @vite(['resources/css/app.css', 'resources/js/english/app.js', 'resources/js/app.js'])
     </head>
     <body class="font-sans bg-white text-slate-800 antialiased min-h-screen flex flex-col" x-data="{ mobileOpen: false }">
 

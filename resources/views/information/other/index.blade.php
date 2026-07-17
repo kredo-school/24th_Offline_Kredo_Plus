@@ -1,56 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>others</title>
+@extends('layouts.app')
 
-<!-- Tailwind CDN: ビルド不要、そのままブラウザ / Live Server で確認できます -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          ink: '#241E1A',
-          cream: '#FFFFFF',
-          paper: '#FFFFFF',
-          brand: {
-            50: '#F1F0FF',
-            100: '#E3E0FF',
-            300: '#A7A0FF',
-            500: '#5A4CFF',
-            600: '#4736F0',
-            700: '#372AC2',
-          },
-          clay: {
-            400: '#E08A5B',
-            500: '#CE7043',
-            600: '#B15A32',
-          },
-        },
-        fontFamily: {
-          display: ['"Poppins"', '"Noto Sans JP"', 'sans-serif'],
-          body: ['"Noto Sans JP"', 'sans-serif'],
-          mono: ['"IBM Plex Mono"', 'monospace'],
-        },
-        boxShadow: {
-          card: '0 1px 2px rgba(36,30,26,0.06), 0 8px 24px -12px rgba(36,30,26,0.18)',
-          cardHover: '0 4px 8px rgba(36,30,26,0.08), 0 20px 40px -16px rgba(36,30,26,0.28)',
-          pop: '0 24px 60px -12px rgba(36,30,26,0.35)',
-        }
-      }
-    }
-  }
-</script>
+@section('title', 'Others — Kredo Plus')
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&family=Poppins:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-
-<!-- fontawesome cdn -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+@section('content')
 
 <style>
   body { font-family: 'Noto Sans JP', sans-serif; background: #FFFFFF; }
@@ -103,21 +55,18 @@
   #commentList::-webkit-scrollbar { width: 6px; }
   #commentList::-webkit-scrollbar-thumb { background: #E3E0FF; border-radius: 6px; }
 </style>
-</head>
 
-<body class="text-ink">
+<div class="text-[#241E1A] pb-24">
+
 
 <div class="min-h-screen flex flex-col">
 
-  {{-- ヘッダーは共通ファイルからインクルード --}}
-  {{-- @include('layouts.header') --}}
-
   {{-- デモ用: ログイン中のユーザーを切り替えるセレクター(本来はログイン情報から取得。Laravel連携後は削除予定) --}}
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-3 flex justify-end">
-    <label class="flex items-center gap-2 text-xs text-ink/50 bg-ink/[0.03] px-3 py-1.5 rounded-full">
+    <label class="flex items-center gap-2 text-xs text-[#241E1A]/50 bg-[#241E1A]/[0.03] px-3 py-1.5 rounded-full">
       <i class="fa-regular fa-user text-[12px]"></i>
       <span class="font-mono">Login as</span>
-      <select id="currentUserSelect" class="bg-transparent font-semibold text-ink outline-none cursor-pointer">
+      <select id="currentUserSelect" class="bg-transparent font-semibold text-[#241E1A] outline-none cursor-pointer">
         <option value="Guest">Guest(誰でもない人)</option>
         <option value="Rica M.">Rica M.</option>
         <option value="Carlo D.">Carlo D.</option>
@@ -128,9 +77,9 @@
 
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6">
     <!-- Hero -->
-    <div class="relative h-52 sm:h-64 rounded-3xl overflow-hidden shadow-card">
+    <div class="relative h-52 sm:h-64 rounded-3xl overflow-hidden shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]">
       <img src="https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover">
-      <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/25 to-transparent"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-[#241E1A]/80 via-[#241E1A]/25 to-transparent"></div>
       <div class="relative h-full flex flex-col justify-end p-6 sm:p-8">
         <h1 class="font-display text-4xl sm:text-5xl font-bold text-white">Other</h1>
         <p class="text-white/85 mt-1 text-sm sm:text-base">atodekanngaemasu....</p>
@@ -144,23 +93,35 @@
     <aside id="sidebar" class="hidden md:block w-60 shrink-0">
       <div class="sticky top-24">
         <label class="relative block mb-6">
-          <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-ink/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="searchInput" placeholder="タイトル・コメントを検索" class="w-full bg-paper border border-ink/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-ink/40 focus:outline-none focus:ring-2 focus:ring-brand-300">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-[#241E1A]/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="タイトル・コメントを検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
         </label>
 
-        <p class="font-mono text-[11px] tracking-[0.18em] text-ink/40 mb-3 pl-1">STORE</p>
+        <p class="font-mono text-[11px] tracking-[0.18em] text-[#241E1A]/40 mb-3 pl-1">STORE</p>
         <nav class="flex flex-col gap-1 pl-5" id="storeNav">
-          <a href="#" data-tag="Laundry" style="--cat-color:#2f5fdb" class="cat-link active flex items-center justify-between py-2 text-sm text-ink/70 hover:text-ink">Laundry</a>
-          <a href="#" data-tag="Money Exchange" style="--cat-color:#e05237" class="cat-link flex items-center justify-between py-2 text-sm text-ink/70 hover:text-ink">Money Exchange</a>
-          <a href="#" data-tag="SIM Card" style="--cat-color:#f5b52e" class="cat-link flex items-center justify-between py-2 text-sm text-ink/70 hover:text-ink">SIM</a>
-          <a href="#" data-tag="Hospital" style="--cat-color:#5eab35" class="cat-link flex items-center justify-between py-2 text-sm text-ink/70 hover:text-ink">Hospital</a>
-          <a href="#" data-tag="Others" style="--cat-color:#7c6ba6" class="cat-link flex items-center justify-between py-2 text-sm text-ink/70 hover:text-ink">Others</a>
+          <a href="#" data-tag="Laundry" style="--cat-color:#2f5fdb" class="cat-link active flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A]">Laundry</a>
+          <a href="#" data-tag="Money Exchange" style="--cat-color:#e05237" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A]">Money Exchange</a>
+          <a href="#" data-tag="SIM Card" style="--cat-color:#f5b52e" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A]">SIM</a>
+          <a href="#" data-tag="Hospital" style="--cat-color:#5eab35" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A]">Hospital</a>
+          <a href="#" data-tag="Others" style="--cat-color:#7c6ba6" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A]">Others</a>
         </nav>
       </div>
     </aside>
 
     <!-- Main -->
     <main class="flex-1 min-w-0">
+
+      <!-- Toolbar: 件数表示 + 並び替え -->
+      <div class="flex items-center justify-between mb-4">
+        <p id="resultCount" class="text-sm text-[#241E1A]/50"></p>
+        <label class="relative">
+          <select id="sortSelect" class="appearance-none bg-[#FFFFFF] border border-[#241E1A]/10 rounded-lg pl-3 pr-8 py-2 text-sm font-medium text-[#241E1A] focus:outline-none focus:ring-2 focus:ring-[#A7A0FF] cursor-pointer">
+            <option value="new">Newest</option>
+            <option value="likes">Most Liked</option>
+          </select>
+          <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[#241E1A]/40 text-[11px] pointer-events-none"></i>
+        </label>
+      </div>
 
       <!-- Grid -->
       <div id="foodGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
@@ -172,40 +133,40 @@
 </div>
 
 <!-- Detail modal -->
-<div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-ink/40 backdrop-blur-sm">
-  <div class="modal-panel bg-paper rounded-2xl w-full max-w-3xl overflow-hidden shadow-pop opacity-0 translate-y-3 flex flex-col md:flex-row md:h-[520px]">
+<div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-[#241E1A]/40 backdrop-blur-sm">
+  <div class="modal-panel bg-[#FFFFFF] rounded-2xl w-full max-w-3xl overflow-hidden shadow-[0_24px_60px_-12px_rgba(36,30,26,0.35)] opacity-0 translate-y-3 flex flex-col md:flex-row md:h-[520px]">
 
     <!-- 左: 写真(固定) -->
     <div class="relative w-full md:w-1/2 h-64 md:h-full shrink-0">
       <img id="modalImg" src="" class="w-full h-full object-cover" alt="">
       <span id="modalTag" class="absolute top-3 left-3 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full"></span>
-      <button onclick="closeModal()" class="md:hidden absolute top-3 right-3 bg-ink/50 hover:bg-ink/70 text-white w-7 h-7 rounded-full flex items-center justify-center" aria-label="閉じる">✕</button>
+      <button onclick="closeModal()" class="md:hidden absolute top-3 right-3 bg-[#241E1A]/50 hover:bg-[#241E1A]/70 text-white w-7 h-7 rounded-full flex items-center justify-center" aria-label="閉じる">✕</button>
     </div>
 
     <!-- 右: ヘッダー + コメント + アクション -->
     <div class="w-full md:w-1/2 flex flex-col min-h-0">
 
       <!-- ヘッダー: 投稿者 + 編集/削除ボタン -->
-      <div class="flex items-center justify-between gap-2 px-4 py-3 border-b border-ink/10 shrink-0">
+      <div class="flex items-center justify-between gap-2 px-4 py-3 border-b border-[#241E1A]/10 shrink-0">
         <div class="flex items-center gap-2 min-w-0">
           <img id="modalAvatar" src="" class="w-8 h-8 rounded-full object-cover shrink-0" alt="">
           <div class="leading-tight min-w-0">
             <p id="modalName" class="text-sm font-semibold truncate"></p>
-            <p id="modalTime" class="text-xs text-ink/40"></p>
+            <p id="modalTime" class="text-xs text-[#241E1A]/40"></p>
           </div>
         </div>
 
         <div class="flex items-center gap-1 shrink-0">
           <!-- 投稿主だけに表示される操作ボタン(アイコンのみ) -->
           <div id="ownerActions" class="hidden items-center gap-1">
-            <button id="modalEditBtn" class="w-8 h-8 flex items-center justify-center rounded-full text-brand-600 hover:bg-brand-50 transition-colors active:scale-90" aria-label="編集">
+            <button id="modalEditBtn" class="w-8 h-8 flex items-center justify-center rounded-full text-[#4736F0] hover:bg-[#F1F0FF] transition-colors active:scale-90" aria-label="編集">
               <i class="fa-solid fa-edit text-[15px]"></i>
             </button>
             <button id="modalDeleteBtn" class="w-8 h-8 flex items-center justify-center rounded-full text-red-600 hover:bg-red-50 transition-colors active:scale-90" aria-label="削除">
               <i class="fa-solid fa-trash text-[14px]"></i>
             </button>
           </div>
-          <button onclick="closeModal()" class="hidden md:flex w-8 h-8 items-center justify-center rounded-full text-ink/40 hover:bg-ink/5 hover:text-ink transition-colors" aria-label="閉じる">
+          <button onclick="closeModal()" class="hidden md:flex w-8 h-8 items-center justify-center rounded-full text-[#241E1A]/40 hover:bg-[#241E1A]/5 hover:text-[#241E1A] transition-colors" aria-label="閉じる">
             <i class="fa-solid fa-xmark text-[16px]"></i>
           </button>
         </div>
@@ -214,27 +175,27 @@
       <!-- スクロール領域: タイトル・説明・コメント一覧 -->
       <div class="flex-1 overflow-y-auto px-4 py-3 min-h-0">
         <h3 id="modalTitle" class="font-display font-semibold text-lg mb-1"></h3>
-        <p id="modalDesc" class="text-sm text-ink/60 mb-4"></p>
+        <p id="modalDesc" class="text-sm text-[#241E1A]/60 mb-4"></p>
 
-        <p class="text-xs font-mono tracking-[0.1em] text-ink/40 mb-2">COMMENTS</p>
+        <p class="text-xs font-mono tracking-[0.1em] text-[#241E1A]/40 mb-2">COMMENTS</p>
         <div id="commentList" class="space-y-3"></div>
       </div>
 
       <!-- アクションバー: ♡ 💬 保存(左) / 🌐マップ(右) -->
-      <div class="px-4 pt-2 pb-1 border-t border-ink/10 shrink-0">
+      <div class="px-4 pt-2 pb-1 border-t border-[#241E1A]/10 shrink-0">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <button id="modalLikeBtn" class="heart-btn text-ink hover:text-clay-500 transition-colors active:scale-90" aria-label="いいね">
+            <button id="modalLikeBtn" class="heart-btn text-[#241E1A] hover:text-[#CE7043] transition-colors active:scale-90" aria-label="いいね">
               <i class="fa-regular fa-heart text-[22px]"></i>
             </button>
-            <button onclick="document.getElementById('commentInput').focus()" class="text-ink hover:text-brand-600 transition-colors active:scale-90" aria-label="コメント">
+            <button onclick="document.getElementById('commentInput').focus()" class="text-[#241E1A] hover:text-[#4736F0] transition-colors active:scale-90" aria-label="コメント">
               <i class="fa-regular fa-comment text-[22px]"></i>
             </button>
-            <button id="modalSaveBtn" class="save-btn text-ink hover:text-brand-600 transition-colors active:scale-90" aria-label="保存">
+            <button id="modalSaveBtn" class="save-btn text-[#241E1A] hover:text-[#4736F0] transition-colors active:scale-90" aria-label="保存">
               <i class="fa-regular fa-bookmark text-[22px]"></i>
             </button>
           </div>
-          <a id="modalMapLink" href="#" target="_blank" class="text-ink hover:text-brand-600 transition-colors active:scale-90" aria-label="マップで見る">
+          <a id="modalMapLink" href="#" target="_blank" class="text-[#241E1A] hover:text-[#4736F0] transition-colors active:scale-90" aria-label="マップで見る">
             <i class="fa-solid fa-globe text-[22px]"></i>
           </a>
         </div>
@@ -242,9 +203,9 @@
       </div>
 
       <!-- コメント投稿フォーム -->
-      <form id="commentForm" class="flex items-center gap-2 px-4 py-3 border-t border-ink/10 shrink-0">
-        <input type="text" id="commentInput" class="flex-1 border border-ink/10 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300" placeholder="コメントを書く...">
-        <button type="submit" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-brand-600 text-white hover:bg-brand-700 transition-colors active:scale-90">
+      <form id="commentForm" class="flex items-center gap-2 px-4 py-3 border-t border-[#241E1A]/10 shrink-0">
+        <input type="text" id="commentInput" class="flex-1 border border-[#241E1A]/10 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]" placeholder="コメントを書く...">
+        <button type="submit" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-[#4736F0] text-white hover:bg-[#372AC2] transition-colors active:scale-90">
           <i class="fa-solid fa-paper-plane text-sm"></i>
         </button>
       </form>
@@ -269,6 +230,7 @@ const items = @json($posts);
   const PAGE_SIZE = 21;
   let currentPage = 1;
   let searchQuery = '';
+  let sortMode = 'new'; // 'new' | 'likes'
 
   function money(v){ return v + ' PHP'; }
 
@@ -279,22 +241,32 @@ const items = @json($posts);
   function highlightMatch(text, query){
     if (!query) return text;
     const re = new RegExp('(' + escapeRegExp(query) + ')', 'ig');
-    return text.replace(re, '<strong class="bg-brand-50 text-brand-600 rounded px-0.5">$1</strong>');
+    return text.replace(re, '<strong class="bg-[#F1F0FF] text-[#4736F0] rounded px-0.5">$1</strong>');
   }
 
-  // ---- タイトル or コメント内容に検索語が含まれるかで絞り込み ----
+  // ---- タイトル or コメント内容に検索語が含まれるかで絞り込み、その後並び替え ----
   function getFilteredItems(){
-    if (!searchQuery) return items;
-    const q = searchQuery.toLowerCase();
-    return items.filter(it => {
-      const titleMatch = it.title.toLowerCase().includes(q);
-      const commentMatch = (it.comments || []).some(c => c.text.toLowerCase().includes(q));
-      return titleMatch || commentMatch;
-    });
+    let list = items;
+
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(it => {
+        const titleMatch = it.title.toLowerCase().includes(q);
+        const commentMatch = (it.comments || []).some(c => c.text.toLowerCase().includes(q));
+        return titleMatch || commentMatch;
+      });
+    }
+
+    if (sortMode === 'likes') {
+      return [...list].sort((a, b) => b.likes - a.likes);
+    }
+    return list; // 新着順 = 配列に入っている順番のまま
   }
 
   function renderGrid(page){
     const filtered = getFilteredItems();
+    document.getElementById('resultCount').textContent = `${filtered.length} stores found`;
+
     const grid = document.getElementById('foodGrid');
     grid.innerHTML = '';
     const start = (page - 1) * PAGE_SIZE;
@@ -308,7 +280,7 @@ const items = @json($posts);
       const titleHtml = searchQuery ? highlightMatch(it.title, searchQuery) : it.title;
 
       const card = document.createElement('article');
-      card.className = 'food-card rise-in bg-paper rounded-2xl overflow-hidden shadow-card cursor-pointer';
+      card.className = 'food-card rise-in bg-[#FFFFFF] rounded-2xl overflow-hidden shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)] cursor-pointer';
       card.style.animationDelay = (idx * 0.05) + 's';
       card.innerHTML = `
         <div class="relative h-40">
@@ -318,29 +290,29 @@ const items = @json($posts);
         </div>
         <div class="p-4">
           <h3 class="font-display font-semibold text-base mb-1 truncate">${titleHtml}</h3>
-          <p class="text-sm text-ink/55 line-clamp-2 mb-3">${it.desc}</p>
+          <p class="text-sm text-[#241E1A]/55 line-clamp-2 mb-3">${it.desc}</p>
           ${matchedComment ? `
-          <p class="text-xs text-ink/50 mb-3 flex items-start gap-1.5 bg-ink/[0.03] rounded-lg px-2.5 py-2">
+          <p class="text-xs text-[#241E1A]/50 mb-3 flex items-start gap-1.5 bg-[#241E1A]/[0.03] rounded-lg px-2.5 py-2">
             <i class="fa-regular fa-comment mt-0.5 shrink-0"></i>
             <span class="line-clamp-2">${highlightMatch(matchedComment.text, searchQuery)}</span>
           </p>` : ''}
           <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2 min-w-0">
+            <div class="flex items-center gap-1.5 min-w-0">
               <img src="${it.avatar}" class="w-6 h-6 rounded-full object-cover shrink-0" alt="${it.name}">
               <div class="leading-tight min-w-0">
                 <p class="text-xs font-semibold truncate">${it.name}</p>
-                <p class="text-[11px] text-ink/40">${it.time}</p>
+                <p class="text-[11px] text-[#241E1A]/40">${it.time}</p>
               </div>
-            </div>
-            <div class="flex items-center gap-0.5 shrink-0">
-              <button class="heart-btn p-1.5 rounded-full hover:bg-clay-400/10 flex items-center gap-1" aria-label="お気に入り" onclick="event.stopPropagation(); this.classList.toggle('liked'); this.querySelector('i').classList.toggle('fa-regular'); this.querySelector('i').classList.toggle('fa-solid');">
-            <i class="fa-regular fa-heart text-[17px] text-[#CE7043]"></i>
-            <span class="text-xs text-ink/40 font-mono">${it.likes}</span>
-            </button>
-              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.mapQuery || it.title)}" target="_blank" onclick="event.stopPropagation()" class="p-1.5 rounded-full hover:bg-brand-50 text-ink/60 hover:text-brand-600 transition-colors" aria-label="マップで見る">
+              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.mapQuery || it.title)}" target="_blank" onclick="event.stopPropagation()" class="shrink-0 p-1.5 rounded-full hover:bg-[#F1F0FF] text-[#241E1A]/60 hover:text-[#4736F0] transition-colors" aria-label="マップで見る">
                 <i class="fa-solid fa-globe text-[15px]"></i>
               </a>
-              <button class="save-btn p-1.5 rounded-full hover:bg-brand-50 text-ink/60 hover:text-brand-600 transition-colors" aria-label="保存" onclick="event.stopPropagation(); this.classList.toggle('saved'); this.querySelector('i').classList.toggle('fa-regular'); this.querySelector('i').classList.toggle('fa-solid');">
+            </div>
+            <div class="flex items-center gap-0.5 shrink-0">
+              <button class="heart-btn p-1.5 rounded-full hover:bg-[#E08A5B]/10 flex items-center gap-1" aria-label="お気に入り" onclick="event.stopPropagation(); this.classList.toggle('liked'); this.querySelector('i').classList.toggle('fa-regular'); this.querySelector('i').classList.toggle('fa-solid');">
+            <i class="fa-regular fa-heart text-[17px] text-[#CE7043]"></i>
+            <span class="text-xs text-[#241E1A]/40 font-mono">${it.likes}</span>
+            </button>
+              <button class="save-btn p-1.5 rounded-full hover:bg-[#F1F0FF] text-[#241E1A]/60 hover:text-[#4736F0] transition-colors" aria-label="保存" onclick="event.stopPropagation(); this.classList.toggle('saved'); this.querySelector('i').classList.toggle('fa-regular'); this.querySelector('i').classList.toggle('fa-solid');">
                 <i class="fa-regular fa-bookmark text-[15px]"></i>
               </button>
             </div>
@@ -361,14 +333,14 @@ const items = @json($posts);
       const btn = document.createElement('button');
       btn.textContent = p;
       btn.className = 'w-9 h-9 rounded-lg text-sm font-semibold transition ' +
-        (p === currentPage ? 'bg-brand-600 text-white' : 'bg-paper border border-ink/10 text-ink/60 hover:border-brand-300');
+        (p === currentPage ? 'bg-[#4736F0] text-white' : 'bg-[#FFFFFF] border border-[#241E1A]/10 text-[#241E1A]/60 hover:border-[#A7A0FF]');
       btn.onclick = () => { currentPage = p; renderGrid(currentPage); renderPagination(); window.scrollTo({top:0, behavior:'smooth'}); };
       wrap.appendChild(btn);
     }
 
     const next = document.createElement('button');
     next.textContent = 'Next';
-    next.className = 'ml-1 px-4 h-9 rounded-lg text-sm font-semibold bg-paper border border-ink/10 text-ink/60 hover:border-brand-300 disabled:opacity-40';
+    next.className = 'ml-1 px-4 h-9 rounded-lg text-sm font-semibold bg-[#FFFFFF] border border-[#241E1A]/10 text-[#241E1A]/60 hover:border-[#A7A0FF] disabled:opacity-40';
     next.disabled = currentPage === totalPages;
     next.onclick = () => { if(currentPage < totalPages){ currentPage++; renderGrid(currentPage); renderPagination(); window.scrollTo({top:0, behavior:'smooth'}); } };
     wrap.appendChild(next);
@@ -388,16 +360,16 @@ const items = @json($posts);
     list.innerHTML = '';
 
     if (it.comments.length === 0) {
-      list.innerHTML = `<p class="text-xs text-ink/30 italic">まだコメントはありません</p>`;
+      list.innerHTML = `<p class="text-xs text-[#241E1A]/30 italic">まだコメントはありません</p>`;
     } else {
       it.comments.forEach(c => {
         const row = document.createElement('div');
         row.className = 'flex items-start gap-2';
         row.innerHTML = `
-          <div class="w-6 h-6 rounded-full bg-brand-100 flex items-center justify-center text-[10px] font-semibold text-brand-600 shrink-0">${c.name[0]}</div>
+          <div class="w-6 h-6 rounded-full bg-[#E3E0FF] flex items-center justify-center text-[10px] font-semibold text-[#4736F0] shrink-0">${c.name[0]}</div>
           <div class="text-xs leading-snug">
             <span class="font-semibold">${c.name}</span>
-            <span class="text-ink/70"> ${c.text}</span>
+            <span class="text-[#241E1A]/70"> ${c.text}</span>
           </div>
         `;
         list.appendChild(row);
@@ -426,7 +398,7 @@ const items = @json($posts);
       this.classList.toggle('liked');
       likeIcon.classList.toggle('fa-regular');
       likeIcon.classList.toggle('fa-solid');
-      likeIcon.classList.toggle('text-clay-500');
+      likeIcon.classList.toggle('text-[#CE7043]');
     };
     const saveIcon = document.querySelector('#modalSaveBtn i');
     saveIcon.className = 'fa-regular fa-bookmark text-[22px]';
@@ -434,7 +406,7 @@ const items = @json($posts);
       this.classList.toggle('saved');
       saveIcon.classList.toggle('fa-regular');
       saveIcon.classList.toggle('fa-solid');
-      saveIcon.classList.toggle('text-brand-600');
+      saveIcon.classList.toggle('text-[#4736F0]');
     };
 
     // 投稿主(it.name)と今のログインユーザーが一致する時だけ、編集・削除ボタンを表示
@@ -502,6 +474,14 @@ const items = @json($posts);
     renderPagination();
   });
 
+  // 並び替えセレクト:新着順 / いいねの多い順
+  document.getElementById('sortSelect').addEventListener('change', (e) => {
+    sortMode = e.target.value;
+    currentPage = 1;
+    renderGrid(currentPage);
+    renderPagination();
+  });
+
   renderGrid(currentPage);
   renderPagination();
 
@@ -510,13 +490,23 @@ const items = @json($posts);
 </script>
 <!-- Back to top -->
 <button id="backToTop" onclick="window.scrollTo({top:0, behavior:'smooth'})" aria-label="上に戻る"
-  class="fixed right-5 bottom-24 z-40 w-11 h-11 rounded-full bg-brand-600 text-white shadow-pop flex items-center justify-center opacity-0 pointer-events-none translate-y-2 transition-all duration-300 hover:bg-brand-700">
+  class="fixed right-5 bottom-24 z-40 w-11 h-11 rounded-full bg-[#4736F0] text-white shadow-[0_24px_60px_-12px_rgba(36,30,26,0.35)] flex items-center justify-center opacity-0 pointer-events-none translate-y-2 transition-all duration-300 hover:bg-[#372AC2]">
   <i class="fa-solid fa-arrow-up text-[16px]"></i>
 </button>
+<script>
+  const backToTop = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {
+      backToTop.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
+    } else {
+      backToTop.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+    }
+  });
+</script>
 <!-- footer nav: Kredoロゴと同じ配色・フォントに統一 -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <nav class="fixed bottom-0 w-full z-50 bg-white shadow-[0_-4px_20px_-4px_rgba(30,58,138,0.15)] flex justify-around items-center h-20 px-4 pb-2 border-t border-slate-100">
-  <a href="{{ route('other.index') }}" class="flex flex-col items-center justify-center gap-1 text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
+  <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center gap-1 text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
     <i class="fa-solid fa-house text-[20px]"></i>
     <span class="text-[10px] font-bold tracking-wide" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Home</span>
   </a>
@@ -530,9 +520,10 @@ const items = @json($posts);
   </a>
 
   <a href="#" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
-    <i class="fa-solid fa-user text-[20px]"></i>
-    <span class="text-[10px] font-bold tracking-wide" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Profile</span>
+    <i class="fa-solid fa-globe text-[20px]"></i>
+    <span class="text-[10px] font-bold tracking-wide" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Map</span>
   </a>
 </nav>
-</body>
-</html>
+</div>
+
+@endsection

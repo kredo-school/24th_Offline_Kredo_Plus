@@ -428,94 +428,189 @@
             </p>
         </div>
 
-        <!-- Post cards -->
-        <div class="relative max-w-[1140px] mx-auto mt-14 px-6">
-            <div class="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 scrollbar-hide">
+<!-- Post cards (Explore Cebu: 各カテゴリーの最新投稿) -->
+<div class="max-w-[1140px] mx-auto mt-14 px-6">
+  {{-- relativeはこの div だけに絞る(スライダーの高さ = この divの高さ、になるようにするため、
+       矢印ボタンの縦位置がどんな環境に貼り付けてもズレない設計) --}}
+  <div class="relative">
 
-                <article class="group snap-center min-w-[300px] md:min-w-[350px] bg-white rounded-[20px] overflow-hidden shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300">
-                    <div class="relative overflow-hidden">
-                        <img src="https://picsum.photos/seed/sisig-food/500/340" alt="Best Sisig near school" class="w-full h-52 object-cover transition-transform duration-500 group-hover:scale-105">
-                        <span class="absolute top-3.5 left-3.5 bg-brand-red/90 backdrop-blur text-white text-xs font-bold px-3.5 py-1.5 rounded-full">Carinderia</span>
-                        <span class="absolute bottom-3.5 right-3.5 bg-white/95 text-slate-800 text-xs font-bold px-3.5 py-1.5 rounded-full shadow-sm">150 PHP</span>
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-start justify-between gap-2">
-                            <h3 class="font-bold text-slate-800">Best Sisig near school</h3>
-                            <span class="flex items-center gap-1 text-sm text-amber-500 font-semibold shrink-0">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg>
-                                4.8
-                            </span>
-                        </div>
-                        <div class="mt-5 flex items-center justify-between">
-                            <div class="flex items-center gap-2.5">
-                                <span class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 text-xs font-bold flex items-center justify-center ring-2 ring-white shadow-sm">ML</span>
-                                <div class="text-xs text-slate-400 leading-tight">
-                                    <p class="font-semibold text-slate-700 text-[13px]">Mateo L.</p>
-                                    <p class="mt-0.5">2 hours ago</p>
-                                </div>
-                            </div>
-                            <button class="text-brand-blue/70 hover:text-brand-blue transition-colors" aria-label="共有"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.6L15.4 6.4M8.6 13.4l6.8 4.2"/></svg></button>
-                        </div>
-                    </div>
-                </article>
+    <div id="exploreSlider" class="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 scrollbar-hide">
 
-                <article class="group snap-center min-w-[300px] md:min-w-[350px] bg-white rounded-[20px] overflow-hidden shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300">
-                    <div class="relative overflow-hidden">
-                        <img src="https://picsum.photos/seed/blue-lagoon-pool/500/340" alt="Day Pass at Blue Lagoon" class="w-full h-52 object-cover transition-transform duration-500 group-hover:scale-105">
-                        <span class="absolute top-3.5 left-3.5 bg-brand-green/90 backdrop-blur text-white text-xs font-bold px-3.5 py-1.5 rounded-full">Travel</span>
-                        <span class="absolute bottom-3.5 right-3.5 bg-white/95 text-slate-800 text-xs font-bold px-3.5 py-1.5 rounded-full shadow-sm">500 PHP</span>
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-start justify-between gap-2">
-                            <h3 class="font-bold text-slate-800">Day Pass at Blue Lagoon</h3>
-                            <span class="flex items-center gap-1 text-sm text-amber-500 font-semibold shrink-0">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg>
-                                4.9
-                            </span>
-                        </div>
-                        <div class="mt-5 flex items-center justify-between">
-                            <div class="flex items-center gap-2.5">
-                                <span class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 text-xs font-bold flex items-center justify-center ring-2 ring-white shadow-sm">SC</span>
-                                <div class="text-xs text-slate-400 leading-tight">
-                                    <p class="font-semibold text-slate-700 text-[13px]">Sophia C.</p>
-                                    <p class="mt-0.5">5 hours ago</p>
-                                </div>
-                            </div>
-                            <button class="text-brand-blue/70 hover:text-rose-500 transition-colors" aria-label="お気に入り"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.35-9.5-8.5C.7 9 2 5.5 5.3 5c2-.3 3.5.8 4.7 2.4C11.2 5.8 12.7 4.7 14.7 5c3.3.5 4.6 4 3.8 7.5C16 16.65 12 21 12 21z"/></svg></button>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="group snap-center min-w-[300px] md:min-w-[350px] bg-white rounded-[20px] overflow-hidden shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300">
-                    <div class="relative overflow-hidden">
-                        <img src="https://picsum.photos/seed/laundry-machines/500/340" alt="Quick Dry Laundry Shop" class="w-full h-52 object-cover transition-transform duration-500 group-hover:scale-105">
-                        <div class="absolute inset-0 bg-teal-700/25 mix-blend-multiply"></div>
-                        <span class="absolute top-3.5 left-3.5 bg-brand-blue/90 backdrop-blur text-white text-xs font-bold px-3.5 py-1.5 rounded-full">Laundry</span>
-                        <span class="absolute bottom-3.5 right-3.5 bg-white/95 text-slate-800 text-xs font-bold px-3.5 py-1.5 rounded-full shadow-sm">35 PHP/kg</span>
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-start justify-between gap-2">
-                            <h3 class="font-bold text-slate-800">Quick Dry Laundry Shop</h3>
-                            <span class="flex items-center gap-1 text-sm text-amber-500 font-semibold shrink-0">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg>
-                                4.5
-                            </span>
-                        </div>
-                        <div class="mt-5 flex items-center justify-between">
-                            <div class="flex items-center gap-2.5">
-                                <span class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 text-xs font-bold flex items-center justify-center ring-2 ring-white shadow-sm">JR</span>
-                                <div class="text-xs text-slate-400 leading-tight">
-                                    <p class="font-semibold text-slate-700 text-[13px]">Juan R.</p>
-                                    <p class="mt-0.5">1 day ago</p>
-                                </div>
-                            </div>
-                            <button class="text-brand-blue/70 hover:text-brand-blue transition-colors" aria-label="その他"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="19" r="1.4" fill="currentColor"/></svg></button>
-                        </div>
-                    </div>
-                </article>
-
+    {{-- ① Carinderia --}}
+    <a href="{{ route('carenderia.index') }}" class="group snap-center shrink-0 min-w-[300px] md:min-w-[340px] bg-white rounded-[20px] overflow-hidden shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 block">
+      <div class="relative overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=800&auto=format&fit=crop" alt="Best Sisig near school" class="w-full h-52 object-cover transition-transform duration-500 group-hover:scale-105">
+        <span class="absolute top-3.5 left-3.5 text-white text-xs font-bold px-3.5 py-1.5 rounded-full" style="background:#2f5fdb">Carinderia</span>
+      </div>
+      <div class="p-5">
+        <h3 class="font-bold text-slate-800 mb-3 truncate">Best Sisig near school</h3>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <img src="https://i.pravatar.cc/64?img=12" class="w-8 h-8 rounded-full object-cover ring-2 ring-white shadow-sm shrink-0" alt="Mateo L.">
+            <div class="text-xs text-slate-400 leading-tight min-w-0">
+              <p class="font-semibold text-slate-700 text-[13px] truncate">Mateo L.</p>
+              <p class="mt-0.5">2時間前</p>
             </div>
+          </div>
+          <span class="flex items-center gap-1 text-xs text-[#CE7043] font-mono shrink-0">
+            <i class="fa-regular fa-heart"></i> 34
+          </span>
         </div>
+      </div>
+    </a>
+
+    {{-- ② Restaurant & Cafe --}}
+    <a href="{{ route('restaurant-cafe.index') }}" class="group snap-center shrink-0 min-w-[300px] md:min-w-[340px] bg-white rounded-[20px] overflow-hidden shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 block">
+      <div class="relative overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop" alt="Sunset Grill House" class="w-full h-52 object-cover transition-transform duration-500 group-hover:scale-105">
+        <span class="absolute top-3.5 left-3.5 text-white text-xs font-bold px-3.5 py-1.5 rounded-full" style="background:#e05237">Restaurant & Cafe</span>
+      </div>
+      <div class="p-5">
+        <h3 class="font-bold text-slate-800 mb-3 truncate">Sunset Grill House</h3>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <img src="https://i.pravatar.cc/64?img=12" class="w-8 h-8 rounded-full object-cover ring-2 ring-white shadow-sm shrink-0" alt="Mateo L.">
+            <div class="text-xs text-slate-400 leading-tight min-w-0">
+              <p class="font-semibold text-slate-700 text-[13px] truncate">Mateo L.</p>
+              <p class="mt-0.5">2時間前</p>
+            </div>
+          </div>
+          <span class="flex items-center gap-1 text-xs text-[#CE7043] font-mono shrink-0">
+            <i class="fa-regular fa-heart"></i> 41
+          </span>
+        </div>
+      </div>
+    </a>
+
+    {{-- ③ Travel --}}
+    <a href="{{ route('travel.index') }}" class="group snap-center shrink-0 min-w-[300px] md:min-w-[340px] bg-white rounded-[20px] overflow-hidden shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 block">
+      <div class="relative overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=800&auto=format&fit=crop" alt="Whale Shark Watching, Oslob" class="w-full h-52 object-cover transition-transform duration-500 group-hover:scale-105">
+        <span class="absolute top-3.5 left-3.5 text-white text-xs font-bold px-3.5 py-1.5 rounded-full" style="background:#f5b52e">Travel</span>
+      </div>
+      <div class="p-5">
+        <h3 class="font-bold text-slate-800 mb-3 truncate">Whale Shark Watching, Oslob</h3>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <img src="https://i.pravatar.cc/64?img=51" class="w-8 h-8 rounded-full object-cover ring-2 ring-white shadow-sm shrink-0" alt="Dave K.">
+            <div class="text-xs text-slate-400 leading-tight min-w-0">
+              <p class="font-semibold text-slate-700 text-[13px] truncate">Dave K.</p>
+              <p class="mt-0.5">3時間前</p>
+            </div>
+          </div>
+          <span class="flex items-center gap-1 text-xs text-[#CE7043] font-mono shrink-0">
+            <i class="fa-regular fa-heart"></i> 65
+          </span>
+        </div>
+      </div>
+    </a>
+
+    {{-- ④ Other: Laundry --}}
+    <a href="{{ route('other.index') }}" class="group snap-center shrink-0 min-w-[300px] md:min-w-[340px] bg-white rounded-[20px] overflow-hidden shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 block">
+      <div class="relative overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1545173168-9f1947eebb7f?q=80&w=800&auto=format&fit=crop" alt="Quick Dry Laundry Shop" class="w-full h-52 object-cover transition-transform duration-500 group-hover:scale-105">
+        <span class="absolute top-3.5 left-3.5 text-white text-xs font-bold px-3.5 py-1.5 rounded-full" style="background:#2f5fdb">Laundry</span>
+      </div>
+      <div class="p-5">
+        <h3 class="font-bold text-slate-800 mb-3 truncate">Quick Dry Laundry Shop</h3>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <img src="https://i.pravatar.cc/64?img=45" class="w-8 h-8 rounded-full object-cover ring-2 ring-white shadow-sm shrink-0" alt="Rica M.">
+            <div class="text-xs text-slate-400 leading-tight min-w-0">
+              <p class="font-semibold text-slate-700 text-[13px] truncate">Rica M.</p>
+              <p class="mt-0.5">1時間前</p>
+            </div>
+          </div>
+          <span class="flex items-center gap-1 text-xs text-[#CE7043] font-mono shrink-0">
+            <i class="fa-regular fa-heart"></i> 18
+          </span>
+        </div>
+      </div>
+    </a>
+
+    {{-- ⑤ Other: Money Exchange --}}
+    <a href="{{ route('other.index') }}" class="group snap-center shrink-0 min-w-[300px] md:min-w-[340px] bg-white rounded-[20px] overflow-hidden shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 block">
+      <div class="relative overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1580519542036-c47de6196ba5?q=80&w=800&auto=format&fit=crop" alt="Best Rate USD to PHP" class="w-full h-52 object-cover transition-transform duration-500 group-hover:scale-105">
+        <span class="absolute top-3.5 left-3.5 text-white text-xs font-bold px-3.5 py-1.5 rounded-full" style="background:#e05237">Money Exchange</span>
+      </div>
+      <div class="p-5">
+        <h3 class="font-bold text-slate-800 mb-3 truncate">Best Rate USD to PHP</h3>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <img src="https://i.pravatar.cc/64?img=14" class="w-8 h-8 rounded-full object-cover ring-2 ring-white shadow-sm shrink-0" alt="Carlo D.">
+            <div class="text-xs text-slate-400 leading-tight min-w-0">
+              <p class="font-semibold text-slate-700 text-[13px] truncate">Carlo D.</p>
+              <p class="mt-0.5">30分前</p>
+            </div>
+          </div>
+          <span class="flex items-center gap-1 text-xs text-[#CE7043] font-mono shrink-0">
+            <i class="fa-regular fa-heart"></i> 14
+          </span>
+        </div>
+      </div>
+    </a>
+
+    {{-- ⑥ Other: SIM Card --}}
+    <a href="{{ route('other.index') }}" class="group snap-center shrink-0 min-w-[300px] md:min-w-[340px] bg-white rounded-[20px] overflow-hidden shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 block">
+      <div class="relative overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?q=80&w=800&auto=format&fit=crop" alt="Prepaid SIM Starter Pack" class="w-full h-52 object-cover transition-transform duration-500 group-hover:scale-105">
+        <span class="absolute top-3.5 left-3.5 text-white text-xs font-bold px-3.5 py-1.5 rounded-full" style="background:#f5b52e">SIM Card</span>
+      </div>
+      <div class="p-5">
+        <h3 class="font-bold text-slate-800 mb-3 truncate">Prepaid SIM Starter Pack</h3>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <img src="https://i.pravatar.cc/64?img=39" class="w-8 h-8 rounded-full object-cover ring-2 ring-white shadow-sm shrink-0" alt="Miguel A.">
+            <div class="text-xs text-slate-400 leading-tight min-w-0">
+              <p class="font-semibold text-slate-700 text-[13px] truncate">Miguel A.</p>
+              <p class="mt-0.5">2時間前</p>
+            </div>
+          </div>
+          <span class="flex items-center gap-1 text-xs text-[#CE7043] font-mono shrink-0">
+            <i class="fa-regular fa-heart"></i> 20
+          </span>
+        </div>
+      </div>
+    </a>
+
+    {{-- ⑦ Other: Hospital --}}
+    <a href="{{ route('other.index') }}" class="group snap-center shrink-0 min-w-[300px] md:min-w-[340px] bg-white rounded-[20px] overflow-hidden shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 block">
+      <div class="relative overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?q=80&w=800&auto=format&fit=crop" alt="Student Health Clinic" class="w-full h-52 object-cover transition-transform duration-500 group-hover:scale-105">
+        <span class="absolute top-3.5 left-3.5 text-white text-xs font-bold px-3.5 py-1.5 rounded-full" style="background:#5eab35">Hospital</span>
+      </div>
+      <div class="p-5">
+        <h3 class="font-bold text-slate-800 mb-3 truncate">Student Health Clinic</h3>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <img src="https://i.pravatar.cc/64?img=60" class="w-8 h-8 rounded-full object-cover ring-2 ring-white shadow-sm shrink-0" alt="Dr. Reyes">
+            <div class="text-xs text-slate-400 leading-tight min-w-0">
+              <p class="font-semibold text-slate-700 text-[13px] truncate">Dr. Reyes</p>
+              <p class="mt-0.5">5時間前</p>
+            </div>
+          </div>
+          <span class="flex items-center gap-1 text-xs text-[#CE7043] font-mono shrink-0">
+            <i class="fa-regular fa-heart"></i> 11
+          </span>
+        </div>
+      </div>
+    </a>
+
+    </div>
+
+    {{-- 前へ / 次へボタン: 半透明で写真の上に重ねて表示(横幅を食わない) --}}
+    <button type="button" onclick="document.getElementById('exploreSlider').scrollBy({left:-360, behavior:'smooth'})"
+      class="hidden md:flex absolute -left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/70 backdrop-blur-sm shadow-card items-center justify-center text-[#2f5fdb] hover:bg-white transition-colors z-10" aria-label="前へ">
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+    <button type="button" onclick="document.getElementById('exploreSlider').scrollBy({left:360, behavior:'smooth'})"
+      class="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/70 backdrop-blur-sm shadow-card items-center justify-center text-[#2f5fdb] hover:bg-white transition-colors z-10" aria-label="次へ">
+      <i class="fa-solid fa-chevron-right"></i>
+    </button>
+
+  </div>
+</div>
 
         <!-- School Location -->
         <div class="relative max-w-[1140px] mx-auto px-6 mt-10 mb-16">
