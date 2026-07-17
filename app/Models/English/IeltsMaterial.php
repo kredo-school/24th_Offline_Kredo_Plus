@@ -29,11 +29,6 @@ class IeltsMaterial extends Model
         return $this->belongsTo(IeltsTopic::class, 'topic_id');
     }
 
-    public function records()
-    {
-        return $this->hasMany(IeltsRecord::class, 'material_id');
-    }
-
     // ===== スコープ =====
 
     /**

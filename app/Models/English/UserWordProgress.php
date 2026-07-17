@@ -34,16 +34,4 @@ class UserWordProgress extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-    public function word()
-    {
-        return $this->belongsTo(VocabularyWord::class, 'word_id');
-    }
-
-    // ===== スコープ =====
-
-    public function scopeLearned($query)
-    {
-        return $query->where('status', self::STATUS_LEARNED);
-    }
 }

@@ -38,21 +38,4 @@ class UserSectionProgress extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-    // ===== スコープ =====
-
-    public function scopeCompleted($query)
-    {
-        return $query->where('is_completed', true);
-    }
-
-    /**
-     * ユーザー × セクション種別 × キーで検索（updateOrCreate の条件に使用）
-     */
-    public function scopeForSection($query, int $userId, string $sectionType, string $sectionKey)
-    {
-        return $query->where('user_id', $userId)
-                     ->where('section_type', $sectionType)
-                     ->where('section_key', $sectionKey);
-    }
 }

@@ -3,7 +3,6 @@
 namespace App\Services\English;
 
 use App\Models\User;
-use App\Models\English\StudyLog;
 use Carbon\Carbon;
 
 class StreakService
@@ -49,7 +48,7 @@ class StreakService
      */
     public function getTotalStudyDays(User $user): int
     {
-        return StudyLog::where('user_id', $user->id)
+        return $user->studyLogs()
             ->distinct('studied_date')
             ->count('studied_date');
     }

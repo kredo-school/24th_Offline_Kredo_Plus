@@ -19,13 +19,6 @@ class IeltsSlide extends Model
         'sort_order',
     ];
 
-    // ===== リレーション =====
-
-    public function topic()
-    {
-        return $this->belongsTo(IeltsTopic::class, 'topic_id');
-    }
-
     // ===== スコープ =====
 
     /**

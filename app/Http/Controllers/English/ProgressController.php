@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\English;
 
 use App\Http\Controllers\Controller;
-use App\Models\English\UserWordFavorite;
 use App\Services\English\ProgressService;
 use App\Services\English\StreakService;
 use App\Services\English\StudyLogService;
@@ -42,7 +41,7 @@ class ProgressController extends Controller
         $recentLogs = $this->studyLogService->getRecentLogs($user, 10);
 
         // お気に入り単語数
-        $favoritesCount = UserWordFavorite::where('user_id', $user->id)->count();
+        $favoritesCount = $user->wordFavorites()->count();
 
         // XP・Level 情報
         $levelInfo = $this->xpService->getLevelInfo($user);

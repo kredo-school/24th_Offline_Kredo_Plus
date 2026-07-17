@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Models\English\IeltsRecord;
 use App\Models\English\QuizResult;
 use App\Models\English\StudyLog;
+use App\Models\English\ToeicAnswerLog;
 use App\Models\English\ToeicResult;
 use App\Models\English\TypingRecord;
 use App\Models\English\UserSectionProgress;
@@ -34,6 +35,8 @@ class User extends Authenticatable
         'study_streak',
         'last_study_date',
         'total_study_time',
+        'gender',
+        'gender_locked',
     ];
 
     /**
@@ -60,14 +63,20 @@ class User extends Authenticatable
             'total_xp' => 'integer',
             'study_streak' => 'integer',
             'total_study_time' => 'integer',
+            'gender_locked' => 'boolean',
         ];
     }
 
     // ===== 英語学習リレーション =====
 
-    public function typingRecords()
+    public function toeicResults()
     {
-        return $this->hasMany(TypingRecord::class);
+        return $this->hasMany(ToeicResult::class);
+    }
+
+    public function toeicAnswerLogs()
+    {
+        return $this->hasManyThrough(ToeicAnswerLog::class, ToeicResult::class, 'user_id', 'result_id');
     }
 
     public function ieltsRecords()
@@ -75,9 +84,9 @@ class User extends Authenticatable
         return $this->hasMany(IeltsRecord::class);
     }
 
-    public function toeicResults()
+    public function typingRecords()
     {
-        return $this->hasMany(ToeicResult::class);
+        return $this->hasMany(TypingRecord::class);
     }
 
     public function quizResults()
@@ -105,29 +114,9 @@ class User extends Authenticatable
         return $this->hasMany(UserWordProgress::class);
     }
 
-    /**
-     * 累積XPから現在のレベルを動的に算出
-     * level = floor(total_xp / 500) + 1
-     */
-    public function getLevelAttribute(): int
+    // シャワーリレーション
+    public function hasGender(): bool
     {
-        return (int) floor($this->total_xp / 500) + 1;
-    }
-
-    /**
-     * 次のレベルに必要な累積XP
-     */
-    public function getNextLevelXpAttribute(): int
-    {
-        return $this->level * 500;
-    }
-
-    /**
-     * 現在のレベル内でのXP（進捗バー用）
-     * current_level_xp = total_xp % 500
-     */
-    public function getCurrentLevelXpAttribute(): int
-    {
-        return (int) ($this->total_xp % 500);
+        return !is_null($this->gender);
     }
 }

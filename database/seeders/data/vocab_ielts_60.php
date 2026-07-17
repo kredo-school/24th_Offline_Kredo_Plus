@@ -310,8 +310,8 @@ return [
         'part_of_speech' => 'noun',
         'meaning_ja' => '補助金',
         'meaning_en' => 'money given by a government to support an industry or activity',
-        'example_sentence' => 'The government provides subsidies to farmers who grow organic crops.',
-        'example_sentence_ja' => '政府は有機作物を栽培する農家に補助金を提供している。',
+        'example_sentence' => 'The government provides a subsidy to farmers who grow organic crops. Critics argue that removing the subsidy could drive smaller farms out of business.',
+        'example_sentence_ja' => '政府は有機作物を栽培する農家に補助金を提供している。批評家たちは、その補助金を撤廃すれば小規模農家が廃業に追い込まれる可能性があると主張している。',
     ],
     [
         'word' => 'tariff',
@@ -422,8 +422,8 @@ return [
         'part_of_speech' => 'noun',
         'meaning_ja' => '少数派',
         'meaning_en' => 'a small group within a larger population, differing in some way',
-        'example_sentence' => 'Ethnic minorities sometimes face barriers to accessing quality education.',
-        'example_sentence_ja' => '少数民族は質の高い教育を受ける上で障壁に直面することがある。',
+        'example_sentence' => 'Ethnic minority groups sometimes face barriers to accessing quality education in rural areas. Government policies now aim to ensure that every minority community has equal access to public services.',
+        'example_sentence_ja' => '少数民族グループは、地方において質の高い教育を受ける上で障壁に直面することがある。政府の政策は現在、あらゆる少数派コミュニティが公共サービスに平等にアクセスできるようにすることを目指している。',
     ],
     [
         'word' => 'household',

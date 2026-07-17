@@ -25,17 +25,4 @@ class QuizResult extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-    // ===== アクセサ =====
-
-    /**
-     * 正答率（%）
-     */
-    public function getAccuracyAttribute(): float
-    {
-        if ($this->total_questions === 0) {
-            return 0.0;
-        }
-        return round($this->correct_count / $this->total_questions * 100, 1);
-    }
 }

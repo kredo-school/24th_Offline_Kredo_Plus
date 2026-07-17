@@ -21,11 +21,4 @@ class TypingCategory extends Model
     {
         return $this->hasMany(TypingMaterial::class, 'category_id');
     }
-
-    // ===== スコープ =====
-
-    public function scopeOrdered($query)
-    {
-        return $query->orderBy('sort_order');
-    }
 }

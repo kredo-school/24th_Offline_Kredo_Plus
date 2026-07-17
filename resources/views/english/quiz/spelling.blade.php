@@ -5,10 +5,12 @@
 @section('content')
 @php
 $wordsJson = $words->map(fn($w) => [
-    'id'      => $w->id,
-    'word'    => $w->word,
-    'hint'    => $w->meaning_ja,
-    'example' => $w->example_sentence,
+    'id'         => $w->id,
+    'word'       => $w->word,
+    'hint'       => $w->meaning_ja,
+    'pos'        => $w->part_of_speech,
+    'example'    => $w->example_sentence,
+    'exampleJa'  => $w->example_sentence_ja,
 ])->values()->all();
 @endphp
 
@@ -41,9 +43,9 @@ $wordsJson = $words->map(fn($w) => [
 
         <div x-show="!isComplete" class="max-w-2xl mx-auto">
             <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8 mb-6">
-                <p class="text-caption text-on-surface-variant mb-2">意味のヒント</p>
+                <p class="text-body-md font-bold text-on-surface-variant mb-2">この意味を表す英単語のスペルを入力してください</p>
                 <p class="text-headline-md font-bold text-primary mb-4" x-text="current.hint"></p>
-                <p class="text-caption text-on-surface-variant mb-1">例文</p>
+                <p class="text-body-md font-bold text-on-surface-variant mb-1">例文（この単語が本文中に使われています。わからない場合は本文から探して入力してもOKです）</p>
                 <p class="text-body-md text-on-surface font-mono" x-text="current.example"></p>
             </div>
 
@@ -52,7 +54,7 @@ $wordsJson = $words->map(fn($w) => [
                     type="text"
                     x-model="userInput"
                     @keydown.enter="submitAnswer()"
-                    placeholder="英単語を入力してください..."
+                    placeholder="上の意味に合う英単語のスペルを入力..."
                     class="w-full p-4 text-body-lg border-2 border-outline-variant rounded-[0.75rem] bg-surface-container-lowest focus:border-primary focus:outline-none transition-colors"
                 />
                 <button @click="submitAnswer()"
@@ -75,6 +77,20 @@ $wordsJson = $words->map(fn($w) => [
                         正解: <strong x-text="current.word"></strong>
                     </p>
                 </div>
+
+                {{-- 正解時：意味・品詞・例文（英文/日本語訳）を表示 --}}
+                <div x-show="isCorrect" class="bg-surface-container-lowest rounded-[0.5rem] p-6 text-left space-y-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-headline-md font-bold text-primary" x-text="current.word"></span>
+                        <span class="text-caption text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full" x-text="current.pos"></span>
+                    </div>
+                    <p class="text-body-md text-on-surface" x-text="current.hint"></p>
+                    <div class="pt-2 border-t border-outline-variant/50">
+                        <p class="text-body-md text-on-surface font-mono" x-text="current.example"></p>
+                        <p class="text-body-md text-on-surface-variant mt-1" x-text="current.exampleJa"></p>
+                    </div>
+                </div>
+
                 <button @click="nextQuestion()"
                         :disabled="isLoading"
                         class="w-full py-3 bg-primary text-on-primary rounded-[0.75rem] font-label-md text-label-md hover:opacity-90 transition-all flex items-center justify-center gap-2">
@@ -82,6 +98,13 @@ $wordsJson = $words->map(fn($w) => [
                     <span x-text="currentIndex < words.length - 1 ? '次の問題' : '結果を見る'"></span>
                     <span x-show="!isLoading" class="material-symbols-outlined text-sm">arrow_forward</span>
                 </button>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <a href="{{ route('english.quiz.index') }}"
+                   class="px-6 py-2.5 bg-orange-600 text-white font-bold rounded-[0.5rem] shadow-sm hover:bg-orange-700 transition-colors text-base no-underline">
+                    Quit Practice
+                </a>
             </div>
         </div>
 
