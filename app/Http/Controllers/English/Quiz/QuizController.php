@@ -48,7 +48,7 @@ class QuizController extends Controller
     {
         $words = VocabularyWord::inRandomOrder()
             ->take(10)
-            ->get(['id', 'word', 'meaning_ja', 'example_sentence']);
+            ->get(['id', 'word', 'part_of_speech', 'meaning_ja', 'example_sentence', 'example_sentence_ja']);
 
         return view('english.quiz.spelling', compact('words'));
     }

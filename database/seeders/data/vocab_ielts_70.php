@@ -286,8 +286,8 @@ return [
         'part_of_speech' => 'noun',
         'meaning_ja' => '階層',
         'meaning_en' => 'a system in which people are ranked according to status',
-        'example_sentence' => 'Rigid corporate hierarchies can stifle innovation by discouraging employees from voicing ideas.',
-        'example_sentence_ja' => '硬直的な企業階層は、従業員が意見を述べることを阻み、革新を阻害しかねない。',
+        'example_sentence' => 'A rigid corporate hierarchy can stifle innovation by discouraging employees from voicing new ideas. Flattening the hierarchy allowed the company to make decisions more quickly.',
+        'example_sentence_ja' => '硬直した企業の階層構造は、従業員が新しいアイデアを声に出すことを躊躇させ、イノベーションを阻害することがある。階層構造をフラット化したことで、その企業はより迅速に意思決定ができるようになった。',
     ],
     [
         'word' => 'underscore',

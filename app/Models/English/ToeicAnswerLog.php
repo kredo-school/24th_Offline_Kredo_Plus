@@ -21,11 +21,6 @@ class ToeicAnswerLog extends Model
 
     // ===== リレーション =====
 
-    public function result()
-    {
-        return $this->belongsTo(ToeicResult::class, 'result_id');
-    }
-
     public function question()
     {
         return $this->belongsTo(ToeicQuestion::class, 'question_id');

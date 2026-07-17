@@ -116,7 +116,10 @@ class VocabularyController extends Controller
         $levelLabel = $meta['exam_type'] . ' ' . $meta['level'];
         $userId     = Auth::id();
 
-        $words = VocabularyWord::byLevel($meta['exam_type'], $meta['level'])->get();
+        $words = VocabularyWord::byLevel($meta['exam_type'], $meta['level'])
+            ->inRandomOrder()
+            ->take(10)
+            ->get();
 
         $favoriteIds = UserWordFavorite::where('user_id', $userId)
             ->whereIn('word_id', $words->pluck('id'))

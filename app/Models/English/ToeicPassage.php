@@ -19,9 +19,4 @@ class ToeicPassage extends Model
     protected $casts = [
         'documents' => 'array',
     ];
-
-    public function questions()
-    {
-        return $this->hasMany(ToeicQuestion::class, 'passage_id');
-    }
 }

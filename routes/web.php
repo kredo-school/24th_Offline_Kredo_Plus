@@ -16,6 +16,9 @@ use App\Http\Controllers\CarenderiaController;
 use App\Http\Controllers\TravelController;
 use App\Http\Controllers\OtherController;
 use App\Http\Controllers\RestaurantCafeController;
+use App\Http\Controllers\ShowerController;
+use App\Http\Controllers\GenderController;
+use App\Http\Middleware\EnsureGenderIsSet;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -107,7 +110,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/progress', [EnglishProgressController::class, 'index'])->name('progress');
         Route::get('/ranking',  [EnglishRankingController::class, 'index'])->name('ranking');
     });
-        // Shower
+
+    // Shower
+    // 性別登録
+    Route::post('/gender', [GenderController::class, 'store'])->name('gender.store');
+
+    // シャワーページに入る。性別未登録であれば弾かれる。
+    Route::get('/shower', [ShowerController::class, 'entry'])
+        ->middleware(EnsureGenderIsSet::class)
+        ->name('shower.entry');
+
+    // 男子寮ページ
+    Route::get('/shower/male', [ShowerController::class, 'male'])
+        ->middleware('gender:male')
+        ->name('shower.male');
+
+    // 女子寮ページ
+    Route::get('/shower/female', [ShowerController::class, 'female'])
+        ->middleware('gender:female')
+        ->name('shower.female');
 
         // Information (編集・削除はログイン必須のためこちらに配置)
         Route::prefix('information/restaurant-cafe')->name('restaurant-cafe.')->group(function () {

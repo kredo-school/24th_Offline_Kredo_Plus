@@ -20,18 +20,6 @@ class VocabularyWord extends Model
         'sort_order',
     ];
 
-    // ===== リレーション =====
-
-    public function favorites()
-    {
-        return $this->hasMany(UserWordFavorite::class, 'word_id');
-    }
-
-    public function wordProgress()
-    {
-        return $this->hasMany(UserWordProgress::class, 'word_id');
-    }
-
     // ===== スコープ =====
 
     /**
