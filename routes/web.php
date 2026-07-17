@@ -130,9 +130,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('gender:female')
         ->name('shower.female');
 
-    // Information
-
-});
+        // Information (編集・削除はログイン必須のためこちらに配置)
+        Route::prefix('information/restaurant-cafe')->name('restaurant-cafe.')->group(function () {
+            Route::get('/{post}/edit', [RestaurantCafeController::class, 'edit'])->name('edit');
+            Route::put('/{post}', [RestaurantCafeController::class, 'update'])->name('update');
+            Route::delete('/{post}', [RestaurantCafeController::class, 'destroy'])->name('destroy');
+            Route::get('/{post}', [RestaurantCafeController::class, 'show'])->name('show');
+         });
+}); //
 
 //下記コードデフォルトのままです。
 Route::middleware('auth')->group(function () {
@@ -140,6 +145,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
 // information
 Route::prefix('information')->group(function () {
     Route::get('/carenderia', [CarenderiaController::class, 'index'])->name('carenderia.index');
@@ -149,4 +155,4 @@ Route::prefix('information')->group(function () {
     Route::get('/other', [OtherController::class, 'index'])->name('other.index');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
