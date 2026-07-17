@@ -3,14 +3,16 @@ import { showXpModal } from '../utils/xpModal.js';
 import { showToast }   from '../utils/toast.js';
 
 /**
- * Parse "[Question N]\n...\n[Answer]\n..." formatted text.
+ * Parse "[Question N]\n...\n[Answer]\n...\n[Meaning]\n..." formatted text.
+ * The [Meaning] section (Japanese translation of the answer) is optional —
+ * IELTS materials don't include it, only typing-practice materials do.
  */
 function parseSpeakingText(raw) {
-    const pattern = /\[Question \d+\]\n([\s\S]*?)\n\[Answer\]\n([\s\S]*?)(?=\[Question \d+\]|$)/g;
+    const pattern = /\[Question \d+\]\n([\s\S]*?)\n\[Answer\]\n([\s\S]*?)(?:\n\[Meaning\]\n([\s\S]*?))?(?=\[Question \d+\]|$)/g;
     const pairs = [];
     let m;
     while ((m = pattern.exec(raw)) !== null) {
-        pairs.push({ question: m[1].trim(), answer: m[2].trim() });
+        pairs.push({ question: m[1].trim(), answer: m[2].trim(), meaning: m[3] ? m[3].trim() : null });
     }
     return pairs;
 }
@@ -34,6 +36,8 @@ export function initTypingEngine({ rawText, storeUrl, resultUrl, typeQuestion = 
     const typingBox          = document.getElementById('typing-box');
     const questionProgressEl = document.getElementById('question-progress');
     const questionTextEl     = document.getElementById('current-question-text');
+    const meaningEl          = document.getElementById('current-meaning-text');
+    const meaningWrapperEl   = document.getElementById('current-meaning-wrapper');
     const restartBtn         = document.getElementById('restart-btn');
 
     if (!typingBox || !rawText) return;
@@ -80,6 +84,10 @@ export function initTypingEngine({ rawText, storeUrl, resultUrl, typeQuestion = 
         }
         if (questionTextEl) {
             questionTextEl.textContent = pair.question;
+        }
+        if (meaningEl && meaningWrapperEl) {
+            meaningEl.textContent = pair.meaning ?? '';
+            meaningWrapperEl.style.display = pair.meaning ? '' : 'none';
         }
         targetText = subPhase === 'Q' ? pair.question : pair.answer;
         cursorIdx  = 0;

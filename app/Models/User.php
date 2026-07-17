@@ -3,6 +3,15 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\English\IeltsRecord;
+use App\Models\English\QuizResult;
+use App\Models\English\StudyLog;
+use App\Models\English\ToeicAnswerLog;
+use App\Models\English\ToeicResult;
+use App\Models\English\TypingRecord;
+use App\Models\English\UserSectionProgress;
+use App\Models\English\UserWordFavorite;
+use App\Models\English\UserWordProgress;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -56,6 +65,53 @@ class User extends Authenticatable
             'total_study_time' => 'integer',
             'gender_locked' => 'boolean',
         ];
+    }
+
+    // ===== 英語学習リレーション =====
+
+    public function toeicResults()
+    {
+        return $this->hasMany(ToeicResult::class);
+    }
+
+    public function toeicAnswerLogs()
+    {
+        return $this->hasManyThrough(ToeicAnswerLog::class, ToeicResult::class, 'user_id', 'result_id');
+    }
+
+    public function ieltsRecords()
+    {
+        return $this->hasMany(IeltsRecord::class);
+    }
+
+    public function typingRecords()
+    {
+        return $this->hasMany(TypingRecord::class);
+    }
+
+    public function quizResults()
+    {
+        return $this->hasMany(QuizResult::class);
+    }
+
+    public function studyLogs()
+    {
+        return $this->hasMany(StudyLog::class);
+    }
+
+    public function sectionProgress()
+    {
+        return $this->hasMany(UserSectionProgress::class);
+    }
+
+    public function wordFavorites()
+    {
+        return $this->hasMany(UserWordFavorite::class);
+    }
+
+    public function wordProgress()
+    {
+        return $this->hasMany(UserWordProgress::class);
     }
 
     // シャワーリレーション

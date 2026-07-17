@@ -39,7 +39,7 @@ class TypingMaterialSeeder extends Seeder
                         'title'  => $p['scene'],
                         'level'  => $p['level'],
                         'prompt' => '実際の場面で使うフレーズをタイピングしましょう。',
-                        'text'   => "[Question 1]\n{$p['scene']}\n\n[Answer]\n{$p['phrase']}",
+                        'text'   => "[Question 1]\n{$p['scene']}\n\n[Answer]\n{$p['phrase']}\n\n[Meaning]\n{$p['phrase_ja']}",
                         'xp'     => 20,
                     ]
                 );

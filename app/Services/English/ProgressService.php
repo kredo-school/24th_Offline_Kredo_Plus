@@ -5,9 +5,7 @@ namespace App\Services\English;
 use App\Models\User;
 use App\Models\English\UserSectionProgress;
 use App\Models\English\TypingMaterial;
-use App\Models\English\ToeicAnswerLog;
 use App\Models\English\ToeicQuestion;
-use App\Models\English\ToeicResult;
 
 class ProgressService
 {
@@ -27,15 +25,17 @@ class ProgressService
     public function getSectionProgress(User $user): array
     {
         // 完了済みセクションを section_type ごとにグループ化して取得
-        $completed = UserSectionProgress::where('user_id', $user->id)
+        $completed = $user->sectionProgress()
             ->where('is_completed', true)
             ->get()
             ->groupBy('section_type');
 
         // TOEIC: Part5/6/7 の全問題数に対する回答済みユニーク問題数の割合
         $toeicTotal = ToeicQuestion::whereIn('part', [5, 6, 7])->count();
-        $toeicResultIds = ToeicResult::where('user_id', $user->id)->whereIn('part', [5, 6, 7])->pluck('id');
-        $toeicDone = ToeicAnswerLog::whereIn('result_id', $toeicResultIds)->distinct()->count('question_id');
+        $toeicDone  = $user->toeicAnswerLogs()
+            ->whereIn('toeic_results.part', [5, 6, 7])
+            ->distinct()
+            ->count('toeic_answer_logs.question_id');
 
         // IELTS: 3Part × 3Topic × 4Score × 2種類(slides + typing) = 72 セクション
         $ieltsTotal = 72;

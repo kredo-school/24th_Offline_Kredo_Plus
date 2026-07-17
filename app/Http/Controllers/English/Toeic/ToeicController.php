@@ -7,9 +7,9 @@ use App\Http\Requests\English\StoreToeicAnswerRequest;
 use App\Models\English\ToeicAnswerLog;
 use App\Models\English\ToeicQuestion;
 use App\Models\English\ToeicQuestionOption;
-use App\Models\English\ToeicResult;
 use App\Models\English\ToeicSlide;
 use App\Models\English\UserSectionProgress;
+use App\Models\User;
 use App\Services\English\StudyLogService;
 use App\Services\English\XpService;
 use Illuminate\Http\Request;
@@ -29,14 +29,14 @@ class ToeicController extends Controller
      */
     public function index()
     {
-        $userId = Auth::id();
+        $user = Auth::user();
 
         $partMeta = config('english.toeic_part_meta');
 
         // 進捗ゲージ = DBに登録された全問題のうち回答済みユニーク問題数の割合（スライド閲覧状況は含めない）
-        $parts = collect($partMeta)->map(function ($meta, $partNum) use ($userId) {
+        $parts = collect($partMeta)->map(function ($meta, $partNum) use ($user) {
             $progress = $meta['available']
-                ? $this->toeicQuestionsCoveragePercent($userId, $partNum)
+                ? $this->toeicQuestionsCoveragePercent($user, $partNum)
                 : 0;
 
             return array_merge($meta, [
@@ -52,7 +52,7 @@ class ToeicController extends Controller
      * DBに登録された当該Partの全問題のうち、ユーザーが一度でも回答したユニーク問題数の割合（%）。
      * 全問に一度でも解答すると100%になる。
      */
-    private function toeicQuestionsCoveragePercent(int $userId, int $part): int
+    private function toeicQuestionsCoveragePercent(User $user, int $part): int
     {
         $total = ToeicQuestion::forPart($part)->count();
 
@@ -60,7 +60,7 @@ class ToeicController extends Controller
             return 0;
         }
 
-        $answered = count($this->toeicAnsweredQuestionIds($userId, $part));
+        $answered = count($this->toeicAnsweredQuestionIds($user, $part));
 
         return (int) round(min($answered, $total) / $total * 100);
     }
@@ -68,13 +68,12 @@ class ToeicController extends Controller
     /**
      * ユーザーが過去のセッションを通じて一度でも回答したことのある問題IDの一覧。
      */
-    private function toeicAnsweredQuestionIds(int $userId, int $part): array
+    private function toeicAnsweredQuestionIds(User $user, int $part): array
     {
-        $resultIds = ToeicResult::where('user_id', $userId)->where('part', $part)->pluck('id');
-
-        return ToeicAnswerLog::whereIn('result_id', $resultIds)
+        return $user->toeicAnswerLogs()
+            ->where('toeic_results.part', $part)
             ->distinct()
-            ->pluck('question_id')
+            ->pluck('toeic_answer_logs.question_id')
             ->all();
     }
 
@@ -94,15 +93,15 @@ class ToeicController extends Controller
         $step        = max(1, min($step, $totalSteps));
         $slide       = $slides->firstWhere('step_number', $step) ?? $slides->first();
 
-        $userId      = Auth::id();
+        $user        = Auth::user();
         $sectionKey  = "part_{$part}";
 
         // 初回閲覧時でも問題へスキップ可能
         $canSkip = true;
 
         // 最終閲覧ステップを更新
-        UserSectionProgress::updateOrCreate(
-            ['user_id' => $userId, 'section_type' => UserSectionProgress::TYPE_TOEIC_SLIDES, 'section_key' => $sectionKey],
+        $user->sectionProgress()->updateOrCreate(
+            ['section_type' => UserSectionProgress::TYPE_TOEIC_SLIDES, 'section_key' => $sectionKey],
             ['last_step' => $step]
         );
 
@@ -117,8 +116,8 @@ class ToeicController extends Controller
     {
         $sectionKey = "part_{$part}";
 
-        UserSectionProgress::updateOrCreate(
-            ['user_id' => Auth::id(), 'section_type' => UserSectionProgress::TYPE_TOEIC_SLIDES, 'section_key' => $sectionKey],
+        Auth::user()->sectionProgress()->updateOrCreate(
+            ['section_type' => UserSectionProgress::TYPE_TOEIC_SLIDES, 'section_key' => $sectionKey],
             ['is_completed' => true, 'completed_at' => now()]
         );
 
@@ -156,9 +155,11 @@ class ToeicController extends Controller
 
             abort_if($pool->isEmpty(), 404);
 
+            $user = Auth::user();
+
             if ($part === 5) {
                 // 未回答の問題を優先して出題し、全問回答済みなら完全ランダムに戻す
-                $answeredIds = $this->toeicAnsweredQuestionIds(Auth::id(), $part);
+                $answeredIds = $this->toeicAnsweredQuestionIds($user, $part);
                 $unanswered  = $pool->whereNotIn('id', $answeredIds)->values();
 
                 $questions = $unanswered->isNotEmpty()
@@ -172,7 +173,7 @@ class ToeicController extends Controller
                 }
             } elseif (in_array($part, [6, 7], true)) {
                 // 未回答の問題を含むパッセージを優先し、パッセージ2つ分を出題する
-                $answeredIds          = $this->toeicAnsweredQuestionIds(Auth::id(), $part);
+                $answeredIds          = $this->toeicAnsweredQuestionIds($user, $part);
                 $allPassageIds        = $pool->pluck('passage_id')->unique()->values();
                 $incompletePassageIds = $pool->whereNotIn('id', $answeredIds)->pluck('passage_id')->unique()->values();
 
@@ -269,8 +270,7 @@ class ToeicController extends Controller
 
         DB::transaction(function () use ($user, $part, $answers, $correctCount, $totalQuestions, $xp) {
             // ToeicResult 保存
-            $result = ToeicResult::create([
-                'user_id'         => $user->id,
+            $result = $user->toeicResults()->create([
                 'part'            => $part,
                 'total_questions' => $totalQuestions,
                 'correct_count'   => $correctCount,
@@ -299,10 +299,10 @@ class ToeicController extends Controller
             $this->studyLogService->log($user, 'toeic', $result->id, $xp, 0);
 
             // セクション進捗を更新（DBに登録された全問題に一度でも解答したら完了とする）
-            $isFullyCovered = $this->toeicQuestionsCoveragePercent($user->id, $part) >= 100;
+            $isFullyCovered = $this->toeicQuestionsCoveragePercent($user, $part) >= 100;
 
-            UserSectionProgress::updateOrCreate(
-                ['user_id' => $user->id, 'section_type' => UserSectionProgress::TYPE_TOEIC_QUESTIONS, 'section_key' => "part_{$part}"],
+            $user->sectionProgress()->updateOrCreate(
+                ['section_type' => UserSectionProgress::TYPE_TOEIC_QUESTIONS, 'section_key' => "part_{$part}"],
                 ['is_completed' => $isFullyCovered, 'completed_at' => $isFullyCovered ? now() : null]
             );
 
@@ -329,7 +329,7 @@ class ToeicController extends Controller
             return redirect()->route('english.toeic.practice', ['part' => $part]);
         }
 
-        $result = ToeicResult::with([
+        $result = Auth::user()->toeicResults()->with([
             'answerLogs.question.options',
             'answerLogs.selectedOption',
         ])->findOrFail($resultId);
