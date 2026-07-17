@@ -36,6 +36,10 @@ window.__TYPING_CONFIG__ = {
       <p id="current-question-text" class="text-headline-md text-on-surface font-semibold leading-snug">
         Loading question...
       </p>
+      <div id="current-meaning-wrapper" class="mt-3 pt-3 border-t border-outline-variant/50" style="display: none;">
+        <p class="text-caption text-on-surface-variant mb-1">意味</p>
+        <p id="current-meaning-text" class="text-body-md text-on-surface-variant"></p>
+      </div>
     </div>
 
     <div id="typing-box"
