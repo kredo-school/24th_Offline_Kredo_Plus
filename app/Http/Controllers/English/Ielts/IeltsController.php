@@ -5,10 +5,10 @@ namespace App\Http\Controllers\English\Ielts;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\English\StoreIeltsResultRequest;
 use App\Models\English\IeltsMaterial;
-use App\Models\English\IeltsRecord;
 use App\Models\English\IeltsSlide;
 use App\Models\English\IeltsTopic;
 use App\Models\English\UserSectionProgress;
+use App\Models\User;
 use App\Services\English\StudyLogService;
 use App\Services\English\XpService;
 use Illuminate\Http\Request;
@@ -77,14 +77,14 @@ class IeltsController extends Controller
             $slide      = $slides->firstWhere('step_number', $step) ?? $slides->first();
         }
 
-        $userId     = Auth::id();
+        $user       = Auth::user();
         $sectionKey = "{$part}_{$topic}_{$score}";
 
         // 初回閲覧時でもタイピングへスキップ可能
         $canSkip = true;
 
-        UserSectionProgress::updateOrCreate(
-            ['user_id' => $userId, 'section_type' => UserSectionProgress::TYPE_IELTS_SLIDES, 'section_key' => $sectionKey],
+        $user->sectionProgress()->updateOrCreate(
+            ['section_type' => UserSectionProgress::TYPE_IELTS_SLIDES, 'section_key' => $sectionKey],
             ['last_step' => $step]
         );
 
@@ -108,8 +108,8 @@ class IeltsController extends Controller
         $sectionKey = "{$part}_{$topic}_{$score}";
         $xp         = config('english.xp.ielts_slides_complete', 20);
 
-        UserSectionProgress::updateOrCreate(
-            ['user_id' => $user->id, 'section_type' => UserSectionProgress::TYPE_IELTS_SLIDES, 'section_key' => $sectionKey],
+        $user->sectionProgress()->updateOrCreate(
+            ['section_type' => UserSectionProgress::TYPE_IELTS_SLIDES, 'section_key' => $sectionKey],
             ['is_completed' => true, 'completed_at' => now()]
         );
 
@@ -162,8 +162,7 @@ class IeltsController extends Controller
             ?? IeltsMaterial::forSession($part, $topic, $score)->first();
         $xp       = $this->xpService->calcIeltsTypingXp($accuracy);
 
-        $record = IeltsRecord::create([
-            'user_id'     => $user->id,
+        $record = $user->ieltsRecords()->create([
             'material_id' => $material?->id,
             'wpm'         => $wpm,
             'accuracy'    => $accuracy,
@@ -176,8 +175,8 @@ class IeltsController extends Controller
 
         // タイピング進捗を完了に更新
         $sectionKey = "{$part}_{$topic}_{$score}";
-        UserSectionProgress::updateOrCreate(
-            ['user_id' => $user->id, 'section_type' => UserSectionProgress::TYPE_IELTS_TYPING, 'section_key' => $sectionKey],
+        $user->sectionProgress()->updateOrCreate(
+            ['section_type' => UserSectionProgress::TYPE_IELTS_TYPING, 'section_key' => $sectionKey],
             ['is_completed' => true, 'completed_at' => now()]
         );
 
@@ -212,10 +211,11 @@ class IeltsController extends Controller
             return redirect()->route('english.ielts.typing', compact('part', 'topic', 'score'));
         }
 
-        $record = IeltsRecord::with('material')->findOrFail($recordId);
+        $user   = Auth::user();
+        $record = $user->ieltsRecords()->with('material')->findOrFail($recordId);
         session()->forget('ielts_record_id');
 
-        $levelInfo = $this->xpService->getLevelInfo(Auth::user());
+        $levelInfo = $this->xpService->getLevelInfo($user);
         $topicMeta = config('english.ielts_topic_meta')[$topic] ?? [];
         $scoreMeta = config('english.ielts_score_meta')[$score] ?? [];
 
@@ -231,13 +231,13 @@ class IeltsController extends Controller
     /**
      * 1つの Part で全12パターン（3topic × 4score）の typing を完了した場合に 500XP ボーナスを付与する。
      */
-    private function checkIeltsPartBonus($user, int $part): void
+    private function checkIeltsPartBonus(User $user, int $part): void
     {
         $topics = config('english.ielts_topics');
         $scores = config('english.ielts_scores');
         $total  = count($topics) * count($scores);
 
-        $completedCount = UserSectionProgress::where('user_id', $user->id)
+        $completedCount = $user->sectionProgress()
             ->where('section_type', UserSectionProgress::TYPE_IELTS_TYPING)
             ->where('is_completed', true)
             ->where('section_key', 'like', "{$part}_%")

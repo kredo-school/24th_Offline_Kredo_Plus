@@ -2,6 +2,7 @@
 
 namespace App\Models\English;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class UserWordFavorite extends Model
@@ -14,6 +15,11 @@ class UserWordFavorite extends Model
     ];
 
     // ===== リレーション =====
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function word()
     {

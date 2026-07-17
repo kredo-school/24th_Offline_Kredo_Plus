@@ -2,6 +2,7 @@
 
 namespace App\Models\English;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class StudyLog extends Model
@@ -27,4 +28,11 @@ class StudyLog extends Model
     protected $casts = [
         'studied_date' => 'date',
     ];
+
+    // ===== リレーション =====
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

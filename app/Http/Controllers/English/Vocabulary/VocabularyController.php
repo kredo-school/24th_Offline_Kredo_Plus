@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\English\Vocabulary;
 
 use App\Http\Controllers\Controller;
-use App\Models\English\QuizResult;
 use App\Models\English\UserSectionProgress;
-use App\Models\English\UserWordFavorite;
 use App\Models\English\UserWordProgress;
 use App\Models\English\VocabularyWord;
 use App\Services\English\StudyLogService;
@@ -35,14 +33,14 @@ class VocabularyController extends Controller
             ->keyBy(fn($r) => strtolower($r->exam_type) . '-' . str_replace('.', '', $r->level));
 
         // フラッシュカード完了状況
-        $completedLevels = UserSectionProgress::where('user_id', $user->id)
+        $completedLevels = $user->sectionProgress()
             ->where('section_type', UserSectionProgress::TYPE_VOCABULARY)
             ->where('is_completed', true)
             ->pluck('section_key')
             ->toArray();
 
         // 学習済み単語数（user_word_progress.status = 2: 覚えた）
-        $learnedByLevel = UserWordProgress::where('user_id', $user->id)
+        $learnedByLevel = $user->wordProgress()
             ->where('status', UserWordProgress::STATUS_LEARNED)
             ->join('vocabulary_words', 'user_word_progress.word_id', '=', 'vocabulary_words.id')
             ->selectRaw("CONCAT(LOWER(vocabulary_words.exam_type), '-', REPLACE(vocabulary_words.level, '.', '')) as slug, COUNT(*) as cnt")
@@ -77,7 +75,7 @@ class VocabularyController extends Controller
             }
         }
 
-        $favoritesCount = UserWordFavorite::where('user_id', $user->id)->count();
+        $favoritesCount = $user->wordFavorites()->count();
 
         return view('english.vocabulary.index', compact('toeicLevels', 'ieltsLevels', 'favoritesCount'));
     }
@@ -88,15 +86,15 @@ class VocabularyController extends Controller
      */
     public function favorites()
     {
-        $userId = Auth::id();
+        $user = Auth::user();
 
-        $favorites = UserWordFavorite::where('user_id', $userId)
+        $favorites = $user->wordFavorites()
             ->with('word')
             ->get()
             ->filter(fn($f) => $f->word !== null)
             ->values();
 
-        $learnedIds = UserWordProgress::where('user_id', $userId)
+        $learnedIds = $user->wordProgress()
             ->where('status', UserWordProgress::STATUS_LEARNED)
             ->pluck('word_id')
             ->toArray();
@@ -114,19 +112,19 @@ class VocabularyController extends Controller
     {
         $meta       = $this->parseLevelParam($level);
         $levelLabel = $meta['exam_type'] . ' ' . $meta['level'];
-        $userId     = Auth::id();
+        $user       = Auth::user();
 
         $words = VocabularyWord::byLevel($meta['exam_type'], $meta['level'])
             ->inRandomOrder()
             ->take(10)
             ->get();
 
-        $favoriteIds = UserWordFavorite::where('user_id', $userId)
+        $favoriteIds = $user->wordFavorites()
             ->whereIn('word_id', $words->pluck('id'))
             ->pluck('word_id')
             ->toArray();
 
-        $learnedIds = UserWordProgress::where('user_id', $userId)
+        $learnedIds = $user->wordProgress()
             ->where('status', UserWordProgress::STATUS_LEARNED)
             ->whereIn('word_id', $words->pluck('id'))
             ->pluck('word_id')
@@ -170,8 +168,8 @@ class VocabularyController extends Controller
         $isCorrect    = ($userAnswer === $correctWord);
 
         // 個別問題の学習進捗を更新
-        $progress = UserWordProgress::firstOrCreate(
-            ['user_id' => Auth::id(), 'word_id' => $word->id],
+        $progress = Auth::user()->wordProgress()->firstOrCreate(
+            ['word_id' => $word->id],
             ['correct_count' => 0, 'incorrect_count' => 0, 'status' => UserWordProgress::STATUS_NOT_LEARNED]
         );
         $isCorrect ? $progress->increment('correct_count') : $progress->increment('incorrect_count');
@@ -291,8 +289,7 @@ class VocabularyController extends Controller
 
         $xp = $this->xpService->calcQuizXp($correctCount);
 
-        QuizResult::create([
-            'user_id'         => $user->id,
+        $user->quizResults()->create([
             'quiz_type'       => 'vocabulary',
             'exam_type'       => $meta['exam_type'],
             'level'           => $meta['level'],
@@ -329,18 +326,16 @@ class VocabularyController extends Controller
             'word_id' => ['required', 'integer', 'exists:vocabulary_words,id'],
         ]);
 
-        $userId  = Auth::id();
-        $wordId  = $request->integer('word_id');
+        $user   = Auth::user();
+        $wordId = $request->integer('word_id');
 
-        $existing = UserWordFavorite::where('user_id', $userId)
-            ->where('word_id', $wordId)
-            ->first();
+        $existing = $user->wordFavorites()->where('word_id', $wordId)->first();
 
         if ($existing) {
             $existing->delete();
             $isFavorite = false;
         } else {
-            UserWordFavorite::create(['user_id' => $userId, 'word_id' => $wordId]);
+            $user->wordFavorites()->create(['word_id' => $wordId]);
             $isFavorite = true;
         }
 
@@ -364,16 +359,16 @@ class VocabularyController extends Controller
         $isCompleted = $request->boolean('is_completed');
         $user        = Auth::user();
 
-        UserSectionProgress::updateOrCreate(
-            ['user_id' => $user->id, 'section_type' => UserSectionProgress::TYPE_VOCABULARY, 'section_key' => $level],
+        $user->sectionProgress()->updateOrCreate(
+            ['section_type' => UserSectionProgress::TYPE_VOCABULARY, 'section_key' => $level],
             ['is_completed' => $isCompleted, 'completed_at' => $isCompleted ? now() : null]
         );
 
         // 「覚えた」マークをつけた単語を学習済みとして記録
         $learnedIds = $request->input('learned_word_ids', []);
         foreach (array_unique($learnedIds) as $wordId) {
-            UserWordProgress::updateOrCreate(
-                ['user_id' => $user->id, 'word_id' => (int) $wordId],
+            $user->wordProgress()->updateOrCreate(
+                ['word_id' => (int) $wordId],
                 ['status' => UserWordProgress::STATUS_LEARNED, 'last_reviewed_at' => now()]
             );
         }

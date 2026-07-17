@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\English\Quiz;
 
 use App\Http\Controllers\Controller;
-use App\Models\English\QuizResult;
 use App\Models\English\VocabularyWord;
 use App\Services\English\StudyLogService;
 use App\Services\English\XpService;
@@ -23,15 +22,15 @@ class QuizController extends Controller
      */
     public function index()
     {
-        $userId = Auth::id();
+        $user = Auth::user();
 
-        $recentSpelling = QuizResult::where('user_id', $userId)
+        $recentSpelling = $user->quizResults()
             ->where('quiz_type', 'spelling')
             ->orderByDesc('created_at')
             ->take(3)
             ->get();
 
-        $recentVocabulary = QuizResult::where('user_id', $userId)
+        $recentVocabulary = $user->quizResults()
             ->where('quiz_type', 'vocabulary')
             ->orderByDesc('created_at')
             ->take(3)
@@ -91,8 +90,7 @@ class QuizController extends Controller
 
         $xp = $this->xpService->calcQuizXp($correctCount);
 
-        QuizResult::create([
-            'user_id'         => $user->id,
+        $user->quizResults()->create([
             'quiz_type'       => 'spelling',
             'exam_type'       => null,
             'level'           => null,
@@ -187,8 +185,7 @@ class QuizController extends Controller
 
         $xp = $this->xpService->calcQuizXp($correctCount);
 
-        QuizResult::create([
-            'user_id'         => $user->id,
+        $user->quizResults()->create([
             'quiz_type'       => 'vocabulary',
             'exam_type'       => null,
             'level'           => null,

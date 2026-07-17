@@ -2,6 +2,7 @@
 
 namespace App\Models\English;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class TypingRecord extends Model
@@ -23,6 +24,11 @@ class TypingRecord extends Model
     ];
 
     // ===== リレーション =====
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function material()
     {

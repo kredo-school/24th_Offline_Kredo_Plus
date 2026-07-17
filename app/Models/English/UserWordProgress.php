@@ -2,6 +2,7 @@
 
 namespace App\Models\English;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class UserWordProgress extends Model
@@ -26,4 +27,11 @@ class UserWordProgress extends Model
         'last_reviewed_at' => 'datetime',
         'status'           => 'integer',
     ];
+
+    // ===== リレーション =====
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

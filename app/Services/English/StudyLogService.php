@@ -3,7 +3,6 @@
 namespace App\Services\English;
 
 use App\Models\User;
-use App\Models\English\StudyLog;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -34,8 +33,7 @@ class StudyLogService
     ): void {
         DB::transaction(function () use ($user, $activityType, $activityId, $xp, $durationSeconds) {
             // 1. study_logs に INSERT
-            StudyLog::create([
-                'user_id'          => $user->id,
+            $user->studyLogs()->create([
                 'activity_type'    => $activityType,
                 'activity_id'      => $activityId,
                 'xp_gained'        => $xp,
@@ -58,7 +56,7 @@ class StudyLogService
      */
     public function getRecentLogs(User $user, int $limit = 10): Collection
     {
-        return StudyLog::where('user_id', $user->id)
+        return $user->studyLogs()
             ->orderByDesc('created_at')
             ->limit($limit)
             ->get();

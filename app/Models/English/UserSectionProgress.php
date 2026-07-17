@@ -2,6 +2,7 @@
 
 namespace App\Models\English;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class UserSectionProgress extends Model
@@ -30,4 +31,11 @@ class UserSectionProgress extends Model
         'is_completed' => 'boolean',
         'completed_at' => 'datetime',
     ];
+
+    // ===== リレーション =====
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

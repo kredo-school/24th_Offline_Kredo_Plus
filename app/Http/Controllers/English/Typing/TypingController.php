@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\English\StoreTypingResultRequest;
 use App\Models\English\TypingCategory;
 use App\Models\English\TypingMaterial;
-use App\Models\English\TypingRecord;
-use App\Models\English\TypingSlide;
 use App\Models\English\UserSectionProgress;
 use App\Services\English\StudyLogService;
 use App\Services\English\XpService;
@@ -86,18 +84,18 @@ class TypingController extends Controller
         $step       = max(1, min($step, $totalSteps));
         $slide      = $slides->firstWhere('step_number', $step) ?? $slides->first();
 
-        $userId      = Auth::id();
+        $user        = Auth::user();
         $sectionKey  = (string) $id;
 
-        $sectionProgress = UserSectionProgress::where('user_id', $userId)
+        $sectionProgress = $user->sectionProgress()
             ->where('section_type', UserSectionProgress::TYPE_TYPING_SLIDES)
             ->where('section_key', $sectionKey)
             ->first();
 
         $canSkip = $sectionProgress && $sectionProgress->is_completed;
 
-        UserSectionProgress::updateOrCreate(
-            ['user_id' => $userId, 'section_type' => UserSectionProgress::TYPE_TYPING_SLIDES, 'section_key' => $sectionKey],
+        $user->sectionProgress()->updateOrCreate(
+            ['section_type' => UserSectionProgress::TYPE_TYPING_SLIDES, 'section_key' => $sectionKey],
             ['last_step' => $step]
         );
 
@@ -114,8 +112,8 @@ class TypingController extends Controller
         $sectionKey = (string) $id;
         $xp         = config('english.xp.typing_slides_complete', 20);
 
-        UserSectionProgress::updateOrCreate(
-            ['user_id' => $user->id, 'section_type' => UserSectionProgress::TYPE_TYPING_SLIDES, 'section_key' => $sectionKey],
+        $user->sectionProgress()->updateOrCreate(
+            ['section_type' => UserSectionProgress::TYPE_TYPING_SLIDES, 'section_key' => $sectionKey],
             ['is_completed' => true, 'completed_at' => now()]
         );
 
@@ -151,8 +149,7 @@ class TypingController extends Controller
         $timeSec   = $request->integer('time_seconds');
         $xp        = (int) $materials->sum('xp');
 
-        $record = TypingRecord::create([
-            'user_id'     => $user->id,
+        $record = $user->typingRecords()->create([
             'material_id' => $id,
             'wpm'         => $wpm,
             'accuracy'    => $accuracy,
@@ -163,8 +160,8 @@ class TypingController extends Controller
         $this->xpService->addXp($user, $xp);
         $this->studyLogService->log($user, 'typing', $record->id, $xp, $timeSec);
 
-        UserSectionProgress::updateOrCreate(
-            ['user_id' => $user->id, 'section_type' => UserSectionProgress::TYPE_TYPING_MATERIAL, 'section_key' => (string) $id],
+        $user->sectionProgress()->updateOrCreate(
+            ['section_type' => UserSectionProgress::TYPE_TYPING_MATERIAL, 'section_key' => (string) $id],
             ['is_completed' => true, 'completed_at' => now()]
         );
 
@@ -196,16 +193,18 @@ class TypingController extends Controller
             return redirect()->route('english.typing.practice', ['id' => $id]);
         }
 
-        $record   = TypingRecord::with('material')->findOrFail($recordId);
+        $user = Auth::user();
+
+        $record   = $user->typingRecords()->with('material')->findOrFail($recordId);
         $material = TypingMaterial::findOrFail($id);
 
         session()->forget('typing_record_id');
 
-        $bestWpm = TypingRecord::where('user_id', Auth::id())
+        $bestWpm = $user->typingRecords()
             ->where('material_id', $id)
             ->max('wpm') ?? 0;
 
-        $levelInfo = $this->xpService->getLevelInfo(Auth::user());
+        $levelInfo = $this->xpService->getLevelInfo($user);
 
         return view('english.typing.result', compact('id', 'record', 'material', 'bestWpm', 'levelInfo'));
     }
