@@ -446,8 +446,8 @@ return [
         'part_of_speech' => 'verb',
         'meaning_ja' => '例証する、典型となる',
         'meaning_en' => 'be a typical example of something',
-        'example_sentence' => 'The product recall exemplifies the risks of rushing quality control.',
-        'example_sentence_ja' => 'その製品回収は品質管理を急ぐことのリスクを例証している。',
+        'example_sentence' => 'This case is often used to exemplify the risks of rushing quality control. Analysts say the recent product recall continues to exemplify what can go wrong when deadlines are prioritized over safety.',
+        'example_sentence_ja' => 'この事例は、品質管理を急ぐことのリスクを例証するためによく使われる。アナリストたちは、その製品回収は締め切りを安全より優先した際に何が起こりうるかを今も例証していると述べている。',
     ],
     [
         'word' => 'permeate',
