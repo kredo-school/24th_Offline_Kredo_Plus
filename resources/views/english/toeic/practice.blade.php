@@ -101,6 +101,13 @@
                     </button>
                 </div>
             </div>
+
+            <div class="mt-6 flex justify-end max-w-3xl mx-auto">
+                <a href="{{ route('english.toeic.index') }}"
+                   class="px-6 py-2.5 bg-orange-600 text-white font-bold rounded-[0.5rem] shadow-sm hover:bg-orange-700 transition-colors text-base no-underline">
+                    Quit Practice
+                </a>
+            </div>
         </div>
 
         {{-- 全問完了（complete() が form submit するため、ここは loading 表示のみ） --}}
