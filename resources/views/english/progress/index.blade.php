@@ -217,6 +217,14 @@ $sectionLabels = [
                                     style="background-color: {{ $examColor }};">
                                     保存
                                 </button>
+                                <button type="submit"
+                                    onclick="if (!confirm('{{ $examLabel }}の試験日を取り消しますか？')) return false; this.form.exam_date.value = '';"
+                                    onmouseover="this.style.backgroundColor = '{{ $examColor }}1A';"
+                                    onmouseout="this.style.backgroundColor = 'transparent';"
+                                    class="px-3 py-1.5 border rounded-[0.5rem] text-caption font-bold transition-all shrink-0"
+                                    style="border-color: {{ $examColor }}; color: {{ $examColor }};">
+                                    取り消し
+                                </button>
                             </form>
                         </div>
                         @endforeach
