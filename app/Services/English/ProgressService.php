@@ -4,8 +4,10 @@ namespace App\Services\English;
 
 use App\Models\User;
 use App\Models\English\UserSectionProgress;
+use App\Models\English\UserWordProgress;
 use App\Models\English\TypingMaterial;
 use App\Models\English\ToeicQuestion;
+use App\Models\English\VocabularyWord;
 
 class ProgressService
 {
@@ -46,9 +48,9 @@ class ProgressService
         $typingTotal = max(1, TypingMaterial::count());
         $typingDone  = $completed->get(UserSectionProgress::TYPE_TYPING_MATERIAL, collect())->count();
 
-        // 語彙: 8レベル分のフラッシュカード
-        $vocabTotal = 8;
-        $vocabDone  = $completed->get(UserSectionProgress::TYPE_VOCABULARY, collect())->count();
+        // 語彙: DBに登録された全単語数に対する学習済み単語数の割合
+        $vocabTotal = VocabularyWord::count();
+        $vocabDone  = $user->wordProgress()->where('status', UserWordProgress::STATUS_LEARNED)->count();
 
         return [
             'toeic' => [
