@@ -53,14 +53,7 @@ class ProgressController extends Controller
         $calendar = $this->buildCalendar($user, $request->query('month'));
 
         // TOEIC・IELTS試験日までの残り日数
-        $examDaysLeft = [
-            'toeic' => $user->toeic_exam_date
-                ? (int) now()->startOfDay()->diffInDays($user->toeic_exam_date, false)
-                : null,
-            'ielts' => $user->ielts_exam_date
-                ? (int) now()->startOfDay()->diffInDays($user->ielts_exam_date, false)
-                : null,
-        ];
+        $examDaysLeft = $this->progressService->getExamDaysLeft($user);
 
         return view('english.progress.index', compact(
             'user',
