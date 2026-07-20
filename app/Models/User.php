@@ -37,6 +37,8 @@ class User extends Authenticatable
         'total_study_time',
         'gender',
         'gender_locked',
+        'toeic_exam_date',
+        'ielts_exam_date',
     ];
 
     /**
@@ -64,6 +66,8 @@ class User extends Authenticatable
             'study_streak' => 'integer',
             'total_study_time' => 'integer',
             'gender_locked' => 'boolean',
+            'toeic_exam_date' => 'date',
+            'ielts_exam_date' => 'date',
         ];
     }
 

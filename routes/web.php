@@ -107,7 +107,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/{exam}/{level}', [LearningContentController::class, 'strategyShow'])->name('show')->whereIn('exam', config('english.exam_types'));
         });
         // ── 学習管理・ランキング ──────────────────────────────────────────
-        Route::get('/progress', [EnglishProgressController::class, 'index'])->name('progress');
+        Route::get('/progress',             [EnglishProgressController::class, 'index'])->name('progress');
+        Route::post('/progress/exam-date',  [EnglishProgressController::class, 'updateExamDate'])->name('progress.exam-date');
         Route::get('/ranking',  [EnglishRankingController::class, 'index'])->name('ranking');
     });
 
