@@ -109,6 +109,21 @@ class ProgressService
         ];
     }
 
+    /**
+     * TOEIC・IELTS試験日までの残り日数を返す（未設定の場合は null）。
+     */
+    public function getExamDaysLeft(User $user): array
+    {
+        return [
+            'toeic' => $user->toeic_exam_date
+                ? (int) now()->startOfDay()->diffInDays($user->toeic_exam_date, false)
+                : null,
+            'ielts' => $user->ielts_exam_date
+                ? (int) now()->startOfDay()->diffInDays($user->ielts_exam_date, false)
+                : null,
+        ];
+    }
+
     private function pct(int $done, int $total): int
     {
         if ($total === 0) {

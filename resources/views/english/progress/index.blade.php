@@ -115,6 +115,124 @@ $sectionLabels = [
             </div>
         </div>
 
+        {{-- 学習カレンダー + 試験日 --}}
+        <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-6">
+            <h2 class="text-headline-md font-bold text-on-surface mb-4">学習カレンダー</h2>
+
+            <div class="flex flex-col md:flex-row md:items-start gap-8">
+                {{-- カレンダー本体（残りスペース内で中央寄せ） --}}
+                <div class="flex-1 flex justify-center">
+                    <div class="w-64">
+                        <div class="flex items-center justify-center gap-1 mb-3">
+                            <a href="{{ route('english.progress', ['month' => $calendar['prevMonth']]) }}"
+                                class="p-1.5 rounded-full hover:bg-surface-container transition-colors">
+                                <span class="material-symbols-outlined text-on-surface-variant">chevron_left</span>
+                            </a>
+                            <span class="text-label-md font-bold text-on-surface w-24 text-center">{{ $calendar['month']->format('Y年n月') }}</span>
+                            <a href="{{ route('english.progress', ['month' => $calendar['nextMonth']]) }}"
+                                class="p-1.5 rounded-full hover:bg-surface-container transition-colors">
+                                <span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+                            </a>
+                        </div>
+                        <div class="grid grid-cols-7 gap-1.5 mb-1.5">
+                            @foreach(['日', '月', '火', '水', '木', '金', '土'] as $dow)
+                            <div class="text-center text-caption text-on-surface-variant font-bold">{{ $dow }}</div>
+                            @endforeach
+                        </div>
+                        <div class="space-y-1.5">
+                            @foreach($calendar['weeks'] as $week)
+                            <div class="grid grid-cols-7 gap-1.5">
+                                @foreach($week as $cell)
+                                <div class="aspect-square rounded-[0.375rem] flex items-center justify-center text-caption
+                                    {{ !$cell['inMonth']
+                                        ? 'text-on-surface-variant/30'
+                                        : ($cell['examType'] === 'toeic'
+                                            ? 'bg-[#2f5fdb] text-white font-bold'
+                                            : ($cell['examType'] === 'ielts'
+                                                ? 'bg-[#84CC16] text-white font-bold'
+                                                : ($cell['studied']
+                                                    ? 'bg-[#974018] text-white font-bold'
+                                                    : 'bg-[#E5E7EB] text-on-surface'))) }}
+                                    {{ $cell['isToday'] ? 'ring-2 ring-[#F59E0B]' : '' }}">
+                                    {{ $cell['date']->day }}
+                                </div>
+                                @endforeach
+                            </div>
+                            @endforeach
+                        </div>
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-4 text-caption text-on-surface-variant">
+                            <span class="flex items-center gap-1.5">
+                                <span class="w-3 h-3 rounded-[0.2rem] bg-[#974018] inline-block"></span>
+                                学習した日
+                            </span>
+                            <span class="flex items-center gap-1.5">
+                                <span class="w-3 h-3 rounded-[0.2rem] bg-[#2f5fdb] inline-block"></span>
+                                TOEIC試験日
+                            </span>
+                            <span class="flex items-center gap-1.5">
+                                <span class="w-3 h-3 rounded-[0.2rem] bg-[#84CC16] inline-block"></span>
+                                IELTS試験日
+                            </span>
+                            <span class="flex items-center gap-1.5">
+                                <span class="w-3 h-3 rounded-[0.2rem] bg-[#E5E7EB] ring-2 ring-[#F59E0B] inline-block"></span>
+                                今日
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- 試験日（残りスペース内で中央寄せ） --}}
+                <div class="flex-1 flex justify-center">
+                    <div class="flex flex-col gap-4 w-full max-w-xs">
+                        @foreach(['toeic' => 'TOEIC', 'ielts' => 'IELTS'] as $examKey => $examLabel)
+                        @php
+                            $examDate = $user->{$examKey . '_exam_date'};
+                            $daysLeft = $examDaysLeft[$examKey];
+                            $examColor = $examKey === 'toeic' ? '#2f5fdb' : '#84CC16';
+                        @endphp
+                        <div class="rounded-[0.75rem] p-5" style="background-color: {{ $examColor }}1A;">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-label-md font-bold text-on-surface-variant">{{ $examLabel }} 試験日</h3>
+                                <span class="material-symbols-outlined text-lg" style="color: {{ $examColor }};">event</span>
+                            </div>
+                            @if($examDate)
+                                <p class="text-caption text-on-surface mb-1">📅 {{ $examDate->format('Y年n月j日') }}</p>
+                                @if($daysLeft > 0)
+                                    <p class="text-headline-md font-black" style="color: {{ $examColor }};">残り {{ $daysLeft }} 日</p>
+                                @elseif($daysLeft === 0)
+                                    <p class="text-body-md font-bold" style="color: {{ $examColor }};">本日が試験日です</p>
+                                @else
+                                    <p class="text-caption text-on-surface-variant">試験日を過ぎています</p>
+                                @endif
+                            @else
+                                <p class="text-caption text-on-surface-variant mb-1">未設定</p>
+                            @endif
+                            <form method="POST" action="{{ route('english.progress.exam-date') }}" class="mt-3 flex items-center gap-2">
+                                @csrf
+                                <input type="hidden" name="exam_type" value="{{ $examKey }}">
+                                <input type="date" name="exam_date" value="{{ $examDate?->format('Y-m-d') }}"
+                                    class="flex-1 min-w-0 text-caption border border-outline-variant rounded-[0.5rem] px-2 py-1.5 bg-surface-container-lowest focus:border-primary focus:outline-none">
+                                <button type="submit"
+                                    class="px-3 py-1.5 text-white rounded-[0.5rem] text-caption font-bold hover:opacity-90 transition-all shrink-0"
+                                    style="background-color: {{ $examColor }};">
+                                    保存
+                                </button>
+                                <button type="submit"
+                                    onclick="if (!confirm('{{ $examLabel }}の試験日を取り消しますか？')) return false; this.form.exam_date.value = '';"
+                                    onmouseover="this.style.backgroundColor = '{{ $examColor }}1A';"
+                                    onmouseout="this.style.backgroundColor = 'transparent';"
+                                    class="px-3 py-1.5 border rounded-[0.5rem] text-caption font-bold transition-all shrink-0"
+                                    style="border-color: {{ $examColor }}; color: {{ $examColor }};">
+                                    取り消し
+                                </button>
+                            </form>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {{-- 機能別進捗 --}}
         <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-6">
             <h2 class="text-headline-md font-bold text-on-surface mb-6">機能別進捗</h2>

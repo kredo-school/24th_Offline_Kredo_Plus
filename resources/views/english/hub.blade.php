@@ -60,6 +60,33 @@
                         <p class="text-caption text-on-surface-variant mt-0.5">全体進捗率</p>
                     </div>
                 </div>
+
+                <div class="grid grid-cols-2 gap-2 mt-2 pt-4 border-t border-outline-variant/30">
+                    <div class="text-center">
+                        @if($examDaysLeft['toeic'] === null)
+                            <p class="text-headline-md font-black text-on-surface">未設定</p>
+                        @elseif($examDaysLeft['toeic'] > 0)
+                            <p class="text-headline-md font-black text-on-surface">{{ $examDaysLeft['toeic'] }}<span class="text-body-md">日</span></p>
+                        @elseif($examDaysLeft['toeic'] === 0)
+                            <p class="text-headline-md font-black text-on-surface">本日</p>
+                        @else
+                            <p class="text-headline-md font-black text-on-surface">終了</p>
+                        @endif
+                        <p class="text-caption text-on-surface-variant mt-0.5">TOEICまで</p>
+                    </div>
+                    <div class="text-center border-l border-outline-variant/30">
+                        @if($examDaysLeft['ielts'] === null)
+                            <p class="text-headline-md font-black text-on-surface">未設定</p>
+                        @elseif($examDaysLeft['ielts'] > 0)
+                            <p class="text-headline-md font-black text-on-surface">{{ $examDaysLeft['ielts'] }}<span class="text-body-md">日</span></p>
+                        @elseif($examDaysLeft['ielts'] === 0)
+                            <p class="text-headline-md font-black text-on-surface">本日</p>
+                        @else
+                            <p class="text-headline-md font-black text-on-surface">終了</p>
+                        @endif
+                        <p class="text-caption text-on-surface-variant mt-0.5">IELTSまで</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

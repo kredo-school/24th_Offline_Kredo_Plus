@@ -38,6 +38,9 @@ class HubController extends Controller
         // 累計学習日数（XP獲得のあった日のみをカウント。閲覧のみでは加算されない）
         $totalStudyDays = $this->streakService->getTotalStudyDays($user);
 
-        return view('english.hub', compact('user', 'levelInfo', 'featureProgress', 'overallProgress', 'totalStudyDays'));
+        // TOEIC・IELTS試験日までの残り日数
+        $examDaysLeft = $this->progressService->getExamDaysLeft($user);
+
+        return view('english.hub', compact('user', 'levelInfo', 'featureProgress', 'overallProgress', 'totalStudyDays', 'examDaysLeft'));
     }
 }
