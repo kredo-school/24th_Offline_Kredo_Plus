@@ -70,7 +70,7 @@
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6">
     <!-- Hero -->
     <div class="relative h-52 sm:h-64 rounded-3xl overflow-hidden shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]">
-      <img src="https://images.unsplash.com/photo-1544148103-0773bf10d330?q=80&w=1600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="カリンデリアの食卓">
+      <img src="asset('images/carenderia/sisig.jpg')" class="absolute inset-0 w-full h-full object-cover" alt="カリンデリアの食卓">
       <div class="absolute inset-0 bg-gradient-to-t from-[#241E1A]/80 via-[#241E1A]/25 to-transparent"></div>
       <div class="relative h-full flex flex-col justify-end p-6 sm:p-8">
         <h1 class="font-display text-4xl sm:text-5xl font-bold text-white">Carinderia</h1>
@@ -79,9 +79,29 @@
     </div>
   </div>
 
-  <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 flex gap-6">
+  <br>
 
-    <!-- Sidebar -->
+  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-4">
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+    <a href="{{ route('carenderia.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#2f5fdb">
+      Carinderia
+    </a>
+    <a href="{{ route('restaurant-cafe.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#e05237">
+      Restaurant&Cafe
+    </a>
+    <a href="{{ route('travel.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#f5b52e">
+      Travel
+    </a>
+    <a href="{{ route('other.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#5eab35">
+      Other
+    </a>
+  </div>
+</div>
+
+<br>
+
+  <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 flex gap-6">
+<!-- Sidebar -->
     <aside id="sidebar" class="hidden md:block w-60 shrink-0">
       <div class="sticky top-24">
         <label class="relative block mb-6">
@@ -285,9 +305,6 @@
                 <p class="text-xs font-semibold truncate">${it.name}</p>
                 <p class="text-[11px] text-[#241E1A]/40">${it.time}</p>
               </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.mapQuery || it.title)}" target="_blank" onclick="event.stopPropagation()" class="shrink-0 p-1.5 rounded-full hover:bg-[#F1F0FF] text-[#241E1A]/60 hover:text-[#4736F0] transition-colors" aria-label="マップで見る">
-                <i class="fa-solid fa-globe text-[15px]"></i>
-              </a>
             </div>
             <div class="flex items-center gap-0.5 shrink-0">
               <button class="heart-btn p-1.5 rounded-full hover:bg-[#E08A5B]/10 flex items-center gap-1" aria-label="お気に入り" onclick="event.stopPropagation(); this.classList.toggle('liked'); this.querySelector('i').classList.toggle('fa-regular'); this.querySelector('i').classList.toggle('fa-solid');">
