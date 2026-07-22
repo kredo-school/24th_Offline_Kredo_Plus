@@ -87,6 +87,28 @@
     </div>
   </div>
 
+
+  <br>
+
+  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-4">
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+    <a href="{{ route('carenderia.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#2f5fdb">
+      Carinderia
+    </a>
+    <a href="{{ route('restaurant-cafe.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#e05237">
+      Restaurant&Cafe
+    </a>
+    <a href="{{ route('travel.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#f5b52e">
+      Travel
+    </a>
+    <a href="{{ route('other.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#5eab35">
+      Other
+    </a>
+  </div>
+</div>
+
+<br>
+
   <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 flex gap-6">
 
     <!-- Sidebar -->
@@ -298,9 +320,6 @@ const items = @json($posts);
                 <p class="text-xs font-semibold truncate">${it.name}</p>
                 <p class="text-[11px] text-[#241E1A]/40">${it.time}</p>
               </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.mapQuery || it.title)}" target="_blank" onclick="event.stopPropagation()" class="shrink-0 p-1.5 rounded-full hover:bg-[#F1F0FF] text-[#241E1A]/60 hover:text-[#4736F0] transition-colors" aria-label="マップで見る">
-                <i class="fa-solid fa-globe text-[15px]"></i>
-              </a>
             </div>
             <div class="flex items-center gap-0.5 shrink-0">
               <button class="heart-btn p-1.5 rounded-full hover:bg-[#E08A5B]/10 flex items-center gap-1" aria-label="お気に入り" onclick="event.stopPropagation(); this.classList.toggle('liked'); this.querySelector('i').classList.toggle('fa-regular'); this.querySelector('i').classList.toggle('fa-solid');">
