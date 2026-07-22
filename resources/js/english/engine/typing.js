@@ -21,6 +21,52 @@ function escapeHtml(char) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char] ?? char;
 }
 
+let audioCtx = null;
+
+/** Short buzzer beep played when the user mistypes a character. */
+function playMistakeSound() {
+    try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const osc  = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.value = 180;
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.15);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.15);
+    } catch {
+        // Web Audio unsupported/blocked — fail silently, the red flash still shows.
+    }
+}
+
+let mistakeFlashEl = null;
+
+/** Flashes the whole screen red for ~1s when the user mistypes a character. */
+function flashMistake() {
+    if (!mistakeFlashEl) {
+        mistakeFlashEl = document.createElement('div');
+        mistakeFlashEl.id = 'typing-mistake-flash';
+        Object.assign(mistakeFlashEl.style, {
+            position: 'fixed',
+            inset: '0',
+            backgroundColor: 'rgba(220, 38, 38, 0.35)',
+            pointerEvents: 'none',
+            zIndex: '9998',
+            opacity: '0',
+        });
+        document.body.appendChild(mistakeFlashEl);
+    }
+    // Reset without transition first so rapid repeated mistakes re-trigger the flash.
+    mistakeFlashEl.style.transition = 'none';
+    mistakeFlashEl.style.opacity = '0.6';
+    void mistakeFlashEl.offsetWidth; // force reflow
+    mistakeFlashEl.style.transition = 'opacity 1s ease-out';
+    mistakeFlashEl.style.opacity = '0';
+}
+
 /**
  * Initialise the typing engine.
  *
@@ -136,6 +182,9 @@ export function initTypingEngine({ rawText, storeUrl, resultUrl, typeQuestion = 
         if (key === targetText[cursorIdx]) {
             correctTyped++;
             cursorIdx++;
+        } else {
+            playMistakeSound();
+            flashMistake();
         }
         renderText();
 
