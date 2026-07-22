@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('intro', true)
+@if($showIntro ?? false)
+    @section('intro', true)
+@endif
 
 @section('content')
     {{-- シャワーページにアクセスする際に性別登録のmodalが表示される（未登録の場合） --}}
