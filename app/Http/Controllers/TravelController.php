@@ -95,7 +95,7 @@ class TravelController extends Controller
         $areas = Category::forSection('travel');
         $posts = $this->allSpots();
 
-        return view('information.travel.show', [
+        return view('information.travel.index', [
             'areas' => $areas,
             'currentArea' => null, // 全エリア表示中は「選択中カテゴリーなし」
             'posts' => $posts,
@@ -123,7 +123,7 @@ class TravelController extends Controller
             fn ($p) => $p['tag'] === $currentArea->name
         ));
 
-        return view('information.travel.show', [
+        return view('information.travel.index', [
             'areas' => $areas,
             'currentArea' => $currentArea,
             'posts' => $posts,
