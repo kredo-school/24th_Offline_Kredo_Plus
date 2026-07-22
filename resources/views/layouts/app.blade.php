@@ -93,6 +93,24 @@
                     </span>
                 </a>
                 <div class="flex items-center gap-5">
+                    <nav class="hidden sm:flex items-center gap-4 pr-4 mr-1 border-r border-slate-200">
+                        <a href="{{ route('shower.entry') }}" aria-label="シャワー情報"
+                            class="flex flex-col items-center gap-0.5 transition-colors {{ request()->routeIs('shower.*') ? 'text-brand-blue' : 'text-slate-400 hover:text-brand-blue' }}">
+                            <span class="material-symbols-outlined !text-2xl leading-none">shower</span>
+                            <span class="text-[11px] font-bold whitespace-nowrap">シャワー情報</span>
+                        </a>
+                        <a href="{{ route('english.hub') }}" aria-label="英語学習"
+                            class="flex flex-col items-center gap-0.5 transition-colors {{ request()->routeIs('english.*') ? 'text-orange-600' : 'text-slate-400 hover:text-orange-600' }}">
+                            <span class="material-symbols-outlined !text-2xl leading-none">menu_book</span>
+                            <span class="text-[11px] font-bold whitespace-nowrap">英語学習</span>
+                        </a>
+                        <a href="{{ route('travel.index') }}" aria-label="留学情報"
+                            class="flex flex-col items-center gap-0.5 transition-colors {{ request()->routeIs('travel.*') ? 'text-brand-green' : 'text-slate-400 hover:text-brand-green' }}">
+                            <span class="material-symbols-outlined !text-2xl leading-none">flight</span>
+                            <span class="text-[11px] font-bold whitespace-nowrap">留学情報</span>
+                        </a>
+                    </nav>
+
                     <button class="relative text-slate-500 hover:text-brand-blue transition-colors" aria-label="通知">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                             <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor"
@@ -144,6 +162,12 @@
                 class="sm:hidden border-t border-slate-100 px-6 py-3 space-y-1" style="display: none;">
                 <a href="{{ route('dashboard') }}"
                     class="block py-2 text-sm font-semibold text-slate-600 hover:text-brand-blue">{{ __('Dashboard') }}</a>
+                <a href="{{ route('shower.entry') }}"
+                    class="block py-2 text-sm font-semibold {{ request()->routeIs('shower.*') ? 'text-brand-blue' : 'text-slate-600 hover:text-brand-blue' }}">シャワー情報</a>
+                <a href="{{ route('english.hub') }}"
+                    class="block py-2 text-sm font-semibold {{ request()->routeIs('english.*') ? 'text-orange-600' : 'text-slate-600 hover:text-orange-600' }}">英語学習</a>
+                <a href="{{ route('travel.index') }}"
+                    class="block py-2 text-sm font-semibold {{ request()->routeIs('travel.*') ? 'text-brand-green' : 'text-slate-600 hover:text-brand-green' }}">留学情報</a>
                 <a href="{{ route('profile.edit') }}"
                     class="block py-2 text-sm font-semibold text-slate-600 hover:text-brand-blue">{{ __('Profile') }}</a>
                 <form method="POST" action="{{ route('logout') }}">
