@@ -1,0 +1,1 @@
+<div>temperature bar</div>
