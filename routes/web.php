@@ -157,3 +157,10 @@ Route::prefix('information')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+// Admin (管理者画面)
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard'); // admin/dashboard.blade.php を表示
+        })->name('dashboard');
+    });
