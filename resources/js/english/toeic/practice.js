@@ -34,8 +34,47 @@ export function toeicPractice(config) {
                 : 0;
         },
 
+        init() {
+            // ChromeはgetVoices()が非同期に読み込まれ、初回は空配列を返すことがあるため、
+            // 読み込み完了後に一度だけ再生し直して指定ボイスを反映させる
+            if ('speechSynthesis' in window && window.speechSynthesis.getVoices().length === 0) {
+                window.speechSynthesis.onvoiceschanged = () => this.autoPlayListening();
+            }
+            this.autoPlayListening();
+            this.$watch('currentIndex', () => this.autoPlayListening());
+        },
+
         selectOption(optionId) {
             if (!this.isAnswered) this.selectedId = optionId;
+        },
+
+        getPreferredVoice() {
+            return window.speechSynthesis.getVoices().find(voice => voice.name === 'Google US English');
+        },
+
+        speak(text) {
+            if (!('speechSynthesis' in window)) return;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            // ブラウザ既定のrate=1は速すぎるため、TOEIC本番相当（約140〜160 WPM）に近づける
+            utterance.rate = 0.85;
+            utterance.voice = this.getPreferredVoice();
+            window.speechSynthesis.speak(utterance);
+        },
+
+        // Part1（写真描写問題）は本番の音声形式に合わせ、選択肢ごとに
+        // 文字（A〜D）を読み上げてから一呼吸おいて文章を読み上げる
+        repeatAudio() {
+            if (!('speechSynthesis' in window) || !this.current?.options) return;
+            window.speechSynthesis.cancel();
+            this.current.options.forEach(option => {
+                this.speak(`${option.label}...`);
+                this.speak(option.option_text);
+            });
+        },
+
+        autoPlayListening() {
+            if (this.current?.image_url) this.repeatAudio();
         },
 
         optionClass(optionId) {
@@ -73,6 +112,7 @@ export function toeicPractice(config) {
 
         async nextQuestion() {
             if (!this.isAnswered) return;
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
             if (this.currentIndex < this.questions.length - 1) {
                 this.currentIndex++;
                 this.selectedId      = null;

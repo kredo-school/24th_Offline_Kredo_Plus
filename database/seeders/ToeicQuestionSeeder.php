@@ -15,9 +15,10 @@ class ToeicQuestionSeeder extends Seeder
     public function run(): void
     {
         // forceDelete で実データを削除し、FK cascade で選択肢も削除する
-        ToeicQuestion::withTrashed()->whereIn('part', [5, 6, 7])->forceDelete();
+        ToeicQuestion::withTrashed()->whereIn('part', [1, 5, 6, 7])->forceDelete();
         ToeicPassage::whereIn('part', [6, 7])->delete();
 
+        $this->createPart1Questions();
         $this->createPart5Questions();
         $this->createPart6Questions();
         $this->createPart7Questions();
@@ -32,6 +33,7 @@ class ToeicQuestionSeeder extends Seeder
             'part'          => $part,
             'passage_id'    => $passageId,
             'question_text' => $data['question_text'],
+            'image_url'     => $data['image_url'] ?? null,
             'explanation'   => $data['explanation'],
             'difficulty'    => $data['difficulty'],
             'xp'            => $data['xp'],
@@ -45,6 +47,85 @@ class ToeicQuestionSeeder extends Seeder
                 'option_text' => $option['text'],
                 'is_correct'  => $option['is_correct'],
             ]);
+        }
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    //  Part 1：写真描写問題（音声読み上げ機能の動作確認用に5問のみ）
+    // ──────────────────────────────────────────────────────────────
+
+    private function createPart1Questions(): void
+    {
+        $questions = [
+            [
+                'question_text' => 'Look at the picture and listen to the four statements. Select the statement that best describes what you see.',
+                'image_url'     => '/images/english/toeic/part1/office-meeting.svg',
+                'explanation'   => '写真では女性が同僚たちにプレゼンテーションを行っている様子が写っている。他の選択肢は写真に写っていない動作（握手・退勤・投影機オフ）を描写している。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'The man is shaking hands with a colleague.',    'is_correct' => false],
+                    ['label' => 'B', 'text' => 'A woman is presenting to a group of coworkers.', 'is_correct' => true],
+                    ['label' => 'C', 'text' => 'The employees are leaving the building.',        'is_correct' => false],
+                    ['label' => 'D', 'text' => 'The projector screen is turned off.',             'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Look at the picture and listen to the four statements. Select the statement that best describes what you see.',
+                'image_url'     => '/images/english/toeic/part1/kitchen-chef.svg',
+                'explanation'   => '写真ではシェフがまな板の上で野菜を刻んでいる様子が写っている。皿洗いや配膳、冷蔵庫のドアなどは写真に写っていない。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'The chef is chopping vegetables on a cutting board.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The dishes are being washed in the sink.',             'is_correct' => false],
+                    ['label' => 'C', 'text' => 'A waiter is serving food to customers.',               'is_correct' => false],
+                    ['label' => 'D', 'text' => 'The refrigerator door is wide open.',                  'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Look at the picture and listen to the four statements. Select the statement that best describes what you see.',
+                'image_url'     => '/images/english/toeic/part1/park-dog.svg',
+                'explanation'   => '写真では男性が公園で犬を散歩させている様子が写っている。ジョギングやブランコ、無人のベンチは写真の内容と一致しない。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'A woman is jogging along the beach.',   'is_correct' => false],
+                    ['label' => 'B', 'text' => 'Children are playing on the swings.',   'is_correct' => false],
+                    ['label' => 'C', 'text' => 'A man is walking his dog in the park.', 'is_correct' => true],
+                    ['label' => 'D', 'text' => 'The bench is unoccupied.',              'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Look at the picture and listen to the four statements. Select the statement that best describes what you see.',
+                'image_url'     => '/images/english/toeic/part1/street-parking.svg',
+                'explanation'   => '写真では通りの片側に車が連なって駐車されている様子が写っている。信号機の修理や横断中の歩行者、空の道路は写真に写っていない。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Cars are lined up along the side of the street.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'A traffic light is being repaired.',               'is_correct' => false],
+                    ['label' => 'C', 'text' => 'Pedestrians are crossing at the intersection.',    'is_correct' => false],
+                    ['label' => 'D', 'text' => 'The road is completely empty.',                    'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Look at the picture and listen to the four statements. Select the statement that best describes what you see.',
+                'image_url'     => '/images/english/toeic/part1/library-reading.svg',
+                'explanation'   => '写真では人々が静かに座って読書をしている様子が写っている。本の返却や受付の整理、廊下での会話は写真の内容と一致しない。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Books are being returned to the shelves.',       'is_correct' => false],
+                    ['label' => 'B', 'text' => 'A librarian is organizing the front desk.',      'is_correct' => false],
+                    ['label' => 'C', 'text' => 'People are sitting quietly and reading books.',  'is_correct' => true],
+                    ['label' => 'D', 'text' => 'Students are talking loudly in the hallway.',    'is_correct' => false],
+                ],
+            ],
+        ];
+
+        foreach ($questions as $idx => $data) {
+            $this->createQuestion($data, 1, $idx + 1);
         }
     }
 
