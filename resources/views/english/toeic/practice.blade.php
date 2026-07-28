@@ -48,28 +48,64 @@
                 </div>
             </template>
 
+            {{-- 写真描写問題の画像 + 音声リピート（Part1） --}}
+            <template x-if="current.image_url">
+                <div class="max-w-3xl mx-auto mb-6">
+                    <img :src="current.image_url" alt="TOEIC Part1 photograph"
+                         class="w-full h-64 md:h-80 object-cover rounded-[0.75rem] shadow-sm mb-3 bg-surface-container">
+                    <button
+                        @click="repeatAudio()"
+                        type="button"
+                        class="w-full py-2.5 bg-primary/10 text-primary rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-primary/20 transition-all"
+                    >
+                        <span class="material-symbols-outlined text-sm">replay</span>
+                        Repeat Audio (A–D)
+                    </button>
+                </div>
+            </template>
+
             {{-- 問題文カード --}}
             <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8 mb-6 max-w-3xl mx-auto">
                 <p class="text-body-lg text-on-surface font-semibold leading-relaxed"
                    x-text="current.question_text"></p>
             </div>
 
-            {{-- 4択ボタン --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-3xl mx-auto mb-6">
-                <template x-for="option in current.options" :key="option.id">
-                    <button
-                        @click="selectOption(option.id)"
-                        :disabled="isAnswered"
-                        :class="optionClass(option.id)"
-                        class="p-4 rounded-[0.75rem] border-2 text-left font-label-md transition-all"
-                    >
-                        <span class="font-bold uppercase mr-2" x-text="option.label + '.'"></span>
-                        <span x-text="option.option_text"></span>
-                        <span x-show="isAnswered && option.id === correctOptionId" class="ml-2">✅</span>
-                        <span x-show="isAnswered && selectedId === option.id && option.id !== correctOptionId" class="ml-2">❌</span>
-                    </button>
-                </template>
-            </div>
+            {{-- 4択ボタン（Part5〜7：本文つき） --}}
+            <template x-if="!current.image_url">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-3xl mx-auto mb-6">
+                    <template x-for="option in current.options" :key="option.id">
+                        <button
+                            @click="selectOption(option.id)"
+                            :disabled="isAnswered"
+                            :class="optionClass(option.id)"
+                            class="p-4 rounded-[0.75rem] border-2 text-left font-label-md transition-all"
+                        >
+                            <span class="font-bold uppercase mr-2" x-text="option.label + '.'"></span>
+                            <span x-text="option.option_text"></span>
+                            <span x-show="isAnswered && option.id === correctOptionId" class="ml-2">✅</span>
+                            <span x-show="isAnswered && selectedId === option.id && option.id !== correctOptionId" class="ml-2">❌</span>
+                        </button>
+                    </template>
+                </div>
+            </template>
+
+            {{-- 4択ボタン（Part1：本番同様、文字は表示せず音声のみで判断） --}}
+            <template x-if="current.image_url">
+                <div class="grid grid-cols-4 gap-3 max-w-3xl mx-auto mb-6">
+                    <template x-for="option in current.options" :key="option.id">
+                        <button
+                            @click="selectOption(option.id)"
+                            :disabled="isAnswered"
+                            :class="optionClass(option.id)"
+                            class="p-6 rounded-[0.75rem] border-2 text-center font-label-md transition-all"
+                        >
+                            <span class="block text-headline-md font-bold uppercase" x-text="option.label"></span>
+                            <span x-show="isAnswered && option.id === correctOptionId" class="block mt-1">✅</span>
+                            <span x-show="isAnswered && selectedId === option.id && option.id !== correctOptionId" class="block mt-1">❌</span>
+                        </button>
+                    </template>
+                </div>
+            </template>
 
             {{-- 回答ボタン / フィードバック --}}
             <div class="max-w-3xl mx-auto">

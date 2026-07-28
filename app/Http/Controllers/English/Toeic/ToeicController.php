@@ -157,7 +157,10 @@ class ToeicController extends Controller
 
             $user = Auth::user();
 
-            if ($part === 5) {
+            if ($part === 1) {
+                // Part1は登録済みの問題（現在5問）を毎回全問シャッフルして出題する
+                $questions = $pool->shuffle()->values();
+            } elseif ($part === 5) {
                 // 未回答の問題を優先して出題し、全問回答済みなら完全ランダムに戻す
                 $answeredIds = $this->toeicAnsweredQuestionIds($user, $part);
                 $unanswered  = $pool->whereNotIn('id', $answeredIds)->values();
@@ -199,6 +202,7 @@ class ToeicController extends Controller
             return [
                 'id'            => $q->id,
                 'question_text' => $q->question_text,
+                'image_url'     => $q->image_url,
                 'explanation'   => $q->explanation ?? '',
                 'passage'       => $q->passage ? [
                     'id'        => $q->passage->id,

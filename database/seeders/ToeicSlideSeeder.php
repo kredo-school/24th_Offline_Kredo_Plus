@@ -12,11 +12,38 @@ class ToeicSlideSeeder extends Seeder
 
     public function run(): void
     {
-        ToeicSlide::whereIn('part', [5, 6, 7])->delete();
+        ToeicSlide::whereIn('part', [1, 5, 6, 7])->delete();
 
+        $this->createPart1Slides();
         $this->createPart5Slides();
         $this->createPart6Slides();
         $this->createPart7Slides();
+    }
+
+    private function createPart1Slides(): void
+    {
+        $slides = [
+            [
+                'step_number' => 1,
+                'slide_type'  => 'explanation',
+                'title'       => 'Part 1 とは？',
+                'content'     => '<p class="mb-4">Part 1は<strong>Photographs（写真描写問題）</strong>です。</p>
+<ul class="space-y-2">
+<li>問題数: <strong>6問</strong>（本番）</li>
+<li>形式: 1枚の写真について読み上げられる4つの英文（A〜D）を聞き、写真を最も正確に描写しているものを選ぶ</li>
+<li>選択肢は<strong>音声のみ</strong>で読み上げられ、印刷はされない</li>
+<li>目標解答時間: <strong>1問あたり約10秒</strong></li>
+</ul>
+<div class="mt-4 p-4 bg-primary/10 rounded-xl">
+<p class="font-semibold text-primary">💡 攻略ポイント</p>
+<p>再生ボタンで英文を聞きながら、写真の「人物の動作」「物の位置」に注目しよう。迷ったら候補を2つに絞って消去法で選ぶ。</p>
+</div>',
+            ],
+        ];
+
+        foreach ($slides as $slide) {
+            ToeicSlide::create(array_merge($slide, ['part' => 1, 'sort_order' => $slide['step_number']]));
+        }
     }
 
     private function createPart5Slides(): void
