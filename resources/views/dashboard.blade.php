@@ -117,6 +117,18 @@
                 IT × 英語で人生の選択肢を広げる
             </span>
 
+            <!-- Admin Dashboard Link (管理者用ボタン) -->
+            <div class="fade-up mb-4 flex justify-center">
+                <a href="{{ route('admin.dashboard') }}" 
+                   class="inline-flex items-center gap-2 bg-slate-900 text-white text-xs font-semibold px-4 py-2 rounded-full hover:bg-slate-800 transition-all shadow-md group">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>管理者ダッシュボードへ</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-0.5 transition-transform">
+                        <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                </a>
+            </div>
+            
             <h1 class="fade-up fade-up-1 mt-8 font-display font-extrabold text-6xl sm:text-7xl tracking-tight flex items-center justify-center gap-3 flex-wrap">
                 <span><span class="wordmark-kredo">Kredo</span> <span class="wordmark-plus">Plus</span></span>
                 <svg width="64" height="54" viewBox="0 0 48 40" fill="none" class="inline-block -mt-2">
