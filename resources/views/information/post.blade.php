@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Restaurant & Cafe 投稿 — Kredo Plus')
+@section('title', 'Information 投稿 — Kredo Plus')
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/information.css') }}">
@@ -14,10 +14,13 @@
         <div class="rc-bar">
             <div class="rc-bar-inner">
                 <div class="rc-bar-left">
-                    <a href="{{ route('restaurant-cafe.index') }}" class="rc-back-link" aria-label="戻る">
+                    <a href="{{ route('restaurant-cafe.index') }}" class="rc-back-link">
                         <i class="fa-solid fa-arrow-left"></i>
                     </a>
-                    <span class="rc-page-title">Restaurant & Cafe 投稿</span>
+
+                    <span class="rc-page-title">
+                        Information 投稿
+                    </span>
                 </div>
             </div>
         </div>
@@ -27,6 +30,7 @@
             @if ($errors->any())
                 <div class="rc-error-box">
                     <p>入力内容をご確認ください</p>
+
                     <ul>
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -35,30 +39,180 @@
                 </div>
             @endif
 
-            <form action="{{ route('restaurant-cafe.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('information.store') }}" method="POST" enctype="multipart/form-data">
+
                 @csrf
 
                 <!-- Image -->
                 <div>
+
                     <label for="imageInput" class="rc-image-box">
+
                         <img id="imagePreview"
                             src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop"
-                            alt="写真プレビュー">
+                            alt="preview">
 
                         <div class="rc-image-overlay">
                             <span class="rc-image-overlay-inner">
                                 <i class="fa-solid fa-camera"></i>
-                                <span>写真を選択</span>
+                                <span>写真を追加</span>
                             </span>
                         </div>
+
                     </label>
 
-                    <input type="file" name="image" id="imageInput" accept="image/*" class="rc-hidden-file">
+                    <input type="file" id="imageInput" name="image" accept="image/*" class="rc-hidden-file">
+
                 </div>
 
+                <!-- Category -->
+                <div>
 
-            @endsection
+                    <label class="rc-field-label">
+                        CATEGORY
+                    </label>
 
-            @push('scripts')
-                <script src="{{ asset('js/information.js') }}"></script>
-            @endpush
+                    <select name="category_id" id="categorySelect" class="rc-field-input">
+
+                        <option value="">
+                            選択してください
+                        </option>
+
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}" data-name="{{ strtolower($category->name) }}"
+                                {{ old('category_id') == $category->id ? 'selected' : '' }}>
+
+                                {{ $category->name }}
+
+                            </option>
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+                <!-- Title -->
+                <div>
+
+                    <label class="rc-field-label">
+
+                        TITLE
+
+                    </label>
+
+                    <input type="text" name="title" class="rc-field-input" value="{{ old('title') }}"
+                        placeholder="店名・タイトル">
+
+                </div>
+
+                <!-- Description -->
+                <div>
+
+                    <label class="rc-field-label">
+
+                        DESCRIPTION
+
+                    </label>
+
+                    <textarea name="description" rows="4" class="rc-field-input" placeholder="説明を入力してください">{{ old('description') }}</textarea>
+
+                </div>
+                <!-- Price -->
+                <div>
+                    <label class="rc-field-label">
+                        PRICE (PHP)
+                    </label>
+
+                    <input type="number" name="price" min="0" step="1" class="rc-field-input"
+                        value="{{ old('price') }}" placeholder="例：450">
+                </div>
+
+                <!-- Location -->
+                <div>
+
+                    <label class="rc-field-label">
+                        LOCATION
+                    </label>
+
+                    <!-- Carenderiaのみ表示 -->
+                    <div id="carenderiaLocation" style="display:none;">
+                        <button type="button" class="rc-save-btn"
+                            style="background:#f8fafc;color:#4736F0;border:1px solid #4736F0;">
+
+                            <i class="fa-solid fa-store"></i>
+                            <span>店舗を選択</span>
+
+                        </button>
+                    </div>
+
+                    <!-- Restaurant / Travel / Other -->
+                    <div id="mapLocation">
+
+                        <button type="button" class="rc-save-btn"
+                            style="background:#f8fafc;color:#4736F0;border:1px solid #4736F0;">
+
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span>場所を追加</span>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <!-- Action -->
+                <div class="flex gap-3">
+
+                    <button type="submit" class="rc-save-btn" style="background:#4736F0;color:#fff;">
+
+                        <span>SAVE</span>
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </main>
+
+        <!-- Footer -->
+
+        <nav class="rc-footer-nav">
+
+            <a href="{{ route('restaurant-cafe.index') }}" class="rc-nav-item">
+
+                <i class="fa-solid fa-house" style="font-size:20px;"></i>
+
+                <span>Home</span>
+
+            </a>
+
+            <a href="{{ route('information.create') }}" class="rc-nav-item active">
+
+                <div class="rc-nav-post-icon">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                </div>
+
+                <span>Post</span>
+
+            </a>
+
+            <a href="#" class="rc-nav-item">
+
+                <i class="fa-solid fa-user" style="font-size:20px;"></i>
+
+                <span>Profile</span>
+
+            </a>
+
+        </nav>
+
+    </div>
+
+@endsection
+
+@push('scripts')
+    <script src="{{ asset('js/information.js') }}"></script>
+@endpush

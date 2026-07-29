@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Information;
 
+use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -95,7 +96,7 @@ class TravelController extends Controller
         $areas = Category::forSection('travel');
         $posts = $this->allSpots();
 
-        return view('information.travel.index', [
+        return view('information.travel.show', [
             'areas' => $areas,
             'currentArea' => null, // 全エリア表示中は「選択中カテゴリーなし」
             'posts' => $posts,
@@ -123,7 +124,7 @@ class TravelController extends Controller
             fn ($p) => $p['tag'] === $currentArea->name
         ));
 
-        return view('information.travel.index', [
+        return view('information.travel.show', [
             'areas' => $areas,
             'currentArea' => $currentArea,
             'posts' => $posts,
