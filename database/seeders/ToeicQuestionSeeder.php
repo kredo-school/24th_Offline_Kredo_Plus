@@ -59,7 +59,7 @@ class ToeicQuestionSeeder extends Seeder
         $questions = [
             [
                 'question_text' => 'Look at the picture and listen to the four statements. Select the statement that best describes what you see.',
-                'image_url'     => '/images/english/toeic/part1/office-meeting.svg',
+                'image_url'     => '/images/english/toeic/part1/office-meeting.jpg',
                 'explanation'   => '写真では女性が同僚たちにプレゼンテーションを行っている様子が写っている。他の選択肢は写真に写っていない動作（握手・退勤・投影機オフ）を描写している。',
                 'difficulty'    => 'easy',
                 'xp'            => 30,
@@ -72,7 +72,7 @@ class ToeicQuestionSeeder extends Seeder
             ],
             [
                 'question_text' => 'Look at the picture and listen to the four statements. Select the statement that best describes what you see.',
-                'image_url'     => '/images/english/toeic/part1/kitchen-chef.svg',
+                'image_url'     => '/images/english/toeic/part1/kitchen-chef.jpg',
                 'explanation'   => '写真ではシェフがまな板の上で野菜を刻んでいる様子が写っている。皿洗いや配膳、冷蔵庫のドアなどは写真に写っていない。',
                 'difficulty'    => 'easy',
                 'xp'            => 30,
@@ -85,7 +85,7 @@ class ToeicQuestionSeeder extends Seeder
             ],
             [
                 'question_text' => 'Look at the picture and listen to the four statements. Select the statement that best describes what you see.',
-                'image_url'     => '/images/english/toeic/part1/park-dog.svg',
+                'image_url'     => '/images/english/toeic/part1/park-dog.jpg',
                 'explanation'   => '写真では男性が公園で犬を散歩させている様子が写っている。ジョギングやブランコ、無人のベンチは写真の内容と一致しない。',
                 'difficulty'    => 'easy',
                 'xp'            => 30,
@@ -98,7 +98,7 @@ class ToeicQuestionSeeder extends Seeder
             ],
             [
                 'question_text' => 'Look at the picture and listen to the four statements. Select the statement that best describes what you see.',
-                'image_url'     => '/images/english/toeic/part1/street-parking.svg',
+                'image_url'     => '/images/english/toeic/part1/street-parking.jpg',
                 'explanation'   => '写真では通りの片側に車が連なって駐車されている様子が写っている。信号機の修理や横断中の歩行者、空の道路は写真に写っていない。',
                 'difficulty'    => 'easy',
                 'xp'            => 30,
@@ -111,7 +111,7 @@ class ToeicQuestionSeeder extends Seeder
             ],
             [
                 'question_text' => 'Look at the picture and listen to the four statements. Select the statement that best describes what you see.',
-                'image_url'     => '/images/english/toeic/part1/library-reading.svg',
+                'image_url'     => '/images/english/toeic/part1/library-reading.jpg',
                 'explanation'   => '写真では人々が静かに座って読書をしている様子が写っている。本の返却や受付の整理、廊下での会話は写真の内容と一致しない。',
                 'difficulty'    => 'easy',
                 'xp'            => 30,

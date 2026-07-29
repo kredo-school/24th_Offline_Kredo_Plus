@@ -62,15 +62,23 @@ export function toeicPractice(config) {
             window.speechSynthesis.speak(utterance);
         },
 
+        stopAudio() {
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        },
+
         // Part1（写真描写問題）は本番の音声形式に合わせ、選択肢ごとに
         // 文字（A〜D）を読み上げてから一呼吸おいて文章を読み上げる
         repeatAudio() {
             if (!('speechSynthesis' in window) || !this.current?.options) return;
-            window.speechSynthesis.cancel();
-            this.current.options.forEach(option => {
-                this.speak(`${option.label}...`);
-                this.speak(option.option_text);
-            });
+            this.stopAudio();
+            // Chromeはcancel()の直後にspeak()すると正しく停止・再生できないことがあるため、
+            // 少し間を空けてから読み上げを開始する
+            setTimeout(() => {
+                this.current.options.forEach(option => {
+                    this.speak(`${option.label}...`);
+                    this.speak(option.option_text);
+                });
+            }, 50);
         },
 
         autoPlayListening() {
@@ -112,7 +120,7 @@ export function toeicPractice(config) {
 
         async nextQuestion() {
             if (!this.isAnswered) return;
-            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            this.stopAudio();
             if (this.currentIndex < this.questions.length - 1) {
                 this.currentIndex++;
                 this.selectedId      = null;
