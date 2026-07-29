@@ -141,3 +141,4 @@
 @push('scripts')
     <script src="{{ asset('js/information.js') }}"></script>
 @endpush
+{{-- テストだよ --}}
