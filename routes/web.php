@@ -12,13 +12,14 @@ use App\Http\Controllers\English\Toeic\ToeicController;
 use App\Http\Controllers\English\Typing\TypingController;
 use App\Http\Controllers\English\Vocabulary\VocabularyController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CarenderiaController;
-use App\Http\Controllers\TravelController;
-use App\Http\Controllers\OtherController;
-use App\Http\Controllers\RestaurantCafeController;
 use App\Http\Controllers\ShowerController;
 use App\Http\Controllers\GenderController;
 use App\Http\Middleware\EnsureGenderIsSet;
+use App\Http\Controllers\Information\InformationController;
+use App\Http\Controllers\Information\CarenderiaController;
+use App\Http\Controllers\Information\TravelController;
+use App\Http\Controllers\Information\OtherController;
+use App\Http\Controllers\Information\RestaurantCafeController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -149,6 +150,11 @@ Route::middleware('auth')->group(function () {
 
 // information
 Route::prefix('information')->group(function () {
+    // 投稿画面
+    Route::get('/post', [InformationController::class, 'create'])->name('information.create');
+    // 投稿保存
+    Route::post('/', [InformationController::class, 'store'])->name('information.store');
+    // 各カテゴリ一覧
     Route::get('/carenderia', [CarenderiaController::class, 'index'])->name('carenderia.index');
     Route::get('/restaurant-cafe', [RestaurantCafeController::class, 'index'])->name('restaurant-cafe.index');
     Route::get('/travel', [TravelController::class, 'index'])->name('travel.index');

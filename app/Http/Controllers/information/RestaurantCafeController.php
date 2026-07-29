@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Information;
 
+use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
@@ -27,7 +28,7 @@ class RestaurantCafeController extends Controller
 
     public function index()
     {
-     // ---- Restaurant ----
+        // ---- Restaurant ----
         $posts = Post::with(['category', 'user'])
             ->latest()
             ->get();
@@ -45,8 +46,7 @@ class RestaurantCafeController extends Controller
     }
 
     /**
-     * 編集フォーム表示
-     * ルートモデルバインディングで posts.id から Post を自動取得
+     * 編集フォーム表示 * ルートモデルバインディングで posts.id から Post を自動取得
      */
     public function edit(Post $post)
     {

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Information;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class CarenderiaController extends Controller
@@ -28,7 +29,7 @@ class CarenderiaController extends Controller
                 'name' => 'Mateo L.',
                 'time' => '2時間前',
                 'likes' => 34,
-                'img' => asset('images/carenderia/sisig.jpg'),
+                'img' => 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=800&auto=format&fit=crop',
                 'avatar' => 'https://i.pravatar.cc/64?img=12',
                 'mapQuery' => 'Orange UCMA',
                 'comments' => [
@@ -44,7 +45,7 @@ class CarenderiaController extends Controller
                 'name' => 'Sophia C.',
                 'time' => '5時間前',
                 'likes' => 51,
-                'img' => asset('images/carenderia/sisig2.jpg'),
+                'img' => 'https://images.unsplash.com/photo-1512058564366-18510be2db19?q=80&w=800&auto=format&fit=crop',
                 'avatar' => 'https://i.pravatar.cc/64?img=32',
                 'mapQuery' => 'Orange UCMA',
                 'comments' => [],
@@ -57,7 +58,7 @@ class CarenderiaController extends Controller
                 'name' => 'Juan R.',
                 'time' => '1日前',
                 'likes' => 12,
-                'img' => asset('images/carenderia/sisig3.jpg'),
+                'img' => 'https://images.unsplash.com/photo-1562967914-608f82629710?q=80&w=800&auto=format&fit=crop',
                 'avatar' => 'https://i.pravatar.cc/64?img=51',
                 'mapQuery' => 'Orange UCMA',
                 'comments' => [],
