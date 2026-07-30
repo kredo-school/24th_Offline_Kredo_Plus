@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\English;
 
 use App\Models\English\IeltsMaterial;
 use App\Models\English\IeltsTopic;
@@ -15,7 +15,7 @@ use Illuminate\Database\Seeder;
  *
  * 質問(questions)はBand共通、回答(answers)はBandごとに個別の文章を使用し、
  * 同じ Part/Band の Slides で学習した語彙・表現を実際に使う構成になっている。
- * 実際のコンテンツは database/seeders/data/ielts_materials.php で管理する。
+ * 実際のコンテンツは database/seeders/English/data/ielts_materials.php で管理する。
  *
  * updateOrCreate を使用しているため、内容を更新して再実行しても安全（重複しない）。
  */
@@ -38,7 +38,7 @@ class IeltsMaterialSeeder extends Seeder
     public function run(): void
     {
         $topics = IeltsTopic::all()->keyBy('slug');
-        $data   = require database_path('seeders/data/ielts_materials.php');
+        $data   = require database_path('seeders/English/data/ielts_materials.php');
 
         foreach ($data as $part => $topicData) {
             foreach ($topicData as $topicSlug => $d) {
