@@ -34,88 +34,13 @@
             }
             #auth-card { transition: opacity .3s ease, transform .3s ease; }
 
-            .pulse { stroke-dasharray: 40 460; animation: pulseTravel 5s linear infinite; }
-            .pulse.p2 { animation-delay: 1.6s; animation-duration: 6s; }
-            .pulse.p3 { animation-delay: 3.2s; animation-duration: 7s; }
-            @keyframes pulseTravel {
-                from { stroke-dashoffset: 500; }
-                to   { stroke-dashoffset: 0; }
-            }
-            .node { animation: nodeBlink 3.2s ease-in-out infinite; }
-            .node.n2 { animation-delay: .8s; }
-            .node.n3 { animation-delay: 1.6s; }
-            .node.n4 { animation-delay: 2.4s; }
-            @keyframes nodeBlink {
-                0%, 100% { opacity: .35; }
-                50% { opacity: 1; }
-            }
-            .float-code { animation: floatY 7s ease-in-out infinite; }
-            .float-code.f2 { animation-delay: 1.5s; animation-duration: 9s; }
-            .float-code.f3 { animation-delay: 3s; animation-duration: 8s; }
-            .float-code.f4 { animation-delay: .8s; animation-duration: 10s; }
-            @keyframes floatY {
-                0%, 100% { transform: translateY(0); }
-                50% { transform: translateY(-16px); }
-            }
-            .blink { animation: blink 1.1s steps(1) infinite; }
-            @keyframes blink { 50% { opacity: 0; } }
-
             @media (prefers-reduced-motion: reduce) {
                 .fade-up { animation: none; }
-                [class*="pulse"], [class*="node"], [class*="float-code"], .blink { animation: none !important; }
                 * { transition: none !important; }
             }
         </style>
     </head>
-    <body class="font-sans bg-gradient-to-b from-sky-100 via-sky-50 to-white text-slate-800 antialiased min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-
-        <!-- Background: IT motif + soft color glows -->
-        <div class="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
-            <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-[720px] h-[420px] rounded-full bg-sky-200/40 blur-3xl"></div>
-            <div class="absolute top-20 -left-24 w-[340px] h-[340px] rounded-full bg-amber-100/50 blur-3xl"></div>
-            <div class="absolute bottom-10 -right-24 w-[340px] h-[340px] rounded-full bg-emerald-100/50 blur-3xl"></div>
-            <div class="absolute bottom-0 left-1/4 w-[300px] h-[240px] rounded-full bg-rose-100/40 blur-3xl"></div>
-
-            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none">
-                <g stroke="#93c5fd" stroke-width="1.5" opacity="0.4">
-                    <path d="M-20 140 H120 L180 200 V360 H100 L60 400 V620"/>
-                    <path d="M-20 300 H80 L140 360 H240 V520 L200 600"/>
-                    <path d="M1220 120 H1080 L1020 190 V340 H1100 L1150 400 V640"/>
-                    <path d="M1220 320 H1120 L1060 380 H960 V560"/>
-                </g>
-                <g stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.8">
-                    <path class="pulse" stroke="#2f5fdb" d="M-20 140 H120 L180 200 V360 H100 L60 400 V620"/>
-                    <path class="pulse p2" stroke="#e05237" d="M1220 120 H1080 L1020 190 V340 H1100 L1150 400 V640"/>
-                    <path class="pulse p3" stroke="#5eab35" d="M-20 300 H80 L140 360 H240 V520 L200 600"/>
-                </g>
-                <g>
-                    <circle class="node"    cx="180" cy="200" r="5" fill="#2f5fdb"/>
-                    <circle class="node n2" cx="100" cy="360" r="5" fill="#5eab35"/>
-                    <circle class="node n3" cx="1020" cy="190" r="5" fill="#e05237"/>
-                    <circle class="node n4" cx="1100" cy="340" r="5" fill="#f5b52e"/>
-                </g>
-                <g stroke="#60a5fa" fill="none" opacity="0.5">
-                    <circle class="node n3" cx="180" cy="200" r="11"/>
-                    <circle class="node"    cx="1020" cy="190" r="11"/>
-                </g>
-                <g class="float-code">
-                    <text x="90" y="130" font-size="26" fill="#60a5fa" opacity="0.5" font-family="ui-monospace, Menlo, monospace" font-weight="700">&lt;/&gt;</text>
-                </g>
-                <g class="float-code f2">
-                    <text x="1060" y="110" font-size="24" fill="#e05237" opacity="0.4" font-family="ui-monospace, Menlo, monospace" font-weight="700">{ }</text>
-                </g>
-                <g class="float-code f3">
-                    <text x="200" y="640" font-size="15" fill="#5eab35" opacity="0.45" font-family="ui-monospace, Menlo, monospace" letter-spacing="3">101010</text>
-                </g>
-                <g class="float-code f4">
-                    <text x="950" y="640" font-size="15" fill="#93c5fd" opacity="0.5" font-family="ui-monospace, Menlo, monospace" letter-spacing="3">010011</text>
-                </g>
-                <g class="float-code f2">
-                    <text x="1060" y="600" font-size="18" fill="#60a5fa" opacity="0.5" font-family="ui-monospace, Menlo, monospace" font-weight="700">&gt;_</text>
-                    <rect class="blink" x="1087" y="586" width="9" height="16" fill="#f5b52e" opacity="0.7"/>
-                </g>
-            </svg>
-        </div>
+    <body class="font-sans bg-gradient-to-b from-sky-50 via-white to-white text-slate-800 antialiased min-h-screen flex items-center justify-center p-4">
 
         <!-- Main -->
         <main class="w-full max-w-[440px] z-10 fade-up">
