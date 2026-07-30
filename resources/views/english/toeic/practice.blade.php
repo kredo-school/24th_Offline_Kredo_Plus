@@ -52,7 +52,7 @@
             <template x-if="current.image_url">
                 <div class="max-w-3xl mx-auto mb-6">
                     <img :src="current.image_url" alt="TOEIC Part1 photograph"
-                         class="w-full h-64 md:h-80 object-cover rounded-[0.75rem] shadow-sm mb-3 bg-surface-container">
+                         class="w-full max-h-[420px] object-contain rounded-[0.75rem] shadow-sm mb-3 bg-surface-container">
                     <button
                         @click="repeatAudio()"
                         type="button"
@@ -128,6 +128,20 @@
                             <span x-text="isCorrect ? '✅ 正解！' : '❌ 不正解'"></span>
                         </p>
                         <p class="text-body-md text-on-surface" x-text="explanation"></p>
+
+                        {{-- Part1：回答後に音声の文章（A〜D）を表示し、リピート再生と合わせて振り返れるようにする --}}
+                        <template x-if="current.image_url">
+                            <div class="mt-3 pt-3 border-t border-outline-variant/40 space-y-1.5">
+                                <template x-for="option in current.options" :key="option.id">
+                                    <p class="text-body-md" :class="option.id === correctOptionId ? 'text-green-700 font-semibold' : 'text-on-surface-variant'">
+                                        <span class="font-bold uppercase mr-1" x-text="option.label + '.'"></span>
+                                        <span x-text="option.option_text"></span>
+                                        <span x-show="option.id === correctOptionId">✅</span>
+                                        <span x-show="selectedId === option.id && option.id !== correctOptionId">❌</span>
+                                    </p>
+                                </template>
+                            </div>
+                        </template>
                     </div>
                     <button @click="nextQuestion()"
                             :disabled="isLoading"
