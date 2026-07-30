@@ -90,7 +90,7 @@
       Carinderia
     </a>
     <a href="{{ route('restaurant-cafe.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#e05237">
-      Restaurant&Cafe
+      Restaurant&Cafe e
     </a>
     <a href="{{ route('travel.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#f5b52e">
       Travel
