@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\English;
 
 use App\Models\English\ToeicPassage;
 use App\Models\English\ToeicQuestion;
