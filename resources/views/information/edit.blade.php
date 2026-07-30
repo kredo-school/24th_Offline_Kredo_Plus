@@ -137,6 +137,7 @@
     </div>
 
 @endsection
+{{-- テスト２だよ --}}
 
 @push('scripts')
     <script src="{{ asset('js/information.js') }}"></script>
