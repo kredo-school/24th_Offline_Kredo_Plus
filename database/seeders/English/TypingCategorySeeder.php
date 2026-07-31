@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\English;
 
 use App\Models\English\TypingCategory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;

@@ -3,6 +3,15 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Database\Seeders\English\IeltsMaterialSeeder;
+use Database\Seeders\English\IeltsSlideSeeder;
+use Database\Seeders\English\IeltsTopicSeeder;
+use Database\Seeders\English\LearningContentSeeder;
+use Database\Seeders\English\ToeicQuestionSeeder;
+use Database\Seeders\English\ToeicSlideSeeder;
+use Database\Seeders\English\TypingCategorySeeder;
+use Database\Seeders\English\TypingMaterialSeeder;
+use Database\Seeders\English\VocabularyWordSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
