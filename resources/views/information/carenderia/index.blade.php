@@ -44,8 +44,7 @@
   #detailModal { transition: opacity .2s ease; }
   #detailModal .modal-panel { transition: transform .28s cubic-bezier(.2,.8,.2,1), opacity .28s ease; }
 
-  #commentList::-webkit-scrollbar { width: 6px; }
-  #commentList::-webkit-scrollbar-thumb { background: #E3E0FF; border-radius: 6px; }
+  .avatar-initial { display:flex; align-items:center; justify-content:center; background:#E3E0FF; color:#4736F0; font-weight:600; }
 </style>
 
 <div class="text-[#241E1A] pb-24">
@@ -53,24 +52,10 @@
 
 <div class="min-h-screen flex flex-col">
 
-  {{-- デモ用: ログイン中のユーザーを切り替えるセレクター(本来はログイン情報から取得。Laravel連携後は削除予定) --}}
-  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-3 flex justify-end">
-    <label class="flex items-center gap-2 text-xs text-[#241E1A]/50 bg-[#241E1A]/[0.03] px-3 py-1.5 rounded-full">
-      <i class="fa-regular fa-user text-[12px]"></i>
-      <span class="font-mono">Login as</span>
-      <select id="currentUserSelect" class="bg-transparent font-semibold text-[#241E1A] outline-none cursor-pointer">
-        <option value="Guest">Guest(誰でもない人)</option>
-        <option value="Mateo L.">Mateo L.</option>
-        <option value="Sophia C.">Sophia C.</option>
-        <option value="Juan R.">Juan R.</option>
-      </select>
-    </label>
-  </div>
-
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6">
     <!-- Hero -->
     <div class="relative h-52 sm:h-64 rounded-3xl overflow-hidden shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]">
-      <img src="asset('images/carenderia/sisig.jpg')" class="absolute inset-0 w-full h-full object-cover" alt="カリンデリアの食卓">
+      <img src="{{ asset('images/carenderia/sisig.jpg') }}" class="absolute inset-0 w-full h-full object-cover" alt="カリンデリアの食卓">
       <div class="absolute inset-0 bg-gradient-to-t from-[#241E1A]/80 via-[#241E1A]/25 to-transparent"></div>
       <div class="relative h-full flex flex-col justify-end p-6 sm:p-8">
         <h1 class="font-display text-4xl sm:text-5xl font-bold text-white">Carinderia</h1>
@@ -106,7 +91,7 @@
       <div class="sticky top-24">
         <label class="relative block mb-6">
           <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-[#241E1A]/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="searchInput" placeholder="タイトル・コメントを検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
+          <input type="text" id="searchInput" placeholder="タイトルを検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
         </label>
 
         <p class="font-mono text-[11px] tracking-[0.18em] text-[#241E1A]/40 mb-3 pl-1">STORE</p>
@@ -119,16 +104,9 @@
     <!-- Main -->
     <main class="flex-1 min-w-0">
 
-      <!-- Toolbar: 件数表示 + 並び替え -->
+      <!-- Toolbar: 件数表示 -->
       <div class="flex items-center justify-between mb-4">
         <p id="resultCount" class="text-sm text-[#241E1A]/50"></p>
-        <label class="relative">
-          <select id="sortSelect" class="appearance-none bg-[#FFFFFF] border border-[#241E1A]/10 rounded-lg pl-3 pr-8 py-2 text-sm font-medium text-[#241E1A] focus:outline-none focus:ring-2 focus:ring-[#A7A0FF] cursor-pointer">
-            <option value="new">Newest</option>
-            <option value="likes">Most Liked</option>
-          </select>
-          <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[#241E1A]/40 text-[11px] pointer-events-none"></i>
-        </label>
       </div>
 
       <!-- Grid -->
@@ -152,13 +130,13 @@
       <button onclick="closeModal()" class="md:hidden absolute top-3 right-3 bg-[#241E1A]/50 hover:bg-[#241E1A]/70 text-white w-7 h-7 rounded-full flex items-center justify-center" aria-label="閉じる">✕</button>
     </div>
 
-    <!-- 右: ヘッダー + コメント + アクション -->
+    <!-- 右: ヘッダー + 説明 + アクション -->
     <div class="w-full md:w-1/2 flex flex-col min-h-0">
 
       <!-- ヘッダー: 投稿者 + 編集/削除ボタン -->
       <div class="flex items-center justify-between gap-2 px-4 py-3 border-b border-[#241E1A]/10 shrink-0">
         <div class="flex items-center gap-2 min-w-0">
-          <img id="modalAvatar" src="" class="w-8 h-8 rounded-full object-cover shrink-0" alt="">
+          <div id="modalAvatar" class="avatar-initial w-8 h-8 rounded-full shrink-0 text-xs"></div>
           <div class="leading-tight min-w-0">
             <p id="modalName" class="text-sm font-semibold truncate"></p>
             <p id="modalTime" class="text-xs text-[#241E1A]/40"></p>
@@ -190,7 +168,7 @@
         <div id="commentList" class="space-y-3"></div>
       </div>
 
-      <!-- アクションバー: ♡ 💬 保存(左) / 🌐マップ(右) -->
+      <!-- アクションバー: ♡ 💬(左) / 🌐マップ(右) -->
       <div class="px-4 pt-2 pb-1 border-t border-[#241E1A]/10 shrink-0">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
@@ -222,16 +200,49 @@
   </div>
 </div>
 
+<!-- 削除用の隠しフォーム(投稿ごとにactionだけJSで差し替える) -->
+<form id="deleteForm" method="POST" class="hidden">
+  @csrf
+  @method('DELETE')
+</form>
+
 <script>
-  // ---- テストデータ（自由に増減・編集OK） ----
+  // ---- カテゴリごとの色(Category::color()と同じ値をサーバーから受け取る) ----
+  const categoryColors = @json($categoryColors);
+  function colorOf(tag){ return categoryColors[tag] || '#2f5fdb'; }
+
+  // ---- 実データ(Post::whereHas('category', section=carinderia)->latest()->get()) ----
   const items = @json($posts);
+
+  // ---- 現在ログイン中のユーザー(Auth::id()。未ログインならnull) ----
+  const currentUserId = {{ auth()->id() ?? 'null' }};
+  const routeBase = @json(url('information/carenderia'));
+  const postsRouteBase = @json(url('information/posts'));
+  const loginUrl = @json(route('login'));
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
   const PAGE_SIZE = 21;
   let currentPage = 1;
-  let sortMode = 'new'; // 'new' | 'likes'
   let searchQuery = '';
+  let currentModalItem = null;
 
-  function money(v){ return v + ' PHP'; }
+  function money(v){ return v === null || v === undefined ? '' : Math.trunc(v) + ' PHP'; }
+
+  function initials(name){
+    return (name || '?').trim().charAt(0).toUpperCase();
+  }
+
+  function timeAgo(dateStr){
+    if (!dateStr) return '';
+    const diffSec = Math.max(0, Math.floor((Date.now() - new Date(dateStr)) / 1000));
+    if (diffSec < 60) return 'たった今';
+    const diffMin = Math.floor(diffSec / 60);
+    if (diffMin < 60) return diffMin + '分前';
+    const diffHour = Math.floor(diffMin / 60);
+    if (diffHour < 24) return diffHour + '時間前';
+    const diffDay = Math.floor(diffHour / 24);
+    return diffDay + '日前';
+  }
 
   // ---- 検索語をHTML内で安全に太字ハイライトする ----
   function escapeRegExp(str){
@@ -243,24 +254,106 @@
     return text.replace(re, '<strong class="bg-[#F1F0FF] text-[#4736F0] rounded px-0.5">$1</strong>');
   }
 
-  // ---- タイトル or コメント内容に検索語が含まれるかで絞り込み ----
-  function getFilteredItems(){
-    let list = items;
+  // ---- いいねのトグル(サーバーに保存。未ログインならログイン画面へ) ----
+  function toggleLike(it){
+    if (currentUserId === null) { window.location.href = loginUrl; return; }
 
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      list = list.filter(it => {
-        const titleMatch = it.title.toLowerCase().includes(q);
-        const commentMatch = (it.comments || []).some(c => c.text.toLowerCase().includes(q));
-        return titleMatch || commentMatch;
+    fetch(`${postsRouteBase}/${it.id}/like`, {
+      method: 'POST',
+      headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+    })
+      .then(r => r.json())
+      .then(data => {
+        it.liked_by_me = data.liked;
+        it.likes_count = data.likes_count;
+        updateLikeUI(it);
+      })
+      .catch(() => alert('通信エラーが発生しました。もう一度お試しください。'));
+  }
+
+  // ---- いいねボタンの見た目を、カード側・モーダル側の両方で更新 ----
+  function updateLikeUI(it){
+    const cardBtn = document.querySelector(`.food-card[data-post-id="${it.id}"] .card-like-btn`);
+    if (cardBtn) {
+      const icon = cardBtn.querySelector('i');
+      icon.classList.toggle('fa-solid', !!it.liked_by_me);
+      icon.classList.toggle('fa-regular', !it.liked_by_me);
+      cardBtn.querySelector('.card-like-count').textContent = it.likes_count;
+    }
+    if (currentModalItem && currentModalItem.id === it.id) {
+      const modalIcon = document.querySelector('#modalLikeBtn i');
+      modalIcon.className = (it.liked_by_me ? 'fa-solid' : 'fa-regular') + ' fa-heart text-[22px]' + (it.liked_by_me ? ' text-[#CE7043]' : '');
+      document.getElementById('modalLikeBtn').classList.toggle('liked', !!it.liked_by_me);
+      document.getElementById('modalLikeCount').textContent = `${it.likes_count}件のいいね`;
+    }
+  }
+
+  // ---- お気に入り(保存)のトグル(サーバーに保存。未ログインならログイン画面へ) ----
+  function toggleBookmark(it){
+    if (currentUserId === null) { window.location.href = loginUrl; return; }
+
+    fetch(`${postsRouteBase}/${it.id}/bookmark`, {
+      method: 'POST',
+      headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+    })
+      .then(r => r.json())
+      .then(data => {
+        it.bookmarked_by_me = data.bookmarked;
+        updateBookmarkUI(it);
+      })
+      .catch(() => alert('通信エラーが発生しました。もう一度お試しください。'));
+  }
+
+  // ---- 保存ボタンの見た目を、カード側・モーダル側の両方で更新 ----
+  function updateBookmarkUI(it){
+    const cardBtn = document.querySelector(`.food-card[data-post-id="${it.id}"] .card-save-btn`);
+    if (cardBtn) {
+      const icon = cardBtn.querySelector('i');
+      icon.classList.toggle('fa-solid', !!it.bookmarked_by_me);
+      icon.classList.toggle('fa-regular', !it.bookmarked_by_me);
+    }
+    if (currentModalItem && currentModalItem.id === it.id) {
+      const modalIcon = document.querySelector('#modalSaveBtn i');
+      modalIcon.classList.toggle('fa-solid', !!it.bookmarked_by_me);
+      modalIcon.classList.toggle('fa-regular', !it.bookmarked_by_me);
+      document.getElementById('modalSaveBtn').classList.toggle('saved', !!it.bookmarked_by_me);
+    }
+  }
+
+  // ---- コメント一覧の描画 ----
+  function renderComments(it){
+    const list = document.getElementById('commentList');
+    list.innerHTML = '';
+    const comments = it.comments || [];
+
+    if (comments.length === 0) {
+      list.innerHTML = `<p class="text-xs text-[#241E1A]/30 italic">まだコメントはありません</p>`;
+    } else {
+      comments.forEach(c => {
+        const name = c.user ? c.user.name : (c.user_name || 'ゲスト');
+        const row = document.createElement('div');
+        row.className = 'flex items-start gap-2';
+        row.innerHTML = `
+          <div class="w-6 h-6 rounded-full bg-[#E3E0FF] flex items-center justify-center text-[10px] font-semibold text-[#4736F0] shrink-0">${initials(name)}</div>
+          <div class="text-xs leading-snug">
+            <span class="font-semibold">${name}</span>
+            <span class="text-[#241E1A]/70"> ${c.body}</span>
+          </div>
+        `;
+        list.appendChild(row);
       });
     }
+    list.scrollTop = list.scrollHeight;
+  }
 
-    if (sortMode === 'likes') {
-      // いいねの多い順(元の配列は壊さないようコピーしてから並び替え)
-      return [...list].sort((a, b) => b.likes - a.likes);
+  // ---- タイトルに検索語が含まれるかで絞り込み ----
+  function getFilteredItems(){
+    let list = items;
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(it => (it.title || '').toLowerCase().includes(q));
     }
-    return list; // 新着順 = 配列に入っている順番のまま
+    return list; // 新着順 = Controllerの latest() 順のまま
   }
 
   function renderGrid(page){
@@ -273,51 +366,47 @@
     const pageItems = sorted.slice(start, start + PAGE_SIZE);
 
     pageItems.forEach((it, idx) => {
-      // 検索中、タイトルに一致しなくてもコメントに一致していれば、そのコメントを抜粋して表示する
-      const q = searchQuery.toLowerCase();
-      const matchedComment = searchQuery
-        ? (it.comments || []).find(c => c.text.toLowerCase().includes(q))
-        : null;
-
       const titleHtml = searchQuery ? highlightMatch(it.title, searchQuery) : it.title;
+      const tag = it.category ? it.category.name : '';
+      const userName = it.user ? it.user.name : '不明なユーザー';
 
       const card = document.createElement('article');
       card.className = 'food-card rise-in bg-[#FFFFFF] rounded-2xl overflow-hidden shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)] cursor-pointer';
       card.style.animationDelay = (idx * 0.05) + 's';
+      card.dataset.postId = it.id;
       card.innerHTML = `
         <div class="relative h-40">
-          <img src="${it.img}" class="w-full h-full object-cover" alt="${it.title}" loading="lazy">
-          <span class="absolute top-2.5 left-2.5 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full" style="background:#2f5fdb">${it.tag}</span>
+          <img src="${it.image_url}" class="w-full h-full object-cover" alt="${it.title}" loading="lazy">
+          <span class="absolute top-2.5 left-2.5 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full" style="background:#2f5fdb">${tag}</span>
           <span class="absolute bottom-2.5 right-2.5 bg-[#FFFFFF]/95 font-mono font-semibold text-xs px-2.5 py-1 rounded-lg">${money(it.price)}</span>
         </div>
         <div class="p-4">
           <h3 class="font-display font-semibold text-base mb-1 truncate">${titleHtml}</h3>
-          <p class="text-sm text-[#241E1A]/55 line-clamp-2 mb-3">${it.desc}</p>
-          ${matchedComment ? `
-          <p class="text-xs text-[#241E1A]/50 mb-3 flex items-start gap-1.5 bg-[#241E1A]/[0.03] rounded-lg px-2.5 py-2">
-            <i class="fa-regular fa-comment mt-0.5 shrink-0"></i>
-            <span class="line-clamp-2">${highlightMatch(matchedComment.text, searchQuery)}</span>
-          </p>` : ''}
+          <p class="text-sm text-[#241E1A]/55 line-clamp-2 mb-3">${it.description ?? ''}</p>
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-1.5 min-w-0">
-              <img src="${it.avatar}" class="w-6 h-6 rounded-full object-cover shrink-0" alt="${it.name}">
+              <div class="avatar-initial w-6 h-6 rounded-full shrink-0 text-[10px]">${initials(userName)}</div>
               <div class="leading-tight min-w-0">
-                <p class="text-xs font-semibold truncate">${it.name}</p>
-                <p class="text-[11px] text-[#241E1A]/40">${it.time}</p>
+                <p class="text-xs font-semibold truncate">${userName}</p>
+                <p class="text-[11px] text-[#241E1A]/40">${timeAgo(it.created_at)}</p>
               </div>
             </div>
             <div class="flex items-center gap-0.5 shrink-0">
-              <button class="heart-btn p-1.5 rounded-full hover:bg-[#E08A5B]/10 flex items-center gap-1" aria-label="お気に入り" onclick="event.stopPropagation(); this.classList.toggle('liked'); this.querySelector('i').classList.toggle('fa-regular'); this.querySelector('i').classList.toggle('fa-solid');">
-                <i class="fa-regular fa-heart text-[17px] text-[#CE7043]"></i>
-                <span class="text-xs text-[#241E1A]/40 font-mono">${it.likes}</span>
+              <button class="card-like-btn heart-btn p-1.5 rounded-full hover:bg-[#E08A5B]/10 flex items-center gap-1" aria-label="お気に入り">
+                <i class="${it.liked_by_me ? 'fa-solid' : 'fa-regular'} fa-heart text-[17px] text-[#CE7043]"></i>
+                <span class="card-like-count text-xs text-[#241E1A]/40 font-mono">${it.likes_count ?? 0}</span>
               </button>
-              <button class="save-btn p-1.5 rounded-full hover:bg-[#F1F0FF] text-[#241E1A]/60 hover:text-[#4736F0] transition-colors" aria-label="保存" onclick="event.stopPropagation(); this.classList.toggle('saved'); this.querySelector('i').classList.toggle('fa-regular'); this.querySelector('i').classList.toggle('fa-solid');">
-                <i class="fa-regular fa-bookmark text-[15px]"></i>
+              <button class="card-save-btn save-btn p-1.5 rounded-full hover:bg-[#F1F0FF] text-[#241E1A]/60 hover:text-[#4736F0] transition-colors" aria-label="保存">
+                <i class="${it.bookmarked_by_me ? 'fa-solid' : 'fa-regular'} fa-bookmark text-[15px]"></i>
               </button>
             </div>
           </div>
         </div>
       `;
+      const likeBtn = card.querySelector('.card-like-btn');
+      likeBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleLike(it); });
+      const saveBtn = card.querySelector('.card-save-btn');
+      saveBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleBookmark(it); });
       card.addEventListener('click', () => openModal(it));
       grid.appendChild(card);
     });
@@ -345,98 +434,52 @@
     wrap.appendChild(next);
   }
 
-  // ---- デモ用: 現在ログインしている(ふりをする)ユーザー ----
-  let currentUser = 'Guest';
-  const userSelect = document.getElementById('currentUserSelect');
-  userSelect.addEventListener('change', (e) => {
-    currentUser = e.target.value;
-  });
-
-  // ---- コメント描画(投稿に紐づくcomments配列を表示、増えたら欄内スクロール) ----
-  function renderComments(it){
-    if (!it.comments) it.comments = [];
-    const list = document.getElementById('commentList');
-    list.innerHTML = '';
-
-    if (it.comments.length === 0) {
-      list.innerHTML = `<p class="text-xs text-[#241E1A]/30 italic">まだコメントはありません</p>`;
-    } else {
-      it.comments.forEach(c => {
-        const row = document.createElement('div');
-        row.className = 'flex items-start gap-2';
-        row.innerHTML = `
-          <div class="w-6 h-6 rounded-full bg-[#E3E0FF] flex items-center justify-center text-[10px] font-semibold text-[#4736F0] shrink-0">${c.name[0]}</div>
-          <div class="text-xs leading-snug">
-            <span class="font-semibold">${c.name}</span>
-            <span class="text-[#241E1A]/70"> ${c.text}</span>
-          </div>
-        `;
-        list.appendChild(row);
-      });
-    }
-    list.scrollTop = list.scrollHeight; // 最新コメントが見えるよう自動スクロール
-  }
-
   function openModal(it){
-    document.getElementById('modalImg').src = it.img;
-    document.getElementById('modalTag').textContent = it.tag;
+    currentModalItem = it;
+    const tag = it.category ? it.category.name : '';
+    const userName = it.user ? it.user.name : '不明なユーザー';
+
+    document.getElementById('modalImg').src = it.image_url;
+    document.getElementById('modalTag').textContent = tag;
     document.getElementById('modalPrice').textContent = money(it.price);
     document.getElementById('modalTitle').textContent = it.title;
-    document.getElementById('modalDesc').textContent = it.desc;
-    document.getElementById('modalAvatar').src = it.avatar;
-    document.getElementById('modalName').textContent = it.name;
-    document.getElementById('modalTime').textContent = it.time;
-    document.getElementById('modalLikeCount').textContent = `${it.likes}件のいいね`;
+    document.getElementById('modalDesc').textContent = it.description ?? '';
+    document.getElementById('modalAvatar').textContent = initials(userName);
+    document.getElementById('modalName').textContent = userName;
+    document.getElementById('modalTime').textContent = timeAgo(it.created_at);
 
-    // マップリンク(とりあえず "Orange UCMA" を仮の検索クエリとして設定)
+    // いいねボタンの初期状態
+    const modalIcon = document.querySelector('#modalLikeBtn i');
+    modalIcon.className = (it.liked_by_me ? 'fa-solid' : 'fa-regular') + ' fa-heart text-[22px]' + (it.liked_by_me ? ' text-[#CE7043]' : '');
+    document.getElementById('modalLikeBtn').classList.toggle('liked', !!it.liked_by_me);
+    document.getElementById('modalLikeCount').textContent = `${it.likes_count ?? 0}件のいいね`;
+
+    // 保存(お気に入り)ボタンの初期状態
+    const modalSaveIcon = document.querySelector('#modalSaveBtn i');
+    modalSaveIcon.classList.toggle('fa-solid', !!it.bookmarked_by_me);
+    modalSaveIcon.classList.toggle('fa-regular', !it.bookmarked_by_me);
+    document.getElementById('modalSaveBtn').classList.toggle('saved', !!it.bookmarked_by_me);
+
+    renderComments(it);
+
     document.getElementById('modalMapLink').href =
-      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.mapQuery || it.title)}`;
+      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.map_query || it.title)}`;
 
-    // いいね・保存ボタン(見た目だけのトグル)
-    const likeIcon = document.querySelector('#modalLikeBtn i');
-    likeIcon.className = 'fa-regular fa-heart text-[22px]';
-    document.getElementById('modalLikeBtn').onclick = function(){
-      this.classList.toggle('liked');
-      likeIcon.classList.toggle('fa-regular');
-      likeIcon.classList.toggle('fa-solid');
-      likeIcon.classList.toggle('text-[#CE7043]');
-    };
-    const saveIcon = document.querySelector('#modalSaveBtn i');
-    saveIcon.className = 'fa-regular fa-bookmark text-[22px]';
-    document.getElementById('modalSaveBtn').onclick = function(){
-      this.classList.toggle('saved');
-      saveIcon.classList.toggle('fa-regular');
-      saveIcon.classList.toggle('fa-solid');
-      saveIcon.classList.toggle('text-[#4736F0]');
-    };
-
-    // 投稿主(it.name)と今のログインユーザーが一致する時だけ、編集・削除ボタンを表示
-    const isOwner = (it.name === currentUser);
+    // 投稿主(user_id)と今ログインしているユーザー(Auth::id())が一致する時だけ、編集・削除ボタンを表示
+    const isOwner = currentUserId !== null && it.user_id === currentUserId;
     const ownerActions = document.getElementById('ownerActions');
     ownerActions.classList.toggle('hidden', !isOwner);
     ownerActions.classList.toggle('flex', isOwner);
 
     document.getElementById('modalEditBtn').onclick = () => {
-      alert(`「${it.title}」の編集画面へ移動します(edit-post.htmlに接続予定)`);
+      window.location.href = `${routeBase}/${it.id}/edit`;
     };
     document.getElementById('modalDeleteBtn').onclick = () => {
       if (confirm(`「${it.title}」を削除しますか？この操作は取り消せません。`)) {
-        alert('削除しました(デモ)');
-        closeModal();
+        const form = document.getElementById('deleteForm');
+        form.action = `${routeBase}/${it.id}`;
+        form.submit();
       }
-    };
-
-    // コメント表示 + 投稿フォームの紐付け
-    renderComments(it);
-    document.getElementById('commentForm').onsubmit = (e) => {
-      e.preventDefault();
-      const input = document.getElementById('commentInput');
-      const text = input.value.trim();
-      if (!text) return;
-      if (!it.comments) it.comments = [];
-      it.comments.push({ name: currentUser === 'Guest' ? 'ゲスト' : currentUser, text });
-      input.value = '';
-      renderComments(it);
     };
 
     const modal = document.getElementById('detailModal');
@@ -459,14 +502,52 @@
     if(e.target.id === 'detailModal') closeModal();
   });
 
-  document.getElementById('sortSelect').addEventListener('change', (e) => {
-    sortMode = e.target.value;
-    currentPage = 1;
-    renderGrid(currentPage);
-    renderPagination();
+  // モーダルのいいねボタン(開いている投稿=currentModalItemに対して動作)
+  document.getElementById('modalLikeBtn').addEventListener('click', () => {
+    if (currentModalItem) toggleLike(currentModalItem);
   });
 
-  // 検索ボックス:タイトル or コメント内容に一致したものだけ表示
+  // モーダルの保存ボタン
+  document.getElementById('modalSaveBtn').addEventListener('click', () => {
+    if (currentModalItem) toggleBookmark(currentModalItem);
+  });
+
+  // コメント投稿フォーム(サーバーに保存し、成功したら一覧に追加)
+  document.getElementById('commentForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!currentModalItem) return;
+    if (currentUserId === null) { window.location.href = loginUrl; return; }
+
+    const input = document.getElementById('commentInput');
+    const body = input.value.trim();
+    if (!body) return;
+
+    fetch(`${postsRouteBase}/${currentModalItem.id}/comments`, {
+      method: 'POST',
+      headers: {
+        'X-CSRF-TOKEN': csrfToken,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ body }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (!currentModalItem.comments) currentModalItem.comments = [];
+        currentModalItem.comments.push({
+          id: data.comment.id,
+          body: data.comment.body,
+          user: { name: data.comment.user_name },
+          created_at: data.comment.created_at,
+        });
+        currentModalItem.comments_count = data.comments_count;
+        input.value = '';
+        renderComments(currentModalItem);
+      })
+      .catch(() => alert('コメントの送信に失敗しました。もう一度お試しください。'));
+  });
+
+  // 検索ボックス:タイトルに一致したものだけ表示
   document.getElementById('searchInput').addEventListener('input', (e) => {
     searchQuery = e.target.value.trim();
     currentPage = 1;
@@ -505,7 +586,7 @@
     <span class="text-[10px] font-bold tracking-wide" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Home</span>
   </a>
 
-  <a href="#" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
+  <a href="{{ route('information.create') }}" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
     <div class="w-14 h-14 -mt-8 rounded-full flex items-center justify-center shadow-[0_12px_32px_-12px_rgba(30,58,138,0.35)] border-4 border-white"
          style="background: linear-gradient(135deg, #2f5fdb 0%, #e05237 33%, #f5b52e 66%, #5eab35 100%);">
       <i class="fa-solid fa-plus text-white text-[20px]"></i>

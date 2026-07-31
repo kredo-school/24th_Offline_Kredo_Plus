@@ -3,73 +3,110 @@
 namespace App\Http\Controllers\Information;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class OtherController extends Controller
 {
     /**
-     * Other一覧ページ(Laundry / Money Exchange / SIM Card / Hospital / Others)
-     *
-     * 将来DB接続する時:
-     *   $posts = Post::whereIn('category', ['Laundry','Money Exchange','SIM Card','Hospital','Others'])
-     *                ->latest()->get();
+     * カテゴリーのsection名(categoriesテーブルのsectionカラムと一致させる)
      */
-    public function index(Request $request)
+    private const SECTION = 'other';
+
+    /**
+     * Other一覧ページ(Laundry / Money Exchange / SIM Card / Hospital / Others)
+     * RestaurantCafeControllerと同じ形にDB化。
+     */
+    public function index()
     {
-        $posts = [
-            // ---- Laundry ----
-            [
-                'tag' => 'Laundry', 'title' => 'Quick Dry Laundry Shop',
-                'desc' => 'Fast wash & dry service, ready in 3 hours. Includes folding.',
-                'name' => 'Rica M.', 'time' => '1時間前', 'likes' => 18,
-                'img' => 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?q=80&w=800&auto=format&fit=crop',
-                'avatar' => 'https://i.pravatar.cc/64?img=45', 'mapQuery' => 'Orange UCMA', 'comments' => [],
-            ],
-            [
-                'tag' => 'Laundry', 'title' => 'Coin Laundry near Dorm',
-                'desc' => 'Self-service coin laundry, open 24/7 for busy students.',
-                'name' => 'Josh T.', 'time' => '4時間前', 'likes' => 9,
-                'img' => 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?q=80&w=800&auto=format&fit=crop',
-                'avatar' => 'https://i.pravatar.cc/64?img=33', 'mapQuery' => 'Orange UCMA', 'comments' => [],
-            ],
+        $posts = Post::whereHas('category', fn ($q) => $q->where('section', self::SECTION))
+            ->withCount(['likes', 'comments'])
+            ->with([
+                'category',
+                'user:id,name',
+                // 今ログインしている本人のいいね/保存だけ読み込む(post->liked_by_me等の判定に使う。N+1防止)
+                'likes' => fn ($q) => $q->where('user_id', auth()->id()),
+                'bookmarks' => fn ($q) => $q->where('user_id', auth()->id()),
+                'comments' => fn ($q) => $q->with('user:id,name')->oldest(),
+            ])
+            ->latest()
+            ->get();
 
-            // ---- Money Exchange ----
-            [
-                'tag' => 'Money Exchange', 'title' => 'Best Rate USD to PHP',
-                'desc' => 'Trusted money changer with daily updated rates, no hidden fees.',
-                'name' => 'Carlo D.', 'time' => '30分前', 'likes' => 14,
-                'img' => 'https://images.unsplash.com/photo-1580519542036-c47de6196ba5?q=80&w=800&auto=format&fit=crop',
-                'avatar' => 'https://i.pravatar.cc/64?img=14', 'mapQuery' => 'Orange UCMA', 'comments' => [],
-            ],
+        // カテゴリー名 => 表示色(Category::color()と同じロジック)。JSのバッジ色に使う。
+        $categoryColors = Category::forSection(self::SECTION)->mapWithKeys(fn ($c) => [$c->name => $c->color()]);
 
-            // ---- SIM Card ----
-            [
-                'tag' => 'SIM Card', 'title' => 'Prepaid SIM Starter Pack',
-                'desc' => 'Includes free load and data bundle for new students.',
-                'name' => 'Miguel A.', 'time' => '2時間前', 'likes' => 20,
-                'img' => 'https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?q=80&w=800&auto=format&fit=crop',
-                'avatar' => 'https://i.pravatar.cc/64?img=39', 'mapQuery' => 'Orange UCMA', 'comments' => [],
-            ],
+        return view('information.other.index', compact('posts', 'categoryColors'));
+    }
 
-            // ---- Hospital ----
-            [
-                'tag' => 'Hospital', 'title' => 'Student Health Clinic',
-                'desc' => 'Walk-in clinic with English-speaking staff near campus.',
-                'name' => 'Dr. Reyes', 'time' => '5時間前', 'likes' => 11,
-                'img' => 'https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?q=80&w=800&auto=format&fit=crop',
-                'avatar' => 'https://i.pravatar.cc/64?img=60', 'mapQuery' => 'Orange UCMA', 'comments' => [],
-            ],
+    /**
+     * 投稿詳細ページ(独立ページ)
+     */
+    public function show(Post $post)
+    {
+        $post->load(['user', 'category']);
 
-            // ---- Others ----
-            [
-                'tag' => 'Others', 'title' => 'Budget Smartphones & Repairs',
-                'desc' => 'Affordable phones, screen repairs, and accessories for students.',
-                'name' => 'Kevin R.', 'time' => '2時間前', 'likes' => 16,
-                'img' => 'https://images.unsplash.com/photo-1556656793-08538906a9f8?q=80&w=800&auto=format&fit=crop',
-                'avatar' => 'https://i.pravatar.cc/64?img=17', 'mapQuery' => 'Orange UCMA', 'comments' => [],
-            ],
-        ];
+        return view('information.other.show', compact('post'));
+    }
 
-        return view('information.other.index', compact('posts'));
+    /**
+     * 編集フォーム表示
+     */
+    public function edit(Post $post)
+    {
+        abort_if($post->user_id !== auth()->id(), 403, 'この投稿を編集する権限がありません。');
+
+        $categories = Category::forSection(self::SECTION);
+        $section = self::SECTION;
+
+        return view('information.edit', compact('post', 'categories', 'section'));
+    }
+
+    /**
+     * 更新処理
+     */
+    public function update(Request $request, Post $post)
+    {
+        abort_if($post->user_id !== auth()->id(), 403, 'この投稿を編集する権限がありません。');
+
+        $validated = $request->validate([
+            'category_id' => ['required', 'exists:categories,id'],
+            'title'       => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:2000'],
+            'price'       => ['nullable', 'numeric', 'min:0'],
+            'image'       => ['nullable', 'image', 'max:5120'],
+        ]);
+
+        if ($request->hasFile('image')) {
+            if ($post->image) {
+                Storage::disk('public')->delete($post->image);
+            }
+            $validated['image'] = $request->file('image')->store('posts', 'public');
+        }
+
+        $post->update($validated);
+
+        return redirect()
+            ->route('other.index')
+            ->with('status', '投稿を更新しました。');
+    }
+
+    /**
+     * 削除処理
+     */
+    public function destroy(Post $post)
+    {
+        abort_if($post->user_id !== auth()->id(), 403, 'この投稿を削除する権限がありません。');
+
+        if ($post->image) {
+            Storage::disk('public')->delete($post->image);
+        }
+
+        $post->delete();
+
+        return redirect()
+            ->route('other.index')
+            ->with('status', '投稿を削除しました。');
     }
 }

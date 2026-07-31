@@ -33,10 +33,21 @@ class InformationController extends Controller
 
         $validated['user_id'] = auth()->id();
 
-        Post::create($validated);
+        $post = Post::create($validated);
+
+        // 投稿したカテゴリーのsectionに応じて、正しい一覧ページへ戻す。
+        // ⚠️ categoriesテーブルの値は 'carinderia'(業種として正しい綴り)だが、
+        // ルート名/Controller名は 'carenderia'(既存コードの綴り)のため対応表が必要。
+        $sectionToRoute = [
+            'carinderia'      => 'carenderia.index',
+            'restaurant-cafe' => 'restaurant-cafe.index',
+            'travel'          => 'travel.index',
+            'other'           => 'other.index',
+        ];
+        $routeName = $sectionToRoute[$post->category->section ?? ''] ?? 'restaurant-cafe.index';
 
         return redirect()
-            ->route('restaurant-cafe.index')
+            ->route($routeName)
             ->with('status', '投稿しました。');
     }
 }

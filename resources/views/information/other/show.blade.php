@@ -55,14 +55,11 @@
 
 <div class="min-h-screen flex flex-col pb-24">
 
-  {{-- ヘッダーは共通ファイルからインクルード --}}
-  {{-- @include('layouts.header') --}}
-
   <!-- Top bar -->
   <header class="sticky top-0 z-30 bg-paper/90 backdrop-blur border-b border-ink/10">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <a href="{{ route('restaurant-cafe.index') }}" class="p-2 -ml-2 rounded-lg hover:bg-ink/5 transition-colors" aria-label="戻る">
+        <a href="{{ route('other.index') }}" class="p-2 -ml-2 rounded-lg hover:bg-ink/5 transition-colors" aria-label="戻る">
           <i class="fa-solid fa-arrow-left text-[18px]"></i>
         </a>
         <span class="font-display font-bold text-xl tracking-tight text-brand-600">投稿詳細</span>
@@ -71,12 +68,12 @@
       @if ($post->user_id === auth()->id() || (bool) auth()->user()?->is_admin)
         <div class="flex items-center gap-1">
           @if ($post->user_id === auth()->id())
-            <a href="{{ route('restaurant-cafe.edit', $post) }}"
+            <a href="{{ route('other.edit', $post) }}"
                class="w-9 h-9 flex items-center justify-center rounded-full text-brand-600 hover:bg-brand-50 transition-colors" aria-label="編集">
               <i class="fa-solid fa-edit text-[16px]"></i>
             </a>
           @endif
-          <form id="deleteForm" action="{{ route('restaurant-cafe.destroy', $post) }}" method="POST">
+          <form id="deleteForm" action="{{ route('other.destroy', $post) }}" method="POST">
             @csrf
             @method('DELETE')
             <button type="button" id="deleteBtn"
@@ -101,12 +98,6 @@
           <span class="absolute top-3 left-3 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full"
                 style="background:{{ $post->category->color() }}">
             {{ $post->category->name }}
-          </span>
-        @endif
-
-        @if (!is_null($post->price))
-          <span class="absolute bottom-3 right-3 bg-paper/95 font-mono font-semibold text-sm px-2.5 py-1 rounded-lg">
-            {{ number_format($post->price) }} PHP
           </span>
         @endif
       </div>
@@ -152,7 +143,7 @@
 
 <!-- footer nav -->
 <nav class="fixed bottom-0 w-full z-50 bg-white shadow-[0_-4px_20px_-4px_rgba(30,58,138,0.15)] flex justify-around items-center h-20 px-4 pb-2 border-t border-slate-100">
-  <a href="{{ route('restaurant-cafe.index') }}" class="flex flex-col items-center justify-center gap-1 text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
+  <a href="{{ route('other.index') }}" class="flex flex-col items-center justify-center gap-1 text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
     <i class="fa-solid fa-house text-[20px]"></i>
     <span class="text-[10px] font-bold tracking-wide" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Home</span>
   </a>

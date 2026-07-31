@@ -1,6 +1,17 @@
 @extends('layouts.app')
 
-@section('title', 'Restaurant & Cafe 編集 — Kredo Plus')
+@php
+    // セクションごとの表示名・戻り先ラベル。新しいセクションを追加する時はここに1行足すだけでOK。
+    $sectionLabels = [
+        'restaurant-cafe' => 'Restaurant & Cafe',
+        'carenderia'      => 'Carinderia',
+        'travel'          => 'Travel',
+        'other'           => 'Other',
+    ];
+    $sectionLabel = $sectionLabels[$section] ?? ucfirst($section);
+@endphp
+
+@section('title', $sectionLabel . ' 編集 — Kredo Plus')
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/information.css') }}">
@@ -13,13 +24,13 @@
         <div class="rc-bar">
             <div class="rc-bar-inner">
                 <div class="rc-bar-left">
-                    <a href="{{ route('restaurant-cafe.index') }}" class="rc-back-link" aria-label="戻る">
+                    <a href="{{ route($section . '.index') }}" class="rc-back-link" aria-label="戻る">
                         <i class="fa-solid fa-arrow-left"></i>
                     </a>
-                    <span class="rc-page-title">Restaurant & Cafe 編集</span>
+                    <span class="rc-page-title">{{ $sectionLabel }} 編集</span>
                 </div>
 
-                <form id="deleteForm" action="{{ route('restaurant-cafe.destroy', $post) }}" method="POST">
+                <form id="deleteForm" action="{{ route($section . '.destroy', $post) }}" method="POST">
                     @csrf
                     @method('DELETE')
                     <button type="button" id="deleteBtn" class="rc-delete-btn" aria-label="削除">
@@ -49,7 +60,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('restaurant-cafe.update', $post) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route($section . '.update', $post) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -118,12 +129,12 @@
         </main>
 
         <nav class="rc-footer-nav">
-            <a href="{{ route('restaurant-cafe.index') }}" class="rc-nav-item active">
+            <a href="{{ route($section . '.index') }}" class="rc-nav-item active">
                 <i class="fa-solid fa-house" style="font-size:20px;"></i>
                 <span>Home</span>
             </a>
 
-            <a href="#" class="rc-nav-item">
+            <a href="{{ route('information.create') }}" class="rc-nav-item">
                 <div class="rc-nav-post-icon"><i class="fa-solid fa-plus"></i></div>
                 <span>Post</span>
             </a>
@@ -137,9 +148,7 @@
     </div>
 
 @endsection
-{{-- テスト２だよ --}}
 
 @push('scripts')
     <script src="{{ asset('js/information.js') }}"></script>
 @endpush
-{{-- テストだよ --}}
