@@ -15,10 +15,13 @@ class ToeicQuestionSeeder extends Seeder
     public function run(): void
     {
         // forceDelete で実データを削除し、FK cascade で選択肢も削除する
-        ToeicQuestion::withTrashed()->whereIn('part', [1, 5, 6, 7])->forceDelete();
-        ToeicPassage::whereIn('part', [6, 7])->delete();
+        ToeicQuestion::withTrashed()->whereIn('part', [1, 2, 3, 4, 5, 6, 7])->forceDelete();
+        ToeicPassage::whereIn('part', [3, 4, 6, 7])->delete();
 
         $this->createPart1Questions();
+        $this->createPart2Questions();
+        $this->createPart3Questions();
+        $this->createPart4Questions();
         $this->createPart5Questions();
         $this->createPart6Questions();
         $this->createPart7Questions();
@@ -321,6 +324,1010 @@ class ToeicQuestionSeeder extends Seeder
 
         foreach ($questions as $idx => $data) {
             $this->createQuestion($data, 1, $idx + 1);
+        }
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    //  Part 2：質問応答問題（20問プールからランダム5問出題）
+    //  質問文（question_text）・選択肢（option_text）とも画面には表示せず、
+    //  音声読み上げのみで出題する（本番同様の形式）。
+    // ──────────────────────────────────────────────────────────────
+
+    private function createPart2Questions(): void
+    {
+        $questions = [
+            [
+                'question_text' => 'When does the marketing meeting start?',
+                'explanation'   => '時刻を尋ねるWhen疑問文には具体的な時刻で答える(A)が正解。(B)は"market"の音の類似による誤答、(C)は場所を答えており質問の意図とずれる。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'It starts at two o\'clock.',        'is_correct' => true],
+                    ['label' => 'B', 'text' => 'I marketed the product last year.', 'is_correct' => false],
+                    ['label' => 'C', 'text' => 'The meeting room is on the third floor.', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Could you send me the quarterly report by tomorrow?',
+                'explanation'   => '依頼表現"Could you...?"には引き受ける返答が自然。(A)が快諾する適切な応答。(B)は"report"に反応しただけで質問に答えていない。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Sure, I\'ll email it this afternoon.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The report was very informative.',     'is_correct' => false],
+                    ['label' => 'C', 'text' => 'I sent the invitation last week.',     'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Who is going to lead the new project?',
+                'explanation'   => '人物を尋ねるWho疑問文には人名や役職で答える。(B)が適切。(A)は日時、(C)は"led/lead"の音の類似による誤答。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'It\'s scheduled for next Monday.', 'is_correct' => false],
+                    ['label' => 'B', 'text' => 'Sarah will be in charge of it.',   'is_correct' => true],
+                    ['label' => 'C', 'text' => 'I led a great discussion.',        'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Isn\'t the new office building supposed to open next month?',
+                'explanation'   => '否定疑問文でも基本はYes/Noで答える(内容が真ならYes)。(A)は開業予定を確認しつつ補足情報を加えた自然な応答。',
+                'difficulty'    => 'medium',
+                'xp'            => 40,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Yes, but it might be delayed a bit.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The building has ten floors.',        'is_correct' => false],
+                    ['label' => 'C', 'text' => 'I opened the window earlier.',        'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Where should I put these boxes of supplies?',
+                'explanation'   => '場所を尋ねるWhereには具体的な場所で答える(A)が正解。(B)は"supplies"の音に反応しただけの誤答。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'You can leave them by the storage room.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'I supplied the data yesterday.',          'is_correct' => false],
+                    ['label' => 'C', 'text' => 'They arrived this morning.',              'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'How long will the training session take?',
+                'explanation'   => 'How longは所要時間を問う。時間の長さで答える(A)が正解。',
+                'difficulty'    => 'medium',
+                'xp'            => 40,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'It usually lasts about two hours.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'I trained for the marathon.',       'is_correct' => false],
+                    ['label' => 'C', 'text' => 'The trainer arrived early.',        'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Would you like to join us for lunch, or stay in the office?',
+                'explanation'   => '選択疑問文(or)には二択のどちらかを選んで答える。(A)は「残る」ことを選んだ自然な応答。',
+                'difficulty'    => 'medium',
+                'xp'            => 40,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'I\'d rather stay and finish this report.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'Lunch was delicious.',                     'is_correct' => false],
+                    ['label' => 'C', 'text' => 'The office is on the fifth floor.',        'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'The printer on the second floor isn\'t working again.',
+                'explanation'   => '問題提起の平叙文には対処法や反応で答える。(A)が自然な返答。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'I\'ll call maintenance right away.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'I printed twenty copies.',           'is_correct' => false],
+                    ['label' => 'C', 'text' => 'The second floor has a nice view.',  'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Have you finished reviewing the contract yet?',
+                'explanation'   => '現在完了のYes/No疑問文。まだ終わっていないことを伝える(A)が自然。(C)は"review"の意味を勘違いした誤答。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Not yet, I should be done by noon.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The contract is on the desk.',       'is_correct' => false],
+                    ['label' => 'C', 'text' => 'I reviewed the movie last night.',   'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Why was the shipment delayed?',
+                'explanation'   => 'Whyには理由で答える。"because of"で理由を示している(A)が正解。',
+                'difficulty'    => 'medium',
+                'xp'            => 40,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Because of a problem with customs clearance.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'It was shipped from Japan.',                   'is_correct' => false],
+                    ['label' => 'C', 'text' => 'The delay lasted five minutes.',               'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Do you know where the nearest ATM is?',
+                'explanation'   => '埋め込み疑問文(Do you know where...)。場所を答える(A)が正解。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'There\'s one right around the corner.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'I know him very well.',                 'is_correct' => false],
+                    ['label' => 'C', 'text' => 'The bank closes at five.',              'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'This coffee machine hasn\'t been cleaned in weeks.',
+                'explanation'   => '問題を指摘する平叙文には対応を示す応答が自然。(A)が適切。',
+                'difficulty'    => 'medium',
+                'xp'            => 40,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'I\'ll take care of it this afternoon.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'I like my coffee black.',               'is_correct' => false],
+                    ['label' => 'C', 'text' => 'The machine was expensive.',            'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'What time does the flight to Chicago depart?',
+                'explanation'   => '出発時刻を尋ねるWhat timeには時刻で答える(A)が正解。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'It leaves at nine thirty tomorrow morning.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'Chicago is a big city.',                     'is_correct' => false],
+                    ['label' => 'C', 'text' => 'I departed from the meeting early.',         'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'You\'re coming to the workshop on Friday, aren\'t you?',
+                'explanation'   => '付加疑問文。参加予定を確認しYesと答えている(A)が正解。',
+                'difficulty'    => 'medium',
+                'xp'            => 40,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Yes, I\'ve already registered.',   'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The workshop was very useful.',    'is_correct' => false],
+                    ['label' => 'C', 'text' => 'Friday is my favorite day.',       'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'How much does it cost to renew the software license?',
+                'explanation'   => 'How muchは金額を尋ねる。金額で答える(A)が正解。',
+                'difficulty'    => 'medium',
+                'xp'            => 40,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'It\'s about three hundred dollars a year.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The software is easy to use.',              'is_correct' => false],
+                    ['label' => 'C', 'text' => 'I renewed my passport last month.',         'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Could you turn down the air conditioner? It\'s freezing in here.',
+                'explanation'   => '依頼表現には応じる返答が自然。(A)が適切。(C)は"turn"の音に反応した誤答。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Sure, I\'ll adjust it now.',           'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The weather is quite cold outside.',   'is_correct' => false],
+                    ['label' => 'C', 'text' => 'I turned in my assignment.',           'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Isn\'t there a staff meeting scheduled for this afternoon?',
+                'explanation'   => '否定疑問文にYesで答え、具体的な時間を補足している(A)が正解。',
+                'difficulty'    => 'medium',
+                'xp'            => 40,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Yes, it starts right after lunch.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The staff did a great job.',        'is_correct' => false],
+                    ['label' => 'C', 'text' => 'I scheduled a dentist appointment.','is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Who left these documents on my desk?',
+                'explanation'   => 'Whoには人物で答える(A)が正解。(B)は物、(C)は"documents/documented"の音の類似による誤答。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'I think it was someone from accounting.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The desk needs to be replaced.',           'is_correct' => false],
+                    ['label' => 'C', 'text' => 'I documented everything carefully.',       'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'The client wants to reschedule tomorrow\'s meeting.',
+                'explanation'   => '会議の再調整を伝える平叙文には対応方針を示す応答が自然。(C)は紛らわしいが質問の意図(再調整への対応)に直接応えていない。',
+                'difficulty'    => 'hard',
+                'xp'            => 50,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Let\'s find another time that works for everyone.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The client seemed satisfied.',                      'is_correct' => false],
+                    ['label' => 'C', 'text' => 'I scheduled it for next Tuesday originally.',       'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Would you mind reviewing my presentation before the meeting?',
+                'explanation'   => '"Would you mind ...?"には快諾する場合"Not at all"などで答える。(A)が正解。',
+                'difficulty'    => 'medium',
+                'xp'            => 40,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Not at all, just send it over.',   'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The presentation went really well.','is_correct' => false],
+                    ['label' => 'C', 'text' => 'I don\'t mind the weather today.', 'is_correct' => false],
+                ],
+            ],
+        ];
+
+        foreach ($questions as $idx => $data) {
+            $this->createQuestion($data, 2, $idx + 1);
+        }
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    //  Part 3：会話問題（8会話 × 3問 = 24問プールからランダム2会話出題）
+    //  会話内容（passage.documents）は画面には表示せず、音声読み上げのみで出題する。
+    //  質問文・選択肢（4択）は本番同様、画面に印刷（表示）する。
+    // ──────────────────────────────────────────────────────────────
+
+    private function createPart3Questions(): void
+    {
+        $conversationSets = [
+            // ── 会話1：会議室の予約変更 ──
+            [
+                'title'     => '会議室の予約変更',
+                'documents' => [
+                    ['heading' => 'Man',   'body' => 'Hi Rachel, I need to move our budget meeting from two P.M. to four P.M. today. Is the large conference room still available then?'],
+                    ['heading' => 'Woman', 'body' => "Let me check... Yes, it's free after three thirty. I'll update the calendar invite right away."],
+                    ['heading' => 'Man',   'body' => 'Great, thanks. Could you also let the finance team know about the change?'],
+                    ['heading' => 'Woman', 'body' => "Sure, I'll send them an e-mail as soon as I update the room booking."],
+                ],
+                'questions' => [
+                    [
+                        'question_text' => 'What does the man want to change?',
+                        'explanation'   => '男性は"I need to move our budget meeting from two P.M. to four P.M."と述べており、会議の時間変更を求めている。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'The time of a meeting',        'is_correct' => true],
+                            ['label' => 'B', 'text' => 'The location of his office',   'is_correct' => false],
+                            ['label' => 'C', 'text' => 'The topic of a presentation',  'is_correct' => false],
+                            ['label' => 'D', 'text' => 'The date of a conference',     'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What will the woman do next?',
+                        'explanation'   => '女性は"I\'ll update the calendar invite right away."と述べており、予約(カレンダー)を更新する。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Cancel the meeting',               'is_correct' => false],
+                            ['label' => 'B', 'text' => 'Book a different room',            'is_correct' => false],
+                            ['label' => 'C', 'text' => 'Update the room reservation',      'is_correct' => true],
+                            ['label' => 'D', 'text' => 'Attend the finance meeting',       'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What does the man ask the woman to do?',
+                        'explanation'   => '男性は"Could you also let the finance team know about the change?"と依頼している。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Print the budget report',        'is_correct' => false],
+                            ['label' => 'B', 'text' => 'Notify the finance team',        'is_correct' => true],
+                            ['label' => 'C', 'text' => 'Reserve a larger room',          'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Reschedule another meeting',     'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+            // ── 会話2：レストランの予約 ──
+            [
+                'title'     => 'レストランの予約',
+                'documents' => [
+                    ['heading' => 'Woman', 'body' => "Hi, I'd like to make a reservation for six people this Friday evening."],
+                    ['heading' => 'Man',   'body' => 'Of course. What time would you like to come in?'],
+                    ['heading' => 'Woman', 'body' => "Around seven thirty, if possible. Also, one of my guests has a nut allergy — can the kitchen accommodate that?"],
+                    ['heading' => 'Man',   'body' => "Absolutely, I'll note that on the reservation and let our chef know in advance."],
+                ],
+                'questions' => [
+                    [
+                        'question_text' => 'Why is the woman calling?',
+                        'explanation'   => '女性は"I\'d like to make a reservation for six people"と述べている。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'To make a reservation',    'is_correct' => true],
+                            ['label' => 'B', 'text' => 'To cancel an order',       'is_correct' => false],
+                            ['label' => 'C', 'text' => 'To apply for a job',       'is_correct' => false],
+                            ['label' => 'D', 'text' => 'To complain about service','is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What does the woman mention about one of her guests?',
+                        'explanation'   => '女性は"one of my guests has a nut allergy"と述べている。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'The guest will arrive late',        'is_correct' => false],
+                            ['label' => 'B', 'text' => 'The guest has a food allergy',      'is_correct' => true],
+                            ['label' => 'C', 'text' => 'The guest cannot attend',           'is_correct' => false],
+                            ['label' => 'D', 'text' => 'The guest requested a window seat', 'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What will the man most likely do next?',
+                        'explanation'   => '男性は"let our chef know in advance"と述べており、厨房スタッフに知らせる。',
+                        'difficulty'    => 'hard', 'xp' => 50,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Cancel the reservation',       'is_correct' => false],
+                            ['label' => 'B', 'text' => 'Inform the kitchen staff',     'is_correct' => true],
+                            ['label' => 'C', 'text' => 'Offer a discount',             'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Ask for a credit card number', 'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+            // ── 会話3：ITサポート ──
+            [
+                'title'     => 'ITサポート',
+                'documents' => [
+                    ['heading' => 'Man',   'body' => "My laptop keeps freezing whenever I open the sales database. It's been happening since yesterday."],
+                    ['heading' => 'Woman', 'body' => 'That\'s strange. Have you tried restarting the computer?'],
+                    ['heading' => 'Man',   'body' => 'Yeah, I restarted it twice already, but the problem keeps coming back.'],
+                    ['heading' => 'Woman', 'body' => 'Okay, let me remote into your machine and take a look. It might be a software update issue.'],
+                ],
+                'questions' => [
+                    [
+                        'question_text' => 'What problem does the man have?',
+                        'explanation'   => '男性は"My laptop keeps freezing"と述べている。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => "His password isn't working", 'is_correct' => false],
+                            ['label' => 'B', 'text' => 'His computer keeps freezing', 'is_correct' => true],
+                            ['label' => 'C', 'text' => 'He lost an important file',   'is_correct' => false],
+                            ['label' => 'D', 'text' => 'His printer is broken',       'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What has the man already tried?',
+                        'explanation'   => '男性は"I restarted it twice already"と述べている。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Restarting his computer',    'is_correct' => true],
+                            ['label' => 'B', 'text' => 'Reinstalling the database',  'is_correct' => false],
+                            ['label' => 'C', 'text' => 'Contacting the manufacturer','is_correct' => false],
+                            ['label' => 'D', 'text' => 'Buying a new laptop',        'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What will the woman do to help?',
+                        'explanation'   => '女性は"let me remote into your machine"と述べている。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Replace the laptop',                'is_correct' => false],
+                            ['label' => 'B', 'text' => 'Access his computer remotely',      'is_correct' => true],
+                            ['label' => 'C', 'text' => 'Schedule a repair appointment',     'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Send him a new password',           'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+            // ── 会話4：出張の手配 ──
+            [
+                'title'     => '出張の手配',
+                'documents' => [
+                    ['heading' => 'Woman', 'body' => 'I need to book a flight to the Chicago branch for the sales conference next week.'],
+                    ['heading' => 'Man',   'body' => 'Sure, do you have a preferred departure time?'],
+                    ['heading' => 'Woman', 'body' => 'Ideally something in the morning, so I can attend the afternoon session on the same day.'],
+                    ['heading' => 'Man',   'body' => "I'll check flights before ten A.M. and send you a few options by the end of the day."],
+                ],
+                'questions' => [
+                    [
+                        'question_text' => 'What is the woman planning to do?',
+                        'explanation'   => '女性は"book a flight...for the sales conference"と述べている。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Attend a conference',           'is_correct' => true],
+                            ['label' => 'B', 'text' => 'Interview a job candidate',     'is_correct' => false],
+                            ['label' => 'C', 'text' => "Visit a client's office",       'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Return from vacation',          'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What does the woman prefer?',
+                        'explanation'   => '女性は"something in the morning"を希望している。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'A direct flight',       'is_correct' => false],
+                            ['label' => 'B', 'text' => 'A morning departure',   'is_correct' => true],
+                            ['label' => 'C', 'text' => 'A window seat',         'is_correct' => false],
+                            ['label' => 'D', 'text' => 'A refundable ticket',   'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What will the man do by the end of the day?',
+                        'explanation'   => '男性は"send you a few options by the end of the day"と述べている。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Confirm a hotel booking',   'is_correct' => false],
+                            ['label' => 'B', 'text' => 'Provide flight options',    'is_correct' => true],
+                            ['label' => 'C', 'text' => 'Submit an expense report',  'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Cancel the conference',     'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+            // ── 会話5：アパートの内見 ──
+            [
+                'title'     => 'アパートの内見',
+                'documents' => [
+                    ['heading' => 'Man',   'body' => "Hi, I'm calling about the two-bedroom apartment listed on your website. Is it still available?"],
+                    ['heading' => 'Woman', 'body' => 'Yes, it is. Would you like to schedule a viewing?'],
+                    ['heading' => 'Man',   'body' => 'That would be great. Is this Saturday morning possible?'],
+                    ['heading' => 'Woman', 'body' => "Let me check the schedule... Yes, ten o'clock works. I'll send you the address by text message."],
+                ],
+                'questions' => [
+                    [
+                        'question_text' => 'Why is the man calling?',
+                        'explanation'   => '男性は"calling about the two-bedroom apartment"と述べている。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'To renew a lease',                 'is_correct' => false],
+                            ['label' => 'B', 'text' => 'To ask about an apartment',        'is_correct' => true],
+                            ['label' => 'C', 'text' => 'To report a maintenance issue',    'is_correct' => false],
+                            ['label' => 'D', 'text' => 'To pay a deposit',                 'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What does the man request?',
+                        'explanation'   => '男性は"Is this Saturday morning possible?"と内見の予約を依頼している。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'A lower rent',            'is_correct' => false],
+                            ['label' => 'B', 'text' => 'A viewing appointment',   'is_correct' => true],
+                            ['label' => 'C', 'text' => 'A parking space',         'is_correct' => false],
+                            ['label' => 'D', 'text' => 'A refund',                'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What will the woman send to the man?',
+                        'explanation'   => '女性は"I\'ll send you the address by text message"と述べている。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'A rental contract',              'is_correct' => false],
+                            ['label' => 'B', 'text' => "The apartment's address",        'is_correct' => true],
+                            ['label' => 'C', 'text' => 'A list of nearby restaurants',    'is_correct' => false],
+                            ['label' => 'D', 'text' => 'A payment receipt',               'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+            // ── 会話6：製品の返品 ──
+            [
+                'title'     => '製品の返品',
+                'documents' => [
+                    ['heading' => 'Woman', 'body' => 'Hi, I bought this blender last week, but it stopped working after just two uses.'],
+                    ['heading' => 'Man',   'body' => 'I\'m sorry to hear that. Do you have your receipt with you?'],
+                    ['heading' => 'Woman', 'body' => "Yes, right here. I'd like a refund if that's possible."],
+                    ['heading' => 'Man',   'body' => "Since it's within our thirty-day return policy, I can process a full refund for you right now."],
+                ],
+                'questions' => [
+                    [
+                        'question_text' => "What is the woman's problem?",
+                        'explanation'   => '女性は"it stopped working after just two uses"と述べている。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'She lost her receipt',        'is_correct' => false],
+                            ['label' => 'B', 'text' => 'A product stopped working',   'is_correct' => true],
+                            ['label' => 'C', 'text' => 'She was overcharged',         'is_correct' => false],
+                            ['label' => 'D', 'text' => 'An item was out of stock',    'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What does the woman want?',
+                        'explanation'   => '女性は"I\'d like a refund if that\'s possible"と述べている。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'A replacement product', 'is_correct' => false],
+                            ['label' => 'B', 'text' => 'A refund',              'is_correct' => true],
+                            ['label' => 'C', 'text' => 'A store credit',        'is_correct' => false],
+                            ['label' => 'D', 'text' => 'A repair service',      'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What does the man say about the return policy?',
+                        'explanation'   => '男性は"it\'s within our thirty-day return policy"と述べ、返金対象であることを伝えている。',
+                        'difficulty'    => 'hard', 'xp' => 50,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'It has already expired',                  'is_correct' => false],
+                            ['label' => 'B', 'text' => 'The purchase qualifies for a refund',     'is_correct' => true],
+                            ['label' => 'C', 'text' => 'It only applies to online orders',        'is_correct' => false],
+                            ['label' => 'D', 'text' => "A manager's approval is required",        'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+            // ── 会話7：健康診断の予約 ──
+            [
+                'title'     => '健康診断の予約',
+                'documents' => [
+                    ['heading' => 'Man',   'body' => "I'd like to schedule my annual health checkup sometime next week."],
+                    ['heading' => 'Woman', 'body' => 'Sure. We have openings on Tuesday morning or Thursday afternoon.'],
+                    ['heading' => 'Man',   'body' => 'Thursday afternoon works better for me. Also, should I fast before the appointment?'],
+                    ['heading' => 'Woman', 'body' => "Yes, please don't eat or drink anything except water for twelve hours beforehand."],
+                ],
+                'questions' => [
+                    [
+                        'question_text' => 'What is the man trying to do?',
+                        'explanation'   => '男性は"schedule my annual health checkup"と述べている。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Cancel an appointment',   'is_correct' => false],
+                            ['label' => 'B', 'text' => 'Schedule a checkup',      'is_correct' => true],
+                            ['label' => 'C', 'text' => 'Request a prescription',  'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Change his doctor',       'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => "When will the man's appointment be?",
+                        'explanation'   => '男性は"Thursday afternoon works better for me"と述べている。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Tuesday morning',    'is_correct' => false],
+                            ['label' => 'B', 'text' => 'Thursday afternoon', 'is_correct' => true],
+                            ['label' => 'C', 'text' => 'Friday evening',     'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Monday morning',     'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What does the woman advise the man to do?',
+                        'explanation'   => '女性は"don\'t eat or drink anything...for twelve hours beforehand"と述べ、断食を指示している。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Bring a form of identification', 'is_correct' => false],
+                            ['label' => 'B', 'text' => 'Fast before the appointment',    'is_correct' => true],
+                            ['label' => 'C', 'text' => 'Arrive an hour early',           'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Bring a family member',          'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+            // ── 会話8：倉庫在庫の確認 ──
+            [
+                'title'     => '倉庫在庫の確認',
+                'documents' => [
+                    ['heading' => 'Woman', 'body' => 'Do we still have any of the wireless keyboards in stock? A customer just placed a large order.'],
+                    ['heading' => 'Man',   'body' => 'Let me check the inventory system... It looks like we only have twelve units left in the warehouse.'],
+                    ['heading' => 'Woman', 'body' => "That won't be enough. The customer wants fifty units by Friday."],
+                    ['heading' => 'Man',   'body' => "I'll contact the supplier this afternoon and see how quickly we can get more shipped in."],
+                ],
+                'questions' => [
+                    [
+                        'question_text' => 'What are the speakers discussing?',
+                        'explanation'   => '在庫(wireless keyboards)の数について話しており、在庫状況が話題。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Product inventory',      'is_correct' => true],
+                            ['label' => 'B', 'text' => 'A hiring decision',      'is_correct' => false],
+                            ['label' => 'C', 'text' => 'A marketing campaign',   'is_correct' => false],
+                            ['label' => 'D', 'text' => 'An office relocation',   'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What problem does the woman mention?',
+                        'explanation'   => '女性は"That won\'t be enough"と述べ、在庫不足を指摘している。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'The price has increased',    'is_correct' => false],
+                            ['label' => 'B', 'text' => "There isn't enough stock",   'is_correct' => true],
+                            ['label' => 'C', 'text' => 'The order was canceled',     'is_correct' => false],
+                            ['label' => 'D', 'text' => 'The warehouse is closed',    'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What will the man do this afternoon?',
+                        'explanation'   => '男性は"I\'ll contact the supplier this afternoon"と述べている。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Visit the warehouse',    'is_correct' => false],
+                            ['label' => 'B', 'text' => 'Contact the supplier',   'is_correct' => true],
+                            ['label' => 'C', 'text' => 'Update the price list',  'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Train new staff',        'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $sortOrder = 1;
+        foreach ($conversationSets as $setIdx => $set) {
+            $passage = ToeicPassage::create([
+                'part'         => 3,
+                'passage_type' => 'convo',
+                'title'        => $set['title'],
+                'documents'    => $set['documents'],
+                'sort_order'   => $setIdx + 1,
+            ]);
+
+            foreach ($set['questions'] as $data) {
+                $this->createQuestion($data, 3, $sortOrder, $passage->id);
+                $sortOrder++;
+            }
+        }
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    //  Part 4：トーク問題（8トーク × 3問 = 24問プールからランダム2トーク出題）
+    //  トーク内容（passage.documents）は画面には表示せず、音声読み上げのみで出題する。
+    //  質問文・選択肢（4択）は本番同様、画面に印刷（表示）する。
+    // ──────────────────────────────────────────────────────────────
+
+    private function createPart4Questions(): void
+    {
+        $talkSets = [
+            // ── トーク1：留守番電話メッセージ（配送遅延） ──
+            [
+                'title'     => '留守番電話メッセージ（配送遅延）',
+                'documents' => [
+                    ['heading' => 'Speaker', 'body' => "Hi, this is Daniel from Greenfield Logistics. I'm calling about your delivery scheduled for this afternoon."],
+                    ['heading' => 'Speaker', 'body' => "Unfortunately, due to a mechanical issue with one of our trucks, the delivery will be delayed until tomorrow morning. I apologize for any inconvenience."],
+                    ['heading' => 'Speaker', 'body' => "If this new time doesn't work for you, please call our office before five P.M. today to arrange a different schedule. Thank you for your patience."],
+                ],
+                'questions' => [
+                    [
+                        'question_text' => 'Who most likely is the speaker?',
+                        'explanation'   => '話者は"this is Daniel from Greenfield Logistics"と名乗っており、配送業者の担当者である。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'A delivery company employee', 'is_correct' => true],
+                            ['label' => 'B', 'text' => 'A restaurant manager',        'is_correct' => false],
+                            ['label' => 'C', 'text' => 'A repair technician',         'is_correct' => false],
+                            ['label' => 'D', 'text' => 'A store cashier',             'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'Why has the delivery been delayed?',
+                        'explanation'   => '"due to a mechanical issue with one of our trucks"と述べている。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'The weather is bad',              'is_correct' => false],
+                            ['label' => 'B', 'text' => 'The address was incorrect',       'is_correct' => false],
+                            ['label' => 'C', 'text' => 'A truck has a mechanical problem','is_correct' => true],
+                            ['label' => 'D', 'text' => 'The warehouse is closed',         'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What should the listener do if the new time is inconvenient?',
+                        'explanation'   => '"please call our office before five P.M. today"と案内している。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Visit the office in person', 'is_correct' => false],
+                            ['label' => 'B', 'text' => 'Call before five P.M.',      'is_correct' => true],
+                            ['label' => 'C', 'text' => 'Send an e-mail',             'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Wait until next week',       'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+            // ── トーク2：店内アナウンス（閉店・セール） ──
+            [
+                'title'     => '店内アナウンス（閉店・セール）',
+                'documents' => [
+                    ['heading' => 'Speaker', 'body' => "Attention, shoppers. We'd like to remind you that Greenway Department Store will be closing in fifteen minutes. Please bring your final purchases to the checkout counters located on the first and second floors."],
+                    ['heading' => 'Speaker', 'body' => "Also, don't forget that our annual summer clearance sale continues through this weekend, with discounts of up to fifty percent on selected clothing items."],
+                    ['heading' => 'Speaker', 'body' => 'Thank you for shopping with us today, and we look forward to seeing you again soon.'],
+                ],
+                'questions' => [
+                    [
+                        'question_text' => 'Where is this announcement being made?',
+                        'explanation'   => '"Greenway Department Store"と述べており、店内でのアナウンスである。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'At an airport',        'is_correct' => false],
+                            ['label' => 'B', 'text' => 'At a department store','is_correct' => true],
+                            ['label' => 'C', 'text' => 'At a restaurant',      'is_correct' => false],
+                            ['label' => 'D', 'text' => 'At a train station',   'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What are listeners reminded about?',
+                        'explanation'   => '"will be closing in fifteen minutes"と述べている。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'The store is closing soon', 'is_correct' => true],
+                            ['label' => 'B', 'text' => 'A parking lot is full',     'is_correct' => false],
+                            ['label' => 'C', 'text' => 'A new store is opening',    'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Prices have increased',     'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What does the speaker mention about the summer sale?',
+                        'explanation'   => '"discounts of up to fifty percent on selected clothing items"と述べている。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'It has already ended',                    'is_correct' => false],
+                            ['label' => 'B', 'text' => 'It offers discounts up to fifty percent',  'is_correct' => true],
+                            ['label' => 'C', 'text' => 'It applies only to shoes',                 'is_correct' => false],
+                            ['label' => 'D', 'text' => 'It starts next month',                     'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+            // ── トーク3：天気予報 ──
+            [
+                'title'     => '天気予報',
+                'documents' => [
+                    ['heading' => 'Speaker', 'body' => 'Good morning, and welcome to your local weather update. Today will be mostly sunny with a high of seventy-eight degrees, perfect for outdoor activities.'],
+                    ['heading' => 'Speaker', 'body' => "However, we're expecting a change tomorrow, as a cold front moves in from the north, bringing rain and much cooler temperatures throughout the afternoon."],
+                    ['heading' => 'Speaker', 'body' => 'If you have outdoor plans tomorrow, you may want to reschedule them for later in the week when conditions are expected to improve.'],
+                ],
+                'questions' => [
+                    [
+                        'question_text' => 'What is the weather like today?',
+                        'explanation'   => '"mostly sunny with a high of seventy-eight degrees"と述べている。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Rainy and cold',   'is_correct' => false],
+                            ['label' => 'B', 'text' => 'Mostly sunny',     'is_correct' => true],
+                            ['label' => 'C', 'text' => 'Snowy',            'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Extremely windy',  'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What will happen tomorrow?',
+                        'explanation'   => '"a cold front moves in...bringing rain and much cooler temperatures"と述べている。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'The temperature will rise further', 'is_correct' => false],
+                            ['label' => 'B', 'text' => 'A cold front will bring rain',      'is_correct' => true],
+                            ['label' => 'C', 'text' => 'The weather will stay the same',    'is_correct' => false],
+                            ['label' => 'D', 'text' => 'There will be a heat wave',         'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What does the speaker suggest listeners do?',
+                        'explanation'   => '"you may want to reschedule them for later in the week"と提案している。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Cancel all outdoor plans permanently',            'is_correct' => false],
+                            ['label' => 'B', 'text' => 'Reschedule outdoor plans for later in the week',  'is_correct' => true],
+                            ['label' => 'C', 'text' => 'Bring an umbrella today',                          'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Avoid going outside today',                        'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+            // ── トーク4：ツアーガイドの案内 ──
+            [
+                'title'     => 'ツアーガイドの案内',
+                'documents' => [
+                    ['heading' => 'Speaker', 'body' => "Welcome aboard, everyone. My name is Sofia, and I'll be your guide for today's city tour."],
+                    ['heading' => 'Speaker', 'body' => "Our first stop will be the historic art museum, where we'll spend about an hour exploring the main exhibits. After that, we'll head to the riverside park for a short break before lunch."],
+                    ['heading' => 'Speaker', 'body' => "Please remember to keep your ticket with you at all times, as you'll need it to enter each site. If you have any questions during the tour, feel free to ask me at any time."],
+                ],
+                'questions' => [
+                    [
+                        'question_text' => "What is the speaker's role?",
+                        'explanation'   => '"I\'ll be your guide for today\'s city tour"と述べている。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'A museum curator',    'is_correct' => false],
+                            ['label' => 'B', 'text' => 'A tour guide',        'is_correct' => true],
+                            ['label' => 'C', 'text' => 'A restaurant owner',  'is_correct' => false],
+                            ['label' => 'D', 'text' => 'A bus driver',        'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'Where will the group go first?',
+                        'explanation'   => '"Our first stop will be the historic art museum"と述べている。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'A riverside park',     'is_correct' => false],
+                            ['label' => 'B', 'text' => 'A restaurant',         'is_correct' => false],
+                            ['label' => 'C', 'text' => 'An art museum',        'is_correct' => true],
+                            ['label' => 'D', 'text' => 'A shopping center',    'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What are listeners asked to keep with them?',
+                        'explanation'   => '"keep your ticket with you at all times"と述べている。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'A water bottle',  'is_correct' => false],
+                            ['label' => 'B', 'text' => 'A map',           'is_correct' => false],
+                            ['label' => 'C', 'text' => 'Their ticket',    'is_correct' => true],
+                            ['label' => 'D', 'text' => 'A camera',        'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+            // ── トーク5：会議冒頭の紹介 ──
+            [
+                'title'     => '会議冒頭の紹介',
+                'documents' => [
+                    ['heading' => 'Speaker', 'body' => "Good afternoon, everyone, and thank you for joining today's quarterly meeting."],
+                    ['heading' => 'Speaker', 'body' => "Before we begin, I'd like to introduce our new marketing director, Mr. Lee, who joined the company last month. He'll be presenting the updated marketing strategy later in the meeting."],
+                    ['heading' => 'Speaker', 'body' => "First, though, let's review last quarter's sales figures, which I'll display on the screen in just a moment."],
+                ],
+                'questions' => [
+                    [
+                        'question_text' => 'What is the purpose of this talk?',
+                        'explanation'   => '"thank you for joining today\'s quarterly meeting"と述べている。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'To open a quarterly meeting', 'is_correct' => true],
+                            ['label' => 'B', 'text' => 'To announce a product recall','is_correct' => false],
+                            ['label' => 'C', 'text' => 'To welcome new customers',    'is_correct' => false],
+                            ['label' => 'D', 'text' => 'To close the fiscal year',    'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'Who is Mr. Lee?',
+                        'explanation'   => '"our new marketing director, Mr. Lee"と述べている。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => "The company's accountant",  'is_correct' => false],
+                            ['label' => 'B', 'text' => 'The new marketing director','is_correct' => true],
+                            ['label' => 'C', 'text' => 'A guest speaker',            'is_correct' => false],
+                            ['label' => 'D', 'text' => 'A former employee',          'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What will happen first in the meeting?',
+                        'explanation'   => "直後に\"let's review last quarter's sales figures\"と述べている。",
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => "Mr. Lee's presentation",                     'is_correct' => false],
+                            ['label' => 'B', 'text' => "A review of last quarter's sales figures",   'is_correct' => true],
+                            ['label' => 'C', 'text' => 'A lunch break',                               'is_correct' => false],
+                            ['label' => 'D', 'text' => 'A vote on the budget',                        'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+            // ── トーク6：自動音声案内（銀行） ──
+            [
+                'title'     => '自動音声案内（銀行）',
+                'documents' => [
+                    ['heading' => 'Speaker', 'body' => 'Thank you for calling Horizon Bank customer service. Our office hours are Monday through Friday, nine A.M. to six P.M.'],
+                    ['heading' => 'Speaker', 'body' => "If you'd like to check your account balance, press one. To report a lost or stolen card, press two."],
+                    ['heading' => 'Speaker', 'body' => 'To speak with a representative, please stay on the line, and the next available agent will assist you. We appreciate your patience during this busy time.'],
+                ],
+                'questions' => [
+                    [
+                        'question_text' => 'What kind of business is this recording for?',
+                        'explanation'   => '"Thank you for calling Horizon Bank"と述べている。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'A hotel',              'is_correct' => false],
+                            ['label' => 'B', 'text' => 'A bank',               'is_correct' => true],
+                            ['label' => 'C', 'text' => 'An airline',           'is_correct' => false],
+                            ['label' => 'D', 'text' => 'An insurance company', 'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What should a caller do to report a lost card?',
+                        'explanation'   => '"To report a lost or stolen card, press two"と述べている。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Press one',        'is_correct' => false],
+                            ['label' => 'B', 'text' => 'Press two',        'is_correct' => true],
+                            ['label' => 'C', 'text' => 'Stay on the line', 'is_correct' => false],
+                            ['label' => 'D', 'text' => 'Visit a branch',   'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What does the speaker say about wait times?',
+                        'explanation'   => '"the next available agent will assist you...appreciate your patience"と述べ、待機が必要と示唆している。',
+                        'difficulty'    => 'hard', 'xp' => 50,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'There is no wait',                     'is_correct' => false],
+                            ['label' => 'B', 'text' => 'Calls are not being accepted',          'is_correct' => false],
+                            ['label' => 'C', 'text' => 'Callers may need to wait for an agent', 'is_correct' => true],
+                            ['label' => 'D', 'text' => 'The office is closed',                  'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+            // ── トーク7：ラジオニュース（交通情報） ──
+            [
+                'title'     => 'ラジオニュース（交通情報）',
+                'documents' => [
+                    ['heading' => 'Speaker', 'body' => 'In local news, construction on Main Street will begin next Monday and is expected to continue for approximately three weeks.'],
+                    ['heading' => 'Speaker', 'body' => 'During this time, one lane will be closed in each direction, so drivers should expect delays during rush hour. City officials recommend using Second Avenue as an alternate route.'],
+                    ['heading' => 'Speaker', 'body' => "We'll continue to provide updates on the project's progress throughout the coming weeks."],
+                ],
+                'questions' => [
+                    [
+                        'question_text' => 'What is the news report mainly about?',
+                        'explanation'   => '"construction on Main Street will begin next Monday"と述べている。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'A new construction project', 'is_correct' => true],
+                            ['label' => 'B', 'text' => 'A weather warning',          'is_correct' => false],
+                            ['label' => 'C', 'text' => 'A local election',           'is_correct' => false],
+                            ['label' => 'D', 'text' => 'A sports event',             'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'How long is the construction expected to last?',
+                        'explanation'   => '"expected to continue for approximately three weeks"と述べている。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'One week',                     'is_correct' => false],
+                            ['label' => 'B', 'text' => 'Approximately three weeks',    'is_correct' => true],
+                            ['label' => 'C', 'text' => 'Six months',                    'is_correct' => false],
+                            ['label' => 'D', 'text' => 'One day',                       'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What do officials recommend?',
+                        'explanation'   => '"recommend using Second Avenue as an alternate route"と述べている。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'Avoiding downtown entirely',   'is_correct' => false],
+                            ['label' => 'B', 'text' => 'Using public transportation',  'is_correct' => false],
+                            ['label' => 'C', 'text' => 'Taking an alternate route',    'is_correct' => true],
+                            ['label' => 'D', 'text' => 'Driving only at night',        'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+            // ── トーク8：製品紹介（広告） ──
+            [
+                'title'     => '製品紹介（広告）',
+                'documents' => [
+                    ['heading' => 'Speaker', 'body' => 'Introducing the all-new UltraBrew coffee maker, designed for busy mornings. With its one-touch brewing system, you can have a fresh cup of coffee ready in under two minutes.'],
+                    ['heading' => 'Speaker', 'body' => 'The UltraBrew also features a built-in timer, so you can set it up the night before and wake up to the smell of freshly brewed coffee.'],
+                    ['heading' => 'Speaker', 'body' => 'Visit our website today to order yours and receive free shipping on all orders this month.'],
+                ],
+                'questions' => [
+                    [
+                        'question_text' => 'What is being advertised?',
+                        'explanation'   => '"the all-new UltraBrew coffee maker"と述べている。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'A coffee maker',  'is_correct' => true],
+                            ['label' => 'B', 'text' => 'A blender',       'is_correct' => false],
+                            ['label' => 'C', 'text' => 'A refrigerator',  'is_correct' => false],
+                            ['label' => 'D', 'text' => 'A toaster',       'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What feature allows users to prepare coffee in advance?',
+                        'explanation'   => '"features a built-in timer, so you can set it up the night before"と述べている。',
+                        'difficulty'    => 'medium', 'xp' => 40,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'A built-in timer',      'is_correct' => true],
+                            ['label' => 'B', 'text' => 'A voice control system','is_correct' => false],
+                            ['label' => 'C', 'text' => 'A mobile app',          'is_correct' => false],
+                            ['label' => 'D', 'text' => 'A larger water tank',   'is_correct' => false],
+                        ],
+                    ],
+                    [
+                        'question_text' => 'What is offered this month?',
+                        'explanation'   => '"receive free shipping on all orders this month"と述べている。',
+                        'difficulty'    => 'easy', 'xp' => 30,
+                        'options' => [
+                            ['label' => 'A', 'text' => 'A discount on accessories', 'is_correct' => false],
+                            ['label' => 'B', 'text' => 'A free coffee maker',       'is_correct' => false],
+                            ['label' => 'C', 'text' => 'Free shipping',             'is_correct' => true],
+                            ['label' => 'D', 'text' => 'An extended warranty',      'is_correct' => false],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $sortOrder = 1;
+        foreach ($talkSets as $setIdx => $set) {
+            $passage = ToeicPassage::create([
+                'part'         => 4,
+                'passage_type' => 'talk',
+                'title'        => $set['title'],
+                'documents'    => $set['documents'],
+                'sort_order'   => $setIdx + 1,
+            ]);
+
+            foreach ($set['questions'] as $data) {
+                $this->createQuestion($data, 4, $sortOrder, $passage->id);
+                $sortOrder++;
+            }
         }
     }
 
