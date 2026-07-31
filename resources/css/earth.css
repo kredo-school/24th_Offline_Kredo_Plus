@@ -1,0 +1,1217 @@
+/* ==========================================
+   Earth V2 Complete Style
+========================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,
+body{
+
+    width:100%;
+    height:100%;
+
+    overflow:hidden;
+
+    font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    sans-serif;
+
+    background:#000;
+
+}
+
+body{
+
+    position:relative;
+
+}
+
+/* ==========================================
+   Globe
+========================================== */
+
+#globeViz{
+
+    position:fixed;
+
+    inset:0;
+
+    transition:opacity .6s;
+
+}
+
+/* ==========================================
+   Flat Map
+========================================== */
+
+#flat-map{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:1000;
+
+    display:none;
+
+}
+
+/* ==========================================
+   Globe Button
+========================================== */
+
+#backToGlobe{
+
+    position:fixed;
+
+    top:25px;
+
+    left:25px;
+
+    z-index:2000;
+
+    padding:14px 24px;
+
+    border:none;
+
+    border-radius:999px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    background:white;
+
+    color:#222;
+
+    box-shadow:
+    0 12px 30px rgba(0,0,0,.18);
+
+    transition:.25s;
+
+}
+
+#backToGlobe:hover{
+
+    transform:translateY(-2px);
+
+}
+
+/* ==========================================
+   Popup
+========================================== */
+
+.leaflet-popup-content{
+
+    margin:18px;
+
+    font-family:inherit;
+
+}
+
+.popup{
+
+    text-align:center;
+
+}
+
+.popup h3{
+
+    margin-bottom:10px;
+
+    color:#222;
+
+}
+
+.popup p{
+
+    color:#666;
+
+    margin-bottom:15px;
+
+}
+
+.popup-btn{
+
+    width:100%;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    color:white;
+
+    font-weight:600;
+
+    background:
+    linear-gradient(
+        135deg,
+        #4A90FF,
+        #735BFF
+    );
+
+    transition:.25s;
+
+}
+
+.popup-btn:hover{
+
+    transform:translateY(-2px);
+
+}
+
+/* ==========================================
+   Store Card
+========================================== */
+
+#storeCard{
+
+    position:fixed;
+
+    right:35px;
+
+    bottom:35px;
+
+    width:380px;
+
+    background:white;
+
+    border-radius:28px;
+
+    overflow:hidden;
+
+    box-shadow:
+    0 25px 60px rgba(0,0,0,.28);
+
+    transform:translateY(80px);
+
+    opacity:0;
+
+    transition:.45s;
+
+    z-index:1500;
+
+}
+
+#storeCard.show{
+
+    transform:translateY(0);
+
+    opacity:1;
+
+}
+
+.store-image{
+
+    width:100%;
+
+    height:220px;
+
+    object-fit:cover;
+
+}
+
+.store-content{
+
+    padding:24px;
+
+}
+
+.store-content h2{
+
+    font-size:28px;
+
+    margin-bottom:15px;
+
+    color:#222;
+
+}
+
+.info-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-bottom:15px;
+
+    color:#777;
+
+}
+
+.category{
+
+    margin-bottom:10px;
+
+    color:#555;
+
+}
+
+.location{
+
+    margin-bottom:20px;
+
+    color:#888;
+
+}
+
+.description{
+
+    color:#666;
+
+    line-height:1.8;
+
+    margin-bottom:25px;
+
+}
+
+#storyButton{
+
+    width:100%;
+
+    padding:16px;
+
+    border:none;
+
+    border-radius:16px;
+
+    cursor:pointer;
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:600;
+
+    background:
+    linear-gradient(
+        135deg,
+        #4A90FF,
+        #735BFF
+    );
+
+    transition:.25s;
+
+}
+
+#storyButton:hover{
+
+    transform:translateY(-2px);
+
+}
+
+#closeCard{
+
+    position:absolute;
+
+    top:15px;
+
+    right:15px;
+
+    width:40px;
+
+    height:40px;
+
+    border:none;
+
+    border-radius:50%;
+
+    cursor:pointer;
+
+    background:white;
+
+    font-size:18px;
+
+    box-shadow:
+    0 5px 15px rgba(0,0,0,.18);
+
+}
+
+/* ==========================================
+   Story Page
+========================================== */
+
+#storyPage{
+
+    position: fixed;
+
+    top: 50%;
+
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: 55%;
+
+    max-width: 900px;
+
+    height: 60%;
+
+    background: #fff;
+
+    border-radius: 24px;
+
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+
+    z-index: 3000;
+
+    overflow-y: auto;
+
+    opacity: 0;
+
+    transition: .35s;
+
+}
+
+#storyPage.show{
+
+    opacity:1;
+
+}
+
+.story-image{
+
+    width:100%;
+
+    height:360px;
+
+    object-fit:cover;
+
+}
+
+.story-content{
+
+    max-width:900px;
+
+    margin:auto;
+
+    padding:50px;
+
+}
+
+.story-content h1{
+
+    font-size:42px;
+
+    margin-bottom:20px;
+
+    color:#222;
+
+}
+
+.story-content h3{
+
+    margin-top:35px;
+
+    margin-bottom:15px;
+
+    color:#333;
+
+}
+
+.story-content p{
+
+    line-height:1.9;
+
+    color:#666;
+
+}
+
+.story-location{
+
+    color:#888;
+
+    margin-bottom:30px;
+
+}
+
+#closeStory{
+
+    position:fixed;
+
+    top:25px;
+
+    right:25px;
+
+    width:48px;
+
+    height:48px;
+
+    border:none;
+
+    border-radius:50%;
+
+    cursor:pointer;
+
+    font-size:20px;
+
+    background:white;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.2);
+
+    z-index:3100;
+
+}
+
+/* ==========================================
+   Search
+========================================== */
+
+#searchBox{
+
+    position:fixed;
+
+    top:30px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    display:flex;
+
+    gap:10px;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:.35s;
+
+    z-index:1800;
+
+}
+
+#searchBox.show{
+
+    opacity:1;
+
+    pointer-events:auto;
+
+}
+
+#searchInput{
+
+    width:300px;
+
+    padding:14px 18px;
+
+    border:none;
+
+    border-radius:999px;
+
+    outline:none;
+
+    background:white;
+
+    font-size:15px;
+
+}
+
+#searchButton{
+
+    width:52px;
+
+    border:none;
+
+    border-radius:50%;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+    background:white;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.18);
+
+}
+
+/* ==========================================
+   Responsive
+========================================== */
+
+@media(max-width:900px){
+
+    #storeCard{
+
+        width:92%;
+
+        right:4%;
+
+        left:4%;
+
+        bottom:20px;
+
+    }
+
+    .story-content{
+
+        padding:30px;
+
+    }
+
+    .story-image{
+
+        height:240px;
+
+    }
+
+    #searchInput{
+
+        width:220px;
+
+    }
+
+}
+
+/* ==========================================
+   Opening Screen
+========================================== */
+
+#overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:2500;
+
+    background:rgba(0,0,0,.45);
+
+    backdrop-filter:blur(12px);
+
+}
+
+.glass-card{
+
+    width:520px;
+
+    padding:60px;
+
+    text-align:center;
+
+    border-radius:30px;
+
+    background:rgba(255,255,255,.12);
+
+    border:1px solid rgba(255,255,255,.2);
+
+    backdrop-filter:blur(20px);
+
+    color:white;
+
+    box-shadow:0 25px 60px rgba(0,0,0,.35);
+
+}
+
+.logo{
+
+    font-size:64px;
+
+    margin-bottom:20px;
+
+}
+
+.glass-card h1{
+
+    font-size:56px;
+
+    margin-bottom:20px;
+
+}
+
+.glass-card p{
+
+    font-size:20px;
+
+    color:#ddd;
+
+    margin-bottom:35px;
+
+    line-height:1.6;
+
+}
+
+#startButton{
+
+    width:100%;
+
+    padding:18px;
+
+    border:none;
+
+    border-radius:18px;
+
+    cursor:pointer;
+
+    color:white;
+
+    font-size:20px;
+
+    font-weight:700;
+
+    background:linear-gradient(135deg,#4A90FF,#735BFF);
+
+    transition:.25s;
+
+}
+
+#startButton:hover{
+
+    transform:translateY(-3px);
+
+}
+
+/* ==========================================
+   Travel Message
+========================================== */
+
+#travelMessage{
+
+    position:fixed;
+
+    top:40px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    padding:16px 30px;
+
+    border-radius:999px;
+
+    background:rgba(0,0,0,.65);
+
+    color:white;
+
+    font-size:18px;
+
+    opacity:0;
+
+    transition:.3s;
+
+    z-index:2200;
+
+}
+
+#travelMessage.show{
+
+    opacity:1;
+
+}
+
+/* ==========================================
+   Flat Map Button
+========================================== */
+
+#mapToggle{
+
+    position:fixed;
+
+    right:35px;
+
+    top:35px;
+
+    padding:15px 24px;
+
+    border:none;
+
+    border-radius:999px;
+
+    cursor:pointer;
+
+    background:white;
+
+    font-weight:700;
+
+    font-size:16px;
+
+    box-shadow:0 12px 30px rgba(0,0,0,.2);
+
+    opacity:0;
+
+    transition:.3s;
+
+    z-index:2000;
+
+}
+
+#mapToggle.show{
+
+    opacity:1;
+
+}
+
+/* ==========================
+   Google風 落下ピンアニメーション
+========================== */
+
+
+/* Leafletの余計な背景を消す */
+.drop-pin {
+    background: transparent;
+    border: none;
+}
+
+
+
+/* ピン全体 */
+.pin-wrapper {
+
+    position: relative;
+
+    width: 40px;
+
+    height: 60px;
+
+    transform-origin: bottom center;
+
+    animation: pinDrop 0.8s cubic-bezier(.25,.8,.25,1);
+
+}
+
+
+
+/* ピン本体 */
+.pin {
+
+    width: 34px;
+
+    height: 34px;
+
+    background: #ea4335;
+
+    border-radius: 50% 50% 50% 0;
+
+    transform: rotate(-45deg);
+
+    position: absolute;
+
+    top:0;
+
+    left:3px;
+
+}
+
+
+.pin-center {
+
+    width:12px;
+
+    height:12px;
+
+    background:white;
+
+    border-radius:50%;
+
+    position:absolute;
+
+    top:11px;
+
+    left:11px;
+
+}
+
+
+
+/* 落下時の影 */
+.pin-shadow {
+
+    position:absolute;
+
+    bottom:0;
+
+    left:12px;
+
+    width:16px;
+
+    height:6px;
+
+    background:rgba(0,0,0,0.25);
+
+    border-radius:50%;
+
+    filter:blur(2px);
+
+}
+
+
+
+/* 落下アニメーション */
+@keyframes pinDrop {
+
+
+    0% {
+
+        transform:
+
+        translateY(-300px)
+
+        rotate(-45deg)
+
+        scale(1.2);
+
+        opacity:0;
+
+    }
+
+
+    70% {
+
+        transform:
+
+        translateY(15px)
+
+        rotate(-45deg)
+
+        scale(1);
+
+        opacity:1;
+
+    }
+
+
+    85% {
+
+        transform:
+
+        translateY(-8px)
+
+        rotate(-45deg);
+
+    }
+
+
+    100% {
+
+        transform:
+
+        translateY(0)
+
+        rotate(-45deg);
+
+    }
+
+}
+
+/* ==========================================
+   Selected Pin Animation
+========================================== */
+
+@keyframes pinFloat {
+
+    0%{
+
+        transform:
+        translateY(0)
+        rotate(-45deg)
+        scale(1);
+
+    }
+
+    50%{
+
+        transform:
+        translateY(-10px)
+        rotate(-45deg)
+        scale(1.08);
+
+    }
+
+    100%{
+
+        transform:
+        translateY(0)
+        rotate(-45deg)
+        scale(1);
+
+    }
+
+}
+
+@keyframes shadowFloat{
+
+    0%{
+
+        transform:scale(1);
+
+        opacity:.25;
+
+    }
+
+    50%{
+
+        transform:scale(.78);
+
+        opacity:.12;
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+        opacity:.25;
+
+    }
+
+}
+
+@keyframes pinGlow{
+
+    0%{
+
+        filter:
+        drop-shadow(0 0 0 rgba(66,133,244,.0));
+
+    }
+
+    50%{
+
+        filter:
+        drop-shadow(0 0 12px rgba(66,133,244,.45));
+
+    }
+
+    100%{
+
+        filter:
+        drop-shadow(0 0 0 rgba(66,133,244,.0));
+
+    }
+
+}
+
+/* 着地後 */
+.drop-pin.landed .pin-wrapper {
+
+    animation:pinDrop .8s cubic-bezier(.2,1,.3,1);
+
+}
+
+#flat-map {
+
+    position:fixed;
+
+    inset:0;
+
+    width:100%;
+
+    height:100%;
+
+    z-index:10;
+
+    display:none;
+
+}
+
+/* ==============================
+   Active Pin
+============================== */
+
+.active-pin .pin{
+
+    animation:
+
+        pinFloat 1.5s ease-in-out infinite,
+
+        pinGlow 2s ease-in-out infinite;
+
+}
+
+.active-pin .pin-shadow{
+
+    animation:
+
+        shadowFloat 1.5s ease-in-out infinite;
+
+}
+
+.hover-pin .pin{
+
+    transform:
+
+        translateY(-5px)
+
+        rotate(-45deg)
+
+        scale(1.08);
+
+    transition:.18s;
+
+    filter:
+
+        drop-shadow(0 0 8px rgba(66,133,244,.35));
+
+}
+
+.hover-pin .pin-shadow{
+
+    transform:scale(.82);
+
+    transition:.18s;
+
+}
+
+.drop .pin-shadow{
+
+    animation:
+
+        shadowFloat 1.7s ease-in-out infinite;
+
+}
+
+/* ==========================================
+   Earth Pin
+========================================== */
+
+.earth-pin{
+
+    width:48px;
+
+    height:48px;
+
+    transform:translate(-50%,-100%);
+
+    cursor:pointer;
+
+    transition:
+        transform .25s ease,
+        filter .25s ease;
+
+    will-change:transform;
+
+}
+
+.earth-pin.hover{
+
+    transform:
+        translate(-50%,-100%)
+        scale(1.2);
+
+    filter:
+
+        drop-shadow(0 0 12px rgba(255,255,255,.8));
+
+}
+
+/* ==========================================
+   Hover Card
+========================================== */
+
+.hover-card{
+
+    position:fixed;
+
+    transform: translate(-50%, -100%);
+
+    margin-top: -12px;
+
+    background:white;
+
+    padding:12px 16px;
+
+    border-radius:14px;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.18);
+
+    pointer-events:none;
+
+    z-index:9999;
+
+    min-width:180px;
+
+    animation:fadeUp .18s ease;
+
+}
+
+.hover-card::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:-10px;
+
+    transform:translateX(-50%);
+
+    width:0;
+
+    height:0;
+
+    border-left:10px solid transparent;
+
+    border-right:10px solid transparent;
+
+    border-top:10px solid white;
+
+}
+
+
+.hover-title{
+
+    font-weight:700;
+
+    font-size:15px;
+
+}
+
+.hover-info{
+
+    margin-top:4px;
+
+    color:#666;
+
+    font-size:13px;
+
+}
+
+.hover-category{
+
+    margin-top:4px;
+
+    color:#4d8cff;
+
+    font-size:12px;
+
+}
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(8px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}

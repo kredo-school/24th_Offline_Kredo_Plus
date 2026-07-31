@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\English;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 /**
  * 語彙単語 Seeder
  *
- * database/seeders/data/vocab_{exam}_{level}.php から読み込み、
+ * database/seeders/English/data/vocab_{exam}_{level}.php から読み込み、
  * 各レベル100語（TOEIC 4レベル + IELTS 4レベル = 合計800語）を投入する。
  *
  * 各データファイルは易→難の進行を保つため、同一 exam_type 内で
@@ -41,7 +41,7 @@ class VocabularyWordSeeder extends Seeder
         $seenByExamType = [];
 
         foreach (self::LEVELS as $levelDef) {
-            $path = database_path('seeders/data/' . $levelDef['file']);
+            $path = database_path('seeders/English/data/' . $levelDef['file']);
 
             if (!file_exists($path)) {
                 $this->command?->warn("スキップ: {$path} が見つかりません");

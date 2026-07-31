@@ -38,10 +38,10 @@
         style="
             background: linear-gradient(
                 to right,
-                #76a4ed 0%,
-                #3B82F6 33%,
-                #1d5cc2 66%,
-                #043076 100%
+                #99b9ed 0%,
+                #608fd9 33%,
+                #366bc0 66%,
+                #194489 100%
             );
             clip-path: inset(0 {{ 100 - $percent }}% 0 0 round 9999px);
         ">

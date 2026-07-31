@@ -1,0 +1,296 @@
+import "../../css/earth.css";
+
+import Globe from "globe.gl";
+import { gsap } from "gsap";
+
+import {
+    initializeFlatMap,
+    showFlatMap,
+    hideFlatMap
+} from "./flat-map";
+
+import { showStoreCard } from "./store-card";
+import { stores } from "./stores";
+import { setSelectedStore } from "./selected-store";
+
+import { createPin } from "./pin-manager";
+
+// ==========================================
+// Flat Map
+// ==========================================
+
+initializeFlatMap();
+
+// ==========================================
+// Globe
+// ==========================================
+
+const globe = Globe();
+
+globe(document.getElementById("globeViz"))
+    .globeImageUrl(
+        "//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+    )
+    .backgroundImageUrl(
+        "//unpkg.com/three-globe/example/img/night-sky.png"
+    )
+    .showAtmosphere(true)
+    .atmosphereColor("#7EC8FF")
+    .atmosphereAltitude(0.28)
+    .htmlElement(d => d.element);
+
+// ==========================================
+// Camera
+// ==========================================
+
+globe.pointOfView(
+
+    {
+
+        lat:20,
+
+        lng:120,
+
+        altitude:2.8
+
+    },
+
+    0
+
+);
+
+// ==========================================
+// Controls
+// ==========================================
+
+const controls = globe.controls();
+
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.22;
+
+// ==========================================
+// Audio
+// ==========================================
+
+const audio = new Audio("/videos/world.mp4");
+
+// ==========================================
+// Destination
+// ==========================================
+
+const destination = {
+
+    lat:10.3157,
+
+    lng:123.8854,
+
+    altitude:0.65
+
+};
+
+// ==========================================
+// Search Destinations
+// ==========================================
+
+const destinations = {
+
+    cebu:{
+
+        lat:10.3157,
+
+        lng:123.8854,
+
+        altitude:0.65
+
+    }
+
+};
+
+
+// ==========================================
+// UI
+// ==========================================
+
+function showTravelMessage(){
+
+    document
+        .getElementById("travelMessage")
+        .classList.add("show");
+
+}
+
+function hideTravelMessage(){
+
+    document
+        .getElementById("travelMessage")
+        .classList.remove("show");
+
+}
+
+function showSearchBox(){
+
+    const box=document.getElementById("searchBox");
+
+    if(box){
+
+        box.classList.add("show");
+
+    }
+
+}
+
+// ==========================================
+// Fly
+// ==========================================
+
+function flyToDestination(name){
+
+    const place=
+
+        destinations[name.toLowerCase()];
+
+    if(!place){
+
+        alert("Destination not found.");
+
+        return;
+
+    }
+
+    globe.pointOfView(
+
+        place,
+
+        3500
+
+    );
+
+}
+
+// ==========================================
+// Journey
+// ==========================================
+
+function startJourney(){
+
+    audio.play().catch(()=>{});
+
+
+    showTravelMessage();
+
+    controls.autoRotate=false;
+
+    setTimeout(()=>{
+
+        globe.pointOfView(
+
+            destination,
+
+            5000
+
+        );
+
+    },800);
+
+    setTimeout(()=>{
+
+        hideTravelMessage();
+
+    setTimeout(() => {
+
+    globeDiv.style.opacity = "0";
+
+    showFlatMap();
+
+    setTimeout(() => {
+
+        globeDiv.style.display = "none";
+
+        isFlatMap = true;
+
+    }, 600);
+
+}, 1200);
+
+    },6000);
+}
+
+// ==========================================
+// Auto Start
+// ==========================================
+
+window.addEventListener("load", () => {
+
+    setTimeout(() => {
+
+        startJourney();
+
+    }, 500);
+
+});
+
+// ==========================================
+// Globe ⇔ Flat Map
+// ==========================================
+
+let isFlatMap = false;
+
+const globeDiv = document.getElementById("globeViz");
+
+const mapButton = document.getElementById("mapToggle");
+
+mapButton.addEventListener("click", () => {
+
+    if (!isFlatMap) {
+
+        globeDiv.style.opacity = "0";
+
+        showFlatMap();
+
+        setTimeout(() => {
+
+            globeDiv.style.display = "none";
+
+        }, 600);
+
+        mapButton.style.display = "none";
+
+        isFlatMap = true;
+
+    }
+
+});
+
+// ==========================================
+// Globe Button
+// ==========================================
+
+window.addEventListener("showGlobe", () => {
+
+    hideFlatMap();
+
+    globeDiv.style.display = "block";
+
+    requestAnimationFrame(() => {
+
+        globeDiv.style.opacity = "1";
+
+    });
+
+    mapButton.style.display = "block";
+
+    isFlatMap = false;
+
+});
+
+// ==========================================
+// Export
+// ==========================================
+
+export {
+
+    globe,
+
+    controls
+
+};

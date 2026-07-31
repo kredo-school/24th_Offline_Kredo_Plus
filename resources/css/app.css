@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* "Kredo Plus" wordmark — kept in sync with layouts/guest.blade.php */
+.wordmark-kredo {
+    background: linear-gradient(100deg, #4338ca 0%, #2f5fdb 55%, #2563eb 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.wordmark-plus { color: #3f6db3; }
+
+.kredo-bar {
+    background: linear-gradient(90deg, #2f5fdb 0%, #e05237 33%, #f5b52e 66%, #5eab35 100%);
+}

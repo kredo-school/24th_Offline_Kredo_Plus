@@ -29,10 +29,22 @@ class RestaurantCafeController extends Controller
     public function index()
     {
         // ---- Restaurant ----
-        $posts = Post::with(['category', 'user'])
+        // ⚠️ カテゴリー(restaurant-cafe)による絞り込みは未実装(投稿担当に確認中のため保留)
+        $posts = Post::withCount(['likes', 'comments'])
+            ->with([
+                'category',
+                'user:id,name',
+                'likes' => fn ($q) => $q->where('user_id', auth()->id()),
+                'bookmarks' => fn ($q) => $q->where('user_id', auth()->id()),
+                'comments' => fn ($q) => $q->with('user:id,name')->oldest(),
+            ])
             ->latest()
             ->get();
-        return view('information.restaurant-cafe.index', compact('posts'));
+
+        // カテゴリー名 => 表示色(Category::color()と同じロジック)。JSのバッジ色に使う。
+        $categoryColors = Category::forSection('restaurant-cafe')->mapWithKeys(fn ($c) => [$c->name => $c->color()]);
+
+        return view('information.restaurant-cafe.index', compact('posts', 'categoryColors'));
     }
 
     /**
@@ -55,8 +67,9 @@ class RestaurantCafeController extends Controller
 
         // restaurant-cafe セクションのカテゴリー一覧(色付き選択チップ用)
         $categories = Category::forSection('restaurant-cafe');
+        $section = 'restaurant-cafe';
 
-        return view('information.edit', compact('post', 'categories'));
+        return view('information.edit', compact('post', 'categories', 'section'));
     }
 
     /**
