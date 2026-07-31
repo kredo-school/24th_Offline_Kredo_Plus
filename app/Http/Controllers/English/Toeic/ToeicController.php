@@ -128,6 +128,7 @@ class ToeicController extends Controller
      * TOEIC 問題（全問ロード方式）(S04)
      * GET /english/toeic/{part}/practice
      *
+     * Part 1・2 は問題プールからランダムに5問を抽出して出題する（プールが増えても出題数は5問固定）。
      * Part 5 は問題プールから10問を抽出して出題する（セッション中は順序固定）。
      * 未回答の問題があればそれを優先的に抽出し、全問回答済みの場合は完全ランダムに抽出する。
      * Part 6 / 7 は長文（passage）2つ分を1セッションで出題する。
@@ -157,8 +158,8 @@ class ToeicController extends Controller
 
             $user = Auth::user();
 
-            if ($part === 1) {
-                // Part1は問題プールからランダムに5問を抽出して出題する（プールが増えても出題数は5問固定）
+            if (in_array($part, [1, 2], true)) {
+                // Part1・Part2は問題プールからランダムに5問を抽出して出題する（プールが増えても出題数は5問固定）
                 $questions = $pool->shuffle()->take(5)->values();
             } elseif ($part === 5) {
                 // 未回答の問題を優先して出題し、全問回答済みなら完全ランダムに戻す

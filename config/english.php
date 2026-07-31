@@ -16,12 +16,12 @@ return [
     */
 
     // URL パラメータ {part} として許可する値
-    'toeic_parts' => ['1', '5', '6', '7'],
+    'toeic_parts' => ['1', '2', '5', '6', '7'],
 
     // TOEIC Part ごとのメタ情報（今後 DB 管理に移行可能）
     'toeic_part_meta' => [
         1 => ['name' => 'Part 1', 'desc' => 'Photographs (Listening)',             'available' => true],
-        2 => ['name' => 'Part 2', 'desc' => 'Question-Response (Listening)',        'available' => false],
+        2 => ['name' => 'Part 2', 'desc' => 'Question-Response (Listening)',        'available' => true],
         3 => ['name' => 'Part 3', 'desc' => 'Conversations (Listening)',            'available' => false],
         4 => ['name' => 'Part 4', 'desc' => 'Talks (Listening)',                   'available' => false],
         5 => ['name' => 'Part 5', 'desc' => 'Incomplete Sentences (Grammar)',       'available' => true],

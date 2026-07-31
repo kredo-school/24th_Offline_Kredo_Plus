@@ -13,6 +13,7 @@ import { showToast }        from '../utils/toast.js';
 export function toeicPractice(config) {
     return {
         questions:       config.questions ?? [],
+        part:            config.part,
         submitUrl:       config.submitUrl,
         completeUrl:     config.completeUrl,
         resultUrl:       config.resultUrl,
@@ -35,12 +36,17 @@ export function toeicPractice(config) {
         },
 
         init() {
-            // ChromeはgetVoices()が非同期に読み込まれ、初回は空配列を返すことがあるため、
-            // 読み込み完了後に一度だけ再生し直して指定ボイスを反映させる
+            // ChromeはgetVoices()が非同期に読み込まれ、初回は空配列を返すことがある。
+            // その場合は読み込み完了を待ってから1回だけ再生する（即時呼び出しと二重に
+            // ならないよう、どちらか一方の経路でのみ autoPlayListening() を呼ぶ）
             if ('speechSynthesis' in window && window.speechSynthesis.getVoices().length === 0) {
-                window.speechSynthesis.onvoiceschanged = () => this.autoPlayListening();
+                window.speechSynthesis.onvoiceschanged = () => {
+                    window.speechSynthesis.onvoiceschanged = null;
+                    this.autoPlayListening();
+                };
+            } else {
+                this.autoPlayListening();
             }
-            this.autoPlayListening();
             this.$watch('currentIndex', () => this.autoPlayListening());
         },
 
@@ -66,14 +72,18 @@ export function toeicPractice(config) {
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
         },
 
-        // Part1（写真描写問題）は本番の音声形式に合わせ、選択肢ごとに
-        // 文字（A〜D）を読み上げてから一呼吸おいて文章を読み上げる
+        // Part1（写真描写問題）・Part2（応答問題）は本番の音声形式に合わせ、選択肢ごとに
+        // 文字（A〜C/D）を読み上げてから一呼吸おいて文章を読み上げる。
+        // Part2は選択肢の前に、質問文（question_text）を先に読み上げる。
         repeatAudio() {
             if (!('speechSynthesis' in window) || !this.current?.options) return;
             this.stopAudio();
             // Chromeはcancel()の直後にspeak()すると正しく停止・再生できないことがあるため、
             // 少し間を空けてから読み上げを開始する
             setTimeout(() => {
+                if (this.part === 2 && this.current.question_text) {
+                    this.speak(this.current.question_text);
+                }
                 this.current.options.forEach(option => {
                     this.speak(`${option.label}...`);
                     this.speak(option.option_text);
@@ -82,7 +92,7 @@ export function toeicPractice(config) {
         },
 
         autoPlayListening() {
-            if (this.current?.image_url) this.repeatAudio();
+            if (this.current?.image_url || this.part === 2) this.repeatAudio();
         },
 
         optionClass(optionId) {

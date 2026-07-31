@@ -15,10 +15,11 @@ class ToeicQuestionSeeder extends Seeder
     public function run(): void
     {
         // forceDelete で実データを削除し、FK cascade で選択肢も削除する
-        ToeicQuestion::withTrashed()->whereIn('part', [1, 5, 6, 7])->forceDelete();
+        ToeicQuestion::withTrashed()->whereIn('part', [1, 2, 5, 6, 7])->forceDelete();
         ToeicPassage::whereIn('part', [6, 7])->delete();
 
         $this->createPart1Questions();
+        $this->createPart2Questions();
         $this->createPart5Questions();
         $this->createPart6Questions();
         $this->createPart7Questions();
@@ -321,6 +322,242 @@ class ToeicQuestionSeeder extends Seeder
 
         foreach ($questions as $idx => $data) {
             $this->createQuestion($data, 1, $idx + 1);
+        }
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    //  Part 2：質問応答問題（20問プールからランダム5問出題）
+    //  質問文（question_text）・選択肢（option_text）とも画面には表示せず、
+    //  音声読み上げのみで出題する（本番同様の形式）。
+    // ──────────────────────────────────────────────────────────────
+
+    private function createPart2Questions(): void
+    {
+        $questions = [
+            [
+                'question_text' => 'When does the marketing meeting start?',
+                'explanation'   => '時刻を尋ねるWhen疑問文には具体的な時刻で答える(A)が正解。(B)は"market"の音の類似による誤答、(C)は場所を答えており質問の意図とずれる。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'It starts at two o\'clock.',        'is_correct' => true],
+                    ['label' => 'B', 'text' => 'I marketed the product last year.', 'is_correct' => false],
+                    ['label' => 'C', 'text' => 'The meeting room is on the third floor.', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Could you send me the quarterly report by tomorrow?',
+                'explanation'   => '依頼表現"Could you...?"には引き受ける返答が自然。(A)が快諾する適切な応答。(B)は"report"に反応しただけで質問に答えていない。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Sure, I\'ll email it this afternoon.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The report was very informative.',     'is_correct' => false],
+                    ['label' => 'C', 'text' => 'I sent the invitation last week.',     'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Who is going to lead the new project?',
+                'explanation'   => '人物を尋ねるWho疑問文には人名や役職で答える。(B)が適切。(A)は日時、(C)は"led/lead"の音の類似による誤答。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'It\'s scheduled for next Monday.', 'is_correct' => false],
+                    ['label' => 'B', 'text' => 'Sarah will be in charge of it.',   'is_correct' => true],
+                    ['label' => 'C', 'text' => 'I led a great discussion.',        'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Isn\'t the new office building supposed to open next month?',
+                'explanation'   => '否定疑問文でも基本はYes/Noで答える(内容が真ならYes)。(A)は開業予定を確認しつつ補足情報を加えた自然な応答。',
+                'difficulty'    => 'medium',
+                'xp'            => 40,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Yes, but it might be delayed a bit.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The building has ten floors.',        'is_correct' => false],
+                    ['label' => 'C', 'text' => 'I opened the window earlier.',        'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Where should I put these boxes of supplies?',
+                'explanation'   => '場所を尋ねるWhereには具体的な場所で答える(A)が正解。(B)は"supplies"の音に反応しただけの誤答。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'You can leave them by the storage room.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'I supplied the data yesterday.',          'is_correct' => false],
+                    ['label' => 'C', 'text' => 'They arrived this morning.',              'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'How long will the training session take?',
+                'explanation'   => 'How longは所要時間を問う。時間の長さで答える(A)が正解。',
+                'difficulty'    => 'medium',
+                'xp'            => 40,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'It usually lasts about two hours.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'I trained for the marathon.',       'is_correct' => false],
+                    ['label' => 'C', 'text' => 'The trainer arrived early.',        'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Would you like to join us for lunch, or stay in the office?',
+                'explanation'   => '選択疑問文(or)には二択のどちらかを選んで答える。(A)は「残る」ことを選んだ自然な応答。',
+                'difficulty'    => 'medium',
+                'xp'            => 40,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'I\'d rather stay and finish this report.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'Lunch was delicious.',                     'is_correct' => false],
+                    ['label' => 'C', 'text' => 'The office is on the fifth floor.',        'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'The printer on the second floor isn\'t working again.',
+                'explanation'   => '問題提起の平叙文には対処法や反応で答える。(A)が自然な返答。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'I\'ll call maintenance right away.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'I printed twenty copies.',           'is_correct' => false],
+                    ['label' => 'C', 'text' => 'The second floor has a nice view.',  'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Have you finished reviewing the contract yet?',
+                'explanation'   => '現在完了のYes/No疑問文。まだ終わっていないことを伝える(A)が自然。(C)は"review"の意味を勘違いした誤答。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Not yet, I should be done by noon.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The contract is on the desk.',       'is_correct' => false],
+                    ['label' => 'C', 'text' => 'I reviewed the movie last night.',   'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Why was the shipment delayed?',
+                'explanation'   => 'Whyには理由で答える。"because of"で理由を示している(A)が正解。',
+                'difficulty'    => 'medium',
+                'xp'            => 40,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Because of a problem with customs clearance.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'It was shipped from Japan.',                   'is_correct' => false],
+                    ['label' => 'C', 'text' => 'The delay lasted five minutes.',               'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Do you know where the nearest ATM is?',
+                'explanation'   => '埋め込み疑問文(Do you know where...)。場所を答える(A)が正解。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'There\'s one right around the corner.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'I know him very well.',                 'is_correct' => false],
+                    ['label' => 'C', 'text' => 'The bank closes at five.',              'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'This coffee machine hasn\'t been cleaned in weeks.',
+                'explanation'   => '問題を指摘する平叙文には対応を示す応答が自然。(A)が適切。',
+                'difficulty'    => 'medium',
+                'xp'            => 40,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'I\'ll take care of it this afternoon.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'I like my coffee black.',               'is_correct' => false],
+                    ['label' => 'C', 'text' => 'The machine was expensive.',            'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'What time does the flight to Chicago depart?',
+                'explanation'   => '出発時刻を尋ねるWhat timeには時刻で答える(A)が正解。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'It leaves at nine thirty tomorrow morning.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'Chicago is a big city.',                     'is_correct' => false],
+                    ['label' => 'C', 'text' => 'I departed from the meeting early.',         'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'You\'re coming to the workshop on Friday, aren\'t you?',
+                'explanation'   => '付加疑問文。参加予定を確認しYesと答えている(A)が正解。',
+                'difficulty'    => 'medium',
+                'xp'            => 40,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Yes, I\'ve already registered.',   'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The workshop was very useful.',    'is_correct' => false],
+                    ['label' => 'C', 'text' => 'Friday is my favorite day.',       'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'How much does it cost to renew the software license?',
+                'explanation'   => 'How muchは金額を尋ねる。金額で答える(A)が正解。',
+                'difficulty'    => 'medium',
+                'xp'            => 40,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'It\'s about three hundred dollars a year.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The software is easy to use.',              'is_correct' => false],
+                    ['label' => 'C', 'text' => 'I renewed my passport last month.',         'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Could you turn down the air conditioner? It\'s freezing in here.',
+                'explanation'   => '依頼表現には応じる返答が自然。(A)が適切。(C)は"turn"の音に反応した誤答。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Sure, I\'ll adjust it now.',           'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The weather is quite cold outside.',   'is_correct' => false],
+                    ['label' => 'C', 'text' => 'I turned in my assignment.',           'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Isn\'t there a staff meeting scheduled for this afternoon?',
+                'explanation'   => '否定疑問文にYesで答え、具体的な時間を補足している(A)が正解。',
+                'difficulty'    => 'medium',
+                'xp'            => 40,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Yes, it starts right after lunch.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The staff did a great job.',        'is_correct' => false],
+                    ['label' => 'C', 'text' => 'I scheduled a dentist appointment.','is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Who left these documents on my desk?',
+                'explanation'   => 'Whoには人物で答える(A)が正解。(B)は物、(C)は"documents/documented"の音の類似による誤答。',
+                'difficulty'    => 'easy',
+                'xp'            => 30,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'I think it was someone from accounting.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The desk needs to be replaced.',           'is_correct' => false],
+                    ['label' => 'C', 'text' => 'I documented everything carefully.',       'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'The client wants to reschedule tomorrow\'s meeting.',
+                'explanation'   => '会議の再調整を伝える平叙文には対応方針を示す応答が自然。(C)は紛らわしいが質問の意図(再調整への対応)に直接応えていない。',
+                'difficulty'    => 'hard',
+                'xp'            => 50,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Let\'s find another time that works for everyone.', 'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The client seemed satisfied.',                      'is_correct' => false],
+                    ['label' => 'C', 'text' => 'I scheduled it for next Tuesday originally.',       'is_correct' => false],
+                ],
+            ],
+            [
+                'question_text' => 'Would you mind reviewing my presentation before the meeting?',
+                'explanation'   => '"Would you mind ...?"には快諾する場合"Not at all"などで答える。(A)が正解。',
+                'difficulty'    => 'medium',
+                'xp'            => 40,
+                'options'       => [
+                    ['label' => 'A', 'text' => 'Not at all, just send it over.',   'is_correct' => true],
+                    ['label' => 'B', 'text' => 'The presentation went really well.','is_correct' => false],
+                    ['label' => 'C', 'text' => 'I don\'t mind the weather today.', 'is_correct' => false],
+                ],
+            ],
+        ];
+
+        foreach ($questions as $idx => $data) {
+            $this->createQuestion($data, 2, $idx + 1);
         }
     }
 

@@ -12,9 +12,10 @@ class ToeicSlideSeeder extends Seeder
 
     public function run(): void
     {
-        ToeicSlide::whereIn('part', [1, 5, 6, 7])->delete();
+        ToeicSlide::whereIn('part', [1, 2, 5, 6, 7])->delete();
 
         $this->createPart1Slides();
+        $this->createPart2Slides();
         $this->createPart5Slides();
         $this->createPart6Slides();
         $this->createPart7Slides();
@@ -43,6 +44,99 @@ class ToeicSlideSeeder extends Seeder
 
         foreach ($slides as $slide) {
             ToeicSlide::create(array_merge($slide, ['part' => 1, 'sort_order' => $slide['step_number']]));
+        }
+    }
+
+    private function createPart2Slides(): void
+    {
+        $slides = [
+            [
+                'step_number' => 1,
+                'slide_type'  => 'explanation',
+                'title'       => 'Part 2 とは？',
+                'content'     => '<p class="mb-4">Part 2は<strong>Question-Response（応答問題）</strong>です。</p>
+<ul class="space-y-2">
+<li>問題数: <strong>25問</strong>（本番）</li>
+<li>形式: 1つの質問または発言と、それに対する3つの応答（A〜C）が読み上げられる。最もふさわしい応答を選ぶ</li>
+<li>質問文・応答とも<strong>音声のみ</strong>で、印刷はされない</li>
+<li>目標解答時間: <strong>1問あたり約5秒</strong></li>
+</ul>
+<div class="mt-4 p-4 bg-primary/10 rounded-xl">
+<p class="font-semibold text-primary">💡 攻略ポイント</p>
+<p>最初の疑問詞（Who / What / When / Where / Why / How）を聞き逃さないことが最重要。疑問詞さえ聞き取れれば、話がそれた選択肢を消去できる。</p>
+</div>',
+            ],
+            [
+                'step_number' => 2,
+                'slide_type'  => 'strategy',
+                'title'       => '設問タイプ①：WH疑問文',
+                'content'     => '<p class="mb-4">Who / What / When / Where / Why / How で始まる疑問文は、Yes/Noでは答えられません。疑問詞に対応した情報（人・時・場所・理由・方法など）を答えている選択肢を選びます。</p>
+<ul class="space-y-2">
+<li><strong>Who</strong> → 人名・役職</li>
+<li><strong>When / What time</strong> → 時刻・日付</li>
+<li><strong>Where</strong> → 場所</li>
+<li><strong>Why</strong> → 理由（because など）</li>
+<li><strong>How long / How much / How often</strong> → 期間・金額・頻度</li>
+</ul>
+<div class="mt-4 p-4 bg-primary/10 rounded-xl">
+<p class="font-semibold text-primary">💡 ひっかけに注意</p>
+<p>WH疑問文に "Yes" や "No" で始まる応答は、ほぼ確実に不正解。</p>
+</div>',
+            ],
+            [
+                'step_number' => 3,
+                'slide_type'  => 'strategy',
+                'title'       => '設問タイプ②：Yes/No疑問文・否定疑問文・付加疑問文',
+                'content'     => '<p class="mb-4">Do / Does / Did / Is / Are / Have で始まる疑問文には、Yes/Noまたはそれに相当する内容で応答します。</p>
+<ul class="space-y-2">
+<li><strong>否定疑問文</strong>（Isn\'t / Don\'t で始まる）も、内容が事実ならYes、事実でなければNoで答える（日本語の「はい/いいえ」の感覚と逆になる場合があるので注意）</li>
+<li><strong>付加疑問文</strong>（..., aren\'t you? / ..., isn\'t it? など）も同様にYes/Noベースで答える</li>
+<li>実際にはYes/Noを省略し、具体的な内容だけで答える応答も多い（本番でも頻出）</li>
+</ul>
+<div class="mt-4 p-4 bg-primary/10 rounded-xl">
+<p class="font-semibold text-primary">💡 攻略ポイント</p>
+<p>Yes/Noの有無だけで判断せず、後に続く内容が質問と論理的につながっているかを確認する。</p>
+</div>',
+            ],
+            [
+                'step_number' => 4,
+                'slide_type'  => 'strategy',
+                'title'       => '設問タイプ③：平叙文・依頼・提案・選択疑問文',
+                'content'     => '<p class="mb-4">TOEIC Part 2には疑問文ではなく、依頼・提案・報告（平叙文）の形式で出題されるパターンも多くあります。</p>
+<ul class="space-y-2">
+<li><strong>依頼表現</strong>（Could you...? / Would you mind...?）→ 引き受ける/断る応答</li>
+<li><strong>提案表現</strong>（Why don\'t we...? / Shall we...?）→ 賛成/代案の応答</li>
+<li><strong>選択疑問文</strong>（A or B?）→ どちらかを選ぶ、または両方とも否定する応答</li>
+<li><strong>平叙文</strong>（問題の報告・状況説明）→ 対応策や反応を示す応答</li>
+</ul>
+<div class="mt-4 p-4 bg-primary/10 rounded-xl">
+<p class="font-semibold text-primary">💡 攻略ポイント</p>
+<p>平叙文は「質問」ではないため、内容を最後まで聞き、状況に対する自然な反応・対応を選ぶ意識が必要。</p>
+</div>',
+            ],
+            [
+                'step_number' => 5,
+                'slide_type'  => 'strategy',
+                'title'       => 'ひっかけパターンとPart 2解答戦略',
+                'content'     => '<div class="space-y-3">
+<div class="bg-surface-container p-4 rounded-xl">
+<p class="font-semibold mb-2">頻出のひっかけパターン</p>
+<ul class="space-y-1">
+<li><strong>音の類似</strong>：質問中の単語と似た発音の単語を含む選択肢（例：market ↔ marketing）</li>
+<li><strong>連想語</strong>：質問と関連しそうだが、実際には答えになっていない単語を含む選択肢</li>
+<li><strong>時制のズレ</strong>：質問は未来のことなのに過去形で答えるなど、時制が噛み合わない選択肢</li>
+</ul>
+</div>
+</div>
+<div class="mt-4 p-4 bg-primary/10 rounded-xl">
+<p class="font-semibold text-primary">💡 時間配分の目安</p>
+<p>Part2全25問は<strong>約4分</strong>で解き切るのが理想。1問に迷っても選択肢は一度しか読まれないため、直感で選んですぐ次の問題に集中を切り替えることが高得点の鍵。</p>
+</div>',
+            ],
+        ];
+
+        foreach ($slides as $slide) {
+            ToeicSlide::create(array_merge($slide, ['part' => 2, 'sort_order' => $slide['step_number']]));
         }
     }
 

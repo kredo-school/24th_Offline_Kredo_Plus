@@ -15,6 +15,7 @@
 
     <div x-data="toeicPractice({
             questions:   {{ json_encode($questionsJson) }},
+            part:        {{ $part }},
             submitUrl:   '{{ route('english.toeic.answer',   $part) }}',
             completeUrl: '{{ route('english.toeic.complete', $part) }}',
             resultUrl:   '{{ route('english.toeic.result',   $part) }}'
@@ -64,13 +65,38 @@
                 </div>
             </template>
 
-            {{-- 問題文カード --}}
+            {{-- 質問応答問題（Part2：本番同様、質問文・選択肢とも一切表示せず音声のみで判断） --}}
+            @if($part == 2)
+            <div class="max-w-3xl mx-auto mb-6">
+                <div class="bg-surface-container rounded-[0.75rem] shadow-sm p-8 flex flex-col items-center text-center gap-4">
+                    <span class="material-symbols-outlined text-5xl text-primary">headphones</span>
+                    <p class="text-body-md text-on-surface-variant leading-relaxed max-w-xl">
+                        Directions: You will hear a question or statement and three responses spoken in English.
+                        They will not be printed in your test book and will be spoken only one time.
+                        Select the best response to the question or statement and mark the letter (A), (B), or (C).
+                    </p>
+                    <button
+                        @click="repeatAudio()"
+                        type="button"
+                        class="w-full md:w-auto px-8 py-2.5 bg-primary/10 text-primary rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-primary/20 transition-all"
+                    >
+                        <span class="material-symbols-outlined text-sm">replay</span>
+                        Repeat Audio
+                    </button>
+                </div>
+            </div>
+            @endif
+
+            {{-- 問題文カード（Part2は本番同様、問題文を画面に表示しない） --}}
+            @if($part != 2)
             <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8 mb-6 max-w-3xl mx-auto">
                 <p class="text-body-lg text-on-surface font-semibold leading-relaxed"
                    x-text="current.question_text"></p>
             </div>
+            @endif
 
             {{-- 4択ボタン（Part5〜7：本文つき） --}}
+            @if($part != 2)
             <template x-if="!current.image_url">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-3xl mx-auto mb-6">
                     <template x-for="option in current.options" :key="option.id">
@@ -88,6 +114,7 @@
                     </template>
                 </div>
             </template>
+            @endif
 
             {{-- 4択ボタン（Part1：本番同様、文字は表示せず音声のみで判断） --}}
             <template x-if="current.image_url">
@@ -106,6 +133,24 @@
                     </template>
                 </div>
             </template>
+
+            {{-- 3択ボタン（Part2：本番同様、文字は表示せず音声のみで判断） --}}
+            @if($part == 2)
+            <div class="grid grid-cols-3 gap-3 max-w-md mx-auto mb-6">
+                <template x-for="option in current.options" :key="option.id">
+                    <button
+                        @click="selectOption(option.id)"
+                        :disabled="isAnswered"
+                        :class="optionClass(option.id)"
+                        class="p-6 rounded-[0.75rem] border-2 text-center font-label-md transition-all"
+                    >
+                        <span class="block text-headline-md font-bold uppercase" x-text="option.label"></span>
+                        <span x-show="isAnswered && option.id === correctOptionId" class="block mt-1">✅</span>
+                        <span x-show="isAnswered && selectedId === option.id && option.id !== correctOptionId" class="block mt-1">❌</span>
+                    </button>
+                </template>
+            </div>
+            @endif
 
             {{-- 回答ボタン / フィードバック --}}
             <div class="max-w-3xl mx-auto">
@@ -142,6 +187,21 @@
                                 </template>
                             </div>
                         </template>
+
+                        {{-- Part2：回答後に質問文と応答（A〜C）を表示し、リピート再生と合わせて振り返れるようにする --}}
+                        @if($part == 2)
+                        <div class="mt-3 pt-3 border-t border-outline-variant/40 space-y-1.5">
+                            <p class="text-body-md font-semibold text-on-surface mb-2">"<span x-text="current.question_text"></span>"</p>
+                            <template x-for="option in current.options" :key="option.id">
+                                <p class="text-body-md" :class="option.id === correctOptionId ? 'text-green-700 font-semibold' : 'text-on-surface-variant'">
+                                    <span class="font-bold uppercase mr-1" x-text="option.label + '.'"></span>
+                                    <span x-text="option.option_text"></span>
+                                    <span x-show="option.id === correctOptionId">✅</span>
+                                    <span x-show="selectedId === option.id && option.id !== correctOptionId">❌</span>
+                                </p>
+                            </template>
+                        </div>
+                        @endif
                     </div>
                     <button @click="nextQuestion()"
                             :disabled="isLoading"
