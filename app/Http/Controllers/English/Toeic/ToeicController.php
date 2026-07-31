@@ -131,7 +131,7 @@ class ToeicController extends Controller
      * Part 1・2 は問題プールからランダムに5問を抽出して出題する（プールが増えても出題数は5問固定）。
      * Part 5 は問題プールから10問を抽出して出題する（セッション中は順序固定）。
      * 未回答の問題があればそれを優先的に抽出し、全問回答済みの場合は完全ランダムに抽出する。
-     * Part 6 / 7 は長文（passage）2つ分を1セッションで出題する。
+     * Part 3・4 は会話/トーク（passage）2つ分（3問×2＝6問）、Part 6 / 7 は長文（passage）2つ分を1セッションで出題する。
      * 未回答の問題を含むパッセージを優先し、全問回答済みの場合は完全ランダムに2パッセージ選ぶ。
      */
     public function practice(int $part)
@@ -175,7 +175,7 @@ class ToeicController extends Controller
                     $fillers = $pool->whereNotIn('id', $questions->pluck('id'))->shuffle()->take($needed);
                     $questions = $questions->concat($fillers)->values();
                 }
-            } elseif (in_array($part, [6, 7], true)) {
+            } elseif (in_array($part, [3, 4, 6, 7], true)) {
                 // 未回答の問題を含むパッセージを優先し、パッセージ2つ分を出題する
                 $answeredIds          = $this->toeicAnsweredQuestionIds($user, $part);
                 $allPassageIds        = $pool->pluck('passage_id')->unique()->values();
