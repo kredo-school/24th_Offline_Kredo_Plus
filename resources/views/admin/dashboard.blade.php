@@ -2,7 +2,7 @@
 
 @section('content')
 <!-- x-data で「今どのタブ（メニュー）を開いているか」を管理します (初期値: 'dashboard') -->
-<div x-data="{ currentTab: 'dashboard' }" class="flex min-h-screen bg-slate-100">
+<div x-data="{ currentTab: '{{ session('accountCreated') || $errors->any() ? 'accounts' : 'dashboard' }}' }" class="flex min-h-screen bg-slate-100">
 
     <!-- 1. 左側：サイドバー -->
     <aside class="w-64 bg-slate-900 text-white p-6 shrink-0 hidden md:block">
@@ -23,8 +23,15 @@
                 <span>👥</span> ユーザー管理
             </button>
 
+            <!-- アカウント作成 -->
+            <button @click="currentTab = 'accounts'"
+                    :class="currentTab === 'accounts' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-left">
+                <span>🔑</span> アカウント作成
+            </button>
+
             <!-- ポスト管理 -->
-            <button @click="currentTab = 'posts'" 
+            <button @click="currentTab = 'posts'"
                     :class="currentTab === 'posts' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
                     class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-left">
                 <span>📝</span> ポスト管理
@@ -472,6 +479,60 @@
                 </div>
             </div>
 
+        </div>
+
+        <!-- ⑥ アカウント作成の中身 -->
+        <div x-show="currentTab === 'accounts'" x-cloak>
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-slate-800">アカウント作成</h2>
+                <p class="text-sm text-slate-500 mt-1">管理者が学生アカウントを発行します。作成後、IDとパスワードを学生へ個別にお伝えください。</p>
+            </div>
+
+            <div class="max-w-xl bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+
+                @if (session('accountCreated'))
+                    <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs font-bold space-y-1">
+                        <p>✅ アカウントを作成しました。以下の情報を学生にお伝えください。</p>
+                        <p>ID（メールアドレス）: {{ session('accountCreated')['email'] }}</p>
+                        <p>初期パスワード: {{ session('accountCreated')['password'] }}</p>
+                    </div>
+                @endif
+
+                @if ($errors->any())
+                    <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-bold space-y-1">
+                        @foreach ($errors->all() as $error)
+                            <p>{{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('admin.users.store') }}" class="space-y-4">
+                    @csrf
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">氏名 <span class="text-rose-500">*</span></label>
+                        <input type="text" name="name" value="{{ old('name') }}" required
+                               class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">メールアドレス（ログインID） <span class="text-rose-500">*</span></label>
+                        <input type="email" name="email" value="{{ old('email') }}" required
+                               class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">初期パスワード（8文字以上） <span class="text-rose-500">*</span></label>
+                        <input type="text" name="password" required minlength="8"
+                               class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition">
+                    </div>
+
+                    <button type="submit"
+                            class="w-full py-3 px-6 rounded-xl text-xs font-bold transition bg-slate-900 hover:bg-slate-800 text-white shadow-md">
+                        アカウントを作成する
+                    </button>
+                </form>
+            </div>
         </div>
 
         <!-- ③ ポスト管理の中身 -->

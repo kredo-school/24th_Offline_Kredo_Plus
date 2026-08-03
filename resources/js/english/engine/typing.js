@@ -42,6 +42,50 @@ function playMistakeSound() {
     }
 }
 
+/**
+ * Overlays an invisible, focusable <textarea> on top of `box` so tapping the typing
+ * area on mobile opens the on-screen keyboard (a plain <div> never does). A <textarea>
+ * is used rather than <input> so literal newlines (Enter) can be typed, matching the
+ * multi-line question/answer text this engine renders. It's a sibling of `box`, not a
+ * child, because renderText() replaces box.innerHTML on every keystroke.
+ */
+function createHiddenTypingInput(box) {
+    const wrapper = document.createElement('div');
+    wrapper.style.position = 'relative';
+    box.parentNode.insertBefore(wrapper, box);
+    wrapper.appendChild(box);
+
+    const input = document.createElement('textarea');
+    input.setAttribute('aria-label', 'Typing input');
+    input.autocomplete = 'off';
+    input.autocorrect  = 'off';
+    input.autocapitalize = 'off';
+    input.spellcheck   = false;
+    Object.assign(input.style, {
+        position:  'absolute',
+        inset:     '0',
+        width:     '100%',
+        height:    '100%',
+        opacity:   '0',
+        border:    'none',
+        outline:   'none',
+        resize:    'none',
+        padding:   '0',
+        margin:    '0',
+        background: 'transparent',
+        color:      'transparent',
+        caretColor: 'transparent',
+    });
+    wrapper.appendChild(input);
+
+    // Tapping the (visible) typing box lands on this overlay and focuses it natively,
+    // which is what actually triggers the mobile keyboard. This click handler is a
+    // fallback for cases the overlay doesn't perfectly cover.
+    box.addEventListener('click', () => input.focus());
+
+    return input;
+}
+
 let mistakeFlashEl = null;
 
 /** Flashes the whole screen red for ~1s when the user mistypes a character. */
@@ -163,19 +207,8 @@ export function initTypingEngine({ rawText, storeUrl, resultUrl, typeQuestion = 
         }
     }
 
-    document.addEventListener('keydown', (e) => {
+    function processChar(key) {
         if (currentStep >= quizData.length) return;
-        if (e.key === ' ') e.preventDefault();
-        if (e.key.length > 1 && e.key !== 'Backspace' && e.key !== 'Enter') return;
-
-        const key = e.key === 'Enter' ? '\n' : e.key;
-
-        if (e.key === 'Backspace') {
-            if (cursorIdx > 0) cursorIdx--;
-            renderText();
-            return;
-        }
-
         if (startTime === null) startTime = Date.now();
 
         totalTyped++;
@@ -198,7 +231,35 @@ export function initTypingEngine({ rawText, storeUrl, resultUrl, typeQuestion = 
             }
             loadStep();
         }
+    }
+
+    // Character input is captured through a real, focusable <textarea> (see
+    // createHiddenTypingInput) rather than a global keydown listener, so that tapping
+    // the typing area opens the on-screen keyboard on mobile. The `input` event fires
+    // for both physical and virtual keyboards, covering normal typing, backspace,
+    // Enter, and even autocomplete/paste insertions.
+    const hiddenInput = createHiddenTypingInput(typingBox);
+
+    hiddenInput.addEventListener('input', (e) => {
+        if (currentStep >= quizData.length) { hiddenInput.value = ''; return; }
+
+        if (e.inputType === 'deleteContentBackward' || e.inputType === 'deleteContentForward') {
+            if (cursorIdx > 0) cursorIdx--;
+            renderText();
+        } else if (e.inputType === 'insertLineBreak') {
+            processChar('\n');
+        } else {
+            const typed = e.data ?? hiddenInput.value;
+            for (const ch of typed) processChar(ch);
+        }
+
+        hiddenInput.value = '';
     });
+
+    // Auto-focus for desktop so typing can start immediately; on mobile this initial
+    // call is silently ignored by the browser (no user gesture yet) and the user just
+    // taps the typing box, which focuses the overlay directly and opens the keyboard.
+    hiddenInput.focus({ preventScroll: true });
 
     if (restartBtn) {
         restartBtn.addEventListener('click', () => window.location.reload());

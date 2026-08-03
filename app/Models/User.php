@@ -22,6 +22,9 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    public const ADMIN_ROLE_ID = 1;
+    public const USER_ROLE_ID = 2;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -31,6 +34,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id',
         'total_xp',
         'study_streak',
         'last_study_date',
@@ -61,6 +65,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role_id' => 'integer',
             'last_study_date' => 'date',
             'total_xp' => 'integer',
             'study_streak' => 'integer',
@@ -122,5 +127,10 @@ class User extends Authenticatable
     public function hasGender(): bool
     {
         return !is_null($this->gender);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role_id === self::ADMIN_ROLE_ID;
     }
 }
