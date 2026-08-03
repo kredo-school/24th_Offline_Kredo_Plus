@@ -76,18 +76,6 @@
             <section class="bg-white/85 backdrop-blur border border-white/60 rounded-[24px] shadow-card p-7 relative overflow-hidden" id="auth-card">
                 <div class="kredo-bar absolute top-0 inset-x-0 h-1.5"></div>
 
-                <!-- Tab Switcher -->
-                <div class="flex bg-sky-50 rounded-full p-1 mb-6">
-                    <a href="{{ route('login') }}"
-                       class="flex-1 text-center py-2.5 rounded-full text-sm font-bold transition-all {{ request()->routeIs('login') ? 'bg-white text-brand-blue shadow-sm' : 'text-slate-400 hover:text-brand-blue' }}">
-                        Sign In
-                    </a>
-                    <a href="{{ route('register') }}"
-                       class="flex-1 text-center py-2.5 rounded-full text-sm font-bold transition-all {{ request()->routeIs('register') ? 'bg-white text-brand-blue shadow-sm' : 'text-slate-400 hover:text-brand-blue' }}">
-                        Sign Up
-                    </a>
-                </div>
-
                 <!-- Session Status -->
                 <x-auth-session-status class="mb-4 text-center" :status="session('status')" />
 
