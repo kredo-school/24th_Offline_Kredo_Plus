@@ -1,5 +1,5 @@
 <?php
-
+// Dashboard and English
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\English\Content\LearningContentController;
@@ -12,15 +12,19 @@ use App\Http\Controllers\English\Toeic\ToeicController;
 use App\Http\Controllers\English\Typing\TypingController;
 use App\Http\Controllers\English\Vocabulary\VocabularyController;
 use Illuminate\Support\Facades\Route;
+// Shower
 use App\Http\Controllers\ShowerController;
 use App\Http\Controllers\GenderController;
 use App\Http\Middleware\EnsureGenderIsSet;
+// Information
 use App\Http\Controllers\Information\InformationController;
 use App\Http\Controllers\Information\CarenderiaController;
 use App\Http\Controllers\Information\TravelController;
 use App\Http\Controllers\Information\OtherController;
 use App\Http\Controllers\Information\RestaurantCafeController;
 use App\Http\Controllers\Information\PostInteractionController;
+//Admin
+use App\Http\Controllers\Admin\AdminUserController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -200,8 +204,10 @@ Route::prefix('information')->group(function () {
 require __DIR__ . '/auth.php';
 
 // Admin (管理者画面)
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
         Route::get('/dashboard', function () {
             return view('admin.dashboard'); // admin/dashboard.blade.php を表示
         })->name('dashboard');
+
+        Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
     });

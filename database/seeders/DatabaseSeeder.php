@@ -31,6 +31,8 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
+        $this->call(AdminSeeder::class);
+
         // ===== 英語学習機能 =====
 
         // ----- タイピング教材 -----
