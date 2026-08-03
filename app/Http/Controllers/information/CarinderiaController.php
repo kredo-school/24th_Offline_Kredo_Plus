@@ -8,10 +8,11 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class CarenderiaController extends Controller
+class CarinderiaController extends Controller
 {
     /**
-     * カテゴリーのsection名(categoriesテーブルのsectionカラムと一致させる)
+     * カテゴリーのsection名(categoriesテーブルのsectionカラムと一致させる)。
+     * ルート名・Controller名・ビューフォルダ・DBすべて正式な綴り(carinderia)で統一。
      */
     private const SECTION = 'carinderia';
 
@@ -37,7 +38,7 @@ class CarenderiaController extends Controller
         // カテゴリー名 => 表示色(Category::color()と同じロジック)。JSのバッジ色に使う。
         $categoryColors = Category::forSection(self::SECTION)->mapWithKeys(fn ($c) => [$c->name => $c->color()]);
 
-        return view('information.carenderia.index', compact('posts', 'categoryColors'));
+        return view('information.carinderia.index', compact('posts', 'categoryColors'));
     }
 
     /**
@@ -47,7 +48,7 @@ class CarenderiaController extends Controller
     {
         $post->load(['user', 'category']);
 
-        return view('information.carenderia.show', compact('post'));
+        return view('information.carinderia.show', compact('post'));
     }
 
     /**
@@ -88,7 +89,7 @@ class CarenderiaController extends Controller
         $post->update($validated);
 
         return redirect()
-            ->route('carenderia.index')
+            ->route('carinderia.index')
             ->with('status', '投稿を更新しました。');
     }
 
@@ -106,7 +107,7 @@ class CarenderiaController extends Controller
         $post->delete();
 
         return redirect()
-            ->route('carenderia.index')
+            ->route('carinderia.index')
             ->with('status', '投稿を削除しました。');
     }
 }

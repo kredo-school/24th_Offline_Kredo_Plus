@@ -91,7 +91,7 @@
 
         <p class="font-mono text-[11px] tracking-[0.18em] text-[#241E1A]/40 mb-3 pl-1">STORE</p>
         <nav class="flex flex-col gap-1 pl-5">
-          <a href="{{ route('carenderia.index') }}" class="cat-link active flex items-center justify-between py-2 text-sm font-semibold" style="color:#2f5fdb">Carinderia</a>
+          <a href="{{ route('carinderia.index') }}" class="cat-link active flex items-center justify-between py-2 text-sm font-semibold" style="color:#2f5fdb">Carinderia</a>
         </nav>
       </div>
     </aside>
