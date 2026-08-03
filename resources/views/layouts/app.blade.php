@@ -112,11 +112,13 @@
                         <span class="material-symbols-outlined !text-2xl leading-none">flight</span>
                         <span class="text-[11px] font-bold whitespace-nowrap">留学情報</span>
                     </a>
-                    <a href="{{ route('admin.dashboard') }}" aria-label="Admin画面"
-                        class="flex flex-col items-center gap-0.5 transition-colors {{ request()->routeIs('admin.*') ? 'text-indigo-600' : 'text-slate-400 hover:text-indigo-600' }}">
-                        <span class="material-symbols-outlined !text-2xl leading-none">database</span>
-                        <span class="text-[11px] font-bold whitespace-nowrap">システム管理</span>
-                    </a>
+                    @if (auth()->user()?->isAdmin())
+                        <a href="{{ route('admin.dashboard') }}" aria-label="Admin画面"
+                            class="flex flex-col items-center gap-0.5 transition-colors {{ request()->routeIs('admin.*') ? 'text-indigo-600' : 'text-slate-400 hover:text-indigo-600' }}">
+                            <span class="material-symbols-outlined !text-2xl leading-none">database</span>
+                            <span class="text-[11px] font-bold whitespace-nowrap">システム管理</span>
+                        </a>
+                    @endif
                 </nav>
 
                 <button class="relative text-slate-500 hover:text-brand-blue transition-colors" aria-label="通知">
