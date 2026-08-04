@@ -238,7 +238,7 @@
 
   // ---- 現在ログイン中のユーザー(Auth::id()。未ログインならnull) ----
   const currentUserId = {{ auth()->id() ?? 'null' }};
-  const routeBase = @json(url('information/restaurant-cafe'));
+  const routeBase = @json(url('information'));
   const postsRouteBase = @json(url('information/posts'));
   const loginUrl = @json(route('login'));
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');

@@ -138,50 +138,36 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('gender:female')
         ->name('shower.female');
 
-        // Information (編集・削除はログイン必須のためこちらに配置)
-        Route::prefix('information/restaurant-cafe')->name('restaurant-cafe.')->group(function () {
-            Route::get('/{post}/edit', [RestaurantCafeController::class, 'edit'])->name('edit');
-            Route::put('/{post}', [RestaurantCafeController::class, 'update'])->name('update');
-            Route::delete('/{post}', [RestaurantCafeController::class, 'destroy'])->name('destroy');
-            Route::get('/{post}', [RestaurantCafeController::class, 'show'])->name('show');
-         });
+    // ============================================================
+    // Information
+    // 投稿の編集・更新・削除・詳細のロジックはInformationControllerに集約(セクションごとの重複を削減)。
+    // ============================================================
 
-        // Carinderia (restaurant-cafeと同じパターン)
-        Route::prefix('information/carinderia')->name('carinderia.')->group(function () {
-            Route::get('/{post}/edit', [CarinderiaController::class, 'edit'])->name('edit');
-            Route::put('/{post}', [CarinderiaController::class, 'update'])->name('update');
-            Route::delete('/{post}', [CarinderiaController::class, 'destroy'])->name('destroy');
-            Route::get('/{post}', [CarinderiaController::class, 'show'])->name('show');
-        });
+    // 投稿の詳細・編集・更新・削除(ログイン必須)
+    Route::prefix('information')->name('information.')->group(function () {
+        Route::get('/{post}/edit', [InformationController::class, 'edit'])->name('edit');
+        Route::put('/{post}', [InformationController::class, 'update'])->name('update');
+        Route::delete('/{post}', [InformationController::class, 'destroy'])->name('destroy');
+        Route::get('/{post}', [InformationController::class, 'show'])->name('show');
+    });
 
-        // Other (restaurant-cafeと同じパターン)
-        Route::prefix('information/other')->name('other.')->group(function () {
-            Route::get('/{post}/edit', [OtherController::class, 'edit'])->name('edit');
-            Route::put('/{post}', [OtherController::class, 'update'])->name('update');
-            Route::delete('/{post}', [OtherController::class, 'destroy'])->name('destroy');
-            Route::get('/{post}', [OtherController::class, 'show'])->name('show');
-        });
+    // Travelだけ投稿詳細ページが専用(travel.post.show)。
+    // travel.show は下の公開ルートで「エリア別一覧」(/information/travel/{slug})に使用中のため別名。
+    Route::prefix('information/travel')->name('travel.')->group(function () {
+        Route::get('/post/{post}', [TravelController::class, 'showPost'])->name('post.show');
+    });
 
-        // Travel (restaurant-cafeと同じパターン)
-        // 注意: 'travel.show' は下の公開ルートで「エリア別一覧」(/travel/{slug})に
-        // 既に使われているため、投稿詳細は 'travel.post.show' という別名にしている。
-        Route::prefix('information/travel')->name('travel.')->group(function () {
-            Route::get('/{post}/edit', [TravelController::class, 'edit'])->name('edit');
-            Route::put('/{post}', [TravelController::class, 'update'])->name('update');
-            Route::delete('/{post}', [TravelController::class, 'destroy'])->name('destroy');
-            Route::get('/post/{post}', [TravelController::class, 'showPost'])->name('post.show');
-        });
+    // いいね・コメント・お気に入り(Carinderia/Restaurant&Cafe/Travel/Other共通)
+    Route::prefix('information/posts')->name('posts.')->group(function () {
+        Route::post('/{post}/like', [PostInteractionController::class, 'toggleLike'])->name('like');
+        Route::post('/{post}/bookmark', [PostInteractionController::class, 'toggleBookmark'])->name('bookmark');
+        Route::post('/{post}/comments', [PostInteractionController::class, 'storeComment'])->name('comments.store');
+        Route::delete('/comments/{comment}', [PostInteractionController::class, 'destroyComment'])->name('comments.destroy');
+    });
+    // ============================================================
+});  // auth, verified group
 
-        // いいね・コメント・お気に入り(Carinderia/Restaurant&Cafe/Travel/Other共通)
-        Route::prefix('information/posts')->name('posts.')->group(function () {
-            Route::post('/{post}/like', [PostInteractionController::class, 'toggleLike'])->name('like');
-            Route::post('/{post}/bookmark', [PostInteractionController::class, 'toggleBookmark'])->name('bookmark');
-            Route::post('/{post}/comments', [PostInteractionController::class, 'storeComment'])->name('comments.store');
-            Route::delete('/comments/{comment}', [PostInteractionController::class, 'destroyComment'])->name('comments.destroy');
-        });
-}); //
-
-//下記コードデフォルトのままです。
+//Profile    下記コードデフォルトのままです。
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
