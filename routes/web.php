@@ -23,6 +23,7 @@ use App\Http\Controllers\Information\TravelController;
 use App\Http\Controllers\Information\OtherController;
 use App\Http\Controllers\Information\RestaurantCafeController;
 use App\Http\Controllers\Information\PostInteractionController;
+use App\Http\Controllers\EarthController;
 //Admin
 use App\Http\Controllers\Admin\AdminUserController;
 
@@ -202,6 +203,10 @@ Route::prefix('information')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+// Earth
+Route::get('/earth', [EarthController::class, 'index'])->name('earth');
+
 
 // Admin (管理者画面)
     Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {

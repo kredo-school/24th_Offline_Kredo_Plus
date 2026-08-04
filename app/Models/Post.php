@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\EarthLocation;
 
 class Post extends Model
 {
@@ -111,4 +112,10 @@ class Post extends Model
 
         return $this->bookmarks()->where('user_id', auth()->id())->exists();
     }
+
+    //地球アイコンをクリックしたときに位置情報を入力する
+        public function earthLocation()
+    {
+        return $this->hasOne(EarthLocation::class);
+}
 }
