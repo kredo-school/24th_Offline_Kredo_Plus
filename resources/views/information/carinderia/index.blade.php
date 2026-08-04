@@ -83,17 +83,18 @@
   </div>
 </div>
 
-<br>
+  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-3 md:pt-6">
+    <!-- 検索(画面サイズに関わらず常に表示) -->
+    <label class="relative block mb-4">
+      <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-[#241E1A]/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="タイトルを検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
+    </label>
+  </div>
 
-  <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 flex gap-6">
-<!-- Sidebar -->
+  <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-4 flex gap-6">
+<!-- Sidebar(PC/タブレットのみ。Carinderiaはカテゴリーが1つだけなのでスマホでは非表示のままでOK) -->
     <aside id="sidebar" class="hidden md:block w-60 shrink-0">
       <div class="sticky top-24">
-        <label class="relative block mb-6">
-          <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-[#241E1A]/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="searchInput" placeholder="タイトルを検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
-        </label>
-
         <p class="font-mono text-[11px] tracking-[0.18em] text-[#241E1A]/40 mb-3 pl-1">STORE</p>
         <nav class="flex flex-col gap-1 pl-5">
           <a href="{{ route('carinderia.index') }}" class="cat-link active flex items-center justify-between py-2 text-sm font-semibold" style="color:#2f5fdb">Carinderia</a>
@@ -557,9 +558,6 @@
 
   renderGrid(currentPage);
   renderPagination();
-
-  // モバイルではサイドバーを初期表示
-  if(window.innerWidth >= 768){ document.getElementById('sidebar').classList.remove('hidden'); }
 </script>
 
 <!-- Back to top -->

@@ -12,25 +12,12 @@ class RestaurantCafeController extends Controller
 {
     /**
      * Restaurant & Cafe 一覧ページ
-     *
-     * 将来DB接続する時:
-     *   $posts = Post::whereIn('category', ['Restaurant', 'Cafe'])
-     *                ->with(['user', 'comments.user'])
-     *                ->latest()
-     *                ->get();
-     *0710追記
-     * * ⚠️ 現状は仮データ(配列)のままです。
-     * edit / update / destroy は posts テーブル(Eloquent)を前提にしているため、
-     * index も Post::with(['user','category'])->... のようにDB化しないと
-     * 一覧 → 編集画面への導線(post.id によるルートモデルバインディング)が繋がりません。
-     * 一覧側の担当者と認識合わせをお願いします。
      */
-
     public function index()
     {
-        // ---- Restaurant ----
-        // ⚠️ カテゴリー(restaurant-cafe)による絞り込みは未実装(投稿担当に確認中のため保留)
-        $posts = Post::withCount(['likes', 'comments'])
+        // ---- Restaurant & Cafe セクションの投稿だけに絞り込む ----
+        $posts = Post::whereHas('category', fn ($q) => $q->where('section', 'restaurant-cafe'))
+            ->withCount(['likes', 'comments'])
             ->with([
                 'category',
                 'user:id,name',

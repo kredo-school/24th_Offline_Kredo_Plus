@@ -30,6 +30,10 @@
 
   .cat-link.active { color: var(--cat-color); font-weight: 600; }
 
+  /* スマホ用のSTOREチップ(横スクロール)。デスクトップの縦サイドバーの代わりに表示 */
+  .cat-link-mobile { --cat-color: #4736F0; background: rgba(36,30,26,0.05); color: rgba(36,30,26,0.6); }
+  .cat-link-mobile.active { background: var(--cat-color); color: #fff; }
+
   .food-card { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; }
   .food-card:hover { transform: translateY(-4px); }
 
@@ -92,18 +96,25 @@
   </div>
 </div>
 
-<br>
+  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-3 md:pt-8">
+    <!-- 検索(画面サイズに関わらず常に表示) -->
+    <label class="relative block mb-4">
+      <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-[#241E1A]/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="タイトルを検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
+    </label>
 
-  <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 flex gap-6">
+    <!-- STORE選択(スマホ用: 横スクロールできるチップ。サイドバーが隠れる代わりにこちらを表示) -->
+    <div class="flex md:hidden gap-2 overflow-x-auto pb-1 mb-2" id="storeNavMobile" style="scrollbar-width:none;">
+      <a href="#" data-tag="Restaurant" style="--cat-color:#2f5fdb" class="cat-link-mobile active shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors">Restaurant</a>
+      <a href="#" data-tag="Cafe" style="--cat-color:#e05237" class="cat-link-mobile shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors">Cafe</a>
+    </div>
+  </div>
 
-    <!-- Sidebar -->
+  <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-4 flex gap-6">
+
+    <!-- Sidebar(PC/タブレットのみ。スマホは上のチップに置き換え) -->
     <aside id="sidebar" class="hidden md:block w-60 shrink-0">
       <div class="sticky top-24">
-        <label class="relative block mb-6">
-          <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-[#241E1A]/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="searchInput" placeholder="タイトルを検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
-        </label>
-
         <p class="font-mono text-[11px] tracking-[0.18em] text-[#241E1A]/40 mb-3 pl-1">STORE</p>
         <nav class="flex flex-col gap-1 pl-5" id="storeNav">
           <a href="#" data-tag="Restaurant" style="--cat-color:#2f5fdb" class="cat-link active flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A]">Restaurant</a>
@@ -562,13 +573,15 @@
       .catch(() => alert('コメントの送信に失敗しました。もう一度お試しください。'));
   });
 
-  // STOREサイドバーのカテゴリ選択(クリックで絞り込み+再描画)
-  document.querySelectorAll('#storeNav .cat-link').forEach(link => {
+  // STOREカテゴリ選択(デスクトップの縦サイドバー・スマホの横チップ、両方に対応。クリックで絞り込み+再描画)
+  document.querySelectorAll('#storeNav .cat-link, #storeNavMobile .cat-link-mobile').forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
-      document.querySelectorAll('#storeNav .cat-link').forEach(l => l.classList.remove('active'));
-      link.classList.add('active');
-      activeCategory = link.dataset.tag;
+      const tag = link.dataset.tag;
+      document.querySelectorAll('#storeNav .cat-link, #storeNavMobile .cat-link-mobile').forEach(l => {
+        l.classList.toggle('active', l.dataset.tag === tag);
+      });
+      activeCategory = tag;
       currentPage = 1;
       renderGrid(currentPage);
       renderPagination();
@@ -585,9 +598,6 @@
 
   renderGrid(currentPage);
   renderPagination();
-
-  // モバイルではサイドバーを初期表示
-  if(window.innerWidth >= 768){ document.getElementById('sidebar').classList.remove('hidden'); }
 </script>
 <!-- Back to top -->
 <button id="backToTop" onclick="window.scrollTo({top:0, behavior:'smooth'})" aria-label="上に戻る"
