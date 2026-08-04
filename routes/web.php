@@ -144,11 +144,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ============================================================
 
     // 投稿の詳細・編集・更新・削除(ログイン必須)
+    // {post}は数字のみに制限(そうしないと「/information/carinderia」等の一覧ページURLまで
+    // このルートに食われてしまい、投稿IDとして解釈できず404になる)。
     Route::prefix('information')->name('information.')->group(function () {
-        Route::get('/{post}/edit', [InformationController::class, 'edit'])->name('edit');
-        Route::put('/{post}', [InformationController::class, 'update'])->name('update');
-        Route::delete('/{post}', [InformationController::class, 'destroy'])->name('destroy');
-        Route::get('/{post}', [InformationController::class, 'show'])->name('show');
+        Route::get('/{post}/edit', [InformationController::class, 'edit'])->name('edit')->whereNumber('post');
+        Route::put('/{post}', [InformationController::class, 'update'])->name('update')->whereNumber('post');
+        Route::delete('/{post}', [InformationController::class, 'destroy'])->name('destroy')->whereNumber('post');
+        Route::get('/{post}', [InformationController::class, 'show'])->name('show')->whereNumber('post');
     });
 
     // Travelだけ投稿詳細ページが専用(travel.post.show)。
