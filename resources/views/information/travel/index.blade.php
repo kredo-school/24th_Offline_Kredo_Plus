@@ -86,7 +86,7 @@
 
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-4">
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-    <a href="{{ route('carenderia.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#2f5fdb">
+    <a href="{{ route('carinderia.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#2f5fdb">
       Carinderia
     </a>
     <a href="{{ route('restaurant-cafe.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#e05237">

@@ -77,7 +77,7 @@
 
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-4">
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-    <a href="{{ route('carenderia.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#2f5fdb">
+    <a href="{{ route('carinderia.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#2f5fdb">
       Carinderia
     </a>
     <a href="{{ route('restaurant-cafe.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#e05237">
@@ -620,7 +620,7 @@
     <span class="text-[10px] font-bold tracking-wide mt-1" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Post</span>
   </a>
 
-  <a href="#" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
+  <a href="{{ route('earth') }}" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
     <i class="fa-solid fa-globe text-[20px]"></i>
     <span class="text-[10px] font-bold tracking-wide" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Map</span>
   </a>

@@ -43,5 +43,15 @@ class CategorySeeder extends Seeder
         // ---- Restaurant & Cafe ----
         Category::create(['section' => 'restaurant-cafe', 'name' => 'Restaurant', 'slug' => 'restaurant', 'sort_order' => 1]);
         Category::create(['section' => 'restaurant-cafe', 'name' => 'Cafe',       'slug' => 'cafe',       'sort_order' => 2]);
+
+        // ---- Carinderia ----
+        // 内部のsection/slugはコード全体で使っている綴り(carinderia)に統一。
+        // 表示名(name)だけ正式な綴り(Carinderia)。
+        // firstOrCreateにしているのは、tinker等で既に手動作成済みの環境でも
+        // 重複エラーにならないようにするため。
+        Category::firstOrCreate(
+            ['slug' => 'carinderia'],
+            ['section' => 'carinderia', 'name' => 'Carinderia', 'sort_order' => 1]
+        );
     }
 }

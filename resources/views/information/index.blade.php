@@ -91,7 +91,7 @@
 
         <p class="font-mono text-[11px] tracking-[0.18em] text-[#241E1A]/40 mb-3 pl-1">STORE</p>
         <nav class="flex flex-col gap-1 pl-5">
-          <a href="{{ route('carenderia.index') }}" class="cat-link active flex items-center justify-between py-2 text-sm font-semibold" style="color:#2f5fdb">Carinderia</a>
+          <a href="{{ route('carinderia.index') }}" class="cat-link active flex items-center justify-between py-2 text-sm font-semibold" style="color:#2f5fdb">Carinderia</a>
         </nav>
       </div>
     </aside>
@@ -496,7 +496,7 @@
     <span class="text-[10px] font-bold tracking-wide mt-1" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Post</span>
   </a>
 
-  <a href="#" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
+  <a href="{{ route('earth') }}" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
     <i class="fa-solid fa-globe text-[20px]"></i>
     <span class="text-[10px] font-bold tracking-wide" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Map</span>
   </a>

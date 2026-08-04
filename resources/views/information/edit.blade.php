@@ -1,6 +1,16 @@
 @extends('layouts.app')
 
 @section('title', 'Information 編集 — Kredo Plus')
+@php
+    // セクションごとの表示名・戻り先ラベル。新しいセクションを追加する時はここに1行足すだけでOK。
+    $sectionLabels = [
+        'restaurant-cafe' => 'Restaurant & Cafe',
+        'carinderia'      => 'Carinderia',
+        'travel'          => 'Travel',
+        'other'           => 'Other',
+    ];
+    $sectionLabel = $sectionLabels[$section] ?? ucfirst($section);
+@endphp
 
 @push('styles') <link rel="stylesheet" href="{{ asset('css/information.css') }}">
 @endpush

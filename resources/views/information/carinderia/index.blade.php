@@ -55,7 +55,7 @@
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6">
     <!-- Hero -->
     <div class="relative h-52 sm:h-64 rounded-3xl overflow-hidden shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]">
-      <img src="{{ asset('images/carenderia/sisig.jpg') }}" class="absolute inset-0 w-full h-full object-cover" alt="カリンデリアの食卓">
+      <img src="{{ asset('images/carinderia/sisig.jpg') }}" class="absolute inset-0 w-full h-full object-cover" alt="カリンデリアの食卓">
       <div class="absolute inset-0 bg-gradient-to-t from-[#241E1A]/80 via-[#241E1A]/25 to-transparent"></div>
       <div class="relative h-full flex flex-col justify-end p-6 sm:p-8">
         <h1 class="font-display text-4xl sm:text-5xl font-bold text-white">Carinderia</h1>
@@ -68,7 +68,7 @@
 
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-4">
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-    <a href="{{ route('carenderia.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#2f5fdb">
+    <a href="{{ route('carinderia.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#2f5fdb">
       Carinderia
     </a>
     <a href="{{ route('restaurant-cafe.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#e05237">
@@ -96,7 +96,7 @@
 
         <p class="font-mono text-[11px] tracking-[0.18em] text-[#241E1A]/40 mb-3 pl-1">STORE</p>
         <nav class="flex flex-col gap-1 pl-5">
-          <a href="{{ route('carenderia.index') }}" class="cat-link active flex items-center justify-between py-2 text-sm font-semibold" style="color:#2f5fdb">Carinderia</a>
+          <a href="{{ route('carinderia.index') }}" class="cat-link active flex items-center justify-between py-2 text-sm font-semibold" style="color:#2f5fdb">Carinderia</a>
         </nav>
       </div>
     </aside>
@@ -216,7 +216,7 @@
 
   // ---- 現在ログイン中のユーザー(Auth::id()。未ログインならnull) ----
   const currentUserId = {{ auth()->id() ?? 'null' }};
-  const routeBase = @json(url('information/carenderia'));
+  const routeBase = @json(url('information/carinderia'));
   const postsRouteBase = @json(url('information/posts'));
   const loginUrl = @json(route('login'));
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -594,7 +594,7 @@
     <span class="text-[10px] font-bold tracking-wide mt-1" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Post</span>
   </a>
 
-  <a href="#" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
+  <a href="{{ route('earth') }}" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
     <i class="fa-solid fa-globe text-[20px]"></i>
     <span class="text-[10px] font-bold tracking-wide" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Map</span>
   </a>

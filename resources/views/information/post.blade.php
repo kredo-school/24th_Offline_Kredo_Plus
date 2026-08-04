@@ -134,8 +134,8 @@
                         LOCATION
                     </label>
 
-                    <!-- Carenderiaのみ表示 -->
-                    <div id="carenderiaLocation" style="display:none;">
+                    <!-- Carinderiaのみ表示 -->
+                    <div id="carinderiaLocation" style="display:none;">
                         <button type="button" class="rc-save-btn"
                             style="background:#f8fafc;color:#4736F0;border:1px solid #4736F0;">
 

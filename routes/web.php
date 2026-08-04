@@ -1,5 +1,5 @@
 <?php
-
+// Dashboard and English
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\English\Content\LearningContentController;
@@ -11,16 +11,21 @@ use App\Http\Controllers\English\RankingController as EnglishRankingController;
 use App\Http\Controllers\English\Toeic\ToeicController;
 use App\Http\Controllers\English\Typing\TypingController;
 use App\Http\Controllers\English\Vocabulary\VocabularyController;
+use Illuminate\Support\Facades\Route;
+// Shower
 use App\Http\Controllers\ShowerController;
 use App\Http\Controllers\GenderController;
 use App\Http\Middleware\EnsureGenderIsSet;
+// Information
 use App\Http\Controllers\Information\InformationController;
-use App\Http\Controllers\Information\CarenderiaController;
+use App\Http\Controllers\Information\CarinderiaController;
 use App\Http\Controllers\Information\TravelController;
 use App\Http\Controllers\Information\OtherController;
 use App\Http\Controllers\Information\RestaurantCafeController;
 use App\Http\Controllers\Information\PostInteractionController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EarthController;
+//Admin
+use App\Http\Controllers\Admin\AdminUserController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -139,6 +144,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // 投稿画面・投稿保存
     Route::get('/information/post', [InformationController::class, 'create'])->name('information.create');
     Route::post('/information', [InformationController::class, 'store'])->name('information.store');
+        // Carinderia (restaurant-cafeと同じパターン)
+        Route::prefix('information/carinderia')->name('carinderia.')->group(function () {
+            Route::get('/{post}/edit', [CarinderiaController::class, 'edit'])->name('edit');
+            Route::put('/{post}', [CarinderiaController::class, 'update'])->name('update');
+            Route::delete('/{post}', [CarinderiaController::class, 'destroy'])->name('destroy');
+            Route::get('/{post}', [CarinderiaController::class, 'show'])->name('show');
+        });
 
     // 投稿の編集・更新・削除・詳細 ※InformationControllerで一括管理
     // URL: /information/{post}/edit
@@ -206,11 +218,31 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// information
+Route::prefix('information')->group(function () {
+    // 投稿画面
+    Route::get('/post', [InformationController::class, 'create'])->name('information.create');
+    // 投稿保存
+    Route::post('/', [InformationController::class, 'store'])->name('information.store');
+    // 各カテゴリ一覧
+    Route::get('/carinderia', [CarinderiaController::class, 'index'])->name('carinderia.index');
+    Route::get('/restaurant-cafe', [RestaurantCafeController::class, 'index'])->name('restaurant-cafe.index');
+    Route::get('/travel', [TravelController::class, 'index'])->name('travel.index');
+    Route::get('/travel/{slug}', [TravelController::class, 'show'])->name('travel.show');
+    Route::get('/other', [OtherController::class, 'index'])->name('other.index');
+});
+
 require __DIR__ . '/auth.php';
 
+// Earth
+Route::get('/earth', [EarthController::class, 'index'])->name('earth');
+
+
 // Admin (管理者画面)
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard'); // admin/dashboard.blade.php を表示
-    })->name('dashboard');
-});
+    Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard'); // admin/dashboard.blade.php を表示
+        })->name('dashboard');
+
+        Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
+    });
