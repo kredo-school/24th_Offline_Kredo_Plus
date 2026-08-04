@@ -190,11 +190,12 @@ Route::middleware('auth')->group(function () {
 
 // information
 Route::prefix('information')->group(function () {
-    // 投稿画面
-    Route::get('/post', [InformationController::class, 'create'])->name('information.create');
-    // 投稿保存
-    Route::post('/', [InformationController::class, 'store'])->name('information.store');
-    // 各カテゴリ一覧
+    // 投稿画面・投稿保存(未ログインで投稿できてしまうバグの修正でログイン必須に変更)
+    Route::middleware(['auth', 'verified'])->group(function () {
+        Route::get('/post', [InformationController::class, 'create'])->name('information.create');
+        Route::post('/', [InformationController::class, 'store'])->name('information.store');
+    });
+    // 各カテゴリ一覧(閲覧は未ログインでも可能なままにしている)
     Route::get('/carinderia', [CarinderiaController::class, 'index'])->name('carinderia.index');
     Route::get('/restaurant-cafe', [RestaurantCafeController::class, 'index'])->name('restaurant-cafe.index');
     Route::get('/travel', [TravelController::class, 'index'])->name('travel.index');
