@@ -8,13 +8,15 @@ use App\Models\Post;
 
 class RestaurantCafeController extends Controller
 {
-    // /** Restaurant & Cafe 一覧ページ
-    //  * 投稿の編集・更新・削除・詳細はInformationControllerで一括管理
-
+    /**
+     * Restaurant & Cafe 一覧ページ
+     * 投稿の編集・更新・削除・詳細は InformationController で一括管理する。
+     */
     public function index()
     {
-        // Restaurant & Cafe の投稿一覧を取得
-        $posts = Post::withCount(['likes', 'comments'])
+        // ---- Restaurant & Cafe セクションの投稿だけに絞り込む ----
+        $posts = Post::whereHas('category', fn ($q) => $q->where('section', 'restaurant-cafe'))
+            ->withCount(['likes', 'comments'])
             ->with([
                 'category',
                 'user:id,name',

@@ -36,7 +36,7 @@
 
                     $sectionLabels = [
                         'restaurant-cafe' => 'Restaurant & Cafe',
-                        'carenderia'      => 'Carinderia',
+                        'carinderia'      => 'Carinderia',
                         'travel'          => 'Travel',
                         'other'           => 'Other',
                     ];
@@ -45,7 +45,7 @@
 
                     $sectionRoutes = [
                         'restaurant-cafe' => 'restaurant-cafe.index',
-                        'carenderia'      => 'carenderia.index',
+                        'carinderia'      => 'carinderia.index',
                         'travel'          => 'travel.index',
                         'other'           => 'other.index',
                     ];

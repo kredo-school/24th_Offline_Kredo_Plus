@@ -140,65 +140,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ============================================================
     // Information
+    // 投稿の編集・更新・削除・詳細のロジックはInformationControllerに集約(セクションごとの重複を削減)。
+    // ============================================================
 
-    // 投稿画面・投稿保存
-    Route::get('/information/post', [InformationController::class, 'create'])->name('information.create');
-    Route::post('/information', [InformationController::class, 'store'])->name('information.store');
-        // Carinderia (restaurant-cafeと同じパターン)
-        Route::prefix('information/carinderia')->name('carinderia.')->group(function () {
-            Route::get('/{post}/edit', [CarinderiaController::class, 'edit'])->name('edit');
-            Route::put('/{post}', [CarinderiaController::class, 'update'])->name('update');
-            Route::delete('/{post}', [CarinderiaController::class, 'destroy'])->name('destroy');
-            Route::get('/{post}', [CarinderiaController::class, 'show'])->name('show');
-        });
-
-    // 投稿の編集・更新・削除・詳細 ※InformationControllerで一括管理
-    // URL: /information/{post}/edit
-    // URL: /information/{post}
+    // 投稿の詳細・編集・更新・削除(ログイン必須)
     Route::prefix('information')->name('information.')->group(function () {
-        // 編集画面
         Route::get('/{post}/edit', [InformationController::class, 'edit'])->name('edit');
-        // 更新
         Route::put('/{post}', [InformationController::class, 'update'])->name('update');
-        // 削除
         Route::delete('/{post}', [InformationController::class, 'destroy'])->name('destroy');
-        // 詳細
         Route::get('/{post}', [InformationController::class, 'show'])->name('show');
     });
 
-    // ============================================================
-    // Information 各カテゴリー一覧
-
-    Route::get('/information/carenderia', [CarenderiaController::class, 'index'])->name('carenderia.index');
-    Route::get('/information/restaurant-cafe', [RestaurantCafeController::class, 'index'])->name('restaurant-cafe.index');
-    Route::get('/information/travel', [TravelController::class, 'index'])->name('travel.index');
-    Route::get('/information/travel/{slug}', [TravelController::class, 'show'])->name('travel.show');
-    Route::get('/information/other', [OtherController::class, 'index'])->name('other.index');
-
-    // Carinderia (restaurant-cafeと同じパターン)
-    Route::prefix('information/carenderia')->name('carenderia.')->group(function () {
-        Route::get('/{post}/edit', [CarenderiaController::class, 'edit'])->name('edit');
-        Route::put('/{post}', [CarenderiaController::class, 'update'])->name('update');
-        Route::delete('/{post}', [CarenderiaController::class, 'destroy'])->name('destroy');
-        Route::get('/{post}', [CarenderiaController::class, 'show'])->name('show');
-    });
-
-    // Travel (restaurant-cafeと同じパターン)
-    // 注意: 'travel.show' は下の公開ルートで「エリア別一覧」(/travel/{slug})に
-    // 既に使われているため、投稿詳細は 'travel.post.show' という別名にしている。
+    // Travelだけ投稿詳細ページが専用(travel.post.show)。
+    // travel.show は下の公開ルートで「エリア別一覧」(/information/travel/{slug})に使用中のため別名。
     Route::prefix('information/travel')->name('travel.')->group(function () {
-        Route::get('/{post}/edit', [TravelController::class, 'edit'])->name('edit');
-        Route::put('/{post}', [TravelController::class, 'update'])->name('update');
-        Route::delete('/{post}', [TravelController::class, 'destroy'])->name('destroy');
         Route::get('/post/{post}', [TravelController::class, 'showPost'])->name('post.show');
-    });
-
-    // Other (restaurant-cafeと同じパターン)
-    Route::prefix('information/other')->name('other.')->group(function () {
-        Route::get('/{post}/edit', [OtherController::class, 'edit'])->name('edit');
-        Route::put('/{post}', [OtherController::class, 'update'])->name('update');
-        Route::delete('/{post}', [OtherController::class, 'destroy'])->name('destroy');
-        Route::get('/{post}', [OtherController::class, 'show'])->name('show');
     });
 
     // いいね・コメント・お気に入り(Carinderia/Restaurant&Cafe/Travel/Other共通)
@@ -220,11 +176,12 @@ Route::middleware('auth')->group(function () {
 
 // information
 Route::prefix('information')->group(function () {
-    // 投稿画面
-    Route::get('/post', [InformationController::class, 'create'])->name('information.create');
-    // 投稿保存
-    Route::post('/', [InformationController::class, 'store'])->name('information.store');
-    // 各カテゴリ一覧
+    // 投稿画面・投稿保存(未ログインで投稿できてしまうバグの修正でログイン必須に変更)
+    Route::middleware(['auth', 'verified'])->group(function () {
+        Route::get('/post', [InformationController::class, 'create'])->name('information.create');
+        Route::post('/', [InformationController::class, 'store'])->name('information.store');
+    });
+    // 各カテゴリ一覧(閲覧は未ログインでも可能なままにしている)
     Route::get('/carinderia', [CarinderiaController::class, 'index'])->name('carinderia.index');
     Route::get('/restaurant-cafe', [RestaurantCafeController::class, 'index'])->name('restaurant-cafe.index');
     Route::get('/travel', [TravelController::class, 'index'])->name('travel.index');
