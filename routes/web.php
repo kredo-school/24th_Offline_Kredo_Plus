@@ -11,7 +11,6 @@ use App\Http\Controllers\English\RankingController as EnglishRankingController;
 use App\Http\Controllers\English\Toeic\ToeicController;
 use App\Http\Controllers\English\Typing\TypingController;
 use App\Http\Controllers\English\Vocabulary\VocabularyController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ShowerController;
 use App\Http\Controllers\GenderController;
 use App\Http\Middleware\EnsureGenderIsSet;
@@ -21,6 +20,7 @@ use App\Http\Controllers\Information\TravelController;
 use App\Http\Controllers\Information\OtherController;
 use App\Http\Controllers\Information\RestaurantCafeController;
 use App\Http\Controllers\Information\PostInteractionController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -133,75 +133,84 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('gender:female')
         ->name('shower.female');
 
-        // Information (編集・削除はログイン必須のためこちらに配置)
-        Route::prefix('information/restaurant-cafe')->name('restaurant-cafe.')->group(function () {
-            Route::get('/{post}/edit', [RestaurantCafeController::class, 'edit'])->name('edit');
-            Route::put('/{post}', [RestaurantCafeController::class, 'update'])->name('update');
-            Route::delete('/{post}', [RestaurantCafeController::class, 'destroy'])->name('destroy');
-            Route::get('/{post}', [RestaurantCafeController::class, 'show'])->name('show');
-         });
+    // ============================================================
+    // Information
 
-        // Carinderia (restaurant-cafeと同じパターン)
-        Route::prefix('information/carenderia')->name('carenderia.')->group(function () {
-            Route::get('/{post}/edit', [CarenderiaController::class, 'edit'])->name('edit');
-            Route::put('/{post}', [CarenderiaController::class, 'update'])->name('update');
-            Route::delete('/{post}', [CarenderiaController::class, 'destroy'])->name('destroy');
-            Route::get('/{post}', [CarenderiaController::class, 'show'])->name('show');
-        });
+    // 投稿画面・投稿保存
+    Route::get('/information/post', [InformationController::class, 'create'])->name('information.create');
+    Route::post('/information', [InformationController::class, 'store'])->name('information.store');
 
-        // Other (restaurant-cafeと同じパターン)
-        Route::prefix('information/other')->name('other.')->group(function () {
-            Route::get('/{post}/edit', [OtherController::class, 'edit'])->name('edit');
-            Route::put('/{post}', [OtherController::class, 'update'])->name('update');
-            Route::delete('/{post}', [OtherController::class, 'destroy'])->name('destroy');
-            Route::get('/{post}', [OtherController::class, 'show'])->name('show');
-        });
+    // 投稿の編集・更新・削除・詳細 ※InformationControllerで一括管理
+    // URL: /information/{post}/edit
+    // URL: /information/{post}
+    Route::prefix('information')->name('information.')->group(function () {
+        // 編集画面
+        Route::get('/{post}/edit', [InformationController::class, 'edit'])->name('edit');
+        // 更新
+        Route::put('/{post}', [InformationController::class, 'update'])->name('update');
+        // 削除
+        Route::delete('/{post}', [InformationController::class, 'destroy'])->name('destroy');
+        // 詳細
+        Route::get('/{post}', [InformationController::class, 'show'])->name('show');
+    });
 
-        // Travel (restaurant-cafeと同じパターン)
-        // 注意: 'travel.show' は下の公開ルートで「エリア別一覧」(/travel/{slug})に
-        // 既に使われているため、投稿詳細は 'travel.post.show' という別名にしている。
-        Route::prefix('information/travel')->name('travel.')->group(function () {
-            Route::get('/{post}/edit', [TravelController::class, 'edit'])->name('edit');
-            Route::put('/{post}', [TravelController::class, 'update'])->name('update');
-            Route::delete('/{post}', [TravelController::class, 'destroy'])->name('destroy');
-            Route::get('/post/{post}', [TravelController::class, 'showPost'])->name('post.show');
-        });
+    // ============================================================
+    // Information 各カテゴリー一覧
 
-        // いいね・コメント・お気に入り(Carinderia/Restaurant&Cafe/Travel/Other共通)
-        Route::prefix('information/posts')->name('posts.')->group(function () {
-            Route::post('/{post}/like', [PostInteractionController::class, 'toggleLike'])->name('like');
-            Route::post('/{post}/bookmark', [PostInteractionController::class, 'toggleBookmark'])->name('bookmark');
-            Route::post('/{post}/comments', [PostInteractionController::class, 'storeComment'])->name('comments.store');
-            Route::delete('/comments/{comment}', [PostInteractionController::class, 'destroyComment'])->name('comments.destroy');
-        });
-}); //
+    Route::get('/information/carenderia', [CarenderiaController::class, 'index'])->name('carenderia.index');
+    Route::get('/information/restaurant-cafe', [RestaurantCafeController::class, 'index'])->name('restaurant-cafe.index');
+    Route::get('/information/travel', [TravelController::class, 'index'])->name('travel.index');
+    Route::get('/information/travel/{slug}', [TravelController::class, 'show'])->name('travel.show');
+    Route::get('/information/other', [OtherController::class, 'index'])->name('other.index');
 
-//下記コードデフォルトのままです。
+    // Carinderia (restaurant-cafeと同じパターン)
+    Route::prefix('information/carenderia')->name('carenderia.')->group(function () {
+        Route::get('/{post}/edit', [CarenderiaController::class, 'edit'])->name('edit');
+        Route::put('/{post}', [CarenderiaController::class, 'update'])->name('update');
+        Route::delete('/{post}', [CarenderiaController::class, 'destroy'])->name('destroy');
+        Route::get('/{post}', [CarenderiaController::class, 'show'])->name('show');
+    });
+
+    // Travel (restaurant-cafeと同じパターン)
+    // 注意: 'travel.show' は下の公開ルートで「エリア別一覧」(/travel/{slug})に
+    // 既に使われているため、投稿詳細は 'travel.post.show' という別名にしている。
+    Route::prefix('information/travel')->name('travel.')->group(function () {
+        Route::get('/{post}/edit', [TravelController::class, 'edit'])->name('edit');
+        Route::put('/{post}', [TravelController::class, 'update'])->name('update');
+        Route::delete('/{post}', [TravelController::class, 'destroy'])->name('destroy');
+        Route::get('/post/{post}', [TravelController::class, 'showPost'])->name('post.show');
+    });
+
+    // Other (restaurant-cafeと同じパターン)
+    Route::prefix('information/other')->name('other.')->group(function () {
+        Route::get('/{post}/edit', [OtherController::class, 'edit'])->name('edit');
+        Route::put('/{post}', [OtherController::class, 'update'])->name('update');
+        Route::delete('/{post}', [OtherController::class, 'destroy'])->name('destroy');
+        Route::get('/{post}', [OtherController::class, 'show'])->name('show');
+    });
+
+    // いいね・コメント・お気に入り(Carinderia/Restaurant&Cafe/Travel/Other共通)
+    Route::prefix('information/posts')->name('posts.')->group(function () {
+        Route::post('/{post}/like', [PostInteractionController::class, 'toggleLike'])->name('like');
+        Route::post('/{post}/bookmark', [PostInteractionController::class, 'toggleBookmark'])->name('bookmark');
+        Route::post('/{post}/comments', [PostInteractionController::class, 'storeComment'])->name('comments.store');
+        Route::delete('/comments/{comment}', [PostInteractionController::class, 'destroyComment'])->name('comments.destroy');
+    });
+    // ============================================================
+});  // auth, verified group
+
+//Profile    下記コードデフォルトのままです。
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// information
-Route::prefix('information')->group(function () {
-    // 投稿画面
-    Route::get('/post', [InformationController::class, 'create'])->name('information.create');
-    // 投稿保存
-    Route::post('/', [InformationController::class, 'store'])->name('information.store');
-    // 各カテゴリ一覧
-    Route::get('/carenderia', [CarenderiaController::class, 'index'])->name('carenderia.index');
-    Route::get('/restaurant-cafe', [RestaurantCafeController::class, 'index'])->name('restaurant-cafe.index');
-    Route::get('/travel', [TravelController::class, 'index'])->name('travel.index');
-    Route::get('/travel/{slug}', [TravelController::class, 'show'])->name('travel.show');
-    Route::get('/other', [OtherController::class, 'index'])->name('other.index');
-});
-
 require __DIR__ . '/auth.php';
 
 // Admin (管理者画面)
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard'); // admin/dashboard.blade.php を表示
-        })->name('dashboard');
-    });
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard'); // admin/dashboard.blade.php を表示
+    })->name('dashboard');
+});
