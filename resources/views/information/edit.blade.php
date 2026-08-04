@@ -4,7 +4,7 @@
     // セクションごとの表示名・戻り先ラベル。新しいセクションを追加する時はここに1行足すだけでOK。
     $sectionLabels = [
         'restaurant-cafe' => 'Restaurant & Cafe',
-        'carenderia'      => 'Carinderia',
+        'carinderia'      => 'Carinderia',
         'travel'          => 'Travel',
         'other'           => 'Other',
     ];

@@ -18,7 +18,7 @@ use App\Http\Controllers\GenderController;
 use App\Http\Middleware\EnsureGenderIsSet;
 // Information
 use App\Http\Controllers\Information\InformationController;
-use App\Http\Controllers\Information\CarenderiaController;
+use App\Http\Controllers\Information\CarinderiaController;
 use App\Http\Controllers\Information\TravelController;
 use App\Http\Controllers\Information\OtherController;
 use App\Http\Controllers\Information\RestaurantCafeController;
@@ -147,11 +147,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
          });
 
         // Carinderia (restaurant-cafeと同じパターン)
-        Route::prefix('information/carenderia')->name('carenderia.')->group(function () {
-            Route::get('/{post}/edit', [CarenderiaController::class, 'edit'])->name('edit');
-            Route::put('/{post}', [CarenderiaController::class, 'update'])->name('update');
-            Route::delete('/{post}', [CarenderiaController::class, 'destroy'])->name('destroy');
-            Route::get('/{post}', [CarenderiaController::class, 'show'])->name('show');
+        Route::prefix('information/carinderia')->name('carinderia.')->group(function () {
+            Route::get('/{post}/edit', [CarinderiaController::class, 'edit'])->name('edit');
+            Route::put('/{post}', [CarinderiaController::class, 'update'])->name('update');
+            Route::delete('/{post}', [CarinderiaController::class, 'destroy'])->name('destroy');
+            Route::get('/{post}', [CarinderiaController::class, 'show'])->name('show');
         });
 
         // Other (restaurant-cafeと同じパターン)
@@ -195,7 +195,7 @@ Route::prefix('information')->group(function () {
     // 投稿保存
     Route::post('/', [InformationController::class, 'store'])->name('information.store');
     // 各カテゴリ一覧
-    Route::get('/carenderia', [CarenderiaController::class, 'index'])->name('carenderia.index');
+    Route::get('/carinderia', [CarinderiaController::class, 'index'])->name('carinderia.index');
     Route::get('/restaurant-cafe', [RestaurantCafeController::class, 'index'])->name('restaurant-cafe.index');
     Route::get('/travel', [TravelController::class, 'index'])->name('travel.index');
     Route::get('/travel/{slug}', [TravelController::class, 'show'])->name('travel.show');

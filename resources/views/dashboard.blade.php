@@ -167,7 +167,7 @@
                     <p class="mt-2.5 text-sm text-slate-500 leading-relaxed">セブ島の生活情報やおすすめスポットなど、留学生活に役立つ情報をチェックできます。</p>
 
                     <div class="mt-5 grid grid-cols-4 gap-2">
-                        <a href="{{ route('carenderia.index') }}" class="group flex flex-col items-center gap-1.5">
+                        <a href="{{ route('carinderia.index') }}" class="group flex flex-col items-center gap-1.5">
                             <span class="w-11 h-11 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 bg-[#2f5fdb]/10">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2f5fdb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v20M7 2a3 3 0 000 6M17 2v8a3 3 0 01-3 3h0a3 3 0 01-3-3V2M14 13v9"/></svg>
                             </span>
