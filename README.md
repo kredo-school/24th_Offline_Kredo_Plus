@@ -57,3 +57,8 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+<メモ>
+パスワードリセットに関して、元設定だとスマホからページを開こうとした時にアクセスできないのでvite.config.jsを編集する必要があります。
+→コード修正　IPアドレスが変更されるたびにvite.config.jsと.envのコードを手動で変更する必要がある（
