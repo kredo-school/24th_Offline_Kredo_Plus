@@ -15,9 +15,10 @@ public function up(): void
         $table->id();
 
         $table->foreignId('post_id')
-              ->constrained()
-              ->cascadeOnDelete();
-
+            ->nullable()
+            ->constrained()
+            ->nullOnDelete();
+            
         $table->string('place_name');
 
         $table->string('address')->nullable();
