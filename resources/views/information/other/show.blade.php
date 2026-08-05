@@ -68,12 +68,12 @@
       @if ($post->user_id === auth()->id() || (bool) auth()->user()?->is_admin)
         <div class="flex items-center gap-1">
           @if ($post->user_id === auth()->id())
-            <a href="{{ route('other.edit', $post) }}"
+            <a href="{{ route('information.edit', $post) }}"
                class="w-9 h-9 flex items-center justify-center rounded-full text-brand-600 hover:bg-brand-50 transition-colors" aria-label="編集">
               <i class="fa-solid fa-edit text-[16px]"></i>
             </a>
           @endif
-          <form id="deleteForm" action="{{ route('other.destroy', $post) }}" method="POST">
+          <form id="deleteForm" action="{{ route('information.destroy', $post) }}" method="POST">
             @csrf
             @method('DELETE')
             <button type="button" id="deleteBtn"

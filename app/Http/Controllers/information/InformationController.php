@@ -122,7 +122,14 @@ class InformationController extends Controller
     public function show(Post $post)
     {
         $post->load(['user', 'category']);
-        return view('information.restaurant-cafe.show', compact('post'));
+        $section = $post->category->section ?? 'restaurant-cafe';
+
+        // Travelだけ投稿詳細が専用ページ(travel.post.show)なのでそちらへ
+        if ($section === 'travel') {
+            return redirect()->route('travel.post.show', $post);
+        }
+
+        return view("information.{$section}.show", compact('post'));
     }
 
 
@@ -144,10 +151,12 @@ class InformationController extends Controller
             Storage::disk('public')->delete($post->image);
         }
 
+        $section = $post->category->section ?? 'restaurant-cafe';
+
         $post->delete();
 
         return redirect()
-            ->route('restaurant-cafe.index')
+            ->route($section . '.index')
             ->with('status', '投稿を削除しました。');
     }
 }
