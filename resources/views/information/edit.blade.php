@@ -36,7 +36,7 @@
 
                     $sectionLabels = [
                         'restaurant-cafe' => 'Restaurant & Cafe',
-                        'carenderia'      => 'Carinderia',
+                        'carinderia'      => 'Carinderia',
                         'travel'          => 'Travel',
                         'other'           => 'Other',
                     ];
@@ -45,7 +45,7 @@
 
                     $sectionRoutes = [
                         'restaurant-cafe' => 'restaurant-cafe.index',
-                        'carenderia'      => 'carenderia.index',
+                        'carinderia'      => 'carinderia.index',
                         'travel'          => 'travel.index',
                         'other'           => 'other.index',
                     ];
@@ -74,7 +74,8 @@
                 <button type="button"
                     id="deleteBtn"
                     class="rc-delete-btn"
-                    aria-label="削除">
+                    aria-label="削除"
+                    data-title="{{ $post->title }}">
 
                     <i class="fa-regular fa-trash-can"></i>
 
@@ -312,6 +313,37 @@
     </nav>
 
 </div>
+
+    {{-- 削除確認モーダル --}}
+    <div id="deleteModal" class="delete-modal" aria-hidden="true">
+
+        <div class="delete-modal-content">
+
+            <h2 id="deleteModalTitle"></h2>
+
+            <p>
+                この操作は取り消せません。
+            </p>
+
+            <div class="delete-modal-actions">
+
+                <button type="button"
+                    id="deleteCancelBtn"
+                    class="delete-modal-cancel">
+                    キャンセル
+                </button>
+
+                <button type="button"
+                    id="deleteConfirmBtn"
+                    class="delete-modal-confirm">
+                    削除する
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
 
 @endsection
 

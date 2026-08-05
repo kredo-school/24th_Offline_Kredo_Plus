@@ -169,18 +169,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ============================================================
     // Information 各カテゴリー一覧
 
-    Route::get('/information/carenderia', [CarenderiaController::class, 'index'])->name('carenderia.index');
+    Route::get('/information/carinderia', [CarinderiaController::class, 'index'])->name('carinderia.index');
     Route::get('/information/restaurant-cafe', [RestaurantCafeController::class, 'index'])->name('restaurant-cafe.index');
     Route::get('/information/travel', [TravelController::class, 'index'])->name('travel.index');
     Route::get('/information/travel/{slug}', [TravelController::class, 'show'])->name('travel.show');
     Route::get('/information/other', [OtherController::class, 'index'])->name('other.index');
 
     // Carinderia (restaurant-cafeと同じパターン)
-    Route::prefix('information/carenderia')->name('carenderia.')->group(function () {
-        Route::get('/{post}/edit', [CarenderiaController::class, 'edit'])->name('edit');
-        Route::put('/{post}', [CarenderiaController::class, 'update'])->name('update');
-        Route::delete('/{post}', [CarenderiaController::class, 'destroy'])->name('destroy');
-        Route::get('/{post}', [CarenderiaController::class, 'show'])->name('show');
+    Route::prefix('information/carinderia')->name('carinderia.')->group(function () {
+        Route::get('/{post}/edit', [CarinderiaController::class, 'edit'])->name('edit');
+        Route::put('/{post}', [CarinderiaController::class, 'update'])->name('update');
+        Route::delete('/{post}', [CarinderiaController::class, 'destroy'])->name('destroy');
+        Route::get('/{post}', [CarinderiaController::class, 'show'])->name('show');
     });
 
     // Travel (restaurant-cafeと同じパターン)

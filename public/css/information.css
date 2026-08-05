@@ -1,4 +1,4 @@
-<style> :root {
+:root {
     --ink: #241E1A;
     --brand-300: #A7A0FF;
     --brand-600: #4736F0;
@@ -321,5 +321,99 @@ textarea.rc-field-input {
     font-size: 20px;
 }
 
-</style>
+/* ============================================================
+   Delete Confirmation Modal
+   ============================================================ */
 
+.delete-modal {
+    position: fixed !important;
+    inset: 0 !important;
+
+    display: none;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    margin: 0 !important;
+    padding: 20px !important;
+
+    box-sizing: border-box !important;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    z-index: 9999 !important;
+}
+
+.delete-modal.is-open {
+    display: flex !important;
+}
+
+.delete-modal-content {
+    position: relative !important;
+
+    width: 100% !important;
+    max-width: 420px !important;
+
+    margin: auto !important;
+    padding: 28px 24px !important;
+
+    box-sizing: border-box !important;
+
+    background: #ffffff;
+    border-radius: 16px;
+
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+
+    text-align: center;
+}
+
+.delete-modal-content h2 {
+    margin: 0 0 12px;
+
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.5;
+
+    color: #222222;
+}
+
+.delete-modal-content p {
+    margin: 0 0 24px;
+
+    font-size: 14px;
+    line-height: 1.6;
+
+    color: #666666;
+}
+
+.delete-modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.delete-modal-actions button {
+    flex: 1;
+
+    min-height: 44px;
+
+    border: none;
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.delete-modal-cancel {
+    background: #eeeeee;
+    color: #333333;
+}
+
+.delete-modal-confirm {
+    background: #dc2626;
+    color: #ffffff;
+}
