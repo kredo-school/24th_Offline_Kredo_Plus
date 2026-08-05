@@ -143,6 +143,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // 投稿の編集・更新・削除・詳細のロジックはInformationControllerに集約(セクションごとの重複を削減)。
     // ============================================================
 
+    Route::get('/information/carinderia', [CarinderiaController::class, 'index'])->name('carinderia.index');
+    Route::get('/information/restaurant-cafe', [RestaurantCafeController::class, 'index'])->name('restaurant-cafe.index');
+    Route::get('/information/travel', [TravelController::class, 'index'])->name('travel.index');
+    Route::get('/information/travel/{slug}', [TravelController::class, 'show'])->name('travel.show');
+    Route::get('/information/other', [OtherController::class, 'index'])->name('other.index');
+
+    // Carinderia (restaurant-cafeと同じパターン)
+    Route::prefix('information/carinderia')->name('carinderia.')->group(function () {
+        Route::get('/{post}/edit', [CarinderiaController::class, 'edit'])->name('edit');
+        Route::put('/{post}', [CarinderiaController::class, 'update'])->name('update');
+        Route::delete('/{post}', [CarinderiaController::class, 'destroy'])->name('destroy');
+        Route::get('/{post}', [CarinderiaController::class, 'show'])->name('show');
+    });
+
     // 投稿の詳細・編集・更新・削除(ログイン必須)
     // {post}は数字のみに制限(そうしないと「/information/carinderia」等の一覧ページURLまで
     // このルートに食われてしまい、投稿IDとして解釈できず404になる)。
