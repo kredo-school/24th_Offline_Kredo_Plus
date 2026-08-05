@@ -86,6 +86,18 @@
     <x-shower-female.trend-table
 
     />
+
+    {{-- comments コメント欄 --}}
+    <section class="mt-6">
+        <h2 class="text-headline-md font-bold text-blue-950 mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-blue-700 translate-y-[4px]">chat</span>
+            コメント
+        </h2>
+
+        <x-shower-female.comment-log
+        
+        />
+    </section>
     
 </div>
 @endsection
