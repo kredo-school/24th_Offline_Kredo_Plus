@@ -86,10 +86,10 @@
 </div>
 
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-3 md:pt-8">
-    <!-- 検索(画面サイズに関わらず常に表示) -->
-    <label class="relative block mb-4">
+    <!-- 検索(スマホ用。PCは下のサイドバー内に別途表示) -->
+    <label class="relative block mb-4 md:hidden">
       <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-[#241E1A]/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="searchInput" placeholder="タイトルを検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
+      <input type="text" id="searchInputMobile" placeholder="タイトルを検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
     </label>
 
     <!-- AREA選択(スマホ用: 横スクロールできるチップ。サイドバーが隠れる代わりにこちらを表示) -->
@@ -111,9 +111,13 @@
 
   <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-4 flex gap-6">
 
-    <!-- Sidebar(PC/タブレットのみ。スマホはこの上のチップに置き換え) -->
+    <!-- Sidebar(PC/タブレットのみ。スマホは上の検索欄+チップに置き換え) -->
     <aside id="sidebar" class="hidden md:block w-60 shrink-0">
       <div class="sticky top-24">
+        <label class="relative block mb-6">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-[#241E1A]/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="タイトルを検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
+        </label>
         <p class="font-mono text-[11px] tracking-[0.18em] text-[#241E1A]/40 mb-3 pl-1">AREA</p>
         <nav class="flex flex-col gap-1 pl-5" id="areaNav">
           {{-- カテゴリー一覧はDBから動的に取得。アドミンが追加しても、この@foreachがそのまま対応する --}}
@@ -131,6 +135,11 @@
 
     <!-- Main -->
     <main class="flex-1 min-w-0">
+
+      <!-- Toolbar: 件数表示 -->
+      <div class="flex items-center justify-between mb-4">
+        <p id="resultCount" class="text-sm text-[#241E1A]/50"></p>
+      </div>
 
       <!-- Grid -->
       <div id="foodGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
@@ -379,6 +388,8 @@
 
   function renderGrid(page){
     const filtered = getFilteredItems();
+    document.getElementById('resultCount').textContent = `${filtered.length} spots found`;
+
     const grid = document.getElementById('foodGrid');
     grid.innerHTML = '';
     const start = (page - 1) * PAGE_SIZE;
@@ -573,11 +584,17 @@
   });
 
   // 検索ボックス:タイトルに一致したものだけ表示
-  document.getElementById('searchInput').addEventListener('input', (e) => {
-    searchQuery = e.target.value.trim();
-    currentPage = 1;
-    renderGrid(currentPage);
-    renderPagination();
+  // 検索ボックス:PC用・スマホ用の2つを同期させる(どちらに入力しても両方に反映)
+  document.querySelectorAll('#searchInput, #searchInputMobile').forEach(input => {
+    input.addEventListener('input', (e) => {
+      searchQuery = e.target.value.trim();
+      document.querySelectorAll('#searchInput, #searchInputMobile').forEach(other => {
+        if (other !== e.target) other.value = e.target.value;
+      });
+      currentPage = 1;
+      renderGrid(currentPage);
+      renderPagination();
+    });
   });
 
   renderGrid(currentPage);
