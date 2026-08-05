@@ -121,7 +121,7 @@
         </div>
     </div>
 
-    <!-- Tabs -->
+    <!-- Table -->
     <div class="bg-white border border-blue-500/20 rounded-xl overflow-hidden shadow-lg">
         <div class="overflow-x-auto">
             <table class="w-full text-center border-collapse ">
@@ -130,7 +130,7 @@
                         <th class="px-4 py-3 font-label-md text-label-md text-blue-950">シャワー番号</th>
                         <th class="px-4 py-3 font-label-md text-label-md text-blue-950">温度</th>
                         <th class="px-4 py-3 font-label-md text-label-md text-blue-950">水圧</th>
-                        <th class="px-4 py-3 font-label-md text-label-md text-blue-950">状態</th>
+                        <th class="px-4 py-3 font-label-md text-label-md text-blue-950"></th>
                     </tr>
                 </thead>
                 <tbody class="divide-y outline-blue-500/20">
