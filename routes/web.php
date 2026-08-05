@@ -23,7 +23,9 @@ use App\Http\Controllers\Information\TravelController;
 use App\Http\Controllers\Information\OtherController;
 use App\Http\Controllers\Information\RestaurantCafeController;
 use App\Http\Controllers\Information\PostInteractionController;
+//Earth
 use App\Http\Controllers\EarthController;
+use App\Http\Controllers\EarthLocationController;
 //Admin
 use App\Http\Controllers\Admin\AdminUserController;
 
@@ -206,7 +208,12 @@ require __DIR__ . '/auth.php';
 
 // Earth
 Route::get('/earth', [EarthController::class, 'index'])->name('earth');
-
+Route::get('/earth/location/create', [EarthLocationController::class, 'create'])
+    ->name('earth.location.create');
+Route::post(
+    '/earth/location',
+    [EarthLocationController::class, 'store']
+)->name('earth.location.store');
 
 // Admin (管理者画面)
     Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {

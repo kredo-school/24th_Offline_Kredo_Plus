@@ -134,6 +134,23 @@
                         LOCATION
                     </label>
 
+                    @if($earthLocation)
+
+                    <input
+                    type="hidden"
+                    name="earth_location_id"
+                    value="{{ $earthLocation->id }}">
+
+                    <div style="margin-top:10px;padding:10px;border:1px solid #ddd;border-radius:8px;">
+
+                    <strong>📍 {{ $earthLocation->place_name }}</strong><br>
+
+                    <small>{{ $earthLocation->address }}</small>
+
+                    </div>
+
+                    @endif
+
                     <!-- Carinderiaのみ表示 -->
                     <div id="carinderiaLocation" style="display:none;">
                         <button type="button" class="rc-save-btn"
@@ -148,13 +165,12 @@
                     <!-- Restaurant / Travel / Other -->
                     <div id="mapLocation">
 
-                        <button type="button" class="rc-save-btn"
+                        <a href="{{ route('earth.location.create') }}"  class="rc-save-btn"
                             style="background:#f8fafc;color:#4736F0;border:1px solid #4736F0;">
 
                             <i class="fa-solid fa-location-dot"></i>
                             <span>場所を追加</span>
-
-                        </button>
+                        </a>
 
                     </div>
 

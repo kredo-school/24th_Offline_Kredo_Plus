@@ -5,17 +5,26 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use App\Models\EarthLocation;
 
 class InformationController extends Controller
 {
     // 投稿画面
-    public function create()
+    public function create(Request $request)
     {
         $categories = Category::all();
 
-        return view('information.post', compact('categories'));
-    }
+        $earthLocation = null;
 
+        if ($request->filled('earth_location_id')) {
+            $earthLocation = EarthLocation::find($request->earth_location_id);
+        }
+
+        return view('information.post', compact(
+            'categories',
+            'earthLocation'
+        ));
+    }
     // 投稿保存
     public function store(Request $request)
     {
@@ -34,6 +43,20 @@ class InformationController extends Controller
         $validated['user_id'] = auth()->id();
 
         $post = Post::create($validated);
+
+        if ($request->filled('earth_location_id')) {
+
+            $earthLocation = EarthLocation::find($request->earth_location_id);
+
+            if ($earthLocation) {
+
+                $earthLocation->post_id = $post->id;
+
+                $earthLocation->save();
+
+            }
+
+}
 
         // 投稿したカテゴリーのsectionに応じて、正しい一覧ページへ戻す。
         $sectionToRoute = [
