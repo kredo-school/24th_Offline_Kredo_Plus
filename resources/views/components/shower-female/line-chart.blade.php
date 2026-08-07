@@ -1,8 +1,95 @@
 {{-- line chart 線グラフで各シャワーの状態変化を確認 --}}
 <div class="bg-white rounded-2xl p-6 border-none shadow-lg mt-10">
-    <h3 class="text-headline-sm font-bold text-blue-950 mb-6">
-        パフォーマンストレンド
-    </h3>
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-headline-sm font-bold text-blue-950">
+            パフォーマンストレンド
+        </h3>
+
+        <div class="relative"
+            x-data="{ open: false }"
+            @mouseenter="open = true"
+            @mouseleave="open = false">
+
+            <!-- フィルターボタン -->
+            <button
+                class="material-symbols-outlined p-2 rounded-full hover:bg-blue-500/10 text-blue-700 transition-colors">
+                filter_list
+            </button>
+
+            <!-- ドロップダウン -->
+            <div
+                x-show="open"
+                x-transition.origin.top.right
+                class="absolute right-0 top-full mt-2 z-50 w-[290px] bg-white rounded-2xl shadow-xl border border-slate-200">
+
+                <div class="p-6">
+
+                    <h2 class="font-bold mb-4 text-slate-800">
+                        表示設定
+                    </h2>
+
+                    <form action="#" method="#" class="flex gap-8">
+
+                        {{-- 左側 --}}
+                        <div class="flex-1">
+                            <p class="text-slate-500 text-sm font-semibold mb-2">日数</p>
+
+                            <div class="flex flex-col gap-2">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="radio"
+                                        name="line_days"
+                                        value="three_days"
+                                        x-model="line">
+                                    <span>3日間</span>
+                                </label>
+
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="radio"
+                                        name="line_days"
+                                        value="7days"
+                                        x-model="line">
+                                    <span>7日間</span>
+                                </label>
+
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="radio"
+                                        name="line_days"
+                                        value="14days"
+                                        x-model="line">
+                                    <span>14日間</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        {{-- 縦線 --}}
+                        <div class="border-l border-slate-300"></div>
+
+                        {{-- 右側 --}}
+                        <div class="flex-1">
+                            <p class="text-slate-500 text-sm font-semibold mb-2">シャワー番号</p>
+
+                            <div class="flex flex-col gap-2">
+                                @for ($i = 1; $i <= 7; $i++)
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="radio"
+                                            name="line_shower"
+                                            value="{{ $i }}"
+                                            x-model="line">
+                                        <span>{{ $i }}</span>
+                                    </label>
+                                @endfor
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="relative h-[450px] rounded-xl bg-blue-500/10 p-8">
 

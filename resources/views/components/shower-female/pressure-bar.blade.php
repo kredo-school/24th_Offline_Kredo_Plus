@@ -39,10 +39,10 @@
         style="
             background: linear-gradient(
                 to right,
-                #99b9ed 0%,
-                #608fd9 33%,
-                #366bc0 66%,
-                #194489 100%
+                #eff6ff 0%,
+                #93c5fd 33%,
+                #3b82f6 66%,
+                #1e3a8a 100%
             );
             clip-path: inset(0 {{ 100 - $percent }}% 0 0 round 9999px);
         ">
@@ -54,10 +54,10 @@
 
 @php
 $labels = [
-    '無し' => 'text-blue-300',
-    '弱い' => 'text-blue-500',
-    '普通' => 'text-blue-700',
-    '強い'   => 'text-blue-900',
+    '無し' => 'text-[#eff6ff]',
+    '弱い' => 'text-[#93c5fd]',
+    '普通' => 'text-[#3b82f6]',
+    '強い'   => 'text-[#1e3a8a]',
 ];
 @endphp
 
