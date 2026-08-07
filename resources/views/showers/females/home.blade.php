@@ -32,6 +32,12 @@
                         <div class="ps-5">
                             <p class="text-caption text-blue-950 leading-none mb-1">好みとのマッチ度</p>
                             <p class="text-headline-md font-black text-blue-950 leading-none">100 %</p>
+                            <button
+                                @click="open = true"
+                                class="mt-2 text-caption text-sky-600 hover:text-sky-800 transition-colors"
+                            >
+                                温かい　普通
+                            </button>
                         </div>
                     </div>
                 </div>

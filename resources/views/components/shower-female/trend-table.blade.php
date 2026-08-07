@@ -58,7 +58,7 @@
                                 x-show="table === 'preference'"
                                 x-transition
                             >
-                                <hr class="w-full my-2">
+                                <hr class="my-2">
 
                                 {{-- temperature 温度 --}}
                                 <p class="text-slate-500 text-sm">
