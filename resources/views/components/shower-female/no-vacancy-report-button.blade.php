@@ -27,13 +27,13 @@
             <div class="flex justify-center gap-2">
                 <button
                     @click="open = false"
-                    class="px-4 py-2 rounded-full border-[2px] border-gray-300/50 font-bold text-gray-400 hover:shadow-md hover:bg-gray-400/80 hover:text-white transition-all"
+                    class="rounded-full px-5 py-2.5 text-sm font-semibold text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-600"
                 >
                     キャンセル
                 </button>
 
                 <button
-                    class="px-4 py-2 rounded-full border-[2px] border-green-400 bg-slate-50 text-green-500/90 font-bold hover:shadow-md hover:border-green-300/50 hover:bg-green-500/90 hover:text-slate-50"
+                    class="rounded-full bg-green-400 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-green-500 hover:shadow-md"
                 >
                     満室です
                 </button>

@@ -26,6 +26,7 @@ use App\Http\Controllers\Information\PostInteractionController;
 use App\Http\Controllers\EarthController;
 //Admin
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\SuggestionBoxController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -167,6 +168,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/comments/{comment}', [PostInteractionController::class, 'destroyComment'])->name('comments.destroy');
     });
     // ============================================================
+
+    // suggestion box  目安箱
+    Route::get('/suggestion-box', [SuggestionBoxController::class, 'suggestion'])->name('suggestion');
 });  // auth, verified group
 
 //Profile    下記コードデフォルトのままです。
