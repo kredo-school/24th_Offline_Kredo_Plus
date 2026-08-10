@@ -41,22 +41,22 @@
                     <p class="text-slate-500 text-sm mt-3">温度</p>
                     <div class="grid grid-cols-4 gap-2 my-2 text-sm font-semibold text-slate-500">
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="temp" id="cold" value="cold">
+                            <input type="radio" name="temp" id="cold" value="冷たい">
                             <span>冷たい</span>
                         </label>
-        
+
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="temp" id="luke" value="luke">
+                            <input type="radio" name="temp" id="luke" value="ぬるい">
                             <span>ぬるい</span>
                         </label>
-        
+
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="temp" id="warm" value="warm" checked>
+                            <input type="radio" name="temp" id="warm" value="温かい" checked>
                             <span>温かい</span>
                         </label>
-        
+
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="temp" id="hot" value="hot">
+                            <input type="radio" name="temp" id="hot" value="熱い">
                             <span>熱い</span>
                         </label>
                     </div>
@@ -64,26 +64,21 @@
                     <p class="text-sm text-slate-500 mt-3">水圧</p>
                     <div class="grid grid-cols-4 gap-2 my-2 text-sm font-semibold text-slate-500">
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="pressure" id="none" value="none">
-                            <span>無し</span>
-                        </label>
-        
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="pressure" id="weak" value="weak">
+                            <input type="radio" name="pressure" id="weak" value="弱い">
                             <span>弱い</span>
                         </label>
-        
+
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="pressure" id="medium" value="medium" checked>
+                            <input type="radio" name="pressure" id="medium" value="普通" checked>
                             <span>普通</span>
                         </label>
-        
+
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="pressure" id="strong" value="strong">
+                            <input type="radio" name="pressure" id="strong" value="強い">
                             <span>強い</span>
                         </label>
                     </div>
-
+                    
                     <div class="mt-7 flex justify-center gap-3">
                         <button type="button" @click="open = false"
                                 class="text-sm font-semibold text-slate-400 px-5 py-2.5 rounded-full hover:bg-slate-100 transition-colors">

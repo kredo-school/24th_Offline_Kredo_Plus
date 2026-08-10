@@ -3,7 +3,8 @@
 @section('title', 'male shower')
  
 @section('content')
-    <div class="flex-grow max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop py-8 md:py-12">
+
+<div class="flex-grow max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop py-8 md:py-12">
     {{-- usage status  おすすめシャワー表示 --}}
     <section class="relative overflow-hidden rounded-[0.75rem] mb-8 p-8 md:p-10 bg-cover"
               style="background-image: url('{{ asset('images/shower/shower-image.jpg') }}'); background-position: 70% 58%">
@@ -16,10 +17,6 @@
                 <p class="text-body-md text-blue-950 max-w-lg">
                     好みに応じたおすすめのシャワーをご案内します。
                 </p>
-                <div class="grid grid-cols-3 gap-2 pt-12">
-                    <a href="" class="w-auto rounded-full text-center bg-green-400/35 text-green-700 hover:bg-green-300 transition-colors font-bold p-3">満室を報告する</a>
-                    <a href="" class="w-auto rounded-full text-center bg-yellow-400/65 text-yellow-700 hover:bg-yellow-300 transition-colors font-bold p-3">故障を報告する</a>
-                </div>
             </div>
 
             <div class="w-full lg:w-[380px] bg-surface-container-lowest rounded-[0.75rem] shadow-md p-6 shrink-0">
@@ -35,15 +32,20 @@
                         <div class="ps-5">
                             <p class="text-caption text-blue-950 leading-none mb-1">好みとのマッチ度</p>
                             <p class="text-headline-md font-black text-blue-950 leading-none">100 %</p>
+                            <x-shower-female.preference-setup
+                            
+                            />
                         </div>
                     </div>
                 </div>
 
-                <x-shower-male.temperature-bar
+                {{-- 水温バー --}}
+                <x-shower-female.temperature-bar
 
                 />
 
-                <x-shower-male.pressure-bar
+                {{-- 水圧バー --}}
+                <x-shower-female.pressure-bar
 
                 />
 
@@ -51,6 +53,54 @@
             </div>
         </div>
     </section>
+
+    {{-- buttons 報告ボタン --}}
+    <section>
+        <div class="flex gap-5 justify-center">
+                    
+            {{-- 満室報告 --}}
+            <x-shower-female.no-vacancy-report-button/>
+
+            {{-- シャワー情報投稿 --}}
+            <x-shower-female.shower-rating-button/>
+            {{-- 故障報告 --}}
+            <x-shower-female.defect-report-button/>
+        </div>           
+    </section>
+
+    {{-- statistics 統計 --}}
+    <section class="mt-6">
+        <h2 class="text-headline-md font-bold text-blue-950 mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-blue-700 translate-y-[2px]">bar_chart_4_bars</span>
+            統計
+        </h2>
+        {{-- x-y chart 二次元チャートで各シャワーを比較 --}}
+        <x-shower-female.x-y-chart
+        
+        />
+
+        {{-- line chart 線グラフで各シャワーの状態変化を確認 --}}
+        <x-shower-female.line-chart
+        
+        />
+    </section>
+
+    {{-- trend table  トレンドテーブル --}}
+    <x-shower-female.trend-table
+
+    />
+
+    {{-- comments コメント欄 --}}
+    <section class="mt-6">
+        <h2 class="text-headline-md font-bold text-blue-950 mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-blue-700 translate-y-[4px]">chat</span>
+            コメント
+        </h2>
+
+        <x-shower-female.comment-log
+        
+        />
+    </section>
+    
 </div>
 @endsection
- 

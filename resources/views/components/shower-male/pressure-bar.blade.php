@@ -4,8 +4,9 @@
 
 @php
     $levels = [
-        3.3 => '弱い',
-        6.6 => '普通',
+        2.5 => '無し',
+        5.0 => '弱い',
+        7.5 => '普通',
         10  => '強い',
     ];
 
@@ -38,10 +39,10 @@
         style="
             background: linear-gradient(
                 to right,
-                #76a4ed 0%,
-                #3B82F6 33%,
-                #1d5cc2 66%,
-                #043076 100%
+                #eff6ff 0%,
+                #93c5fd 33%,
+                #3b82f6 66%,
+                #1e3a8a 100%
             );
             clip-path: inset(0 {{ 100 - $percent }}% 0 0 round 9999px);
         ">
@@ -53,9 +54,10 @@
 
 @php
 $labels = [
-    '弱い' => 'text-blue-500',
-    '普通' => 'text-blue-700',
-    '強い'   => 'text-blue-900',
+    '無し' => 'text-[#eff6ff]',
+    '弱い' => 'text-[#93c5fd]',
+    '普通' => 'text-[#3b82f6]',
+    '強い'   => 'text-[#1e3a8a]',
 ];
 @endphp
 
