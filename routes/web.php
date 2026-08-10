@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ShowerController;
 use App\Http\Controllers\GenderController;
 use App\Http\Middleware\EnsureGenderIsSet;
+use App\Http\Controllers\UserShowerPreferenceController;
 // Information
 use App\Http\Controllers\Information\InformationController;
 use App\Http\Controllers\Information\CarinderiaController;
@@ -140,6 +141,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/shower/female', [ShowerController::class, 'female'])
         ->middleware('gender:female')
         ->name('shower.female');
+    
+    // シャワーの好み
+    Route::post('/shower/preference', [UserShowerPreferenceController::class, 'update'])->name('shower.preference.update');
 
     // ============================================================
     // Information

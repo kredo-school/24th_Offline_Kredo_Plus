@@ -16,6 +16,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Services\Shower\ShowerScale;
 
 class User extends Authenticatable
 {
@@ -43,6 +44,8 @@ class User extends Authenticatable
         'gender_locked',
         'toeic_exam_date',
         'ielts_exam_date',
+        'preferred_temperature',
+        'preferred_pressure',
     ];
 
     /**
@@ -73,6 +76,8 @@ class User extends Authenticatable
             'gender_locked' => 'boolean',
             'toeic_exam_date' => 'date',
             'ielts_exam_date' => 'date',
+            'preferred_temperature' => 'integer',
+            'preferred_pressure' => 'integer',
         ];
     }
 
@@ -124,6 +129,7 @@ class User extends Authenticatable
     }
 
     // シャワーリレーション
+    // 性別登録
     public function hasGender(): bool
     {
         return !is_null($this->gender);
@@ -132,5 +138,17 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role_id === self::ADMIN_ROLE_ID;
+    }
+
+    // シャワーの好み登録
+
+    public function getPreferredTemperatureLabelAttribute(): string
+    {
+        return ShowerScale::closestLabel($this->preferred_temperature, ShowerScale::PREFERENCE_TEMPERATURE_LEVELS);
+    }
+
+    public function getPreferredPressureLabelAttribute(): string
+    {
+        return ShowerScale::closestLabel($this->preferred_pressure, ShowerScale::PREFERENCE_PRESSURE_LEVELS);
     }
 }

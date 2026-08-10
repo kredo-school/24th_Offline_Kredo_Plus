@@ -17,13 +17,13 @@ class ShowerController extends Controller
         };
     }
 
-    public function male()
+    public function male(Request $request)
     {
-        return view('showers.males.home');
+        return view('showers.males.home', ['user' => $request->user()]);
     }
 
-    public function female()
+    public function female(Request $request)
     {
-        return view('showers.females.home');
+        return view('showers.females.home', ['user' => $request->user()]);
     }
 }

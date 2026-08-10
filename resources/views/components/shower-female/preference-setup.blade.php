@@ -1,11 +1,11 @@
-{{-- 満室報告 --}}
+{{-- シャワーの好み --}}
 <div x-data="{ open: false }">
 
     <button
         @click="open = true"
         class="mt-2 text-caption text-sky-600 hover:text-sky-800 transition-colors"
     >
-        温かい　普通
+        {{ auth()->user()->preferred_temperature_label }}　{{ auth()->user()->preferred_pressure_label }}
     </button>
 
     <div
@@ -18,14 +18,14 @@
             class="relative overflow-hidden bg-white rounded-[24px] p-6 w-96"
         >
 
-            
             <div class="absolute top-0 inset-x-0 h-1.5 rounded-t-[24px] bg-gradient-to-r from-rose-200 to-rose-600"></div>
 
             <h2 class="text-xl font-bold text-blue-950 text-center mb-6">
                 お好みの温度・水圧
             </h2>
 
-            <form action="#" method="#">
+            <form action="{{ route('shower.preference.update') }}" method="POST">
+                @csrf
 
                 {{-- 温度 --}}
                 <div class="mb-6">
@@ -37,7 +37,8 @@
 
                         {{-- 冷たい --}}
                         <label class="cursor-pointer">
-                            <input type="radio" name="temp" value="cold" class="peer hidden">
+                            <input type="radio" name="temperature" value="冷たい" class="peer hidden"
+                                {{ auth()->user()->preferred_temperature_label === '冷たい' ? 'checked' : '' }}>
 
                             <span class="flex items-center justify-center rounded-xl border border-slate-200
                                         bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-500
@@ -52,7 +53,8 @@
 
                         {{-- ぬるい --}}
                         <label class="cursor-pointer">
-                            <input type="radio" name="temp" value="luke" class="peer hidden">
+                            <input type="radio" name="temperature" value="ぬるい" class="peer hidden"
+                                {{ auth()->user()->preferred_temperature_label === 'ぬるい' ? 'checked' : '' }}>
 
                             <span class="flex items-center justify-center rounded-xl border border-slate-200
                                         bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-500
@@ -67,7 +69,8 @@
 
                         {{-- 温かい --}}
                         <label class="cursor-pointer">
-                            <input type="radio" name="temp" value="warm" class="peer hidden">
+                            <input type="radio" name="temperature" value="温かい" class="peer hidden"
+                                {{ auth()->user()->preferred_temperature_label === '温かい' ? 'checked' : '' }}>
 
                             <span class="flex items-center justify-center rounded-xl border border-slate-200
                                         bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-500
@@ -82,7 +85,8 @@
 
                         {{-- 熱い --}}
                         <label class="cursor-pointer">
-                            <input type="radio" name="temp" value="hot" class="peer hidden">
+                            <input type="radio" name="temperature" value="熱い" class="peer hidden"
+                                {{ auth()->user()->preferred_temperature_label === '熱い' ? 'checked' : '' }}>
 
                             <span class="flex items-center justify-center rounded-xl border border-slate-200
                                         bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-500
@@ -95,6 +99,9 @@
                             </span>
                         </label>
                     </div>
+                    @error('temperature')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
 
@@ -106,24 +113,10 @@
 
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
 
-                        {{-- 無し --}}
-                        <label class="cursor-pointer">
-                            <input type="radio" name="pressure" value="none" class="peer hidden">
-
-                            <span class="flex items-center justify-center rounded-xl border border-slate-200
-                                        bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-500
-                                        transition-all
-                                        hover:bg-slate-100
-                                        peer-checked:border-[#bfdbfe]
-                                        peer-checked:bg-[#eff6ff]
-                                        peer-checked:text-blue-500">
-                                無し
-                            </span>
-                        </label>
-
                         {{-- 弱い --}}
                         <label class="cursor-pointer">
-                            <input type="radio" name="pressure" value="weak" class="peer hidden">
+                            <input type="radio" name="pressure" value="弱い" class="peer hidden"
+                                {{ auth()->user()->preferred_pressure_label === '弱い' ? 'checked' : '' }}>
 
                             <span class="flex items-center justify-center rounded-xl border border-slate-200
                                         bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-500
@@ -138,7 +131,8 @@
 
                         {{-- 普通 --}}
                         <label class="cursor-pointer">
-                            <input type="radio" name="pressure" value="medium" class="peer hidden">
+                            <input type="radio" name="pressure" value="普通" class="peer hidden"
+                                {{ auth()->user()->preferred_pressure_label === '普通' ? 'checked' : '' }}>
 
                             <span class="flex items-center justify-center rounded-xl border border-slate-200
                                         bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-500
@@ -153,7 +147,8 @@
 
                         {{-- 強い --}}
                         <label class="cursor-pointer">
-                            <input type="radio" name="pressure" value="strong" class="peer hidden">
+                            <input type="radio" name="pressure" value="強い" class="peer hidden"
+                                {{ auth()->user()->preferred_pressure_label === '強い' ? 'checked' : '' }}>
 
                             <span class="flex items-center justify-center rounded-xl border border-slate-200
                                         bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-500
@@ -167,6 +162,9 @@
                         </label>
 
                     </div>
+                    @error('pressure')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
 
