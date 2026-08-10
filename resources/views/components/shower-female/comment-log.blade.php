@@ -126,7 +126,7 @@
 
     <div class="space-y-stack-sm">
         <!-- Log Entry 1 -->
-        <div class="bg-white rounded-xl p-4 mb-4 overflow-hidden shadow-lg flex items-center justify-between group hover:border-2 hover:border-blue transition-colors">
+        <div class="bg-white rounded-xl p-4 mb-4 overflow-hidden shadow-lg flex items-center justify-between group">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center">
                     <span class="material-symbols-outlined text-blue-600">shower</span>
@@ -149,7 +149,7 @@
         </div>
 
         <!-- Log Entry 2 -->
-        <div class="bg-white rounded-xl p-4 mb-4 overflow-hidden shadow-lg flex items-center justify-between group hover:border-2 hover:border-blue transition-colors">
+        <div class="bg-white rounded-xl p-4 mb-4 overflow-hidden shadow-lg flex items-center justify-between group">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center">
                     <span class="material-symbols-outlined text-blue-600">shower</span>
@@ -171,7 +171,7 @@
         </div>
 
         <!-- Log Entry 3 -->
-        <div class="bg-white rounded-xl p-4 mb-4 overflow-hidden shadow-lg flex items-center justify-between group hover:border-2 hover:border-blue transition-colors">
+        <div class="bg-white rounded-xl p-4 mb-4 overflow-hidden shadow-lg flex items-center justify-between group">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center">
                     <span class="material-symbols-outlined text-blue-600">shower</span>

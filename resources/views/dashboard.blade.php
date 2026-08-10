@@ -10,15 +10,18 @@
         <div x-data="{ open: true }" x-show="open" x-cloak
             class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 px-4">
             <div class="relative bg-white rounded-[24px] shadow-card p-8 w-full max-w-sm overflow-hidden">
-                {{-- 上部のグラデーションライン（他カードと統一） --}}
+                {{-- 上部のグラデーションライン --}}
                 <div class="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-400 to-brand-blue"></div>
 
-                <h2 class="font-display font-bold text-xl text-slate-800">お住まいの寮を選択してください</h2>
-                <p class="mt-2 text-sm text-slate-500 leading-relaxed">※登録後は変更できません</p>
-
-                <form method="POST" action="{{ route('gender.store') }}" class="mt-6">
+                
+                <form method="POST" action="{{ route('gender.store') }}">
                     @csrf
-                    <div class="flex gap-3">
+                    <h2 class="font-display font-bold text-xl text-blue-700 text-center">ユーザー情報登録</h2>
+    
+                    <p class="mt-4 font-semibold text-lg text-blue-950">お住まいの寮</p>
+                    <p class="text-sm text-red-500">※登録後は変更できません</p>
+
+                    <div class="flex gap-3 mt-4">
                         <label class="flex-1 cursor-pointer">
                             <input type="radio" name="gender" value="male" required class="peer sr-only">
                             <div class="text-center border-2 border-slate-200 rounded-2xl py-4 text-sm font-semibold text-slate-600 transition-all peer-checked:border-brand-blue peer-checked:bg-sky-50 peer-checked:text-brand-blue">
@@ -33,7 +36,55 @@
                         </label>
                     </div>
 
-                    <div class="mt-7 flex justify-end gap-3">
+                    <p class="mt-6 font-semibold text-lg text-blue-950">シャワーのお好み</p>
+                    
+                    <p class="text-slate-500 text-sm mt-3">温度</p>
+                    <div class="grid grid-cols-4 gap-2 my-2 text-sm font-semibold text-slate-500">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="temp" id="cold" value="cold">
+                            <span>冷たい</span>
+                        </label>
+        
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="temp" id="luke" value="luke">
+                            <span>ぬるい</span>
+                        </label>
+        
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="temp" id="warm" value="warm" checked>
+                            <span>温かい</span>
+                        </label>
+        
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="temp" id="hot" value="hot">
+                            <span>熱い</span>
+                        </label>
+                    </div>
+
+                    <p class="text-sm text-slate-500 mt-3">水圧</p>
+                    <div class="grid grid-cols-4 gap-2 my-2 text-sm font-semibold text-slate-500">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="pressure" id="none" value="none">
+                            <span>無し</span>
+                        </label>
+        
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="pressure" id="weak" value="weak">
+                            <span>弱い</span>
+                        </label>
+        
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="pressure" id="medium" value="medium" checked>
+                            <span>普通</span>
+                        </label>
+        
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="pressure" id="strong" value="strong">
+                            <span>強い</span>
+                        </label>
+                    </div>
+
+                    <div class="mt-7 flex justify-center gap-3">
                         <button type="button" @click="open = false"
                                 class="text-sm font-semibold text-slate-400 px-5 py-2.5 rounded-full hover:bg-slate-100 transition-colors">
                             キャンセル

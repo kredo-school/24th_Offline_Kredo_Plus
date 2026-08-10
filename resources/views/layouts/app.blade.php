@@ -112,8 +112,8 @@
                         <span class="material-symbols-outlined !text-2xl leading-none">flight</span>
                         <span class="text-[11px] font-bold whitespace-nowrap">留学情報</span>
                     </a>
-                    <a href="#" aria-label="目安箱"
-                        class="flex flex-col items-center gap-0.5 transition-colors text-slate-400 hover:text-brand-red">
+                    <a href="{{ route('suggestion') }}" aria-label="目安箱"
+                        class="flex flex-col items-center gap-0.5 transition-colors {{ request()->routeIs('suggestion') ? 'text-brand-red' : 'text-slate-400 hover:text-brand-red' }} ">
                         <span class="material-symbols-outlined !text-2xl leading-none">local_post_office</span>
                         <span class="text-[11px] font-bold whitespace-nowrap">目安箱</span>
                     </a>
