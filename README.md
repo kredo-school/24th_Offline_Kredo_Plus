@@ -61,4 +61,8 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 <メモ>
 パスワードリセットに関して、元設定だとスマホからページを開こうとした時にアクセスできないのでvite.config.jsを編集する必要があります。
-→コード修正　IPアドレスが変更されるたびにvite.config.jsと.envのコードを手動で変更する必要がある（
+→コード修正　IPアドレスが変更されるたびにvite.config.jsと.envのコードを手動で変更する必要がある。
+
+ローカルサーバー起動
+php artisan serve --host=0.0.0.0 --port=8000
+npm run dev -- --host
