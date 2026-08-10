@@ -11,8 +11,8 @@
         @endif
     </div>
     @endif
-    <div class="w-full bg-surface-container-high rounded-[0.75rem] h-2 overflow-hidden">
-        <div class="bg-primary h-full rounded-[0.75rem] transition-all duration-500"
+    <div class="w-full bg-slate-100 rounded-[0.75rem] h-2 overflow-hidden">
+        <div class="bg-[#b95827] h-full rounded-[0.75rem] transition-all duration-500"
              style="width: {{ min(max((int)$percent, 0), 100) }}%"></div>
     </div>
 </div>

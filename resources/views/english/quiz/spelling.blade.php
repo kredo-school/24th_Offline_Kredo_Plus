@@ -17,9 +17,9 @@ $wordsJson = $words->map(fn($w) => [
 <div class="flex-grow max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop py-12">
 
     <x-english.breadcrumb>
-        <a href="{{ route('english.hub') }}" class="hover:text-primary transition-colors no-underline">Home</a>
+        <a href="{{ route('english.hub') }}" class="hover:text-orange-600 transition-colors no-underline">Home</a>
         <span class="mx-1">/</span>
-        <a href="{{ route('english.quiz.index') }}" class="hover:text-primary transition-colors no-underline">クイズ</a>
+        <a href="{{ route('english.quiz.index') }}" class="hover:text-orange-600 transition-colors no-underline">クイズ</a>
         <span class="mx-1">/</span>
         <span class="text-on-surface font-semibold">スペルクイズ</span>
     </x-english.breadcrumb>
@@ -35,8 +35,8 @@ $wordsJson = $words->map(fn($w) => [
                 <span class="text-label-md text-on-surface-variant"
                       x-text="`問題 ${currentIndex + 1} / ${words.length}`"></span>
             </div>
-            <div class="w-full bg-surface-container-high rounded-[0.75rem] h-2 overflow-hidden">
-                <div class="bg-primary h-full rounded-[0.75rem] transition-all duration-500"
+            <div class="w-full bg-slate-100 rounded-[0.75rem] h-2 overflow-hidden">
+                <div class="bg-[#b95827] h-full rounded-[0.75rem] transition-all duration-500"
                      :style="`width: ${progressPercent}%`"></div>
             </div>
         </div>
@@ -44,7 +44,7 @@ $wordsJson = $words->map(fn($w) => [
         <div x-show="!isComplete" class="max-w-2xl mx-auto">
             <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8 mb-6">
                 <p class="text-body-md font-bold text-on-surface-variant mb-2">この意味を表す英単語のスペルを入力してください</p>
-                <p class="text-headline-md font-bold text-primary mb-4" x-text="current.hint"></p>
+                <p class="text-headline-md font-bold text-orange-600 mb-4" x-text="current.hint"></p>
                 <p class="text-body-md font-bold text-on-surface-variant mb-1">例文（この単語が本文中に使われています。わからない場合は本文から探して入力してもOKです）</p>
                 <p class="text-body-md text-on-surface font-mono" x-text="current.example"></p>
             </div>
@@ -55,13 +55,13 @@ $wordsJson = $words->map(fn($w) => [
                     x-model="userInput"
                     @keydown.enter="submitAnswer()"
                     placeholder="上の意味に合う英単語のスペルを入力..."
-                    class="w-full p-4 text-body-lg border-2 border-outline-variant rounded-[0.75rem] bg-surface-container-lowest focus:border-primary focus:outline-none transition-colors"
+                    class="w-full p-4 text-body-lg border-2 border-slate-200 rounded-[0.75rem] bg-surface-container-lowest focus:border-orange-600 focus:outline-none transition-colors"
                 />
                 <button @click="submitAnswer()"
                         :disabled="!userInput.trim()"
                         :class="userInput.trim()
-                            ? 'bg-primary text-on-primary hover:opacity-90'
-                            : 'bg-surface-container text-on-surface-variant cursor-not-allowed'"
+                            ? 'bg-[#b95827] text-white hover:opacity-90'
+                            : 'bg-slate-50 text-on-surface-variant cursor-not-allowed'"
                         class="w-full py-3 rounded-[0.75rem] font-label-md text-label-md transition-all">
                     回答する
                 </button>
@@ -81,11 +81,11 @@ $wordsJson = $words->map(fn($w) => [
                 {{-- 正解時：意味・品詞・例文（英文/日本語訳）を表示 --}}
                 <div x-show="isCorrect" class="bg-surface-container-lowest rounded-[0.5rem] p-6 text-left space-y-3">
                     <div class="flex items-center gap-2">
-                        <span class="text-headline-md font-bold text-primary" x-text="current.word"></span>
-                        <span class="text-caption text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full" x-text="current.pos"></span>
+                        <span class="text-headline-md font-bold text-orange-600" x-text="current.word"></span>
+                        <span class="text-caption text-on-surface-variant bg-slate-50 px-2 py-0.5 rounded-full" x-text="current.pos"></span>
                     </div>
                     <p class="text-body-md text-on-surface" x-text="current.hint"></p>
-                    <div class="pt-2 border-t border-outline-variant/50">
+                    <div class="pt-2 border-t border-slate-200/50">
                         <p class="text-body-md text-on-surface font-mono" x-text="current.example"></p>
                         <p class="text-body-md text-on-surface-variant mt-1" x-text="current.exampleJa"></p>
                     </div>
@@ -93,7 +93,7 @@ $wordsJson = $words->map(fn($w) => [
 
                 <button @click="nextQuestion()"
                         :disabled="isLoading"
-                        class="w-full py-3 bg-primary text-on-primary rounded-[0.75rem] font-label-md text-label-md hover:opacity-90 transition-all flex items-center justify-center gap-2">
+                        class="w-full py-3 bg-[#b95827] text-white rounded-[0.75rem] font-label-md text-label-md hover:opacity-90 transition-all flex items-center justify-center gap-2">
                     <span x-show="isLoading" class="material-symbols-outlined text-sm animate-spin">progress_activity</span>
                     <span x-text="currentIndex < words.length - 1 ? '次の問題' : '結果を見る'"></span>
                     <span x-show="!isLoading" class="material-symbols-outlined text-sm">arrow_forward</span>
@@ -102,7 +102,7 @@ $wordsJson = $words->map(fn($w) => [
 
             <div class="mt-6 flex justify-end">
                 <a href="{{ route('english.quiz.index') }}"
-                   class="px-6 py-2.5 bg-orange-600 text-white font-bold rounded-[0.5rem] shadow-sm hover:bg-orange-700 transition-colors text-base no-underline">
+                   class="px-6 py-2.5 bg-[#b95827] text-white font-bold rounded-[0.5rem] shadow-sm hover:bg-[#a04c22] transition-colors text-base no-underline">
                     Quit Practice
                 </a>
             </div>
@@ -113,17 +113,17 @@ $wordsJson = $words->map(fn($w) => [
                 <div class="text-5xl mb-4">🎉</div>
                 <h2 class="text-headline-lg font-bold text-on-surface mb-2">クイズ完了！</h2>
                 <p class="text-body-md text-on-surface-variant mb-2">スコア</p>
-                <p class="text-display font-black text-primary" x-text="`${score} / ${words.length}`"></p>
-                <p class="text-body-md text-primary font-bold mt-3" x-text="`+${gainedXp} XP 獲得！`"></p>
+                <p class="text-display font-black text-orange-600" x-text="`${score} / ${words.length}`"></p>
+                <p class="text-body-md text-orange-600 font-bold mt-3" x-text="`+${gainedXp} XP 獲得！`"></p>
             </div>
             <div class="flex gap-3">
                 <button @click="restart()"
-                        class="flex-1 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-on-surface hover:bg-surface-container transition-all flex items-center justify-center gap-2">
+                        class="flex-1 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-on-surface hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined text-sm">refresh</span>
                     もう一度
                 </button>
                 <a href="{{ route('english.quiz.index') }}"
-                   class="flex-1 py-3 bg-primary text-on-primary rounded-[0.75rem] font-label-md text-label-md hover:opacity-90 transition-all no-underline text-center flex items-center justify-center gap-2">
+                   class="flex-1 py-3 bg-[#b95827] text-white rounded-[0.75rem] font-label-md text-label-md hover:opacity-90 transition-all no-underline text-center flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined text-sm">arrow_back</span>
                     戻る
                 </a>
