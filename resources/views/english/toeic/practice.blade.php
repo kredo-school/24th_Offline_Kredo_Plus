@@ -6,9 +6,9 @@
 <div class="flex-grow max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop py-12">
 
     <x-english.breadcrumb>
-        <a href="{{ route('english.hub') }}" class="hover:text-primary transition-colors no-underline">Home</a>
+        <a href="{{ route('english.hub') }}" class="hover:text-orange-600 transition-colors no-underline">Home</a>
         <span class="mx-1">/</span>
-        <a href="{{ route('english.toeic.index') }}" class="hover:text-primary transition-colors no-underline">TOEIC</a>
+        <a href="{{ route('english.toeic.index') }}" class="hover:text-orange-600 transition-colors no-underline">TOEIC</a>
         <span class="mx-1">/</span>
         <span class="text-on-surface font-semibold">Part {{ $part }} 練習問題</span>
     </x-english.breadcrumb>
@@ -31,8 +31,8 @@
                     <span class="text-label-md text-on-surface-variant font-semibold"
                           x-text="`{{ $part == 3 ? '会話' : 'トーク' }} ${groupIndex + 1} / ${conversationGroups.length}`"></span>
                 </div>
-                <div class="w-full bg-surface-container-high rounded-[0.75rem] h-2 overflow-hidden">
-                    <div class="bg-primary h-full rounded-[0.75rem] transition-all duration-500"
+                <div class="w-full bg-slate-100 rounded-[0.75rem] h-2 overflow-hidden">
+                    <div class="bg-[#b95827] h-full rounded-[0.75rem] transition-all duration-500"
                          :style="`width: ${conversationGroups.length > 0 ? Math.round((groupIndex / conversationGroups.length) * 100) : 0}%`"></div>
                 </div>
             </div>
@@ -40,8 +40,8 @@
             <div x-show="!isComplete">
                 {{-- リスニングカード（会話/トーク内容は表示せず音声のみ） --}}
                 <div class="max-w-3xl mx-auto mb-6">
-                    <div class="bg-surface-container rounded-[0.75rem] shadow-sm p-8 flex flex-col items-center text-center gap-4">
-                        <span class="material-symbols-outlined text-5xl text-primary">headphones</span>
+                    <div class="bg-slate-50 rounded-[0.75rem] shadow-sm p-8 flex flex-col items-center text-center gap-4">
+                        <span class="material-symbols-outlined text-5xl text-orange-600">headphones</span>
                         <p class="text-body-md text-on-surface-variant leading-relaxed max-w-xl">
                             @if($part == 3)
                                 Directions: You will hear a conversation between two or more people.
@@ -58,7 +58,7 @@
                         <button
                             @click="repeatConversationAudio()"
                             type="button"
-                            class="w-full md:w-auto px-8 py-2.5 bg-primary/10 text-primary rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-primary/20 transition-all"
+                            class="w-full md:w-auto px-8 py-2.5 bg-orange-600/10 text-orange-600 rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-orange-600/20 transition-all"
                         >
                             <span class="material-symbols-outlined text-sm">replay</span>
                             Repeat Audio ({{ $part == 3 ? 'Conversation' : 'Talk' }})
@@ -108,8 +108,8 @@
                             @click="submitGroupAnswers()"
                             :disabled="!isGroupComplete || isLoading"
                             :class="isGroupComplete && !isLoading
-                                ? 'bg-primary text-on-primary hover:opacity-90'
-                                : 'bg-surface-container text-on-surface-variant cursor-not-allowed'"
+                                ? 'bg-[#b95827] text-white hover:opacity-90'
+                                : 'bg-slate-50 text-on-surface-variant cursor-not-allowed'"
                             class="w-full py-3 rounded-[0.75rem] font-label-md text-label-md transition-all flex items-center justify-center gap-2">
                             <span x-show="isLoading" class="material-symbols-outlined text-sm animate-spin">progress_activity</span>
                             <span x-text="isLoading ? '送信中...' : '回答を提出'"></span>
@@ -118,7 +118,7 @@
                     <div x-show="groupSubmitted">
                         <button @click="nextConversation()"
                                 :disabled="isLoading"
-                                class="w-full py-3 bg-primary text-on-primary rounded-[0.75rem] font-label-md text-label-md hover:opacity-90 transition-all flex items-center justify-center gap-2">
+                                class="w-full py-3 bg-[#b95827] text-white rounded-[0.75rem] font-label-md text-label-md hover:opacity-90 transition-all flex items-center justify-center gap-2">
                             <span x-text="groupIndex < conversationGroups.length - 1 ? '{{ $part == 3 ? '次の会話へ' : '次のトークへ' }}' : '結果を見る'"></span>
                             <span class="material-symbols-outlined text-sm">arrow_forward</span>
                         </button>
@@ -127,7 +127,7 @@
 
                 <div class="mt-6 flex justify-end max-w-3xl mx-auto">
                     <a href="{{ route('english.toeic.index') }}"
-                       class="px-6 py-2.5 bg-orange-600 text-white font-bold rounded-[0.5rem] shadow-sm hover:bg-orange-700 transition-colors text-base no-underline">
+                       class="px-6 py-2.5 bg-[#b95827] text-white font-bold rounded-[0.5rem] shadow-sm hover:bg-[#a04c22] transition-colors text-base no-underline">
                         Quit Practice
                     </a>
                 </div>
@@ -139,7 +139,7 @@
                     <div class="text-5xl mb-4">🎉</div>
                     <h2 class="text-headline-lg font-bold text-on-surface mb-2">完了！</h2>
                     <p class="text-body-md text-on-surface-variant mb-4">スコア</p>
-                    <p class="text-display font-black text-primary" x-text="`${score} / ${questions.length}`"></p>
+                    <p class="text-display font-black text-orange-600" x-text="`${score} / ${questions.length}`"></p>
                     <p class="text-caption text-on-surface-variant mt-4">結果を保存中...</p>
                 </div>
             </div>
@@ -151,8 +151,8 @@
                     <span class="text-label-md text-on-surface-variant font-semibold"
                           x-text="`問題 ${currentIndex + 1} / ${questions.length}`"></span>
                 </div>
-                <div class="w-full bg-surface-container-high rounded-[0.75rem] h-2 overflow-hidden">
-                    <div class="bg-primary h-full rounded-[0.75rem] transition-all duration-500"
+                <div class="w-full bg-slate-100 rounded-[0.75rem] h-2 overflow-hidden">
+                    <div class="bg-[#b95827] h-full rounded-[0.75rem] transition-all duration-500"
                          :style="`width: ${progressPercent}%`"></div>
                 </div>
             </div>
@@ -161,8 +161,8 @@
             <div x-show="!isComplete">
                 {{-- 長文パッセージ（Part6/7） --}}
                 <template x-if="current.passage">
-                    <div class="bg-surface-container rounded-[0.75rem] shadow-sm p-8 mb-6 max-w-3xl mx-auto max-h-[420px] overflow-y-auto">
-                        <p class="text-label-md font-bold text-primary mb-4" x-text="current.passage.title"></p>
+                    <div class="bg-slate-50 rounded-[0.75rem] shadow-sm p-8 mb-6 max-w-3xl mx-auto max-h-[420px] overflow-y-auto">
+                        <p class="text-label-md font-bold text-orange-600 mb-4" x-text="current.passage.title"></p>
                         <template x-for="(doc, docIndex) in current.passage.documents" :key="docIndex">
                             <div class="mb-5 last:mb-0">
                                 <p class="font-semibold text-on-surface mb-2" x-show="doc.heading" x-text="doc.heading"></p>
@@ -176,11 +176,11 @@
                 <template x-if="current.image_url">
                     <div class="max-w-3xl mx-auto mb-6">
                         <img :src="current.image_url" alt="TOEIC Part1 photograph"
-                             class="w-full max-h-[420px] object-contain rounded-[0.75rem] shadow-sm mb-3 bg-surface-container">
+                             class="w-full max-h-[420px] object-contain rounded-[0.75rem] shadow-sm mb-3 bg-slate-50">
                         <button
                             @click="repeatAudio()"
                             type="button"
-                            class="w-full py-2.5 bg-primary/10 text-primary rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-primary/20 transition-all"
+                            class="w-full py-2.5 bg-orange-600/10 text-orange-600 rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-orange-600/20 transition-all"
                         >
                             <span class="material-symbols-outlined text-sm">replay</span>
                             Repeat Audio (A–D)
@@ -191,8 +191,8 @@
                 {{-- 質問応答問題（Part2：本番同様、質問文・選択肢とも一切表示せず音声のみで判断） --}}
                 @if($part == 2)
                 <div class="max-w-3xl mx-auto mb-6">
-                    <div class="bg-surface-container rounded-[0.75rem] shadow-sm p-8 flex flex-col items-center text-center gap-4">
-                        <span class="material-symbols-outlined text-5xl text-primary">headphones</span>
+                    <div class="bg-slate-50 rounded-[0.75rem] shadow-sm p-8 flex flex-col items-center text-center gap-4">
+                        <span class="material-symbols-outlined text-5xl text-orange-600">headphones</span>
                         <p class="text-body-md text-on-surface-variant leading-relaxed max-w-xl">
                             Directions: You will hear a question or statement and three responses spoken in English.
                             They will not be printed in your test book and will be spoken only one time.
@@ -201,7 +201,7 @@
                         <button
                             @click="repeatAudio()"
                             type="button"
-                            class="w-full md:w-auto px-8 py-2.5 bg-primary/10 text-primary rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-primary/20 transition-all"
+                            class="w-full md:w-auto px-8 py-2.5 bg-orange-600/10 text-orange-600 rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-orange-600/20 transition-all"
                         >
                             <span class="material-symbols-outlined text-sm">replay</span>
                             Repeat Audio
@@ -282,8 +282,8 @@
                             @click="submitAnswer()"
                             :disabled="!selectedId || isLoading"
                             :class="selectedId && !isLoading
-                                ? 'bg-primary text-on-primary hover:opacity-90'
-                                : 'bg-surface-container text-on-surface-variant cursor-not-allowed'"
+                                ? 'bg-[#b95827] text-white hover:opacity-90'
+                                : 'bg-slate-50 text-on-surface-variant cursor-not-allowed'"
                             class="w-full py-3 rounded-[0.75rem] font-label-md text-label-md transition-all flex items-center justify-center gap-2">
                             <span x-show="isLoading" class="material-symbols-outlined text-sm animate-spin">progress_activity</span>
                             <span x-text="isLoading ? '送信中...' : '回答する'"></span>
@@ -299,7 +299,7 @@
 
                             {{-- Part1：回答後に音声の文章（A〜D）を表示し、リピート再生と合わせて振り返れるようにする --}}
                             <template x-if="current.image_url">
-                                <div class="mt-3 pt-3 border-t border-outline-variant/40 space-y-1.5">
+                                <div class="mt-3 pt-3 border-t border-slate-200/40 space-y-1.5">
                                     <template x-for="option in current.options" :key="option.id">
                                         <p class="text-body-md" :class="option.id === correctOptionId ? 'text-green-700 font-semibold' : 'text-on-surface-variant'">
                                             <span class="font-bold uppercase mr-1" x-text="option.label + '.'"></span>
@@ -313,7 +313,7 @@
 
                             {{-- Part2：回答後に質問文と応答（A〜C）を表示し、リピート再生と合わせて振り返れるようにする --}}
                             @if($part == 2)
-                            <div class="mt-3 pt-3 border-t border-outline-variant/40 space-y-1.5">
+                            <div class="mt-3 pt-3 border-t border-slate-200/40 space-y-1.5">
                                 <p class="text-body-md font-semibold text-on-surface mb-2">"<span x-text="current.question_text"></span>"</p>
                                 <template x-for="option in current.options" :key="option.id">
                                     <p class="text-body-md" :class="option.id === correctOptionId ? 'text-green-700 font-semibold' : 'text-on-surface-variant'">
@@ -328,7 +328,7 @@
                         </div>
                         <button @click="nextQuestion()"
                                 :disabled="isLoading"
-                                class="w-full py-3 bg-primary text-on-primary rounded-[0.75rem] font-label-md text-label-md hover:opacity-90 transition-all flex items-center justify-center gap-2">
+                                class="w-full py-3 bg-[#b95827] text-white rounded-[0.75rem] font-label-md text-label-md hover:opacity-90 transition-all flex items-center justify-center gap-2">
                             <span x-text="currentIndex < questions.length - 1 ? '次の問題' : '結果を見る'"></span>
                             <span class="material-symbols-outlined text-sm">arrow_forward</span>
                         </button>
@@ -337,7 +337,7 @@
 
                 <div class="mt-6 flex justify-end max-w-3xl mx-auto">
                     <a href="{{ route('english.toeic.index') }}"
-                       class="px-6 py-2.5 bg-orange-600 text-white font-bold rounded-[0.5rem] shadow-sm hover:bg-orange-700 transition-colors text-base no-underline">
+                       class="px-6 py-2.5 bg-[#b95827] text-white font-bold rounded-[0.5rem] shadow-sm hover:bg-[#a04c22] transition-colors text-base no-underline">
                         Quit Practice
                     </a>
                 </div>
@@ -349,7 +349,7 @@
                     <div class="text-5xl mb-4">🎉</div>
                     <h2 class="text-headline-lg font-bold text-on-surface mb-2">完了！</h2>
                     <p class="text-body-md text-on-surface-variant mb-4">スコア</p>
-                    <p class="text-display font-black text-primary" x-text="`${score} / ${questions.length}`"></p>
+                    <p class="text-display font-black text-orange-600" x-text="`${score} / ${questions.length}`"></p>
                     <p class="text-caption text-on-surface-variant mt-4">結果を保存中...</p>
                 </div>
             </div>

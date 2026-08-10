@@ -25,9 +25,9 @@ $wordsJson  = $words->map(fn($w) => [
 <div class="flex-grow max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop py-12">
 
     <x-english.breadcrumb>
-        <a href="{{ route('english.hub') }}" class="hover:text-primary transition-colors no-underline">Home</a>
+        <a href="{{ route('english.hub') }}" class="hover:text-orange-600 transition-colors no-underline">Home</a>
         <span class="mx-1">/</span>
-        <a href="{{ route('english.vocabulary.index') }}" class="hover:text-primary transition-colors no-underline">英単語</a>
+        <a href="{{ route('english.vocabulary.index') }}" class="hover:text-orange-600 transition-colors no-underline">英単語</a>
         <span class="mx-1">/</span>
         <span class="text-on-surface font-semibold">{{ $levelLabel }}</span>
     </x-english.breadcrumb>
@@ -52,8 +52,8 @@ $wordsJson  = $words->map(fn($w) => [
                     </span>
                 </div>
             </div>
-            <div class="w-full bg-surface-container-high rounded-[0.75rem] h-2 overflow-hidden">
-                <div class="bg-primary h-full rounded-[0.75rem] transition-all duration-500"
+            <div class="w-full bg-slate-100 rounded-[0.75rem] h-2 overflow-hidden">
+                <div class="bg-[#b95827] h-full rounded-[0.75rem] transition-all duration-500"
                      :style="`width: ${progress}%`"></div>
             </div>
         </div>
@@ -72,12 +72,12 @@ $wordsJson  = $words->map(fn($w) => [
             </div>
             <div class="flex gap-3">
                 <button @click="restart()"
-                        class="flex-1 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-on-surface hover:bg-surface-container transition-all flex items-center justify-center gap-2">
+                        class="flex-1 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-on-surface hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined text-sm">refresh</span>
                     もう一度
                 </button>
                 <a href="{{ route('english.vocabulary.index') }}"
-                   class="flex-1 py-3 bg-primary text-on-primary rounded-[0.75rem] font-label-md text-label-md hover:opacity-90 transition-all no-underline text-center flex items-center justify-center">
+                   class="flex-1 py-3 bg-[#b95827] text-white rounded-[0.75rem] font-label-md text-label-md hover:opacity-90 transition-all no-underline text-center flex items-center justify-center">
                     レベル選択へ
                 </a>
             </div>
@@ -88,13 +88,13 @@ $wordsJson  = $words->map(fn($w) => [
             <div style="perspective: 1000px;" class="mb-6 cursor-pointer" @click="flip()">
                 <div class="relative h-64 flashcard-inner" :class="{ 'flipped': isFlipped }">
                     {{-- 表面 --}}
-                    <div class="flashcard-front absolute inset-0 bg-surface-container-lowest border-2 border-outline-variant rounded-[0.75rem] flex flex-col items-center justify-center p-8">
+                    <div class="flashcard-front absolute inset-0 bg-surface-container-lowest border-2 border-slate-200 rounded-[0.75rem] flex flex-col items-center justify-center p-8">
                         <p class="text-display font-black text-on-surface text-center mb-3" x-text="current.word"></p>
                         <p class="text-caption text-on-surface-variant">クリックして意味を確認</p>
                     </div>
                     {{-- 裏面 --}}
-                    <div class="flashcard-back absolute inset-0 bg-primary/5 border-2 border-primary/30 rounded-[0.75rem] flex flex-col justify-center p-8">
-                        <span class="bg-primary/10 text-primary text-caption font-bold px-3 py-1 rounded-[0.75rem] self-start mb-3" x-text="current.pos"></span>
+                    <div class="flashcard-back absolute inset-0 bg-orange-600/5 border-2 border-orange-600/30 rounded-[0.75rem] flex flex-col justify-center p-8">
+                        <span class="bg-orange-600/10 text-orange-600 text-caption font-bold px-3 py-1 rounded-[0.75rem] self-start mb-3" x-text="current.pos"></span>
                         <p class="text-headline-md font-bold text-on-surface mb-3" x-text="current.meaning"></p>
                         <p class="text-body-md text-on-surface font-mono mb-1" x-text="current.example"></p>
                         <p class="text-caption text-on-surface-variant" x-text="current.example_ja"></p>
@@ -107,7 +107,7 @@ $wordsJson  = $words->map(fn($w) => [
                 <button @click="toggleFavorite()"
                         :class="isFavorite(current.id)
                             ? 'bg-red-50 border-red-200 text-red-500'
-                            : 'bg-surface-container-lowest border-outline-variant text-on-surface-variant'"
+                            : 'bg-surface-container-lowest border-slate-200 text-on-surface-variant'"
                         class="py-3 rounded-[0.75rem] border-2 font-label-md text-label-md flex items-center justify-center gap-1 transition-all">
                     <span class="material-symbols-outlined text-base">favorite</span>
                     <span x-text="isFavorite(current.id) ? 'お気に入り済' : 'お気に入り'"></span>
@@ -118,7 +118,7 @@ $wordsJson  = $words->map(fn($w) => [
                     覚えた
                 </button>
                 <button @click="next()"
-                        class="py-3 bg-surface-container-lowest border-2 border-outline-variant rounded-[0.75rem] font-label-md text-label-md text-on-surface flex items-center justify-center gap-1 hover:bg-surface-container transition-all">
+                        class="py-3 bg-surface-container-lowest border-2 border-slate-200 rounded-[0.75rem] font-label-md text-label-md text-on-surface flex items-center justify-center gap-1 hover:bg-slate-50 transition-all">
                     次へ
                     <span class="material-symbols-outlined text-sm">arrow_forward</span>
                 </button>

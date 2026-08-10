@@ -6,7 +6,7 @@
 <div class="flex-grow max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop py-12">
 
     <x-english.breadcrumb>
-        <a href="{{ route('english.hub') }}" class="hover:text-primary transition-colors no-underline">Home</a>
+        <a href="{{ route('english.hub') }}" class="hover:text-orange-600 transition-colors no-underline">Home</a>
         <span class="mx-1">/</span>
         <span class="text-on-surface font-semibold">タイピング練習</span>
     </x-english.breadcrumb>
@@ -20,7 +20,7 @@
     <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-6 flex flex-col gap-4 mb-6">
         <div>
             <h2 class="text-headline-md font-bold text-on-surface mb-1 flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary">keyboard</span>
+                <span class="material-symbols-outlined text-orange-600">keyboard</span>
                 {{ $category->name }}
             </h2>
             <p class="text-caption text-on-surface-variant mb-3">{{ $category->description }}</p>
@@ -32,7 +32,7 @@
         <div>
             @if($category->materials_count > 0)
             <a href="{{ route('english.typing.category.practice', ['category' => $category->slug]) }}"
-               class="inline-flex bg-primary text-on-primary py-2.5 px-6 rounded-[0.75rem] font-label-md text-label-md items-center justify-center gap-2 no-underline hover:opacity-90 transition-all">
+               class="inline-flex bg-[#b95827] text-white py-2.5 px-6 rounded-[0.75rem] font-label-md text-label-md items-center justify-center gap-2 no-underline hover:opacity-90 transition-all">
                 <span class="material-symbols-outlined text-sm">play_arrow</span>
                 練習開始
             </a>

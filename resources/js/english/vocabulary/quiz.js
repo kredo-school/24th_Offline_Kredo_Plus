@@ -45,9 +45,9 @@ export function vocabQuizApp(config) {
                 return 'border-error bg-error-container/50 text-error';
             }
             if (this.selectedOption === idx && !this.isAnswered) {
-                return 'border-primary bg-primary/10';
+                return 'border-orange-600 bg-orange-600/10';
             }
-            return 'border-outline-variant bg-surface-container-lowest';
+            return 'border-slate-200 bg-surface-container-lowest';
         },
 
         submitAnswer() {

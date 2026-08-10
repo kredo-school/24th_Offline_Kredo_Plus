@@ -10,9 +10,9 @@ $topicMeta = config('english.ielts_topic_meta');
 <div class="flex-grow max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop py-12">
 
     <x-english.breadcrumb>
-        <a href="{{ route('english.hub') }}" class="hover:text-primary transition-colors no-underline">Home</a>
+        <a href="{{ route('english.hub') }}" class="hover:text-orange-600 transition-colors no-underline">Home</a>
         <span class="mx-1">/</span>
-        <a href="{{ route('english.ielts.index') }}" class="hover:text-primary transition-colors no-underline">IELTS</a>
+        <a href="{{ route('english.ielts.index') }}" class="hover:text-orange-600 transition-colors no-underline">IELTS</a>
         <span class="mx-1">/</span>
         <span class="text-on-surface font-semibold">Part {{ $part }} トピック選択</span>
     </x-english.breadcrumb>
@@ -32,7 +32,7 @@ $topicMeta = config('english.ielts_topic_meta');
                 <h3 class="text-headline-md font-bold text-on-surface mb-2">{{ $topic->name }}</h3>
                 <p class="text-body-md text-on-surface-variant">{{ $topic->description ?? ($meta['desc'] ?? '') }}</p>
             </div>
-            <div class="mt-auto flex items-center gap-1 text-primary text-label-md font-semibold group-hover:gap-2 transition-all">
+            <div class="mt-auto flex items-center gap-1 text-orange-600 text-label-md font-semibold group-hover:gap-2 transition-all">
                 <span>選択する</span>
                 <span class="material-symbols-outlined text-sm">arrow_forward</span>
             </div>
