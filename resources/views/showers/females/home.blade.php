@@ -27,11 +27,13 @@
                     <div class="w-full grid grid-cols-2 text-center">
                         <div class="border-e border-outline-950/30 pe-5">
                             <p class="text-caption text-blue-950 leading-none mb-1">おすすめシャワー</p>
-                            <p class="text-headline-md font-black text-blue-950 leading-none">0</p>
+                            <p class="text-headline-md font-black text-blue-950 leading-none"
+                                x-text="$store.showerPriority.recommendation ? $store.showerPriority.recommendation.shower_number : '—'"></p>
                         </div>
                         <div class="ps-5">
                             <p class="text-caption text-blue-950 leading-none mb-1">好みとのマッチ度</p>
-                            <p class="text-headline-md font-black text-blue-950 leading-none">100 %</p>
+                            <p class="text-headline-md font-black text-blue-950 leading-none"
+                                x-text="$store.showerPriority.recommendation ? $store.showerPriority.recommendation.match_percent + ' %' : '—'"></p>
                             <x-shower-female.preference-setup
                             
                             />
@@ -104,3 +106,82 @@
     
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('showerPriority', {
+            factor: @json(auth()->user()->shower_priority_factor ?? null),
+            recommendation: @json($recommendation),
+
+            async toggle(clicked) {
+                const nextFactor = this.factor === clicked ? 'none' : clicked;
+
+                const response = await fetch('{{ route('shower.priority.update') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ factor: nextFactor }),
+                });
+
+                if (!response.ok) {
+                    console.error('優先設定の保存に失敗しました');
+                    return;
+                }
+
+                const data = await response.json();
+                this.factor = data.priority_factor;
+                this.recommendation = data.recommendation;
+            },
+        });
+
+        Alpine.data('showerGauge', (type) => ({
+            type,
+
+            levelsByType: {
+                temperature: [
+                    { value: 2.5, label: '冷たい', color: 'text-[#60a5fa]' },
+                    { value: 5.0, label: 'ぬるい', color: 'text-[#34d399]' },
+                    { value: 7.5, label: '温かい', color: 'text-[#fbbf24]' },
+                    { value: 10,  label: '熱い',   color: 'text-[#ef4444]' },
+                ],
+                pressure: [
+                    { value: 2.5, label: '無し', color: 'text-[#eff6ff]' },
+                    { value: 5.0, label: '弱い', color: 'text-[#93c5fd]' },
+                    { value: 7.5, label: '普通', color: 'text-[#3b82f6]' },
+                    { value: 10,  label: '強い', color: 'text-[#1e3a8a]' },
+                ],
+            },
+
+            get levels() {
+                return this.levelsByType[this.type];
+            },
+
+            get hasData() {
+                return this.$store.showerPriority.recommendation !== null;
+            },
+
+            get value() {
+                return this.hasData ? this.$store.showerPriority.recommendation[this.type] : 0;
+            },
+
+            get percent() {
+                return (this.value / 10) * 100;
+            },
+
+            get label() {
+                let closest = this.levels[0];
+                this.levels.forEach((lvl) => {
+                    if (Math.abs(this.value - lvl.value) < Math.abs(this.value - closest.value)) {
+                        closest = lvl;
+                    }
+                });
+                return closest.label;
+            },
+        }));
+    });
+</script>
+@endpush
