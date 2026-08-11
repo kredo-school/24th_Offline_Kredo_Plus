@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ShowerController;
 use App\Http\Controllers\GenderController;
 use App\Http\Middleware\EnsureGenderIsSet;
+use App\Http\Controllers\UserShowerPreferenceController;
 // Information
 use App\Http\Controllers\Information\InformationController;
 use App\Http\Controllers\Information\CarinderiaController;
@@ -24,9 +25,12 @@ use App\Http\Controllers\Information\OtherController;
 use App\Http\Controllers\Information\RestaurantCafeController;
 use App\Http\Controllers\Information\PostInteractionController;
 use App\Http\Controllers\Information\MainCategoryPageController;
+//Earth
 use App\Http\Controllers\EarthController;
+use App\Http\Controllers\EarthLocationController;
 //Admin
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\SuggestionBoxController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -139,6 +143,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('gender:female')
         ->name('shower.female');
 
+    // シャワーの好み
+    Route::post('/shower/preference', [UserShowerPreferenceController::class, 'update'])->name('shower.preference.update');
+
     // ============================================================
     // Information
     // 投稿の編集・更新・削除・詳細のロジックはInformationControllerに集約(セクションごとの重複を削減)。
@@ -189,6 +196,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/comments/{comment}', [PostInteractionController::class, 'destroyComment'])->name('comments.destroy');
     });
     // ============================================================
+
+    // suggestion box  目安箱
+    Route::get('/suggestion-box', [SuggestionBoxController::class, 'suggestion'])->name('suggestion');
 });  // auth, verified group
 
 //Profile    下記コードデフォルトのままです。
@@ -217,7 +227,12 @@ require __DIR__ . '/auth.php';
 
 // Earth
 Route::get('/earth', [EarthController::class, 'index'])->name('earth');
-
+Route::get('/earth/location/create', [EarthLocationController::class, 'create'])
+    ->name('earth.location.create');
+Route::post(
+    '/earth/location',
+    [EarthLocationController::class, 'store']
+)->name('earth.location.store');
 
 // Admin (管理者画面)
     Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {

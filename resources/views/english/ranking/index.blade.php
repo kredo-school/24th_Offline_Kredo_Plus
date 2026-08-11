@@ -6,7 +6,7 @@
 <div class="flex-grow max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop py-12">
 
     <x-english.breadcrumb>
-        <a href="{{ route('english.hub') }}" class="hover:text-primary transition-colors no-underline">Home</a>
+        <a href="{{ route('english.hub') }}" class="hover:text-orange-600 transition-colors no-underline">Home</a>
         <span class="mx-1">/</span>
         <span class="text-on-surface font-semibold">ランキング</span>
     </x-english.breadcrumb>
@@ -22,7 +22,7 @@
         <div class="flex gap-2 mb-6 justify-center">
             @foreach([['id'=>'weekly','label'=>'週間'],['id'=>'monthly','label'=>'月間'],['id'=>'total','label'=>'Total']] as $tab)
             <a href="{{ route('english.ranking', ['period' => $tab['id']]) }}"
-               class="{{ $period === $tab['id'] ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest shadow-sm text-on-surface hover:bg-surface-container' }} px-6 py-2.5 rounded-[0.75rem] font-label-md text-label-md transition-all no-underline">
+               class="{{ $period === $tab['id'] ? 'bg-[#b95827] text-white' : 'bg-surface-container-lowest shadow-sm text-on-surface hover:bg-slate-50' }} px-6 py-2.5 rounded-[0.75rem] font-label-md text-label-md transition-all no-underline">
                 {{ $tab['label'] }}
             </a>
             @endforeach
@@ -32,7 +32,7 @@
         <div class="bg-surface-container-lowest rounded-[0.5rem] shadow-sm overflow-hidden mb-4">
             <table class="w-full text-left">
                 <thead>
-                    <tr class="bg-surface-container-low border-b border-outline-variant">
+                    <tr class="bg-surface-container-low border-b border-slate-200">
                         <th class="py-4 px-4 text-label-md text-on-surface-variant text-center w-16">順位</th>
                         <th class="py-4 px-4 text-label-md text-on-surface-variant">ユーザー</th>
                         <th class="py-4 px-4 text-label-md text-on-surface-variant text-center">Level</th>
@@ -42,7 +42,7 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-outline-variant/50">
+                <tbody class="divide-y divide-slate-200/50">
                     @forelse($rankings as $i => $entry)
                     @php
                         $rank = ($rankings->currentPage() - 1) * $rankings->perPage() + $i + 1;
@@ -50,7 +50,7 @@
                         $xpDisplay = $period === 'total' ? $entry->total_xp : ($entry->period_xp ?? 0);
                         $isMe = $entry->id === $user->id;
                     @endphp
-                    <tr class="{{ $rank <= 3 ? 'bg-primary/5 font-semibold' : '' }} {{ $isMe ? 'bg-primary/10 ring-1 ring-inset ring-primary/30' : '' }} hover:bg-surface-container-low/50 transition-colors">
+                    <tr class="{{ $rank <= 3 ? 'bg-orange-600/5 font-semibold' : '' }} {{ $isMe ? 'bg-orange-600/10 ring-1 ring-inset ring-orange-600/30' : '' }} hover:bg-surface-container-low/50 transition-colors">
                         <td class="py-4 px-4 text-center font-bold">
                             @if($rank === 1) <span class="text-xl">🥇</span>
                             @elseif($rank === 2) <span class="text-xl">🥈</span>
@@ -60,13 +60,13 @@
                         </td>
                         <td class="py-4 px-4 text-on-surface">
                             {{ $entry->name }}
-                            @if($isMe)<span class="ml-1 text-caption text-primary font-bold">（あなた）</span>@endif
+                            @if($isMe)<span class="ml-1 text-caption text-orange-600 font-bold">（あなた）</span>@endif
                         </td>
                         <td class="py-4 px-4 text-center">
-                            <span class="bg-primary/10 text-primary text-caption font-bold px-2 py-0.5 rounded-[0.75rem]">Lv.{{ $level }}</span>
+                            <span class="bg-orange-600/10 text-orange-600 text-caption font-bold px-2 py-0.5 rounded-[0.75rem]">Lv.{{ $level }}</span>
                         </td>
                         <td class="py-4 px-4 text-center text-on-surface-variant">{{ $entry->total_study_days }}日</td>
-                        <td class="py-4 px-4 text-right font-bold text-primary">{{ number_format($xpDisplay) }} <span class="text-caption font-normal text-on-surface-variant">XP</span></td>
+                        <td class="py-4 px-4 text-right font-bold text-orange-600">{{ number_format($xpDisplay) }} <span class="text-caption font-normal text-on-surface-variant">XP</span></td>
                     </tr>
                     @empty
                     <tr>
@@ -87,18 +87,18 @@
         @endif
 
         {{-- 自分の順位（下部固定表示） --}}
-        <div class="bg-primary/10 border-2 border-primary rounded-[0.5rem] p-4">
-            <p class="text-caption text-primary font-bold mb-2">あなたの順位</p>
+        <div class="bg-orange-600/10 border-2 border-orange-600 rounded-[0.5rem] p-4">
+            <p class="text-caption text-orange-600 font-bold mb-2">あなたの順位</p>
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
-                    <span class="text-headline-md font-black text-primary">{{ $myRank }}位</span>
+                    <span class="text-headline-md font-black text-orange-600">{{ $myRank }}位</span>
                     <div>
                         <p class="font-bold text-on-surface">{{ $user->name }}</p>
-                        <span class="bg-primary/10 text-primary text-caption font-bold px-2 py-0.5 rounded-[0.75rem]">Lv.{{ $levelInfo['level'] }}</span>
+                        <span class="bg-orange-600/10 text-orange-600 text-caption font-bold px-2 py-0.5 rounded-[0.75rem]">Lv.{{ $levelInfo['level'] }}</span>
                     </div>
                 </div>
                 <div class="text-right">
-                    <p class="font-black text-primary text-headline-md">{{ number_format($levelInfo['current_xp']) }}</p>
+                    <p class="font-black text-orange-600 text-headline-md">{{ number_format($levelInfo['current_xp']) }}</p>
                     <p class="text-caption text-on-surface-variant">Total XP</p>
                 </div>
             </div>

@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\MainCategory;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use App\Models\EarthLocation;
 use Illuminate\Support\Facades\Storage;
 
 class InformationController extends Controller
@@ -31,16 +32,25 @@ class InformationController extends Controller
     }
 
     // 投稿画面
-    public function create()
+    public function create(Request $request)
     {
         $categories = Category::all();
 
         // メインカテゴリーの一覧(投稿フォームで「メイン→サブ」の2段階選択に使う)
         $mainCategories = MainCategory::allOrdered();
 
-        return view('information.post', compact('categories', 'mainCategories'));
-    }
+        $earthLocation = null;
 
+        if ($request->filled('earth_location_id')) {
+            $earthLocation = EarthLocation::find($request->earth_location_id);
+        }
+
+        return view('information.post', compact(
+            'categories',
+            'mainCategories',
+            'earthLocation'
+        ));
+    }
     // 投稿保存
     public function store(Request $request)
     {
@@ -59,6 +69,20 @@ class InformationController extends Controller
         $validated['user_id'] = auth()->id();
 
         $post = Post::create($validated);
+
+        if ($request->filled('earth_location_id')) {
+
+            $earthLocation = EarthLocation::find($request->earth_location_id);
+
+            if ($earthLocation) {
+
+                $earthLocation->post_id = $post->id;
+
+                $earthLocation->save();
+
+            }
+
+}
 
         // 投稿したカテゴリーのsectionに応じて、正しい一覧ページへ戻す。
         $section = $post->category->section ?? 'restaurant-cafe';

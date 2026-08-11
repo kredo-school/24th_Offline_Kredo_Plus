@@ -18,9 +18,9 @@ $wordsJson = $favorites->map(fn($f) => [
 <div class="flex-grow max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop py-12">
 
     <x-english.breadcrumb>
-        <a href="{{ route('english.hub') }}" class="hover:text-primary transition-colors no-underline">Home</a>
+        <a href="{{ route('english.hub') }}" class="hover:text-orange-600 transition-colors no-underline">Home</a>
         <span class="mx-1">/</span>
-        <a href="{{ route('english.vocabulary.index') }}" class="hover:text-primary transition-colors no-underline">英単語</a>
+        <a href="{{ route('english.vocabulary.index') }}" class="hover:text-orange-600 transition-colors no-underline">英単語</a>
         <span class="mx-1">/</span>
         <span class="text-on-surface font-semibold">お気に入り</span>
     </x-english.breadcrumb>
@@ -46,7 +46,7 @@ $wordsJson = $favorites->map(fn($f) => [
                 <span class="material-symbols-outlined text-5xl text-on-surface-variant/40 mb-4 block">favorite_border</span>
                 <p class="text-body-lg text-on-surface-variant mb-6">お気に入り単語がありません</p>
                 <a href="{{ route('english.vocabulary.index') }}"
-                   class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-on-primary rounded-[0.75rem] font-label-md text-label-md hover:opacity-90 transition-all no-underline">
+                   class="inline-flex items-center gap-2 px-6 py-3 bg-[#b95827] text-white rounded-[0.75rem] font-label-md text-label-md hover:opacity-90 transition-all no-underline">
                     <span class="material-symbols-outlined text-sm">style</span>
                     単語学習へ
                 </a>
@@ -68,7 +68,7 @@ $wordsJson = $favorites->map(fn($f) => [
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2 flex-wrap mb-1">
                                     <span class="text-headline-sm font-bold text-on-surface" x-text="word.word"></span>
-                                    <span class="text-caption bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded-[0.75rem]"
+                                    <span class="text-caption bg-slate-100 text-on-surface-variant px-2 py-0.5 rounded-[0.75rem]"
                                           x-text="word.levelLabel"></span>
                                     <span x-show="word.isLearned"
                                           class="text-caption bg-green-100 text-green-700 px-2 py-0.5 rounded-[0.75rem] flex items-center gap-1">
@@ -83,7 +83,7 @@ $wordsJson = $favorites->map(fn($f) => [
                             <div class="flex items-center gap-2 flex-shrink-0">
                                 {{-- フラッシュカードへ --}}
                                 <a :href="`/english/vocabulary/${word.levelSlug}/flashcard`"
-                                   class="inline-flex items-center gap-1 px-4 py-2 bg-primary text-on-primary rounded-[0.75rem] text-label-md font-label-md hover:opacity-90 transition-all no-underline text-sm">
+                                   class="inline-flex items-center gap-1 px-4 py-2 bg-[#b95827] text-white rounded-[0.75rem] text-label-md font-label-md hover:opacity-90 transition-all no-underline text-sm">
                                     <span class="material-symbols-outlined text-sm">style</span>
                                     フラッシュカード
                                 </a>
@@ -104,7 +104,7 @@ $wordsJson = $favorites->map(fn($f) => [
                 {{-- フラッシュカード一覧へ戻るリンク --}}
                 <div class="mt-8 text-center">
                     <a href="{{ route('english.vocabulary.index') }}"
-                       class="inline-flex items-center gap-2 px-6 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-on-surface hover:bg-surface-container transition-all no-underline">
+                       class="inline-flex items-center gap-2 px-6 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-on-surface hover:bg-slate-50 transition-all no-underline">
                         <span class="material-symbols-outlined text-sm">arrow_back</span>
                         単語レベル一覧へ
                     </a>

@@ -103,7 +103,7 @@
                         <span class="text-[11px] font-bold whitespace-nowrap">シャワー情報</span>
                     </a>
                     <a href="{{ route('english.hub') }}" aria-label="英語学習"
-                        class="flex flex-col items-center gap-0.5 transition-colors {{ request()->routeIs('english.*') ? 'text-orange-600' : 'text-slate-400 hover:text-orange-600' }}">
+                        class="flex flex-col items-center gap-0.5 transition-colors {{ request()->routeIs('english.*') ? 'text-brand-yellow' : 'text-slate-400 hover:text-brand-yellow' }}">
                         <span class="material-symbols-outlined !text-2xl leading-none">menu_book</span>
                         <span class="text-[11px] font-bold whitespace-nowrap">英語学習</span>
                     </a>
@@ -111,6 +111,11 @@
                         class="flex flex-col items-center gap-0.5 transition-colors {{ request()->routeIs('travel.*') ? 'text-brand-green' : 'text-slate-400 hover:text-brand-green' }}">
                         <span class="material-symbols-outlined !text-2xl leading-none">flight</span>
                         <span class="text-[11px] font-bold whitespace-nowrap">留学情報</span>
+                    </a>
+                    <a href="{{ route('suggestion') }}" aria-label="目安箱"
+                        class="flex flex-col items-center gap-0.5 transition-colors {{ request()->routeIs('suggestion') ? 'text-brand-red' : 'text-slate-400 hover:text-brand-red' }} ">
+                        <span class="material-symbols-outlined !text-2xl leading-none">local_post_office</span>
+                        <span class="text-[11px] font-bold whitespace-nowrap">目安箱</span>
                     </a>
                     @if (auth()->user()?->isAdmin())
                         <a href="{{ route('admin.dashboard') }}" aria-label="Admin画面"
@@ -175,7 +180,7 @@
             <a href="{{ route('shower.entry') }}"
                 class="block py-2 text-sm font-semibold {{ request()->routeIs('shower.*') ? 'text-brand-blue' : 'text-slate-600 hover:text-brand-blue' }}">シャワー情報</a>
             <a href="{{ route('english.hub') }}"
-                class="block py-2 text-sm font-semibold {{ request()->routeIs('english.*') ? 'text-orange-600' : 'text-slate-600 hover:text-orange-600' }}">英語学習</a>
+                class="block py-2 text-sm font-semibold {{ request()->routeIs('english.*') ? 'text-brand-yellow' : 'text-slate-600 hover:text-brand-yellow' }}">英語学習</a>
             <a href="{{ route('travel.index') }}"
                 class="block py-2 text-sm font-semibold {{ request()->routeIs('travel.*') ? 'text-brand-green' : 'text-slate-600 hover:text-brand-green' }}">留学情報</a>
             <a href="{{ route('profile.edit') }}"

@@ -13,7 +13,7 @@ function getContainer() {
 const TYPE_CLASSES = {
     success: 'bg-green-600',
     error: 'bg-red-600',
-    info: 'bg-primary',
+    info: 'bg-[#b95827]',
     warning: 'bg-yellow-500',
 };
 

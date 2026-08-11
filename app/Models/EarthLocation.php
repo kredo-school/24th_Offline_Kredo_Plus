@@ -15,10 +15,9 @@ class EarthLocation extends Model
         'longitude',
     ];
 
-    public function earthLocation()
+public function post()
 {
-    return $this->hasOne(EarthLocation::class);
+    return $this->belongsTo(Post::class);
 }
-
 
 }

@@ -17,7 +17,7 @@ $sectionLabels = [
 <div class="flex-grow max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop py-12">
 
     <x-english.breadcrumb>
-        <a href="{{ route('english.hub') }}" class="hover:text-primary transition-colors no-underline">Home</a>
+        <a href="{{ route('english.hub') }}" class="hover:text-orange-600 transition-colors no-underline">Home</a>
         <span class="mx-1">/</span>
         <span class="text-on-surface font-semibold">学習管理</span>
     </x-english.breadcrumb>
@@ -43,7 +43,7 @@ $sectionLabels = [
             <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-6 flex items-center gap-4">
                 <div class="text-5xl">🔥</div>
                 <div>
-                    <p class="text-display font-black text-primary">{{ $user->study_streak }}</p>
+                    <p class="text-display font-black text-orange-600">{{ $user->study_streak }}</p>
                     <p class="text-body-md text-on-surface-variant">日連続学習</p>
                 </div>
             </div>
@@ -89,7 +89,7 @@ $sectionLabels = [
                     <ellipse cx="48" cy="86" rx="5" ry="3.5" fill="#8b5e3c"/>
                 </svg>
                 <div>
-                    <p class="text-display font-black text-primary">{{ $totalStudyDays }}</p>
+                    <p class="text-display font-black text-orange-600">{{ $totalStudyDays }}</p>
                     <p class="text-body-md text-on-surface-variant">総学習日数</p>
                 </div>
             </div>
@@ -99,18 +99,18 @@ $sectionLabels = [
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-5 text-center">
                 @if($studyTimeFormatted['hours'] > 0)
-                <p class="text-headline-lg font-black text-primary">{{ $studyTimeFormatted['hours'] }}<span class="text-body-md">h</span>{{ $studyTimeFormatted['minutes'] }}<span class="text-body-md">m</span></p>
+                <p class="text-headline-lg font-black text-orange-600">{{ $studyTimeFormatted['hours'] }}<span class="text-body-md">h</span>{{ $studyTimeFormatted['minutes'] }}<span class="text-body-md">m</span></p>
                 @else
-                <p class="text-headline-lg font-black text-primary">{{ $studyTimeFormatted['minutes'] }}<span class="text-body-md">m</span></p>
+                <p class="text-headline-lg font-black text-orange-600">{{ $studyTimeFormatted['minutes'] }}<span class="text-body-md">m</span></p>
                 @endif
                 <p class="text-caption text-on-surface-variant">総学習時間</p>
             </div>
             <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-5 text-center">
-                <p class="text-headline-lg font-black text-primary">{{ number_format($levelInfo['current_xp']) }}</p>
+                <p class="text-headline-lg font-black text-orange-600">{{ number_format($levelInfo['current_xp']) }}</p>
                 <p class="text-caption text-on-surface-variant">Total XP</p>
             </div>
             <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-5 text-center">
-                <p class="text-headline-lg font-black text-primary">{{ $levelInfo['level'] }}</p>
+                <p class="text-headline-lg font-black text-orange-600">{{ $levelInfo['level'] }}</p>
                 <p class="text-caption text-on-surface-variant">現在レベル</p>
             </div>
         </div>
@@ -125,12 +125,12 @@ $sectionLabels = [
                     <div class="w-64">
                         <div class="flex items-center justify-center gap-1 mb-3">
                             <a href="{{ route('english.progress', ['month' => $calendar['prevMonth']]) }}"
-                                class="p-1.5 rounded-full hover:bg-surface-container transition-colors">
+                                class="p-1.5 rounded-full hover:bg-slate-50 transition-colors">
                                 <span class="material-symbols-outlined text-on-surface-variant">chevron_left</span>
                             </a>
                             <span class="text-label-md font-bold text-on-surface w-24 text-center">{{ $calendar['month']->format('Y年n月') }}</span>
                             <a href="{{ route('english.progress', ['month' => $calendar['nextMonth']]) }}"
-                                class="p-1.5 rounded-full hover:bg-surface-container transition-colors">
+                                class="p-1.5 rounded-full hover:bg-slate-50 transition-colors">
                                 <span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
                             </a>
                         </div>
@@ -211,7 +211,7 @@ $sectionLabels = [
                                 @csrf
                                 <input type="hidden" name="exam_type" value="{{ $examKey }}">
                                 <input type="date" name="exam_date" value="{{ $examDate?->format('Y-m-d') }}"
-                                    class="flex-1 min-w-0 text-caption border border-outline-variant rounded-[0.5rem] px-2 py-1.5 bg-surface-container-lowest focus:border-primary focus:outline-none">
+                                    class="flex-1 min-w-0 text-caption border border-slate-200 rounded-[0.5rem] px-2 py-1.5 bg-surface-container-lowest focus:border-orange-600 focus:outline-none">
                                 <button type="submit"
                                     class="px-3 py-1.5 text-white rounded-[0.5rem] text-caption font-bold hover:opacity-90 transition-all shrink-0"
                                     style="background-color: {{ $examColor }};">
@@ -241,7 +241,7 @@ $sectionLabels = [
                 @if(isset($sectionProgress[$key]))
                 @php $sp = $sectionProgress[$key]; @endphp
                 <div class="flex items-center gap-3">
-                    <span class="material-symbols-outlined text-primary text-base w-5 flex-shrink-0">{{ $meta['icon'] }}</span>
+                    <span class="material-symbols-outlined text-orange-600 text-base w-5 flex-shrink-0">{{ $meta['icon'] }}</span>
                     <span class="text-body-md text-on-surface w-28 flex-shrink-0">{{ $meta['label'] }}</span>
                     <div class="flex-1">
                         <x-english.progress-bar
@@ -260,29 +260,29 @@ $sectionLabels = [
 
         {{-- 最近の学習履歴 --}}
         <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm overflow-hidden">
-            <div class="p-6 border-b border-outline-variant">
+            <div class="p-6 border-b border-slate-200">
                 <h2 class="text-headline-md font-bold text-on-surface">最近の学習履歴</h2>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
                     <thead>
-                        <tr class="bg-surface-container-low border-b border-outline-variant">
+                        <tr class="bg-surface-container-low border-b border-slate-200">
                             <th class="py-3 px-6 text-label-md text-on-surface-variant">種別</th>
                             <th class="py-3 px-6 text-label-md text-on-surface-variant">日付</th>
                             <th class="py-3 px-6 text-label-md text-on-surface-variant text-right">獲得XP</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-outline-variant/50">
+                    <tbody class="divide-y divide-slate-200/50">
                         @forelse($recentLogs as $log)
                         <tr class="hover:bg-surface-container-low/50 transition-colors">
                             <td class="py-3 px-6 text-body-md text-on-surface flex items-center gap-2">
-                                <span class="material-symbols-outlined text-primary text-base">{{ $typeIcons[$log->activity_type] ?? 'star' }}</span>
+                                <span class="material-symbols-outlined text-orange-600 text-base">{{ $typeIcons[$log->activity_type] ?? 'star' }}</span>
                                 {{ $typeLabels[$log->activity_type] ?? $log->activity_type }}
                             </td>
                             <td class="py-3 px-6 text-caption text-on-surface-variant">
                                 {{ $log->studied_date instanceof \Carbon\Carbon ? $log->studied_date->format('Y/m/d') : $log->studied_date }}
                             </td>
-                            <td class="py-3 px-6 text-right font-bold text-primary">+{{ $log->xp_gained }} XP</td>
+                            <td class="py-3 px-6 text-right font-bold text-orange-600">+{{ $log->xp_gained }} XP</td>
                         </tr>
                         @empty
                         <tr>
@@ -301,10 +301,10 @@ $sectionLabels = [
                 <span class="material-symbols-outlined text-red-500 text-2xl">favorite</span>
             </div>
             <div class="flex-1">
-                <h3 class="font-bold text-on-surface group-hover:text-primary transition-colors">お気に入り単語</h3>
+                <h3 class="font-bold text-on-surface group-hover:text-orange-600 transition-colors">お気に入り単語</h3>
                 <p class="text-caption text-on-surface-variant">{{ $favoritesCount }}語のお気に入りが保存されています</p>
             </div>
-            <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">chevron_right</span>
+            <span class="material-symbols-outlined text-on-surface-variant group-hover:text-orange-600 transition-colors">chevron_right</span>
         </a>
 
     </div>

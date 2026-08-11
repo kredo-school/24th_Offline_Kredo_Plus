@@ -82,6 +82,12 @@
                 @yield('content')
             </section>
 
+            @hasSection('below-card')
+                <div class="mt-6 text-center">
+                    @yield('below-card')
+                </div>
+            @endif
+
             <!-- Footer -->
             <footer class="mt-8 text-center">
                 <div class="flex justify-center items-center gap-1.5 mb-3">

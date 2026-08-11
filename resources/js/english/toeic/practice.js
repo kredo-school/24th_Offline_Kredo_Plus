@@ -162,9 +162,9 @@ export function toeicPractice(config) {
                 return 'border-error bg-error-container/50 text-error';
             }
             if (this.selectedId === optionId && !this.isAnswered) {
-                return 'border-primary bg-primary/10';
+                return 'border-orange-600 bg-orange-600/10';
             }
-            return 'border-outline-variant bg-surface-container-lowest';
+            return 'border-slate-200 bg-surface-container-lowest';
         },
 
         groupOptionClass(questionId, optionId) {
@@ -177,9 +177,9 @@ export function toeicPractice(config) {
                 return 'border-error bg-error-container/50 text-error';
             }
             if (!this.groupSubmitted && selected === optionId) {
-                return 'border-primary bg-primary/10';
+                return 'border-orange-600 bg-orange-600/10';
             }
-            return 'border-outline-variant bg-surface-container-lowest';
+            return 'border-slate-200 bg-surface-container-lowest';
         },
 
         async submitAnswer() {
