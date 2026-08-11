@@ -65,7 +65,42 @@
 
                 </div>
 
-                <!-- Category -->
+                @php
+                    // バリデーションエラーで戻ってきた時、選択済みのサブカテゴリーから
+                    // 元々のメインカテゴリー(section)を逆引きしておく
+                    $oldCategory = old('category_id')
+                        ? $categories->firstWhere('id', (int) old('category_id'))
+                        : null;
+                    $oldSection = $oldCategory->section ?? null;
+                @endphp
+
+                <!-- Main Category -->
+                <div>
+
+                    <label class="rc-field-label">
+                        MAIN CATEGORY
+                    </label>
+
+                    <select id="mainCategorySelect" class="rc-field-input">
+
+                        <option value="">
+                            選択してください
+                        </option>
+
+                        @foreach ($mainCategories as $mainCategory)
+                            <option value="{{ $mainCategory->key }}"
+                                {{ $oldSection === $mainCategory->key ? 'selected' : '' }}>
+
+                                {{ $mainCategory->name }}
+
+                            </option>
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+                <!-- Category (サブカテゴリー: 上で選んだメインカテゴリーの中身だけ表示される) -->
                 <div>
 
                     <label class="rc-field-label">
@@ -75,12 +110,15 @@
                     <select name="category_id" id="categorySelect" class="rc-field-input">
 
                         <option value="">
-                            選択してください
+                            まずメインカテゴリーを選んでください
                         </option>
 
                         @foreach ($categories as $category)
+                            @php $isOldSelected = old('category_id') == $category->id; @endphp
                             <option value="{{ $category->id }}" data-name="{{ strtolower($category->name) }}"
-                                {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                data-section="{{ $category->section }}"
+                                {{ $isOldSelected ? 'selected' : '' }}
+                                {{ $isOldSelected ? '' : 'hidden disabled' }}>
 
                                 {{ $category->name }}
 

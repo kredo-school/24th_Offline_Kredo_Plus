@@ -63,6 +63,7 @@ class PostInteractionController extends Controller
             'comment' => [
                 'id' => $comment->id,
                 'body' => $comment->body,
+                'user_id' => $comment->user_id,
                 'user_name' => $comment->user->name ?? 'ゲスト',
                 'created_at' => $comment->created_at,
             ],
