@@ -17,6 +17,8 @@ use App\Http\Controllers\ShowerController;
 use App\Http\Controllers\GenderController;
 use App\Http\Middleware\EnsureGenderIsSet;
 use App\Http\Controllers\UserShowerPreferenceController;
+use App\Http\Controllers\Shower\ShowerReportController;
+use App\Http\Controllers\Shower\ShowerPriorityController;
 // Information
 use App\Http\Controllers\Information\InformationController;
 use App\Http\Controllers\Information\CarinderiaController;
@@ -144,6 +146,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // シャワーの好み
     Route::post('/shower/preference', [UserShowerPreferenceController::class, 'update'])->name('shower.preference.update');
+    // 温度・水圧の重視項目
+    Route::post('/shower/priority', [ShowerPriorityController::class, 'update'])->name('shower.priority.update');
+
+    // シャワー状態管理
+    // 投稿情報をゲット
+    Route::post('/shower/report', [ShowerReportController::class, 'store'])->name('shower.report.store');
 
     // ============================================================
     // Information

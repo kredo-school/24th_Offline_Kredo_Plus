@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Services\Shower\ShowerScale;
+use App\Models\Shower\ShowerReport;
 
 class User extends Authenticatable
 {
@@ -46,6 +47,7 @@ class User extends Authenticatable
         'ielts_exam_date',
         'preferred_temperature',
         'preferred_pressure',
+        'shower_priority_factor',
     ];
 
     /**
@@ -151,4 +153,10 @@ class User extends Authenticatable
     {
         return ShowerScale::closestLabel($this->preferred_pressure, ShowerScale::PREFERENCE_PRESSURE_LEVELS);
     }
+
+    // シャワー状態の管理
+    public function showerReports()
+{
+    return $this->hasMany(ShowerReport::class);
+}
 }
