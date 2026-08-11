@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Others — Kredo Plus')
+{{--
+    5個目以降、アドミンが新しく追加したメインカテゴリー用の汎用ページ。
+    Carinderia/Restaurant&Cafe/Travel/Otherの4ページと中身はほぼ同じ(other/index.blade.phpをベースに作成)。
+    既存4ページのファイルはこれとは別物で、一切変更していない。
+--}}
+
+@section('title', ($section->name ?? 'Information') . ' — Kredo Plus')
 
 @section('content')
 
@@ -65,28 +71,13 @@
 <div class="min-h-screen flex flex-col">
 
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6">
-    <!-- Hero: $sectionの内容(アドミンが登録した画像・タイトル・説明文)をそのまま表示。
-         STOREでサブカテゴリーを選ぶと、JSでそのサブカテゴリー専用のヒーローに切り替わる(All選択時は元に戻る) -->
-    @php
-      $heroImage = $section->hero_image ?? 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?q=80&w=800&auto=format&fit=crop';
-      // @jsonディレクティブは式中のカンマで引数を区切ってしまうため、カンマを含む文字列は
-      // 先にPHP変数に入れてから@jsonに渡す(直接?? '...'をカンマ入りで書くと壊れる)
-      $defaultHeroDescription = $section->description ?? 'Everyday essentials for student life: laundry, money exchange, SIM cards, and more.';
-      // サブカテゴリーごとのヒーロー画像・説明文をJSに渡す用(未設定のサブカテゴリーはnullのままでOK。JS側でデフォルトにフォールバックする)
-      $subCategoryHero = $subCategories->mapWithKeys(function ($c) {
-        $img = $c->hero_image;
-        if ($img) {
-          $img = \Illuminate\Support\Str::startsWith($img, ['http://', 'https://']) ? $img : asset($img);
-        }
-        return [$c->name => ['image' => $img, 'description' => $c->description]];
-      });
-    @endphp
+    <!-- Hero: $sectionの内容(アドミンが登録した画像・タイトル・説明文)をそのまま表示 -->
     <div class="relative h-52 sm:h-64 rounded-3xl overflow-hidden shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]">
-      <img id="heroImg" src="{{ $heroImage }}" class="absolute inset-0 w-full h-full object-cover" alt="{{ $section->name ?? 'Other' }}">
+      <img src="{{ $section->hero_image ?? 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1600&auto=format&fit=crop' }}" class="absolute inset-0 w-full h-full object-cover" alt="{{ $section->name }}">
       <div class="absolute inset-0 bg-gradient-to-t from-[#241E1A]/80 via-[#241E1A]/25 to-transparent"></div>
       <div class="relative h-full flex flex-col justify-end p-6 sm:p-8">
-        <h1 id="heroTitle" class="font-display text-4xl sm:text-5xl font-bold text-white">{{ $section->name ?? 'Other' }}</h1>
-        <p id="heroDesc" class="text-white/85 mt-1 text-sm sm:text-base">{{ $section->description ?? 'Everyday essentials for student life: laundry, money exchange, SIM cards, and more.' }}</p>
+        <h1 class="font-display text-4xl sm:text-5xl font-bold text-white">{{ $section->name }}</h1>
+        <p class="text-white/85 mt-1 text-sm sm:text-base">{{ $section->description ?? '' }}</p>
       </div>
     </div>
   </div>
@@ -95,9 +86,9 @@
 
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-4">
   {{--
-      メインカテゴリー一覧ボタン。main_categoriesテーブルを動的にループするので、
-      アドミンが5つ目以降を追加しても、ここに自動で表示される。
-      1行のみの横スライド形式。携帯は1画面に2つ、PCは1画面に4つ表示、それ以降は横スライドで見る。
+      メインカテゴリー一覧ボタン。既存4ページは直書きの4つだけだが、
+      このページ(新しく追加された分専用)はDBに登録されている全メインカテゴリーを
+      自動で並べる。既存4つは元のURL(carinderia.index等)にそのままリンクする。
   --}}
   @php
     $fixedRoutes = [
@@ -107,6 +98,9 @@
       'other'           => 'other.index',
     ];
   @endphp
+  {{--
+      1行のみの横スライド形式。携帯は1画面に2つ、PCは1画面に4つ表示、それ以降は横スライドで見る。
+  --}}
   <div class="grid grid-flow-col grid-rows-1 auto-cols-[calc(50%-0.375rem)] sm:auto-cols-[calc(25%-0.5625rem)] gap-3 overflow-x-auto snap-x snap-mandatory pb-1" style="scrollbar-width:none;">
     @foreach ($allMainCategories as $mc)
       @php
@@ -267,25 +261,7 @@
   const categoryColors = @json($categoryColors);
   function colorOf(tag){ return categoryColors[tag] || '#4736F0'; }
 
-  // ---- サブカテゴリーごとのヒーロー画像・説明文(adminが設定していれば使う。無ければデフォルトに戻す) ----
-  const subCategoryHero = @json($subCategoryHero);
-  const defaultHero = {
-    image: @json($heroImage),
-    title: @json($section->name ?? 'Other'),
-    description: @json($defaultHeroDescription),
-  };
-  function updateHero(tag){
-    const heroImg = document.getElementById('heroImg');
-    const heroTitle = document.getElementById('heroTitle');
-    const heroDesc = document.getElementById('heroDesc');
-    if (!heroImg || !heroTitle || !heroDesc) return;
-    const custom = tag ? subCategoryHero[tag] : null;
-    heroImg.src = (custom && custom.image) ? custom.image : defaultHero.image;
-    heroTitle.textContent = tag || defaultHero.title;
-    heroDesc.textContent = (custom && custom.description) ? custom.description : defaultHero.description;
-  }
-
-  // ---- 実データ(Post::whereHas('category', section=other)->latest()->get()) ----
+  // ---- 実データ(Post::whereHas('category', section={{ $section->key }})->latest()->get()) ----
   const items = @json($posts);
 
   // ---- 現在ログイン中のユーザー(Auth::id()。未ログインならnull) ----
@@ -658,7 +634,6 @@
       });
       activeCategory = tag;
       currentPage = 1;
-      updateHero(tag);
       renderGrid(currentPage);
       renderPagination();
     });

@@ -23,6 +23,7 @@ use App\Http\Controllers\Information\TravelController;
 use App\Http\Controllers\Information\OtherController;
 use App\Http\Controllers\Information\RestaurantCafeController;
 use App\Http\Controllers\Information\PostInteractionController;
+use App\Http\Controllers\Information\MainCategoryPageController;
 use App\Http\Controllers\EarthController;
 //Admin
 use App\Http\Controllers\Admin\AdminUserController;
@@ -148,6 +149,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/information/travel', [TravelController::class, 'index'])->name('travel.index');
     Route::get('/information/travel/{slug}', [TravelController::class, 'show'])->name('travel.show');
     Route::get('/information/other', [OtherController::class, 'index'])->name('other.index');
+
+    // 5個目以降、アドミンが新しく追加したメインカテゴリー用の汎用ページ(ログイン必須)。
+    // 上の4つ(carinderia/restaurant-cafe/travel/other)より必ず後ろに書くこと。
+    // (先に書くとURLが食われて、上の4ページが404になってしまう)
+    Route::get('/information/{key}', [MainCategoryPageController::class, 'index'])
+        ->name('information.dynamic')
+        ->where('key', '(?!post$|posts$|carinderia$|restaurant-cafe$|travel$|other$)[a-z0-9\-]+');
 
     // Carinderia (restaurant-cafeと同じパターン)
     Route::prefix('information/carinderia')->name('carinderia.')->group(function () {

@@ -4,18 +4,41 @@ namespace App\Http\Controllers\Information;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\MainCategory;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class InformationController extends Controller
 {
+    /**
+     * 投稿完了後・更新後・削除後に戻る「一覧ページ」のURLを、sectionから組み立てる。
+     * 既存4つ(carinderia/restaurant-cafe/travel/other)は専用の名前付きルートへ、
+     * それ以外(5個目以降、main_categoriesにadminが追加した分)は汎用ルート(information.dynamic)へ。
+     */
+    private function sectionIndexUrl(string $section): string
+    {
+        $fixedRoutes = [
+            'carinderia'      => 'carinderia.index',
+            'restaurant-cafe' => 'restaurant-cafe.index',
+            'travel'          => 'travel.index',
+            'other'           => 'other.index',
+        ];
+
+        return isset($fixedRoutes[$section])
+            ? route($fixedRoutes[$section])
+            : route('information.dynamic', $section);
+    }
+
     // 投稿画面
     public function create()
     {
         $categories = Category::all();
 
-        return view('information.post', compact('categories'));
+        // メインカテゴリーの一覧(投稿フォームで「メイン→サブ」の2段階選択に使う)
+        $mainCategories = MainCategory::allOrdered();
+
+        return view('information.post', compact('categories', 'mainCategories'));
     }
 
     // 投稿保存
@@ -38,16 +61,10 @@ class InformationController extends Controller
         $post = Post::create($validated);
 
         // 投稿したカテゴリーのsectionに応じて、正しい一覧ページへ戻す。
-        $sectionToRoute = [
-            'carinderia'      => 'carinderia.index',
-            'restaurant-cafe' => 'restaurant-cafe.index',
-            'travel'          => 'travel.index',
-            'other'           => 'other.index',
-        ];
-        $routeName = $sectionToRoute[$post->category->section ?? ''] ?? 'restaurant-cafe.index';
+        $section = $post->category->section ?? 'restaurant-cafe';
 
         return redirect()
-            ->route($routeName)
+            ->to($this->sectionIndexUrl($section))
             ->with('status', '投稿しました。');
     }
 
@@ -66,10 +83,13 @@ class InformationController extends Controller
 
         $categories = Category::all();
 
+        // メインカテゴリーの一覧(編集フォームで「メイン→サブ」の2段階選択に使う)
+        $mainCategories = MainCategory::allOrdered();
+
         // 投稿のカテゴリーからセクションを取得
         $section = $post->category->section ?? 'restaurant-cafe';
 
-        return view('information.edit', compact('post', 'categories', 'section'));
+        return view('information.edit', compact('post', 'categories', 'mainCategories', 'section'));
     }
 
 
@@ -110,7 +130,7 @@ class InformationController extends Controller
         $section = $post->category->section ?? 'restaurant-cafe';
 
         return redirect()
-            ->route($section . '.index')
+            ->to($this->sectionIndexUrl($section))
             ->with('status', '投稿を更新しました。');
     }
 
@@ -127,6 +147,11 @@ class InformationController extends Controller
         // Travelだけ投稿詳細が専用ページ(travel.post.show)なのでそちらへ
         if ($section === 'travel') {
             return redirect()->route('travel.post.show', $post);
+        }
+
+        // 5個目以降(main_categoriesにadminが追加した分)は専用の詳細ページが無いため、一覧ページへ戻す
+        if (! in_array($section, ['carinderia', 'restaurant-cafe', 'other'], true)) {
+            return redirect()->to($this->sectionIndexUrl($section));
         }
 
         return view("information.{$section}.show", compact('post'));
@@ -156,7 +181,7 @@ class InformationController extends Controller
         $post->delete();
 
         return redirect()
-            ->route($section . '.index')
+            ->to($this->sectionIndexUrl($section))
             ->with('status', '投稿を削除しました。');
     }
 }
