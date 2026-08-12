@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Information;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\MainCategory;
 
 class CarinderiaController extends Controller
 {
@@ -41,6 +42,15 @@ class CarinderiaController extends Controller
         $categoryColors = Category::forSection(self::SECTION)
             ->mapWithKeys(fn ($c) => [$c->name => $c->color()]);
 
-        return view('information.carinderia.index', compact('posts', 'categoryColors'));
+        // このページ自体(メインカテゴリー)のヒーロー画像・タイトル・説明文
+        $section = MainCategory::findByKey(self::SECTION);
+
+        // サブカテゴリー一覧(STORE欄をDBから動的に表示するため)
+        $subCategories = Category::forSection(self::SECTION);
+
+        // 上部の「メインカテゴリー一覧ボタン」用。既存4つ+今後追加された分すべて
+        $allMainCategories = MainCategory::allOrdered();
+
+        return view('information.carinderia.index', compact('posts', 'categoryColors', 'section', 'subCategories', 'allMainCategories'));
     }
 }

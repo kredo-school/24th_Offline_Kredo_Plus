@@ -65,13 +65,28 @@
 <div class="min-h-screen flex flex-col">
 
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6">
-    <!-- Hero -->
+    <!-- Hero: $sectionの内容(アドミンが登録した画像・タイトル・説明文)をそのまま表示。
+         STOREでサブカテゴリーを選ぶと、JSでそのサブカテゴリー専用のヒーローに切り替わる(All選択時は元に戻る) -->
+    @php
+      $heroImage = $section->hero_image ?? 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1600&auto=format&fit=crop';
+      // @jsonディレクティブは式中のカンマで引数を区切ってしまうため、カンマを含む文字列は
+      // 先にPHP変数に入れてから@jsonに渡す(直接?? '...'をカンマ入りで書くと壊れる)
+      $defaultHeroDescription = $section->description ?? 'Sit-down dinners and cozy coffee corners, all in one place.';
+      // サブカテゴリーごとのヒーロー画像・説明文をJSに渡す用(未設定のサブカテゴリーはnullのままでOK。JS側でデフォルトにフォールバックする)
+      $subCategoryHero = $subCategories->mapWithKeys(function ($c) {
+        $img = $c->hero_image;
+        if ($img) {
+          $img = \Illuminate\Support\Str::startsWith($img, ['http://', 'https://']) ? $img : asset($img);
+        }
+        return [$c->name => ['image' => $img, 'description' => $c->description]];
+      });
+    @endphp
     <div class="relative h-52 sm:h-64 rounded-3xl overflow-hidden shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]">
-      <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="レストランのテーブル">
+      <img id="heroImg" src="{{ $heroImage }}" class="absolute inset-0 w-full h-full object-cover" alt="{{ $section->name ?? 'Restaurant & Cafe' }}">
       <div class="absolute inset-0 bg-gradient-to-t from-[#241E1A]/80 via-[#241E1A]/25 to-transparent"></div>
       <div class="relative h-full flex flex-col justify-end p-6 sm:p-8">
-        <h1 class="font-display text-4xl sm:text-5xl font-bold text-white">Restaurant & Cafe</h1>
-        <p class="text-white/85 mt-1 text-sm sm:text-base">Sit-down dinners and cozy coffee corners, all in one place.</p>
+        <h1 id="heroTitle" class="font-display text-4xl sm:text-5xl font-bold text-white">{{ $section->name ?? 'Restaurant & Cafe' }}</h1>
+        <p id="heroDesc" class="text-white/85 mt-1 text-sm sm:text-base">{{ $section->description ?? 'Sit-down dinners and cozy coffee corners, all in one place.' }}</p>
       </div>
     </div>
   </div>
@@ -80,19 +95,30 @@
   <br>
 
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-4">
-  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-    <a href="{{ route('carinderia.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#2f5fdb">
-      Carinderia
-    </a>
-    <a href="{{ route('restaurant-cafe.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#e05237">
-      Restaurant&Cafe
-    </a>
-    <a href="{{ route('travel.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#f5b52e">
-      Travel
-    </a>
-    <a href="{{ route('other.index') }}" class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:#5eab35">
-      Other
-    </a>
+  {{--
+      メインカテゴリー一覧ボタン。main_categoriesテーブルを動的にループするので、
+      アドミンが5つ目以降を追加しても、ここに自動で表示される。
+      1行のみの横スライド形式。携帯は1画面に2つ、PCは1画面に4つ表示、それ以降は横スライドで見る。
+  --}}
+  @php
+    $fixedRoutes = [
+      'carinderia'      => 'carinderia.index',
+      'restaurant-cafe' => 'restaurant-cafe.index',
+      'travel'          => 'travel.index',
+      'other'           => 'other.index',
+    ];
+  @endphp
+  <div class="grid grid-flow-col grid-rows-1 auto-cols-[calc(50%-0.375rem)] sm:auto-cols-[calc(25%-0.5625rem)] gap-3 overflow-x-auto snap-x snap-mandatory pb-1" style="scrollbar-width:none;">
+    @foreach ($allMainCategories as $mc)
+      @php
+        $href = isset($fixedRoutes[$mc->key])
+          ? route($fixedRoutes[$mc->key])
+          : route('information.dynamic', $mc->key);
+      @endphp
+      <a href="{{ $href }}" class="snap-start flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:{{ $mc->color() }}">
+        {{ $mc->name }}
+      </a>
+    @endforeach
   </div>
 </div>
 
@@ -105,8 +131,11 @@
 
     <!-- STORE選択(スマホ用: 横スクロールできるチップ。サイドバーが隠れる代わりにこちらを表示) -->
     <div class="flex md:hidden gap-2 overflow-x-auto pb-1 mb-2" id="storeNavMobile" style="scrollbar-width:none;">
-      <a href="#" data-tag="Restaurant" style="--cat-color:#2f5fdb" class="cat-link-mobile active shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors">Restaurant</a>
-      <a href="#" data-tag="Cafe" style="--cat-color:#e05237" class="cat-link-mobile shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors">Cafe</a>
+      <a href="#" style="--cat-color:rgba(36,30,26,0.6)" class="cat-link-mobile active shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors">All</a>
+      {{-- サブカテゴリー一覧はDBから動的に取得。アドミンが追加しても、この@foreachがそのまま対応する --}}
+      @foreach ($subCategories as $cat)
+        <a href="#" data-tag="{{ $cat->name }}" style="--cat-color:{{ $cat->color() }}" class="cat-link-mobile shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors">{{ $cat->name }}</a>
+      @endforeach
     </div>
   </div>
 
@@ -121,8 +150,11 @@
         </label>
         <p class="font-mono text-[11px] tracking-[0.18em] text-[#241E1A]/40 mb-3 pl-1">STORE</p>
         <nav class="flex flex-col gap-1 pl-5" id="storeNav">
-          <a href="#" data-tag="Restaurant" style="--cat-color:#2f5fdb" class="cat-link active flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A]">Restaurant</a>
-          <a href="#" data-tag="Cafe" style="--cat-color:#e05237" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A]">Cafe</a>
+          <a href="#" style="--cat-color:rgba(36,30,26,0.6)" class="cat-link active flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A]">All</a>
+          {{-- サブカテゴリー一覧はDBから動的に取得。アドミンが追加しても、この@foreachがそのまま対応する --}}
+          @foreach ($subCategories as $cat)
+            <a href="#" data-tag="{{ $cat->name }}" style="--cat-color:{{ $cat->color() }}" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A]">{{ $cat->name }}</a>
+          @endforeach
         </nav>
       </div>
     </aside>
@@ -237,6 +269,24 @@
   const categoryColors = @json($categoryColors);
   function colorOf(tag){ return categoryColors[tag] || '#2f5fdb'; }
 
+  // ---- サブカテゴリーごとのヒーロー画像・説明文(adminが設定していれば使う。無ければデフォルトに戻す) ----
+  const subCategoryHero = @json($subCategoryHero);
+  const defaultHero = {
+    image: @json($heroImage),
+    title: @json($section->name ?? 'Restaurant & Cafe'),
+    description: @json($defaultHeroDescription),
+  };
+  function updateHero(tag){
+    const heroImg = document.getElementById('heroImg');
+    const heroTitle = document.getElementById('heroTitle');
+    const heroDesc = document.getElementById('heroDesc');
+    if (!heroImg || !heroTitle || !heroDesc) return;
+    const custom = tag ? subCategoryHero[tag] : null;
+    heroImg.src = (custom && custom.image) ? custom.image : defaultHero.image;
+    heroTitle.textContent = tag || defaultHero.title;
+    heroDesc.textContent = (custom && custom.description) ? custom.description : defaultHero.description;
+  }
+
   // ---- 実データ(Post::with(['category','user'])->latest()->get()) ----
   const items = @json($posts);
 
@@ -249,7 +299,7 @@
 
   const PAGE_SIZE = 21;
   let currentPage = 1;
-  let activeCategory = 'Restaurant'; // 'Restaurant' | 'Cafe'
+  let activeCategory = null; // nullは「All(すべて表示)」を意味する。'Restaurant' | 'Cafe' | null
   let searchQuery = '';
   let currentModalItem = null;
 
@@ -359,23 +409,49 @@
     } else {
       comments.forEach(c => {
         const name = c.user ? c.user.name : (c.user_name || 'ゲスト');
+        const isOwnComment = currentUserId !== null && c.user_id === currentUserId;
         const row = document.createElement('div');
         row.className = 'flex items-start gap-2';
         row.innerHTML = `
           <div class="w-6 h-6 rounded-full bg-[#E3E0FF] flex items-center justify-center text-[10px] font-semibold text-[#4736F0] shrink-0">${initials(name)}</div>
-          <div class="text-xs leading-snug">
+          <div class="text-xs leading-snug flex-1 min-w-0">
             <span class="font-semibold">${name}</span>
             <span class="text-[#241E1A]/70"> ${c.body}</span>
           </div>
+          ${isOwnComment ? `<button type="button" class="comment-delete-btn text-[#241E1A]/30 hover:text-red-500 transition-colors shrink-0" aria-label="コメントを削除" data-comment-id="${c.id}"><i class="fa-solid fa-trash-can text-[11px]"></i></button>` : ''}
         `;
         list.appendChild(row);
+      });
+      list.querySelectorAll('.comment-delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => deleteComment(btn.dataset.commentId));
       });
     }
     list.scrollTop = list.scrollHeight;
   }
 
+  // ---- コメント削除(本人のコメントのみ。サーバー側でも権限チェック済み) ----
+  function deleteComment(commentId){
+    fetch(`${postsRouteBase}/comments/${commentId}`, {
+      method: 'DELETE',
+      headers: {
+        'X-CSRF-TOKEN': csrfToken,
+        'Accept': 'application/json',
+      },
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (!currentModalItem) return;
+        currentModalItem.comments = (currentModalItem.comments || []).filter(c => String(c.id) !== String(commentId));
+        currentModalItem.comments_count = data.comments_count;
+        renderComments(currentModalItem);
+      })
+      .catch(() => alert('コメントの削除に失敗しました。もう一度お試しください。'));
+  }
+
   function getSortedItems(){
-    let filtered = items.filter(it => it.category && it.category.name === activeCategory);
+    let filtered = activeCategory
+      ? items.filter(it => it.category && it.category.name === activeCategory)
+      : items; // activeCategoryがnull(=All)の時は絞り込まない
 
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
@@ -419,6 +495,9 @@
                 <p class="text-xs font-semibold truncate">${userName}</p>
                 <p class="text-[11px] text-[#241E1A]/40">${timeAgo(it.created_at)}</p>
               </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.map_query || it.title)}" target="_blank" onclick="event.stopPropagation()" class="shrink-0 p-1.5 rounded-full hover:bg-[#F1F0FF] text-[#241E1A]/60 hover:text-[#4736F0] transition-colors" aria-label="マップで見る">
+                <i class="fa-solid fa-globe text-[15px]"></i>
+              </a>
             </div>
             <div class="flex items-center gap-0.5 shrink-0">
               <button class="card-like-btn heart-btn p-1.5 rounded-full hover:bg-[#E08A5B]/10 flex items-center gap-1" aria-label="お気に入り">
@@ -567,6 +646,7 @@
         currentModalItem.comments.push({
           id: data.comment.id,
           body: data.comment.body,
+          user_id: data.comment.user_id,
           user: { name: data.comment.user_name },
           created_at: data.comment.created_at,
         });
@@ -581,12 +661,13 @@
   document.querySelectorAll('#storeNav .cat-link, #storeNavMobile .cat-link-mobile').forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
-      const tag = link.dataset.tag;
+      const tag = link.dataset.tag || null; // "All"リンクはdata-tagが無いのでnull
       document.querySelectorAll('#storeNav .cat-link, #storeNavMobile .cat-link-mobile').forEach(l => {
-        l.classList.toggle('active', l.dataset.tag === tag);
+        l.classList.toggle('active', (l.dataset.tag || null) === tag);
       });
       activeCategory = tag;
       currentPage = 1;
+      updateHero(tag);
       renderGrid(currentPage);
       renderPagination();
     });
@@ -624,27 +705,7 @@
     }
   });
 </script>
-<!-- footer nav: Kredoロゴと同じ配色・フォントに統一 -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
-<nav class="fixed bottom-0 w-full z-50 bg-white shadow-[0_-4px_20px_-4px_rgba(30,58,138,0.15)] flex justify-around items-center h-20 px-4 pb-2 border-t border-slate-100">
-  <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center gap-1 text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
-    <i class="fa-solid fa-house text-[20px]"></i>
-    <span class="text-[10px] font-bold tracking-wide" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Home</span>
-  </a>
-
-  <a href="{{ route('information.create') }}" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
-    <div class="w-14 h-14 -mt-8 rounded-full flex items-center justify-center shadow-[0_12px_32px_-12px_rgba(30,58,138,0.35)] border-4 border-white"
-         style="background: linear-gradient(135deg, #2f5fdb 0%, #e05237 33%, #f5b52e 66%, #5eab35 100%);">
-      <i class="fa-solid fa-plus text-white text-[20px]"></i>
-    </div>
-    <span class="text-[10px] font-bold tracking-wide mt-1" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Post</span>
-  </a>
-
-  <a href="{{ route('earth') }}" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#2f5fdb] px-4 py-1 active:scale-90 transition-all duration-200">
-    <i class="fa-solid fa-globe text-[20px]"></i>
-    <span class="text-[10px] font-bold tracking-wide" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Map</span>
-  </a>
-</nav>
+@include('information.footer.footer_nav')
 </div>
 
 @endsection

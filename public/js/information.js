@@ -45,4 +45,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ============================================================
+    // メインカテゴリー → サブカテゴリー の2段階選択
+    // (投稿フォーム・編集フォーム共通、どちらもプルダウン)
+    // ============================================================
+
+    const mainCategorySelect = document.getElementById('mainCategorySelect');
+    const subCategorySelect = document.getElementById('categorySelect');
+
+    if (mainCategorySelect && subCategorySelect) {
+        const subOptions = Array.from(subCategorySelect.options).filter(opt => opt.value !== '');
+
+        const filterSubOptions = (section) => {
+            subOptions.forEach(opt => {
+                const matches = opt.dataset.section === section;
+                opt.hidden = !matches;
+                opt.disabled = !matches;
+            });
+
+            // 選択中のサブカテゴリーが、選んだメインカテゴリーと合わなくなったらリセット
+            const current = subCategorySelect.options[subCategorySelect.selectedIndex];
+            if (current && current.dataset.section !== undefined && current.dataset.section !== section) {
+                subCategorySelect.value = '';
+            }
+        };
+
+        mainCategorySelect.addEventListener('change', () => {
+            filterSubOptions(mainCategorySelect.value);
+        });
+
+        // バリデーションエラーで戻ってきた時や、編集画面で最初から選ばれている場合
+        if (mainCategorySelect.value) {
+            filterSubOptions(mainCategorySelect.value);
+        }
+    }
+
 });

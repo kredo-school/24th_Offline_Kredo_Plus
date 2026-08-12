@@ -384,31 +384,40 @@
                     <h3 class="relative mt-1 font-bold text-lg text-slate-800">留学情報</h3>
                     <p class="relative mt-2.5 text-sm text-slate-500 leading-relaxed">セブ島の生活情報やおすすめスポットなど、留学生活に役立つ情報をチェックできます。</p>
 
-                    <div class="relative mt-5 grid grid-cols-4 gap-2">
-                        <a href="{{ route('carinderia.index') }}" class="group flex flex-col items-center gap-1.5">
-                            <span class="w-11 h-11 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 bg-[#2f5fdb]/10">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2f5fdb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v20M7 2a3 3 0 000 6M17 2v8a3 3 0 01-3 3h0a3 3 0 01-3-3V2M14 13v9"/></svg>
-                            </span>
-                            <span class="text-[11px] text-slate-500 font-semibold text-center leading-tight">Carinderia</span>
-                        </a>
-                        <a href="{{ route('restaurant-cafe.index') }}" class="group flex flex-col items-center gap-1.5">
-                            <span class="w-11 h-11 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 bg-[#e05237]/10">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e05237" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"/></svg>
-                            </span>
-                            <span class="text-[11px] text-slate-500 font-semibold text-center leading-tight">Restaurant<br>&amp; Cafe</span>
-                        </a>
-                        <a href="{{ route('travel.index') }}" class="group flex flex-col items-center gap-1.5">
-                            <span class="w-11 h-11 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 bg-[#f5b52e]/10">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f5b52e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
-                            </span>
-                            <span class="text-[11px] text-slate-500 font-semibold text-center leading-tight">Travel</span>
-                        </a>
-                        <a href="{{ route('other.index') }}" class="group flex flex-col items-center gap-1.5">
-                            <span class="w-11 h-11 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 bg-[#5eab35]/10">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5eab35" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-                            </span>
-                            <span class="text-[11px] text-slate-500 font-semibold text-center leading-tight">Other</span>
-                        </a>
+                    {{--
+                        メインカテゴリーのアイコン一覧。既存4つは元のアイコン・色・URLをそのまま使い、
+                        アドミンがmain_categoriesに追加した5つ目以降は共通の汎用アイコンで自動表示される。
+                    --}}
+                    @php
+                        $fixedIcons = [
+                            'carinderia' => '<path d="M7 2v20M7 2a3 3 0 000 6M17 2v8a3 3 0 01-3 3h0a3 3 0 01-3-3V2M14 13v9"/>',
+                            'restaurant-cafe' => '<path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"/>',
+                            'travel' => '<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
+                            'other' => '<circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>',
+                        ];
+                        $fixedRoutes = [
+                            'carinderia' => 'carinderia.index',
+                            'restaurant-cafe' => 'restaurant-cafe.index',
+                            'travel' => 'travel.index',
+                            'other' => 'other.index',
+                        ];
+                        $genericIcon = '<path d="M12 2 3 7l9 5 9-5-9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/>';
+                    @endphp
+                    {{-- カテゴリーが増えてもカードの高さが伸びないよう、4つ分の幅で1行固定+はみ出た分は横スライド --}}
+                    <div class="relative mt-5 flex gap-2 overflow-x-auto snap-x snap-mandatory pb-1" style="scrollbar-width:none;">
+                        @foreach ($mainCategories as $mc)
+                            @php
+                                $href = isset($fixedRoutes[$mc->key]) ? route($fixedRoutes[$mc->key]) : route('information.dynamic', $mc->key);
+                                $color = $mc->color();
+                                $icon = $fixedIcons[$mc->key] ?? $genericIcon;
+                            @endphp
+                            <a href="{{ $href }}" class="group flex flex-col items-center gap-1.5 shrink-0 w-[68px] snap-start">
+                                <span class="w-11 h-11 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105" style="background:{{ $color }}1a">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{ $color }}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">{!! $icon !!}</svg>
+                                </span>
+                                <span class="text-[11px] text-slate-500 font-semibold text-center leading-tight">{{ $mc->name }}</span>
+                            </a>
+                        @endforeach
                     </div>
 
                     <a href="{{ route('travel.index') }}" class="relative mt-5 inline-flex items-center gap-2 text-sm font-semibold text-brand-green bg-white border border-brand-green/40 rounded-full px-5 py-2 hover:bg-brand-green hover:text-white hover:border-brand-green transition-all duration-200 shadow-soft">

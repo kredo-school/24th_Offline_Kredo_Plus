@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\Shower\ShowerRecommendationService;
 
 class ShowerController extends Controller
 {
@@ -17,13 +18,19 @@ class ShowerController extends Controller
         };
     }
 
-    public function male(Request $request)
+    public function male(Request $request, ShowerRecommendationService $service)
     {
-        return view('showers.males.home', ['user' => $request->user()]);
+        return view('showers.males.home', [
+            'user' => $request->user(),
+            'recommendation' => $service->recommend($request->user()),
+        ]);
     }
 
-    public function female(Request $request)
+    public function female(Request $request, ShowerRecommendationService $service)
     {
-        return view('showers.females.home', ['user' => $request->user()]);
+        return view('showers.females.home', [
+            'user' => $request->user(),
+            'recommendation' => $service->recommend($request->user()),
+        ]);
     }
 }

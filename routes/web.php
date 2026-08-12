@@ -17,6 +17,8 @@ use App\Http\Controllers\ShowerController;
 use App\Http\Controllers\GenderController;
 use App\Http\Middleware\EnsureGenderIsSet;
 use App\Http\Controllers\UserShowerPreferenceController;
+use App\Http\Controllers\Shower\ShowerReportController;
+use App\Http\Controllers\Shower\ShowerPriorityController;
 // Information
 use App\Http\Controllers\Information\InformationController;
 use App\Http\Controllers\Information\CarinderiaController;
@@ -24,6 +26,7 @@ use App\Http\Controllers\Information\TravelController;
 use App\Http\Controllers\Information\OtherController;
 use App\Http\Controllers\Information\RestaurantCafeController;
 use App\Http\Controllers\Information\PostInteractionController;
+use App\Http\Controllers\Information\MainCategoryPageController;
 //Earth
 use App\Http\Controllers\EarthController;
 use App\Http\Controllers\EarthLocationController;
@@ -141,9 +144,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/shower/female', [ShowerController::class, 'female'])
         ->middleware('gender:female')
         ->name('shower.female');
-    
+
     // シャワーの好み
     Route::post('/shower/preference', [UserShowerPreferenceController::class, 'update'])->name('shower.preference.update');
+    // 温度・水圧の重視項目
+    Route::post('/shower/priority', [ShowerPriorityController::class, 'update'])->name('shower.priority.update');
+
+    // シャワー状態管理
+    // 投稿情報をゲット
+    Route::post('/shower/report', [ShowerReportController::class, 'store'])->name('shower.report.store');
 
     // ============================================================
     // Information
@@ -155,6 +164,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/information/travel', [TravelController::class, 'index'])->name('travel.index');
     Route::get('/information/travel/{slug}', [TravelController::class, 'show'])->name('travel.show');
     Route::get('/information/other', [OtherController::class, 'index'])->name('other.index');
+
+    // 5個目以降、アドミンが新しく追加したメインカテゴリー用の汎用ページ(ログイン必須)。
+    // 上の4つ(carinderia/restaurant-cafe/travel/other)より必ず後ろに書くこと。
+    // (先に書くとURLが食われて、上の4ページが404になってしまう)
+    Route::get('/information/{key}', [MainCategoryPageController::class, 'index'])
+        ->name('information.dynamic')
+        ->where('key', '(?!post$|posts$|carinderia$|restaurant-cafe$|travel$|other$)[a-z0-9\-]+');
 
     // Carinderia (restaurant-cafeと同じパターン)
     Route::prefix('information/carinderia')->name('carinderia.')->group(function () {

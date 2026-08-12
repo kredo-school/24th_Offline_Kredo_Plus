@@ -171,36 +171,61 @@
             </div>
 
 
-            {{-- Category --}}
+            @php
+                $oldCategoryId = old('category_id', $post->category_id);
+            @endphp
+
+            {{-- Main Category --}}
+            <div>
+
+                <label class="rc-field-label">
+                    MAIN CATEGORY
+                </label>
+
+                <select id="mainCategorySelect" class="rc-field-input">
+
+                    <option value="">
+                        選択してください
+                    </option>
+
+                    @foreach ($mainCategories as $mainCategory)
+                        <option value="{{ $mainCategory->key }}"
+                            {{ $mainCategory->key === $section ? 'selected' : '' }}>
+
+                            {{ $mainCategory->name }}
+
+                        </option>
+                    @endforeach
+
+                </select>
+
+            </div>
+
+            {{-- Category (サブカテゴリー: 上で選んだメインカテゴリーの中身だけ表示される) --}}
             <div>
 
                 <label class="rc-field-label">
                     CATEGORY
                 </label>
 
-                <div class="rc-cat-chips">
+                <select name="category_id" id="categorySelect" class="rc-field-input">
+
+                    <option value="">
+                        まずメインカテゴリーを選んでください
+                    </option>
 
                     @foreach ($categories as $category)
-
-                        <input type="radio"
-                            name="category_id"
-                            id="cat-{{ $category->id }}"
-                            value="{{ $category->id }}"
-                            class="rc-cat-radio"
-                            style="--chip-color:{{ $category->color() }}"
-                            {{ (int) old('category_id', $post->category_id) === $category->id ? 'checked' : '' }}>
-
-                        <label for="cat-{{ $category->id }}"
-                            class="rc-cat-chip"
-                            style="--chip-color:{{ $category->color() }}">
+                        @php $isSubSelected = (int) $oldCategoryId === $category->id; @endphp
+                        <option value="{{ $category->id }}" data-section="{{ $category->section }}"
+                            {{ $isSubSelected ? 'selected' : '' }}
+                            {{ $isSubSelected ? '' : 'hidden disabled' }}>
 
                             {{ $category->name }}
 
-                        </label>
-
+                        </option>
                     @endforeach
 
-                </div>
+                </select>
 
             </div>
 
@@ -254,6 +279,40 @@
             </div>
 
 
+            {{-- Location(投稿画面と同じ仮ボタン) --}}
+            <div>
+
+                <label class="rc-field-label">
+                    LOCATION
+                </label>
+
+                <!-- Carinderiaのみ表示 -->
+                <div id="carinderiaLocation" style="display:none;">
+                    <button type="button" class="rc-save-btn"
+                        style="background:#f8fafc;color:#4736F0;border:1px solid #4736F0;">
+
+                        <i class="fa-solid fa-store"></i>
+                        <span>店舗を選択</span>
+
+                    </button>
+                </div>
+
+                <!-- Restaurant / Travel / Other -->
+                <div id="mapLocation">
+
+                    <button type="button" class="rc-save-btn"
+                        style="background:#f8fafc;color:#4736F0;border:1px solid #4736F0;">
+
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>場所を追加</span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
             {{-- Save --}}
             <div>
 
@@ -301,12 +360,12 @@
         </a>
 
 
-        <a href="#"
+        <a href="{{ route('earth') }}"
             class="rc-nav-item">
 
-            <i class="fa-solid fa-user" style="font-size:20px;"></i>
+            <i class="fa-solid fa-globe" style="font-size:20px;"></i>
 
-            <span>Profile</span>
+            <span>Map</span>
 
         </a>
 

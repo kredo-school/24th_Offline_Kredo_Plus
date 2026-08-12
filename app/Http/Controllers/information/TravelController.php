@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Information;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\MainCategory;
 
 class TravelController extends Controller
 {
@@ -41,7 +42,11 @@ class TravelController extends Controller
         return view('information.travel.show', [
             'areas' => $areas,
             'currentArea' => null,
+            // Travelページ自体(メインカテゴリー)のヒーロー。エリア未選択時はこちらを表示
+            'section' => MainCategory::findByKey(self::SECTION),
             'posts' => $posts,
+            // 上部の「メインカテゴリー一覧ボタン」用。既存4つ+今後追加された分すべて
+            'allMainCategories' => MainCategory::allOrdered(),
         ]);
     }
 
@@ -73,7 +78,11 @@ class TravelController extends Controller
         return view('information.travel.show', [
             'areas' => $areas,
             'currentArea' => $currentArea,
+            // エリア選択時は$currentAreaのヒーローが優先されるが、変数自体は渡しておく
+            'section' => MainCategory::findByKey(self::SECTION),
             'posts' => $posts,
+            // 上部の「メインカテゴリー一覧ボタン」用。既存4つ+今後追加された分すべて
+            'allMainCategories' => MainCategory::allOrdered(),
         ]);
     }
 

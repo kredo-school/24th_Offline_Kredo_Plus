@@ -25,7 +25,9 @@
             </h2>
 
             <div class="flex justify-center gap-2">
-                <form action="#" method="#">
+                <form action="{{ route('shower.report.store') }}" method="POST">
+                    @csrf
+                    
                     <p class="text-slate-500 text-sm font-semibold">シャワー番号</p>
                     <div class="flex items-center mt-1 mb-4 gap-1">
                         @for ($i = 1; $i <= 7; $i++)
