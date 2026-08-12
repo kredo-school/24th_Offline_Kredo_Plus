@@ -360,12 +360,12 @@
         </a>
 
 
-        <a href="#"
+        <a href="{{ route('earth') }}"
             class="rc-nav-item">
 
-            <i class="fa-solid fa-user" style="font-size:20px;"></i>
+            <i class="fa-solid fa-globe" style="font-size:20px;"></i>
 
-            <span>Profile</span>
+            <span>Map</span>
 
         </a>
 
