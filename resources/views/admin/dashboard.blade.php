@@ -125,21 +125,55 @@
                         <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
                             <span>🚿</span> 寮シャワー使用状況サマリー
                         </h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                             <div class="p-4 bg-sky-50 rounded-xl border border-sky-100 flex justify-between items-center">
                                 <div>
                                     <p class="text-xs font-bold text-sky-600">男子寮</p>
-                                    <p class="text-lg font-bold text-slate-800 mt-0.5">空きあり (2/4)</p>
+                                    <p class="text-lg font-bold text-slate-800 mt-0.5">{{ $maleFull ? '満室' : '空きあり' }}</p>
                                 </div>
-                                <span class="px-2.5 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">快適</span>
+                                <span class="px-2.5 py-1 {{ $maleFull ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700' }} text-xs font-bold rounded-full">
+                                    {{ $maleFull ? '混雑中' : '快適' }}
+                                </span>
                             </div>
                             <div class="p-4 bg-rose-50 rounded-xl border border-rose-100 flex justify-between items-center">
                                 <div>
                                     <p class="text-xs font-bold text-rose-600">女子寮</p>
-                                    <p class="text-lg font-bold text-slate-800 mt-0.5">使用中 (4/4)</p>
+                                    <p class="text-lg font-bold text-slate-800 mt-0.5">{{ $femaleFull ? '満室' : '空きあり' }}</p>
                                 </div>
-                                <span class="px-2.5 py-1 bg-rose-100 text-rose-700 text-xs font-bold rounded-full">混雑中</span>
+                                <span class="px-2.5 py-1 {{ $femaleFull ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700' }} text-xs font-bold rounded-full">
+                                    {{ $femaleFull ? '混雑中' : '快適' }}
+                                </span>
                             </div>
+                        </div>
+
+                        {{-- ↓ここから故障報告の情報 --}}
+                        <div class="pt-4 border-t border-slate-100">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-xs font-bold text-slate-700">⚠️ 故障中のシャワー ({{ $brokenShowers->count() }}件)</p>
+                                <a href="{{ route('admin.shower.malfunctions.index') }}" class="text-xs font-semibold text-brand-blue hover:underline">詳細・履歴を見る →</a>
+                            </div>
+
+                            @forelse ($brokenShowers as $report)
+                                <div class="flex items-center justify-between p-3 bg-amber-50 rounded-xl border border-amber-100 text-xs mb-2">
+                                    <div>
+                                        <span class="font-bold text-slate-800">
+                                            {{ $report->gender === 'male' ? '男子寮' : '女子寮' }} {{ $report->shower_number }}番
+                                        </span>
+                                        <span class="text-slate-400 ml-2">{{ $report->created_at->diffForHumans() }}</span>
+                                        @if ($report->comment)
+                                            <p class="text-slate-500 mt-1">{{ $report->comment }}</p>
+                                        @endif
+                                    </div>
+                                    <form action="{{ route('admin.shower.malfunctions.fix', [$report->gender, $report->shower_number]) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="px-3 py-1.5 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 transition">
+                                            修理完了
+                                        </button>
+                                    </form>
+                                </div>
+                            @empty
+                                <p class="text-xs text-slate-400">現在、故障中のシャワーはありません。</p>
+                            @endforelse
                         </div>
                     </div>
 

@@ -78,8 +78,8 @@ class User extends Authenticatable
             'gender_locked' => 'boolean',
             'toeic_exam_date' => 'date',
             'ielts_exam_date' => 'date',
-            'preferred_temperature' => 'integer',
-            'preferred_pressure' => 'integer',
+            'preferred_temperature' => 'decimal:1',
+            'preferred_pressure' => 'decimal:1',
         ];
     }
 
