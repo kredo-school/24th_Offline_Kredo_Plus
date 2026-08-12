@@ -29,7 +29,7 @@
                     @csrf
                     
                     <p class="text-slate-500 text-sm font-semibold">シャワー番号</p>
-                    <div class="flex items-center mt-1 mb-4 gap-1">
+                    <div class="flex items-center mt-2 mb-4 gap-1">
                         @for ($i = 1; $i <= 7; $i++)
                             <div>
                                 <input id="shower-{{$i}}" type="radio" name="shower_number" value="{{$i}}" class="peer hidden">
@@ -80,7 +80,7 @@
                     </div>
 
                     <p class="text-slate-500 text-sm font-semibold">コメント</p>
-                    <textarea name="comment" rows="3" class="mt-3 rounded-md border-2 border-slate-300 w-full"></textarea>
+                    <textarea name="comment" rows="3" class="mt-2 rounded-md border-2 border-slate-300 w-full"></textarea>
 
                     <div class="flex justify-center gap-2 mt-4">
                         <button

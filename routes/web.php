@@ -19,6 +19,10 @@ use App\Http\Middleware\EnsureGenderIsSet;
 use App\Http\Controllers\UserShowerPreferenceController;
 use App\Http\Controllers\Shower\ShowerReportController;
 use App\Http\Controllers\Shower\ShowerPriorityController;
+use App\Http\Controllers\Shower\ShowerCapacityReportController;
+use App\Http\Controllers\Shower\ShowerMalfunctionReportController;
+use App\Http\Controllers\Shower\ShowerScatterDataController;
+use App\Http\Controllers\Shower\ShowerTrendDataController;
 // Information
 use App\Http\Controllers\Information\InformationController;
 use App\Http\Controllers\Information\CarinderiaController;
@@ -33,6 +37,11 @@ use App\Http\Controllers\EarthLocationController;
 //Admin
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\SuggestionBoxController;
+    // シャワー管理
+    use App\Http\Controllers\Admin\AdminShowerMalfunctionController;
+    use App\Models\Shower\ShowerMalfunctionReport;
+    use App\Models\Shower\ShowerCapacityReport;
+
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -153,6 +162,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // シャワー状態管理
     // 投稿情報をゲット
     Route::post('/shower/report', [ShowerReportController::class, 'store'])->name('shower.report.store');
+    // 満室報告
+    Route::post('/shower/capacity', [ShowerCapacityReportController::class, 'store'])->name('shower.capacity.store');
+    // 故障報告
+    Route::post('/shower/malfunction', [ShowerMalfunctionReportController::class, 'store'])->name('shower.malfunction.store');
+
+    // 統計表示
+    // 散布図（二次元チャート）
+    Route::get('/shower/scatter-data', ShowerScatterDataController::class)->name('shower.scatter-data');
+    // パフォーマンストレンド（折れ線グラフ）
+    Route::get('/shower/trend-data', ShowerTrendDataController::class)->name('shower.trend-data');
 
     // ============================================================
     // Information
@@ -245,8 +264,16 @@ Route::post(
 // Admin (管理者画面)
     Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
         Route::get('/dashboard', function () {
-            return view('admin.dashboard'); // admin/dashboard.blade.php を表示
+            return view('admin.dashboard', [ // admin/dashboard.blade.php を表示
+                'brokenShowers' => ShowerMalfunctionReport::currentlyBroken(),
+                'maleFull' => ShowerCapacityReport::isCurrentlyFull('male'),
+                'femaleFull' => ShowerCapacityReport::isCurrentlyFull('female'),
+            ]); 
         })->name('dashboard');
 
         Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
+
+        // シャワー故障報告の受け取り・修理報告
+    Route::get('/shower/malfunctions', [AdminShowerMalfunctionController::class, 'index'])->name('shower.malfunctions.index');
+    Route::post('/shower/malfunctions/{gender}/{showerNumber}/fix', [AdminShowerMalfunctionController::class, 'fix'])->name('shower.malfunctions.fix');
     });

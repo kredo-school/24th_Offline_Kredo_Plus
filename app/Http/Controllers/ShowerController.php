@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Shower\ShowerCapacityReport;
 use App\Services\Shower\ShowerRecommendationService;
+use App\Models\Shower\ShowerMalfunctionReport;
 
 class ShowerController extends Controller
 {
@@ -23,6 +25,9 @@ class ShowerController extends Controller
         return view('showers.males.home', [
             'user' => $request->user(),
             'recommendation' => $service->recommend($request->user()),
+            'isFull' => ShowerCapacityReport::isCurrentlyFull('male'),
+            'fullReportedMinutesAgo' => ShowerCapacityReport::fullReportedMinutesAgo('male'),
+            'brokenShowerNumbers' => ShowerMalfunctionReport::brokenShowerNumbers('male'),
         ]);
     }
 
@@ -31,6 +36,9 @@ class ShowerController extends Controller
         return view('showers.females.home', [
             'user' => $request->user(),
             'recommendation' => $service->recommend($request->user()),
+            'isFull' => ShowerCapacityReport::isCurrentlyFull('female'),
+            'fullReportedMinutesAgo' => ShowerCapacityReport::fullReportedMinutesAgo('female'),
+            'brokenShowerNumbers' => ShowerMalfunctionReport::brokenShowerNumbers('female'),
         ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services\Shower;
 
+use App\Models\Shower\ShowerMalfunctionReport;
 use App\Models\User;
 
 class ShowerRecommendationService
@@ -17,6 +18,16 @@ class ShowerRecommendationService
     public function recommend(User $user, string $period = '24h'): ?array
     {
         $conditions = $this->aggregator->getConditions($user->gender, $period);
+
+        if ($conditions->isEmpty()) {
+            return null;
+        }
+
+        // 故障中の番号を除外
+        $brokenNumbers = ShowerMalfunctionReport::brokenShowerNumbers($user->gender);
+        $conditions = $conditions->reject(
+            fn (array $condition) => $brokenNumbers->contains($condition['shower_number'])
+        );
 
         if ($conditions->isEmpty()) {
             return null;
