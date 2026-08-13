@@ -3,10 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Database\Seeders\CategorySeeder;
 use Database\Seeders\English\IeltsMaterialSeeder;
 use Database\Seeders\English\IeltsSlideSeeder;
 use Database\Seeders\English\IeltsTopicSeeder;
 use Database\Seeders\English\LearningContentSeeder;
+use Database\Seeders\MainCategorySeeder;
 use Database\Seeders\English\ToeicQuestionSeeder;
 use Database\Seeders\English\ToeicSlideSeeder;
 use Database\Seeders\English\TypingCategorySeeder;
@@ -34,6 +36,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call(AdminSeeder::class);
+
+        // ===== 情報ページ(main_categories / categories) =====
+        $this->call([
+            MainCategorySeeder::class, // main_categories
+            CategorySeeder::class,     // categories
+        ]);
 
         // ===== 英語学習機能 =====
 
