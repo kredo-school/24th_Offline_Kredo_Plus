@@ -69,8 +69,6 @@
                 <x-shower-male.pressure-bar
 
                 />
-
-            
             </div>
         </div>
     </section>
@@ -80,10 +78,10 @@
         <div class="flex gap-5 justify-center">
                     
             {{-- 満室報告 --}}
-            <x-shower-female.no-vacancy-report-button :is-full="$isFull" />
+            <x-shower-male.no-vacancy-report-button :is-full="$isFull" />
 
             {{-- シャワー情報投稿 --}}
-            <x-shower-male.shower-rating-button/>
+            <x-shower-male.shower-rating-button :broken-shower-numbers="$brokenShowerNumbers" />
             {{-- 故障報告 --}}
             <x-shower-male.defect-report-button/>
         </div>           
@@ -105,9 +103,7 @@
     </section>
 
     {{-- trend table  トレンドテーブル --}}
-    <x-shower-male.trend-table
-
-    />
+    {{-- <x-shower-male.trend-table /> --}}
 
     {{-- comments コメント欄 --}}
     <section class="mt-6">
@@ -166,9 +162,9 @@
                     { value: 10,  label: '熱い',   color: 'text-[#ef4444]' },
                 ],
                 pressure: [
-                    { value: 0.0, label: '無し', color: 'text-[#eff6ff]' },
-                    { value: 3.3, label: '弱い', color: 'text-[#93c5fd]' },
-                    { value: 6.6, label: '普通', color: 'text-[#3b82f6]' },
+                    { value: 2.5, label: '無し', color: 'text-[#eff6ff]' },
+                    { value: 5.0, label: '弱い', color: 'text-[#93c5fd]' },
+                    { value: 7.5, label: '普通', color: 'text-[#3b82f6]' },
                     { value: 10,  label: '強い', color: 'text-[#1e3a8a]' },
                 ],
             },
@@ -190,13 +186,10 @@
             },
 
             get label() {
-                let closest = this.levels[0];
-                this.levels.forEach((lvl) => {
-                    if (Math.abs(this.value - lvl.value) < Math.abs(this.value - closest.value)) {
-                        closest = lvl;
-                    }
-                });
-                return closest.label;
+                const count = this.levels.length;
+                let idx = Math.floor((this.value / 10) * count);
+                idx = Math.max(0, Math.min(idx, count - 1));
+                return this.levels[idx].label;
             },
         }));
     });

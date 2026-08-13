@@ -1,4 +1,3 @@
-@props(['isFull' => false])
 {{-- シャワー状態報告 --}}
 @if ($isFull)
     {{-- 満室解除報告 --}}
@@ -13,6 +12,7 @@
 
         <div
             x-show="open"
+            x-cloak
             x-transition
             class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center"
         >
@@ -63,6 +63,7 @@
 
         <div
             x-show="open"
+            x-cloak
             x-transition
             class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center"
         >

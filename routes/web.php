@@ -23,6 +23,7 @@ use App\Http\Controllers\Shower\ShowerCapacityReportController;
 use App\Http\Controllers\Shower\ShowerMalfunctionReportController;
 use App\Http\Controllers\Shower\ShowerScatterDataController;
 use App\Http\Controllers\Shower\ShowerTrendDataController;
+use App\Http\Controllers\Shower\ShowerCommentController;
 // Information
 use App\Http\Controllers\Information\InformationController;
 use App\Http\Controllers\Information\CarinderiaController;
@@ -172,6 +173,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/shower/scatter-data', ShowerScatterDataController::class)->name('shower.scatter-data');
     // パフォーマンストレンド（折れ線グラフ）
     Route::get('/shower/trend-data', ShowerTrendDataController::class)->name('shower.trend-data');
+    // コメント
+    Route::get('/shower/comments', ShowerCommentController::class)->name('shower.comments');
 
     // ============================================================
     // Information
