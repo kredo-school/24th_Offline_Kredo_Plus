@@ -68,7 +68,7 @@
   </div>
 
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6">
-    <!-- Hero -->
+    <!-- ヒーローバナー -->
     <div class="relative h-52 sm:h-64 rounded-3xl overflow-hidden shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]">
       <img src="https://images.unsplash.com/photo-1544148103-0773bf10d330?q=80&w=1600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="カリンデリアの食卓">
       <div class="absolute inset-0 bg-gradient-to-t from-[#241E1A]/80 via-[#241E1A]/25 to-transparent"></div>
