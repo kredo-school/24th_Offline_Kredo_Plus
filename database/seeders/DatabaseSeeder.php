@@ -41,7 +41,6 @@ class DatabaseSeeder extends Seeder
         $this->call([
             MainCategorySeeder::class, // main_categories(Carinderia/Restaurant&Cafe/Travel/Other)
             CategorySeeder::class,     // categories(サブカテゴリー)
-            main
         ]);
 
         // ===== 英語学習機能 =====
