@@ -33,6 +33,12 @@ class DatabaseSeeder extends Seeder
 
         $this->call(AdminSeeder::class);
 
+        // ===== Information機能(Carinderia〜Other) =====
+        $this->call([
+            MainCategorySeeder::class, // main_categories(Carinderia/Restaurant&Cafe/Travel/Other)
+            CategorySeeder::class,     // categories(サブカテゴリー)
+        ]);
+
         // ===== 英語学習機能 =====
 
         // ----- タイピング教材 -----
