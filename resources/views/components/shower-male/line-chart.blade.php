@@ -6,33 +6,63 @@
         days: '7',
         showerNumber: {{ optional($recommendation)['shower_number'] ?? 1 }},
         points: [],
+        brokenPeriods: [],
 
         async load() {
             const response = await fetch(`{{ route('shower.trend-data') }}?shower_number=${this.showerNumber}&days=${this.days}`);
             const data = await response.json();
             this.points = data.points;
+            this.brokenPeriods = data.broken_periods;
         },
 
-        xPercent(index) {
-            if (this.points.length === 0) return 0;
+        stepPercent() {
+            const daysNum = parseInt(this.days, 10);
+            return daysNum > 1 ? 100 / (daysNum - 1) : 100;
+        },
 
+        dateToPercent(dateStr) {
             const daysNum = parseInt(this.days, 10);
             const rangeStart = new Date();
             rangeStart.setHours(0, 0, 0, 0);
             rangeStart.setDate(rangeStart.getDate() - (daysNum - 1));
 
-            const pointDate = new Date(this.points[index].date);
-            const dayOffset = Math.round((pointDate - rangeStart) / (1000 * 60 * 60 * 24));
+            const target = new Date(dateStr);
+            const dayOffset = Math.round((target - rangeStart) / (1000 * 60 * 60 * 24));
 
-            return (dayOffset / (daysNum - 1)) * 100;
+            return Math.max(0, Math.min(100, (dayOffset / (daysNum - 1)) * 100));
+        },
+
+        xPercent(index) {
+            if (this.points.length === 0) return 0;
+            return this.dateToPercent(this.points[index].date);
         },
 
         yPercent(value) {
             return (value / 10) * 100;
         },
 
-        linePoints(key) {
-            return this.points.map((p, i) => `${this.xPercent(i)},${100 - this.yPercent(p[key])}`).join(' ');
+        // 故障区間をまたぐ場所で線を分断し、複数のセグメント(線分)に分ける
+        segments(key) {
+            const result = [];
+            let current = [];
+
+            this.points.forEach((point, index) => {
+                const isBroken = this.brokenPeriods.some(period => point.date >= period.start && point.date <= period.end);
+
+                if (isBroken) {
+                    if (current.length > 0) {
+                        result.push(current);
+                        current = [];
+                    }
+                    return;
+                }
+
+                current.push(`${this.xPercent(index)},${100 - this.yPercent(point[key])}`);
+            });
+
+            if (current.length > 0) result.push(current);
+
+            return result.map(seg => seg.join(' '));
         },
     }"
     x-init="load()"
@@ -121,25 +151,32 @@
             <span>冷たい・無し</span>
         </div>
 
-        {{-- 折れ線グラフ本体(SVG) --}}
+        {{-- 故障期間の帯(シェード) --}}
+        <div class="absolute top-14 right-12 bottom-20 left-[200px]">
+            <template x-for="period in brokenPeriods" :key="period.start + period.end">
+                <div
+                    class="absolute top-0 bottom-0 bg-red-400/10 border-x border-red-300/40 flex items-start justify-center pt-2"
+                    :style="{
+                        left: `calc(${dateToPercent(period.start)}% + 12px)`,
+                        width: `calc(${dateToPercent(period.end) - dateToPercent(period.start)}% - 24px)`,
+                    }"
+                >
+                    <span class="text-[10px] font-bold text-red-500 bg-white/80 rounded px-1.5 py-0.5 whitespace-nowrap">故障</span>
+                </div>
+            </template>
+        </div>
+
+        {{-- 折れ線グラフ本体(SVG)+ドット --}}
         <div class="absolute top-14 right-12 bottom-20 left-[200px]">
             <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="w-full h-full overflow-visible">
-                <polyline
-                    :points="linePoints('temperature')"
-                    fill="none"
-                    stroke="#f87171"
-                    stroke-width="1.5"
-                    vector-effect="non-scaling-stroke"
-                />
-                <polyline
-                    :points="linePoints('pressure')"
-                    fill="none"
-                    stroke="#60a5fa"
-                    stroke-width="1.5"
-                    vector-effect="non-scaling-stroke"
-                />
+                <template x-for="(seg, i) in segments('temperature')" :key="'temp-seg-' + i">
+                    <polyline :points="seg" fill="none" stroke="#f87171" stroke-width="1.5" vector-effect="non-scaling-stroke" />
+                </template>
+                <template x-for="(seg, i) in segments('pressure')" :key="'pressure-seg-' + i">
+                    <polyline :points="seg" fill="none" stroke="#60a5fa" stroke-width="1.5" vector-effect="non-scaling-stroke" />
+                </template>
             </svg>
-            {{-- データ点のマーカー(1点しかない場合もこれで見える) --}}
+
             <template x-for="(point, index) in points" :key="'temp-dot-' + point.date">
                 <div
                     class="absolute w-3 h-3 -translate-x-1/2 translate-y-1/2 rounded-full bg-red-400 border-2 border-white shadow"
@@ -153,5 +190,7 @@
                 ></div>
             </template>
         </div>
+
     </div>
+
 </div>

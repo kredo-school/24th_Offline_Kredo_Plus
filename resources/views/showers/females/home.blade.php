@@ -81,7 +81,7 @@
             <x-shower-female.no-vacancy-report-button :is-full="$isFull" />
 
             {{-- シャワー情報投稿 --}}
-            <x-shower-female.shower-rating-button/>
+            <x-shower-female.shower-rating-button :broken-shower-numbers="$brokenShowerNumbers" />
             {{-- 故障報告 --}}
             <x-shower-female.defect-report-button/>
         </div>           
@@ -103,9 +103,7 @@
     </section>
 
     {{-- trend table  トレンドテーブル --}}
-    <x-shower-female.trend-table
-
-    />
+    {{-- <x-shower-female.trend-table /> --}}
 
     {{-- comments コメント欄 --}}
     <section class="mt-6">
@@ -188,13 +186,10 @@
             },
 
             get label() {
-                let closest = this.levels[0];
-                this.levels.forEach((lvl) => {
-                    if (Math.abs(this.value - lvl.value) < Math.abs(this.value - closest.value)) {
-                        closest = lvl;
-                    }
-                });
-                return closest.label;
+                const count = this.levels.length;
+                let idx = Math.floor((this.value / 10) * count);
+                idx = Math.max(0, Math.min(idx, count - 1));
+                return this.levels[idx].label;
             },
         }));
     });
