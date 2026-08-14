@@ -51,6 +51,13 @@
                 <span>📈</span> サービス使用状況分析
             </button>
 
+            <!-- 目安箱 -->
+            <button @click="currentTab = 'suggestions'" 
+                    :class="currentTab === 'suggestions' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-left">
+                <span>📮</span> 目安箱
+            </button>
+
         </nav>
     </aside>
 
@@ -1110,6 +1117,116 @@
                 </div>
             </div>
 
+        </div>
+
+        <!-- ⑦ 目安箱の中身 -->
+        <div
+            x-show="currentTab === 'suggestions'"
+            x-cloak
+            x-data="{
+                statusFilter: 'all',
+                items: [],
+                editingNote: {},
+
+                get filteredItems() {
+                    if (this.statusFilter === 'all') return this.items;
+                    return this.items.filter(item => item.status === this.statusFilter);
+                },
+
+                async load() {
+                    const response = await fetch('{{ route('admin.suggestions.data') }}');
+                    const data = await response.json();
+                    this.items = data.items;
+                    data.items.forEach(item => { this.editingNote[item.id] = item.admin_note ?? ''; });
+                },
+
+                async updateStatus(item, newStatus) {
+                    const response = await fetch(`/admin/suggestions/${item.id}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({ status: newStatus, admin_note: this.editingNote[item.id] }),
+                    });
+
+                    if (response.ok) {
+                        item.status = newStatus;
+                        item.status_label = {{ Js::from(\App\Models\Suggestion::STATUSES) }}[newStatus];
+                    }
+                },
+            }"
+            x-init="load()"
+        >
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">目安箱</h2>
+                    <p class="text-sm text-slate-500 mt-1">留学生から寄せられたご意見・お困りごとを確認・対応します。</p>
+                </div>
+
+                <div class="flex items-center gap-1 bg-slate-200/80 p-1 rounded-xl text-xs font-bold">
+                    <button @click="statusFilter = 'all'"
+                        :class="statusFilter === 'all' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'"
+                        class="px-3 py-1.5 rounded-lg transition">すべて</button>
+                    @foreach (\App\Models\Suggestion::STATUSES as $value => $label)
+                        <button @click="statusFilter = '{{ $value }}'"
+                            :class="statusFilter === '{{ $value }}' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'"
+                            class="px-3 py-1.5 rounded-lg transition">{{ $label }}</button>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <template x-for="item in filteredItems" :key="item.id">
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[11px] font-bold rounded" x-text="item.category_label"></span>
+                                <span class="text-xs text-slate-400" x-text="item.user_name"></span>
+                                <span class="text-xs text-slate-400" x-text="item.created_at"></span>
+                            </div>
+                            <span
+                                class="px-2 py-0.5 text-[11px] font-bold rounded"
+                                :class="{
+                                    'bg-red-100 text-red-700': item.status === 'pending',
+                                    'bg-amber-100 text-amber-700': item.status === 'in_progress',
+                                    'bg-emerald-100 text-emerald-700': item.status === 'resolved',
+                                }"
+                                x-text="item.status_label"
+                            ></span>
+                        </div>
+
+                        <p class="text-sm text-slate-700 whitespace-pre-line mb-4" x-text="item.comment"></p>
+
+                        <div class="flex flex-col gap-2">
+                            <div class="flex gap-2 items-center">
+                                <select
+                                    x-model="item.status"
+                                    @change="updateStatus(item, item.status)"
+                                    class="text-xs border border-slate-200 rounded-lg px-2 py-1.5"
+                                >
+                                    @foreach (\App\Models\Suggestion::STATUSES as $value => $label)
+                                        <option value="{{ $value }}">{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <textarea
+                                x-model="editingNote[item.id]"
+                                @blur="updateStatus(item, item.status)"
+                                rows="2"
+                                placeholder="対応メモ(内部用)"
+                                class="text-xs border border-slate-200 rounded-lg px-2 py-1.5 resize-none"
+                            ></textarea>
+                        </div>
+                    </div>
+                </template>
+
+                <template x-if="filteredItems.length === 0">
+                    <p class="text-center text-slate-400 text-sm py-12">該当する投稿がありません</p>
+                </template>
+            </div>
         </div>
 
     </main>

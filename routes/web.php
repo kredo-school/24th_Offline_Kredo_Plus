@@ -37,7 +37,11 @@ use App\Http\Controllers\EarthController;
 use App\Http\Controllers\EarthLocationController;
 //Admin
 use App\Http\Controllers\Admin\AdminUserController;
-use App\Http\Controllers\SuggestionBoxController;
+
+    // 目安箱
+    use App\Http\Controllers\SuggestionBoxController;
+    use App\Http\Controllers\SuggestionController;
+    use App\Http\Controllers\Admin\AdminSuggestionController;
     // シャワー管理
     use App\Http\Controllers\Admin\AdminShowerMalfunctionController;
     use App\Models\Shower\ShowerMalfunctionReport;
@@ -229,6 +233,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // suggestion box  目安箱
     Route::get('/suggestion-box', [SuggestionBoxController::class, 'suggestion'])->name('suggestion');
+    // 送信・管理
+    Route::get('/suggestion', [SuggestionController::class, 'create'])->name('suggestion');
+    Route::post('/suggestion', [SuggestionController::class, 'store'])->name('suggestion.store');
 });  // auth, verified group
 
 //Profile    下記コードデフォルトのままです。
@@ -277,6 +284,10 @@ Route::post(
         Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
 
         // シャワー故障報告の受け取り・修理報告
-    Route::get('/shower/malfunctions', [AdminShowerMalfunctionController::class, 'index'])->name('shower.malfunctions.index');
-    Route::post('/shower/malfunctions/{gender}/{showerNumber}/fix', [AdminShowerMalfunctionController::class, 'fix'])->name('shower.malfunctions.fix');
-    });
+        Route::get('/shower/malfunctions', [AdminShowerMalfunctionController::class, 'index'])->name('shower.malfunctions.index');
+        Route::post('/shower/malfunctions/{gender}/{showerNumber}/fix', [AdminShowerMalfunctionController::class, 'fix'])->name('shower.malfunctions.fix');
+        
+        // 目安箱受け取り
+        Route::get('/suggestions/data', [AdminSuggestionController::class, 'data'])->name('suggestions.data');
+        Route::patch('/suggestions/{suggestion}', [AdminSuggestionController::class, 'update'])->name('suggestions.update');
+        });

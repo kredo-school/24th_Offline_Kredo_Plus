@@ -156,7 +156,13 @@ class User extends Authenticatable
 
     // シャワー状態の管理
     public function showerReports()
-{
-    return $this->hasMany(ShowerReport::class);
-}
+    {
+        return $this->hasMany(ShowerReport::class);
+    }
+
+    // 目安箱
+    public function suggestions()
+    {
+        return $this->hasMany(Suggestion::class);
+    }
 }
