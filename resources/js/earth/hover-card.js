@@ -4,9 +4,12 @@ let hoverCard = null;
 // Show Hover Card
 // ==========================================
 
-export function showHoverCard(store, x, y) {
+export function showHoverCard(location, x, y) {
 
     hideHoverCard();
+
+    const post = location.post;
+    const category = post?.category;
 
     hoverCard = document.createElement("div");
 
@@ -14,26 +17,43 @@ export function showHoverCard(store, x, y) {
 
     hoverCard.innerHTML = `
 
-        <div class="hover-title">
-            ${store.name}
-        </div>
+        ${
+            post?.image
+                ? `
+                    <img
+                        src="/storage/${post.image}"
+                        class="hover-image"
+                        alt="${post.title ?? location.place_name}"
+                    >
+                `
+                : ""
+        }
 
-        <div class="hover-info">
-            ⭐ ${store.rating}
-        </div>
+        <div class="hover-content">
 
-        <div class="hover-category">
-            ${store.category}
+            <div class="hover-title">
+                ${post?.title ?? location.place_name}
+            </div>
+
+            <div class="hover-location">
+                📍 ${location.place_name}
+            </div>
+
+            <div class="hover-category">
+                ${category?.name ?? "Other"}
+            </div>
+
         </div>
 
     `;
 
-    hoverCard.style.left = `${x}px`;
-    hoverCard.style.top = `${y - 90}px`;
+    hoverCard.style.left = `${x + 15}px`;
+    hoverCard.style.top = `${y - 120}px`;
 
     document.body.appendChild(hoverCard);
 
 }
+
 
 // ==========================================
 // Hide Hover Card

@@ -55,11 +55,13 @@ class InformationController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'category_id' => ['required', 'exists:categories,id'],
-            'title'       => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'price'       => ['nullable', 'numeric'],
-            'image'       => ['nullable', 'image', 'max:5120'],
+                'category_id' => ['required', 'exists:categories,id'],
+                'title'       => ['required', 'string', 'max:255'],
+                'description' => ['nullable', 'string'],
+                'price'       => ['nullable', 'numeric'],
+                'image'       => ['nullable', 'image', 'max:5120'],
+            'earth_location_id'=> ['nullable', 'exists:earth_locations,id'],
+
         ]);
 
         if ($request->hasFile('image')) {
@@ -70,19 +72,13 @@ class InformationController extends Controller
 
         $post = Post::create($validated);
 
+        // 位置情報が選択されていたら、投稿と紐づける
         if ($request->filled('earth_location_id')) {
-
-            $earthLocation = EarthLocation::find($request->earth_location_id);
-
-            if ($earthLocation) {
-
-                $earthLocation->post_id = $post->id;
-
-                $earthLocation->save();
-
-            }
-
-}
+            EarthLocation::where('id', $request->earth_location_id)
+                ->update([
+                    'post_id' => $post->id,
+                ]);
+        }
 
         // 投稿したカテゴリーのsectionに応じて、正しい一覧ページへ戻す。
         $section = $post->category->section ?? 'restaurant-cafe';
@@ -201,6 +197,9 @@ class InformationController extends Controller
         }
 
         $section = $post->category->section ?? 'restaurant-cafe';
+
+        // 投稿に紐づいている位置情報も削除
+        EarthLocation::where('post_id', $post->id)->delete();
 
         $post->delete();
 

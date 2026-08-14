@@ -15,7 +15,7 @@ class Category extends Model
     public static function colorPalette(): array
     {
         return [
-            '#2f5fdb', // Kredo Blue
+            '#2f5bfd', // Kredo Blue
             '#e05237', // Kredo Red
             '#f5b52e', // Kredo Yellow
             '#5eab35', // Kredo Green
