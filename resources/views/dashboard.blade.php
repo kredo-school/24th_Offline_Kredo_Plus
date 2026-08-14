@@ -235,7 +235,9 @@
             <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
 
                 <!-- Shower Information -->
-                <div class="relative rounded-[24px] shadow-card hover:shadow-card-hover transition-all duration-300 p-7 overflow-hidden bg-gradient-to-b from-sky-50 to-white">
+                <a href="{{ route('shower.entry') }}"
+                    class="relative rounded-[24px] shadow-card hover:shadow-card-hover transition-all duration-300 p-7 overflow-hidden bg-gradient-to-b from-sky-50 to-white block"
+                >
                     <div class="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-400 to-brand-blue"></div>
 
                     {{-- 装飾: シャワーヘッドのイラスト --}}
@@ -294,12 +296,48 @@
                     </div>
                     <p class="relative max-w-[60%] text-xs font-bold text-brand-blue tracking-widest">Shower Information</p>
                     <h3 class="relative max-w-[60%] mt-1 font-bold text-lg text-slate-800">シャワー情報</h3>
-                    <p class="relative mt-2.5 text-sm text-slate-500 leading-relaxed">シャワーの混雑状況をチェックして、快適にご利用いただけます。</p>
-                    <a href="{{ route('shower.entry') }}" class="relative mt-5 inline-flex items-center gap-2 text-sm font-semibold text-brand-blue bg-white border border-brand-blue/40 rounded-full px-5 py-2 hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-all duration-200 shadow-soft">
-                        詳しく見る
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
-                    </a>
-                </div>
+
+                    @if ($showerSummary)
+                        <div class="relative mt-4 flex items-center gap-3">
+                            @if ($showerSummary['recommended_number'])
+                                <span class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand-blue text-white font-black text-4xl shadow-md shrink-0">
+                                    {{ $showerSummary['recommended_number'] }}
+                                </span>
+                                <div class="flex flex-col gap-1">
+                                    <span class="text-[10px] font-bold text-slate-400 ps-1">おすすめシャワー</span>
+                                    <div class="flex gap-1.5">
+                                        <span class="inline-block rounded-full bg-rose-100 text-rose-600 text-[11px] font-bold px-2 py-0.5">{{ $showerSummary['temperature_label'] }}</span>
+                                        <span class="inline-block rounded-full bg-sky-100 text-sky-600 text-[11px] font-bold px-2 py-0.5">{{ $showerSummary['pressure_label'] }}</span>
+                                    </div>
+                                </div>
+                            @else
+                                <span class="text-xs text-slate-400">おすすめデータなし</span>
+                            @endif
+                        </div>
+
+                        <div class="relative mt-3 flex flex-wrap gap-1.5">
+                            @if ($showerSummary['is_full'])
+                                <span class="inline-flex items-center gap-1 rounded-full bg-red-50 text-red-600 text-[11px] font-bold px-2.5 py-1">
+                                    <span class="material-symbols-outlined !text-sm">error</span>
+                                    満室({{ $showerSummary['full_reported_minutes_ago'] }}分前)
+                                </span>
+                            @endif
+
+                            @if ($showerSummary['broken_numbers']->isNotEmpty())
+                                <span class="inline-flex items-center gap-1 rounded-full bg-amber-50 text-amber-700 text-[11px] font-bold px-2.5 py-1">
+                                    <span class="material-symbols-outlined !text-sm">build</span>
+                                    {{ $showerSummary['broken_numbers']->map(fn ($n) => $n . '番')->implode('、') }}故障中
+                                </span>
+                            @endif
+                        </div>
+                    @else
+                        <p class="relative mt-2.5 text-sm text-slate-500 leading-relaxed">お好みの温度や水圧に合った、<br>おすすめのシャワーをご案内します。</p>
+                        <a href="{{ route('shower.entry') }}" class="relative mt-5 inline-flex items-center gap-2 text-sm font-semibold text-brand-blue bg-white border border-brand-blue/40 rounded-full px-5 py-2 hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-all duration-200 shadow-soft">
+                            詳しく見る
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                        </a>
+                    @endif
+                </a>
 
                 <!-- English Learning -->
                 <div class="relative rounded-[24px] shadow-card hover:shadow-card-hover transition-all duration-300 p-7 overflow-hidden bg-gradient-to-b from-amber-50 to-white">
