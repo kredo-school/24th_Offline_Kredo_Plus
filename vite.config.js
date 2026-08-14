@@ -6,7 +6,7 @@ export default defineConfig({
         host: '0.0.0.0',
         cors: true,
         hmr: {
-            host: '10.20.60.114', // MacのIPアドレス
+            host: 'localhost', // MacのIPアドレス
         },
     },
 
@@ -16,6 +16,8 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
                 'resources/js/english/app.js',
+                'resources/css/earth/style.css',
+                'resources/js/earth/main.js',
             ],
             refresh: true,
         }),

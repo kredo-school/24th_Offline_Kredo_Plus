@@ -1,3 +1,16 @@
+/* Leafletのデフォルトの四角い枠を消す */
+.school-pin-icon {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.school-pin-icon.leaflet-div-icon {
+    background: transparent !important;
+    border: none !important;
+}
+
+
 /* ==========================================
    Earth V2 Complete Style
 ========================================== */
@@ -1212,6 +1225,124 @@ body{
 
         transform:translateY(0);
 
+    }
+
+}
+
+/* ==========================================
+   Our School / IT Park Pin
+========================================== */
+
+.our-school-pin {
+    background: transparent !important;
+    border: none !important;
+}
+
+.school-pin-wrapper {
+    position: relative;
+    width: 60px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* ピコピコする円 */
+.school-pulse {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    width: 28px;
+    height: 28px;
+
+    transform: translateX(-50%);
+
+    background: rgba(47, 91, 253, 0.2);
+    border-radius: 50%;
+
+    animation: schoolPulse 1.6s infinite;
+}
+
+/* 白い丸 */
+.school-circle {
+    position: absolute;
+
+    top: 0;
+    left: 50%;
+
+    width: 22px;
+    height: 22px;
+
+    transform: translateX(-50%);
+
+    background: #ffffff;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.18);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 2;
+
+    overflow: hidden;
+}
+
+/* 学校ロゴ */
+.school-circle img {
+    width: 16px;
+    height: 16px;
+
+    object-fit: contain;
+    display: block;
+}
+
+/* Our School */
+.school-label {
+    position: absolute;
+
+    top: 32px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    background: #ffffff;
+    color: #2f5bfd;
+
+    padding: 3px 8px;
+
+    border-radius: 16px;
+
+    font-size: 10px;
+    font-weight: bold;
+
+    white-space: nowrap;
+
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.14);
+
+    z-index: 3;
+}
+
+/* ピコピコ */
+@keyframes schoolPulse {
+
+    0% {
+        transform: translateX(-50%) scale(0.75);
+        opacity: 0.7;
+    }
+
+    70% {
+        transform: translateX(-50%) scale(1.6);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateX(-50%) scale(1.6);
+        opacity: 0;
     }
 
 }

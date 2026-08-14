@@ -64,6 +64,10 @@
 ])
 
 
+<script>
+    const locations = @json($locations);
+</script>
+
 </body>
 
 </html>
