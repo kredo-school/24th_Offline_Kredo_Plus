@@ -14,3 +14,7 @@
 .kredo-bar {
     background: linear-gradient(90deg, #2f5fdb 0%, #e05237 33%, #f5b52e 66%, #5eab35 100%);
 }
+
+[x-cloak] {
+    display: none !important;
+}

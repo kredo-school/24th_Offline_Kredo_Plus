@@ -70,7 +70,7 @@
   </div>
 
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6">
-    <!-- Hero: $currentAreaの内容(アドミンが登録した画像・説明文)をそのまま表示。全エリア表示中は汎用バナー -->
+    <!-- ヒーローバナー: $currentAreaの内容(アドミンが登録した画像・説明文)をそのまま表示。全エリア表示中は汎用バナー -->
     <div class="relative h-52 sm:h-64 rounded-3xl overflow-hidden shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]">
       <img src="{{ $currentArea->hero_image ?? 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=1600&auto=format&fit=crop' }}" class="absolute inset-0 w-full h-full object-cover" alt="{{ $currentArea->name ?? 'Travel & Tourism' }}">
       <div class="absolute inset-0 bg-gradient-to-t from-[#241E1A]/80 via-[#241E1A]/25 to-transparent"></div>

@@ -65,13 +65,13 @@
 <div class="min-h-screen flex flex-col">
 
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6">
-    <!-- Hero: $sectionの内容(アドミンが登録した画像・タイトル・説明文)をそのまま表示。
+    <!-- ヒーローバナー: $sectionの内容(アドミンが登録した画像・タイトル・説明文)をそのまま表示。
          STOREでサブカテゴリーを選ぶと、JSでそのサブカテゴリー専用のヒーローに切り替わる(All選択時は元に戻る) -->
     @php
       $heroImage = $section->hero_image ?? 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?q=80&w=800&auto=format&fit=crop';
       // @jsonディレクティブは式中のカンマで引数を区切ってしまうため、カンマを含む文字列は
       // 先にPHP変数に入れてから@jsonに渡す(直接?? '...'をカンマ入りで書くと壊れる)
-      $defaultHeroDescription = $section->description ?? 'Everyday essentials for student life: laundry, money exchange, SIM cards, and more.';
+      $defaultHeroDescription = $section->description ?? '留学生活に欠かせない日常サービス:ランドリー・両替・SIMカードなど。';
       // サブカテゴリーごとのヒーロー画像・説明文をJSに渡す用(未設定のサブカテゴリーはnullのままでOK。JS側でデフォルトにフォールバックする)
       $subCategoryHero = $subCategories->mapWithKeys(function ($c) {
         $img = $c->hero_image;

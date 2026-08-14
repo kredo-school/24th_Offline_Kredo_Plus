@@ -21,14 +21,14 @@ class MainCategorySeeder extends Seeder
         MainCategory::firstOrCreate(['key' => 'carinderia'], [
             'name' => 'Carinderia',
             'hero_image' => 'images/carinderia/sisig.jpg',
-            'description' => 'Simple, delicious, and close to home. Bringing you the flavors of your neighborhood carinderia.',
+            'description' => 'シンプルで美味しい、家庭的な味。近所のカリンデリアの美味しさをお届けします。',
             'sort_order' => 1,
         ]);
 
         MainCategory::firstOrCreate(['key' => 'restaurant-cafe'], [
             'name' => 'Restaurant & Cafe',
             'hero_image' => 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1600&auto=format&fit=crop',
-            'description' => 'Sit-down dinners and cozy coffee corners, all in one place.',
+            'description' => 'ゆったり座れるディナーも、居心地の良いカフェも、ここに全部揃ってます。',
             'sort_order' => 2,
         ]);
 
@@ -42,7 +42,7 @@ class MainCategorySeeder extends Seeder
         MainCategory::firstOrCreate(['key' => 'other'], [
             'name' => 'Other',
             'hero_image' => 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?q=80&w=800&auto=format&fit=crop',
-            'description' => 'Everyday essentials for student life: laundry, money exchange, SIM cards, and more.',
+            'description' => '留学生活に欠かせない日常サービス:ランドリー・両替・SIMカードなど。',
             'sort_order' => 4,
         ]);
     }
