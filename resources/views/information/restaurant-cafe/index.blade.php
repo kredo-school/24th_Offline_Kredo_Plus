@@ -495,7 +495,12 @@
                 <p class="text-xs font-semibold truncate">${userName}</p>
                 <p class="text-[11px] text-[#241E1A]/40">${timeAgo(it.created_at)}</p>
               </div>
-              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.map_query || it.title)}" target="_blank" onclick="event.stopPropagation()" class="shrink-0 p-1.5 rounded-full hover:bg-[#F1F0FF] text-[#241E1A]/60 hover:text-[#4736F0] transition-colors" aria-label="マップで見る">
+              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                 it.earth_location
+                 ? `${it.earth_location.latitude},${it.earth_location.longitude}`
+                  : it.title
+                )}"
+                target="_blank" onclick="event.stopPropagation()" class="shrink-0 p-1.5 rounded-full hover:bg-[#F1F0FF] text-[#241E1A]/60 hover:text-[#4736F0] transition-colors" aria-label="マップで見る">
                 <i class="fa-solid fa-globe text-[15px]"></i>
               </a>
             </div>
@@ -558,7 +563,11 @@
     document.getElementById('modalTime').textContent = timeAgo(it.created_at);
 
     document.getElementById('modalMapLink').href =
-      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.map_query || it.title)}`;
+     `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      it.earth_location
+        ? `${it.earth_location.latitude},${it.earth_location.longitude}`
+        : it.title
+      )}`;
 
     // いいねボタンの初期状態
     const modalIcon = document.querySelector('#modalLikeBtn i');

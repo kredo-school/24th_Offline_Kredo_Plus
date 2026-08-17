@@ -27,6 +27,9 @@ class OtherController extends Controller
             ->with([
                 'category',
                 'user:id,name',
+                
+                // 投稿に紐づいた位置情報
+                'earthLocation',
 
                 // ログイン中ユーザー自身のいいね
                 'likes' => fn ($q) => $q->where('user_id', auth()->id()),
