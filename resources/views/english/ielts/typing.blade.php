@@ -52,7 +52,7 @@ window.__TYPING_CONFIG__ = {
     <div class="mt-6 flex justify-end">
       <a href="{{ route('english.ielts.index') }}"
          class="px-6 py-2.5 bg-[#b95827] text-white font-bold rounded-[0.5rem] shadow-sm hover:bg-[#a04c22] transition-colors text-base">
-        Quit Practice
+        練習を中断する
       </a>
     </div>
   </div>
