@@ -46,15 +46,35 @@
             const result = [];
             let current = [];
 
-            this.points.forEach((point, index) => {
-                const isBroken = this.brokenPeriods.some(period => point.date >= period.start && point.date <= period.end);
+            const addDays = (dateStr, days) => {
+                const d = new Date(dateStr);
+                d.setDate(d.getDate() + days);
+                return d.toISOString().slice(0, 10);
+            };
 
-                if (isBroken) {
-                    if (current.length > 0) {
-                        result.push(current);
-                        current = [];
+            this.points.forEach((point, index) => {
+                if (index > 0) {
+                    const prevDate = this.points[index - 1].date;
+                    const currDate = point.date;
+
+                    // 2点の間にある「投稿が存在しない日」の範囲
+                    const gapStart = addDays(prevDate, 1);
+                    const gapEnd = addDays(currDate, -1);
+
+                    let hasBreakBetween = false;
+                    if (gapStart <= gapEnd) {
+                        // 隙間が実際に存在する場合だけ、故障期間との重なりを判定
+                        hasBreakBetween = this.brokenPeriods.some(
+                            period => !(period.end < gapStart || period.start > gapEnd)
+                        );
                     }
-                    return;
+
+                    if (hasBreakBetween) {
+                        if (current.length > 0) {
+                            result.push(current);
+                            current = [];
+                        }
+                    }
                 }
 
                 current.push(`${this.xPercent(index)},${100 - this.yPercent(point[key])}`);
@@ -168,14 +188,9 @@
 
         {{-- 折れ線グラフ本体(SVG)+ドット --}}
         <div class="absolute top-14 right-12 bottom-20 left-[200px]">
-            <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="w-full h-full overflow-visible">
-                <template x-for="(seg, i) in segments('temperature')" :key="'temp-seg-' + i">
-                    <polyline :points="seg" fill="none" stroke="#f87171" stroke-width="1.5" vector-effect="non-scaling-stroke" />
-                </template>
-                <template x-for="(seg, i) in segments('pressure')" :key="'pressure-seg-' + i">
-                    <polyline :points="seg" fill="none" stroke="#60a5fa" stroke-width="1.5" vector-effect="non-scaling-stroke" />
-                </template>
-            </svg>
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="absolute inset-0 w-full h-full overflow-visible" x-html="segments('temperature').map(seg => `<polyline points=\'${seg}\' fill=\'none\' stroke=\'#f87171\' stroke-width=\'1.5\' vector-effect=\'non-scaling-stroke\' />`).join('')"></svg>
+
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="absolute inset-0 w-full h-full overflow-visible" x-html="segments('pressure').map(seg => `<polyline points=\'${seg}\' fill=\'none\' stroke=\'#60a5fa\' stroke-width=\'1.5\' vector-effect=\'non-scaling-stroke\' />`).join('')"></svg>
 
             <template x-for="(point, index) in points" :key="'temp-dot-' + point.date">
                 <div

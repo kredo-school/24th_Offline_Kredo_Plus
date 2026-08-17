@@ -229,6 +229,16 @@
         </div>
     </footer>
 
+    @push('scripts')
+        <script>
+            document.addEventListener('alpine:init', () => {
+                Alpine.store('genderModal', {
+                    open: false,
+                });
+            });
+        </script>
+    @endpush
+
     @stack('scripts')
 
     @hasSection('intro')
