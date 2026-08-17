@@ -64,7 +64,7 @@
 
 <div class="min-h-screen flex flex-col">
 
-  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6">
+  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-8 md:pt-12">
     <!-- ヒーローバナー: $sectionの内容(アドミンが登録した画像・タイトル・説明文)をそのまま表示。
          STOREでサブカテゴリーを選ぶと、JSでそのサブカテゴリー専用のヒーローに切り替わる(All選択時は元に戻る) -->
     @php
@@ -81,14 +81,17 @@
         return [$c->name => ['image' => $img, 'description' => $c->description]];
       });
     @endphp
-    <div class="relative h-52 sm:h-64 rounded-3xl overflow-hidden shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]">
-      <img id="heroImg" src="{{ $heroImage }}" class="absolute inset-0 w-full h-full object-cover" alt="{{ $section->name ?? 'Other' }}">
-      <div class="absolute inset-0 bg-gradient-to-t from-[#241E1A]/80 via-[#241E1A]/25 to-transparent"></div>
-      <div class="relative h-full flex flex-col justify-end p-6 sm:p-8">
-        <h1 id="heroTitle" class="font-display text-4xl sm:text-5xl font-bold text-white">{{ $section->name ?? 'Other' }}</h1>
-        <p id="heroDesc" class="text-white/85 mt-1 text-sm sm:text-base">{{ $section->description ?? 'Everyday essentials for student life: laundry, money exchange, SIM cards, and more.' }}</p>
+    <section id="heroImg" class="relative overflow-hidden rounded-3xl mb-0 min-h-[280px] sm:min-h-[340px] md:min-h-[380px] p-8 md:p-10 bg-cover bg-center shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]"
+      style="background-image: url('{{ $heroImage }}');">
+      <div class="absolute inset-0 bg-gradient-to-r from-white/80 from-5% via-white/25 via-40% to-transparent to-65% pointer-events-none"></div>
+      <div class="relative flex flex-col lg:flex-row gap-8 w-full">
+        <div class="flex-1">
+          <h1 class="text-display font-black text-blue-950/90 mb-1">留学情報</h1>
+          <p id="heroTitle" class="text-headline-md font-bold text-brand-green mb-3">{{ $section->name ?? 'Other' }}</p>
+          <p id="heroDesc" class="text-body-md text-blue-950/90 max-w-md">{{ $defaultHeroDescription }}</p>
+        </div>
       </div>
-    </div>
+    </section>
   </div>
 
   <br>
@@ -280,7 +283,8 @@
     const heroDesc = document.getElementById('heroDesc');
     if (!heroImg || !heroTitle || !heroDesc) return;
     const custom = tag ? subCategoryHero[tag] : null;
-    heroImg.src = (custom && custom.image) ? custom.image : defaultHero.image;
+    const nextImage = (custom && custom.image) ? custom.image : defaultHero.image;
+    heroImg.style.backgroundImage = `url('${nextImage}')`;
     heroTitle.textContent = tag || defaultHero.title;
     heroDesc.textContent = (custom && custom.description) ? custom.description : defaultHero.description;
   }

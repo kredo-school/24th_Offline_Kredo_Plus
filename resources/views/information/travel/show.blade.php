@@ -54,17 +54,20 @@
 
 <div class="min-h-screen flex flex-col">
 
-  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6">
+  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-8 md:pt-12">
     <!-- ヒーローバナー: エリア選択中は$currentArea(エリア独自)の画像・説明文を優先。
          エリア未選択時は$section(Travelページ自体、アドミンが登録)の内容を表示 -->
-    <div class="relative h-52 sm:h-64 rounded-3xl overflow-hidden shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]">
-      <img src="{{ $currentArea->hero_image ?? $section?->hero_image ?? 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=1600&auto=format&fit=crop' }}" class="absolute inset-0 w-full h-full object-cover" alt="{{ $currentArea->name ?? $section?->name ?? 'Travel & Tourism' }}">
-      <div class="absolute inset-0 bg-gradient-to-t from-[#241E1A]/80 via-[#241E1A]/25 to-transparent"></div>
-      <div class="relative h-full flex flex-col justify-end p-6 sm:p-8">
-        <h1 class="font-display text-4xl sm:text-5xl font-bold text-white">{{ $currentArea->name ?? $section?->name ?? 'Travel & Tourism' }}</h1>
-        <p class="text-white/85 mt-1 text-sm sm:text-base">{{ $currentArea->description ?? $section?->description ?? 'セブの海・自然・カルチャーを、まるごと満喫しよう。' }}</p>
+    <section class="relative overflow-hidden rounded-3xl mb-0 min-h-[280px] sm:min-h-[340px] md:min-h-[380px] p-8 md:p-10 bg-cover bg-center shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]"
+      style="background-image: url('{{ $currentArea->hero_image ?? $section?->hero_image ?? 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=1600&auto=format&fit=crop' }}');">
+      <div class="absolute inset-0 bg-gradient-to-r from-white/80 from-5% via-white/25 via-40% to-transparent to-65% pointer-events-none"></div>
+      <div class="relative flex flex-col lg:flex-row gap-8 w-full">
+        <div class="flex-1">
+          <h1 class="text-display font-black text-blue-950/90 mb-1">留学情報</h1>
+          <p class="text-headline-md font-bold text-brand-green mb-3">{{ $currentArea->name ?? $section?->name ?? 'Travel & Tourism' }}</p>
+          <p class="text-body-md text-blue-950/90 max-w-md">{{ $currentArea->description ?? $section?->description ?? 'セブの海・自然・カルチャーを、まるごと満喫しよう。' }}</p>
+        </div>
       </div>
-    </div>
+    </section>
   </div>
 
   <br>

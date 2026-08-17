@@ -107,8 +107,8 @@
                         <span class="material-symbols-outlined !text-2xl leading-none">menu_book</span>
                         <span class="text-[11px] font-bold whitespace-nowrap">英語学習</span>
                     </a>
-                    <a href="{{ route('travel.index') }}" aria-label="留学情報"
-                        class="flex flex-col items-center gap-0.5 transition-colors {{ request()->routeIs('travel.*') ? 'text-brand-green' : 'text-slate-400 hover:text-brand-green' }}">
+                    <a href="{{ route('carinderia.index') }}" aria-label="留学情報"
+                        class="flex flex-col items-center gap-0.5 transition-colors {{ request()->routeIs('carinderia.*') ? 'text-brand-green' : 'text-slate-400 hover:text-brand-green' }}">
                         <span class="material-symbols-outlined !text-2xl leading-none">flight</span>
                         <span class="text-[11px] font-bold whitespace-nowrap">留学情報</span>
                     </a>
@@ -181,8 +181,8 @@
                 class="block py-2 text-sm font-semibold {{ request()->routeIs('shower.*') ? 'text-brand-blue' : 'text-slate-600 hover:text-brand-blue' }}">シャワー情報</a>
             <a href="{{ route('english.hub') }}"
                 class="block py-2 text-sm font-semibold {{ request()->routeIs('english.*') ? 'text-brand-yellow' : 'text-slate-600 hover:text-brand-yellow' }}">英語学習</a>
-            <a href="{{ route('travel.index') }}"
-                class="block py-2 text-sm font-semibold {{ request()->routeIs('travel.*') ? 'text-brand-green' : 'text-slate-600 hover:text-brand-green' }}">留学情報</a>
+            <a href="{{ route('carinderia.index') }}"
+                class="block py-2 text-sm font-semibold {{ request()->routeIs('carinderia.*') ? 'text-brand-green' : 'text-slate-600 hover:text-brand-green' }}">留学情報</a>
             <a href="{{ route('profile.edit') }}"
                 class="block py-2 text-sm font-semibold text-slate-600 hover:text-brand-blue">{{ __('Profile') }}</a>
             <form method="POST" action="{{ route('logout') }}">
@@ -205,29 +205,37 @@
         @yield('content')
     </main>
 
-    <footer class="relative bg-[#334155] text-gray-300 text-center">
-        {{-- 波型ディバイダー: main の一部を覆わず自然に高さを足すだけなので、
-             どのページ（青/オレンジ/緑テーマ）の直下に来ても崩れない --}}
-        <div aria-hidden="true" class="leading-[0]">
-            <svg viewBox="0 0 1440 48" preserveAspectRatio="none" class="w-full h-6 sm:h-8 block">
-                <path d="M0,24 C220,48 360,0 600,16 C860,32 1000,2 1220,18 C1320,24 1400,20 1440,16 L1440,48 L0,48 Z"
-                      fill="#334155" />
-            </svg>
-        </div>
-
-        <div class="max-w-[1140px] mx-auto px-6 pt-0 pb-7 flex flex-col items-center gap-2.5">
-            <div class="flex items-center gap-2 text-slate-200">
-                <svg width="18" height="15" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 3 C13 2, 16 2.5, 17.5 4 L13.5 37 C9.5 36.5, 7 35, 5.5 33.5 Z" fill="#7c9cf0" />
-                    <path d="M13 22 L31 3 C34 2, 36.5 3.5, 37.5 6.5 L16.5 25.5 C14.5 24.8, 13.4 23.6, 13 22 Z" fill="#f0947f" />
-                    <path d="M13.5 23.5 L32 32.5 C32.5 35.5, 31 37.8, 28.5 38.5 L12 27 C12.2 25.5, 12.7 24.4, 13.5 23.5 Z" fill="#a9d488" />
-                    <path d="M40.5 6.5h3.5v4h4v3.5h-4v4h-3.5v-4h-4V10.5h4z" fill="#f7c862" />
+    {{--
+        Carinderia/Restaurant&Cafe/Travel/Other/投稿/編集など、
+        独自の固定フッターナビ(Home/Post/Map)を持っているページでは、
+        この会社紹介用フッターは表示しない(下に重なって見えてしまうため)。
+        新しいページでこの固定ナビを使う時は、routeIs() の一覧にルート名を足すだけでOK。
+    --}}
+    @unless (request()->routeIs(['carinderia.*', 'restaurant-cafe.*', 'travel.*', 'other.*', 'information.*']))
+        <footer class="relative bg-[#334155] text-gray-300 text-center">
+            {{-- 波型ディバイダー: main の一部を覆わず自然に高さを足すだけなので、
+                 どのページ（青/オレンジ/緑テーマ）の直下に来ても崩れない --}}
+            <div aria-hidden="true" class="leading-[0]">
+                <svg viewBox="0 0 1440 48" preserveAspectRatio="none" class="w-full h-6 sm:h-8 block">
+                    <path d="M0,24 C220,48 360,0 600,16 C860,32 1000,2 1220,18 C1320,24 1400,20 1440,16 L1440,48 L0,48 Z"
+                          fill="#334155" />
                 </svg>
-                <span class="font-display font-bold text-sm tracking-wide text-white">Kredo Plus</span>
             </div>
-            <p class="text-xs font-light tracking-wide text-slate-400">&copy; Kredo Plus. All rights reserved.</p>
-        </div>
-    </footer>
+
+            <div class="max-w-[1140px] mx-auto px-6 pt-0 pb-7 flex flex-col items-center gap-2.5">
+                <div class="flex items-center gap-2 text-slate-200">
+                    <svg width="18" height="15" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 3 C13 2, 16 2.5, 17.5 4 L13.5 37 C9.5 36.5, 7 35, 5.5 33.5 Z" fill="#7c9cf0" />
+                        <path d="M13 22 L31 3 C34 2, 36.5 3.5, 37.5 6.5 L16.5 25.5 C14.5 24.8, 13.4 23.6, 13 22 Z" fill="#f0947f" />
+                        <path d="M13.5 23.5 L32 32.5 C32.5 35.5, 31 37.8, 28.5 38.5 L12 27 C12.2 25.5, 12.7 24.4, 13.5 23.5 Z" fill="#a9d488" />
+                        <path d="M40.5 6.5h3.5v4h4v3.5h-4v4h-3.5v-4h-4V10.5h4z" fill="#f7c862" />
+                    </svg>
+                    <span class="font-display font-bold text-sm tracking-wide text-white">Kredo Plus</span>
+                </div>
+                <p class="text-xs font-light tracking-wide text-slate-400">&copy; Kredo Plus. All rights reserved.</p>
+            </div>
+        </footer>
+    @endunless
 
     @push('scripts')
         <script>
