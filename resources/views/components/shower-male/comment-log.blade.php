@@ -161,7 +161,7 @@
             @click="load(!showingAll)"
             class="text-headline-sm font-semibold py-2 px-3 rounded-full hover:bg-blue-500/10 text-blue-700 transition-colors"
         >
-            <span x-text="showingAll ? '閉じる' : 'View All'"></span>
+            <span x-text="showingAll ? '閉じる' : 'すべてを見る'"></span>
         </button>
     </div>
 </section>
