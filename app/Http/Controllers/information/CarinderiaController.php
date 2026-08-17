@@ -28,6 +28,8 @@ class CarinderiaController extends Controller
             ->with([
                 'category',
                 'user:id,name',
+                // 投稿に紐づいた位置情報
+                'earthLocation',
                 // ログイン中のユーザーのいいねだけ取得
                 'likes' => fn ($q) => $q->where('user_id', auth()->id()),
                 // ログイン中のユーザーのブックマークだけ取得

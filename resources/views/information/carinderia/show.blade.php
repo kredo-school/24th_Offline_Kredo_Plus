@@ -11,6 +11,7 @@
     theme: {
       extend: {
         colors: {
+
           ink: '#241E1A',
           cream: '#FFFFFF',
           paper: '#FFFFFF',
