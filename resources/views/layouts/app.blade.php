@@ -164,7 +164,7 @@
                 </div>
 
                 <button @click="mobileOpen = !mobileOpen"
-                    class="text-slate-600 hover:text-brand-blue transition-colors" aria-label="メニュー">
+                    class="sm:hidden text-slate-600 hover:text-brand-blue transition-colors" aria-label="メニュー">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.8"
                             stroke-linecap="round" />
