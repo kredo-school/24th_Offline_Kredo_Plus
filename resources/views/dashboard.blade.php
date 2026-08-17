@@ -13,11 +13,11 @@
                 {{-- 上部のグラデーションライン --}}
                 <div class="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-400 to-brand-blue"></div>
 
-                
+
                 <form method="POST" action="{{ route('gender.store') }}">
                     @csrf
                     <h2 class="font-display font-bold text-xl text-blue-700 text-center">ユーザー情報登録</h2>
-    
+
                     <p class="mt-4 font-semibold text-lg text-blue-950">お住まいの寮</p>
                     <p class="text-sm text-red-500">※登録後は変更できません</p>
 
@@ -37,7 +37,7 @@
                     </div>
 
                     <p class="mt-6 font-semibold text-lg text-blue-950">シャワーのお好み</p>
-                    
+
                     <p class="text-slate-500 text-sm mt-3">温度</p>
                     <div class="grid grid-cols-4 gap-2 my-2 text-sm font-semibold text-slate-500">
                         <label class="flex items-center gap-2 cursor-pointer">
@@ -78,7 +78,7 @@
                             <span>強い</span>
                         </label>
                     </div>
-                    
+
                     <div class="mt-7 flex justify-center gap-3">
                         <button type="button" @click="open = false"
                                 class="text-sm font-semibold text-slate-400 px-5 py-2.5 rounded-full hover:bg-slate-100 transition-colors">
@@ -458,7 +458,7 @@
                         @endforeach
                     </div>
 
-                    <a href="{{ route('travel.index') }}" class="relative mt-5 inline-flex items-center gap-2 text-sm font-semibold text-brand-green bg-white border border-brand-green/40 rounded-full px-5 py-2 hover:bg-brand-green hover:text-white hover:border-brand-green transition-all duration-200 shadow-soft">
+                    <a href="{{ route('carinderia.index') }}" class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-brand-green border border-brand-green/40 rounded-full px-5 py-2 hover:bg-brand-green hover:text-white hover:border-brand-green transition-all duration-200">
                         詳しく見る
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
                     </a>
