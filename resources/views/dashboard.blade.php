@@ -562,11 +562,11 @@
         </div>
 
         <div class="relative max-w-[1140px] mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+            <div class="relative bg-white rounded-[20px] shadow-card overflow-hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 items-stretch">
 
-                <!-- Map card -->
-                <div class="relative bg-white rounded-[20px] shadow-card p-4 sm:p-5">
-                    <div class="relative h-[280px] sm:h-[320px] rounded-[14px] overflow-hidden shadow-soft">
+                    <!-- Map -->
+                    <div class="relative h-[280px] sm:h-[320px] md:h-auto">
                         <iframe
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3925.367584168285!2d123.9067527756858!3d10.329718467554015!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33a99907372b64d7%3A0x63390c58a5e55e56!2sSkyrise%204%2C%20Cebu%20City%2C%20Cebu!5e0!3m2!1sja!2sph!4v1715000000000!5m2!1sja!2sph"
                             width="100%"
@@ -577,47 +577,40 @@
                             referrerpolicy="no-referrer-when-downgrade"
                             title="School Location Map">
                         </iframe>
-
-                        <a href="https://www.google.co.jp/maps/place/CampusTop(QQEnglish)+IT+Park+Campus/@10.330136,123.9036374,16z/data=!3m1!4b1!4m6!3m5!1s0x33a9992189a343c3:0xa7758b38dbbe1750!8m2!3d10.330136!4d123.9062123!16s%2Fg%2F11c3k6h1kt?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D"
-                           target="_blank" rel="noopener"
-                           class="absolute left-3 top-3 inline-flex items-center gap-1.5 bg-white/95 backdrop-blur-sm text-slate-700 text-xs font-bold px-3.5 py-2 rounded-full shadow-soft hover:bg-white transition-colors">
-                            マップで開く
-                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Info card -->
-                <div class="relative bg-white rounded-[20px] shadow-card p-6 md:p-8 overflow-hidden flex flex-col justify-center">
-                    <div aria-hidden="true" class="absolute -right-6 -bottom-6 w-32 h-32 pointer-events-none opacity-60">
-                        <svg viewBox="0 0 120 120" fill="none">
-                            <circle cx="70" cy="70" r="42" fill="#eff6ff" />
-                            <circle cx="30" cy="90" r="14" fill="#fef3c7" />
-                        </svg>
                     </div>
 
-                    <div class="relative">
-                        <h3 class="font-display font-bold text-2xl text-slate-800">School Location</h3>
-                        <div class="kredo-bar mt-2 w-16 h-1 rounded-full"></div>
-                        <p class="mt-4 text-slate-600 leading-relaxed">
-                            Kredoのキャンパスは、ITパーク内に位置するSkyrise 4の7階にあります。周辺には多くのカフェや飲食店があり、勉強にも生活にも最適な環境です。また、KredoはQQ Englishと協業してIT×英語留学を提供しており、英語レッスンはQQ Englishの校舎で受講します。
-                        </p>
-
-                        <div class="mt-6 flex items-start gap-3">
-                            <svg class="w-6 h-6 text-brand-red shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                <circle cx="12" cy="10" r="3"></circle>
+                    <!-- Info -->
+                    <div class="relative p-6 md:p-8 overflow-hidden flex flex-col justify-center">
+                        <div aria-hidden="true" class="absolute -right-6 -bottom-6 w-32 h-32 pointer-events-none opacity-60">
+                            <svg viewBox="0 0 120 120" fill="none">
+                                <circle cx="70" cy="70" r="42" fill="#eff6ff" />
+                                <circle cx="30" cy="90" r="14" fill="#fef3c7" />
                             </svg>
-                            <span class="text-slate-700 font-medium">7th Floor, Skyrise 4, Apas, Cebu City, 6000 Cebu</span>
                         </div>
 
-                        <a href="https://www.google.co.jp/maps/place/CampusTop(QQEnglish)+IT+Park+Campus/@10.330136,123.9036374,16z/data=!3m1!4b1!4m6!3m5!1s0x33a9992189a343c3:0xa7758b38dbbe1750!8m2!3d10.330136!4d123.9062123!16s%2Fg%2F11c3k6h1kt?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener" class="mt-8 inline-flex items-center gap-2 bg-brand-blue text-white font-semibold px-8 py-3 rounded-full hover:bg-indigo-700 transition-colors shadow-soft">
-                            Googleマップで開く
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
-                        </a>
-                    </div>
-                </div>
+                        <div class="relative">
+                            <h3 class="font-display font-bold text-2xl text-slate-800">School Location</h3>
+                            <div class="kredo-bar mt-2 w-16 h-1 rounded-full"></div>
+                            <p class="mt-4 text-slate-600 leading-relaxed">
+                                Kredoのキャンパスは、ITパーク内に位置するSkyrise 4の7階にあります。周辺には多くのカフェや飲食店があり、勉強にも生活にも最適な環境です。また、KredoはQQ Englishと協業してIT×英語留学を提供しており、英語レッスンはQQ Englishの校舎で受講します。
+                            </p>
 
+                            <div class="mt-6 flex items-start gap-3">
+                                <svg class="w-6 h-6 text-brand-red shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                                <span class="text-slate-700 font-medium">7th Floor, Skyrise 4, Apas, Cebu City, 6000 Cebu</span>
+                            </div>
+
+                            <a href="https://www.google.co.jp/maps/place/CampusTop(QQEnglish)+IT+Park+Campus/@10.330136,123.9036374,16z/data=!3m1!4b1!4m6!3m5!1s0x33a9992189a343c3:0xa7758b38dbbe1750!8m2!3d10.330136!4d123.9062123!16s%2Fg%2F11c3k6h1kt?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener" class="mt-8 inline-flex items-center gap-2 bg-brand-blue text-white font-semibold px-8 py-3 rounded-full hover:bg-indigo-700 transition-colors shadow-soft">
+                                Googleマップで開く
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </section>
