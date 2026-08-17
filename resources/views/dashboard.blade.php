@@ -298,16 +298,16 @@
                     <h3 class="relative max-w-[60%] mt-1 font-bold text-lg text-slate-800">シャワー情報</h3>
 
                     @if ($showerSummary)
-                        <div class="relative mt-4 flex items-center gap-3">
+                        <div class="relative mt-6 flex items-center gap-3">
                             @if ($showerSummary['recommended_number'])
                                 <span class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand-blue text-white font-black text-4xl shadow-md shrink-0">
                                     {{ $showerSummary['recommended_number'] }}
                                 </span>
                                 <div class="flex flex-col gap-1">
-                                    <span class="text-[10px] font-bold text-slate-400 ps-1">おすすめシャワー</span>
+                                    <span class="text-[12px] font-bold text-slate-400 ps-1">おすすめシャワー</span>
                                     <div class="flex gap-1.5">
-                                        <span class="inline-block rounded-full bg-rose-100 text-rose-600 text-[11px] font-bold px-2 py-0.5">{{ $showerSummary['temperature_label'] }}</span>
-                                        <span class="inline-block rounded-full bg-sky-100 text-sky-600 text-[11px] font-bold px-2 py-0.5">{{ $showerSummary['pressure_label'] }}</span>
+                                        <span class="inline-block rounded-full bg-rose-100 text-rose-600 text-[12px] font-bold px-2 py-0.5">{{ $showerSummary['temperature_label'] }}</span>
+                                        <span class="inline-block rounded-full bg-sky-100 text-sky-600 text-[12px] font-bold px-2 py-0.5">{{ $showerSummary['pressure_label'] }}</span>
                                     </div>
                                 </div>
                             @else
@@ -317,14 +317,14 @@
 
                         <div class="relative mt-3 flex flex-wrap gap-1.5">
                             @if ($showerSummary['is_full'])
-                                <span class="inline-flex items-center gap-1 rounded-full bg-red-50 text-red-600 text-[11px] font-bold px-2.5 py-1">
+                                <span class="inline-flex items-center gap-1 rounded-full bg-red-50 text-red-600 text-[12px] font-bold px-2.5 py-1">
                                     <span class="material-symbols-outlined !text-sm">error</span>
                                     満室({{ $showerSummary['full_reported_minutes_ago'] }}分前)
                                 </span>
                             @endif
 
                             @if ($showerSummary['broken_numbers']->isNotEmpty())
-                                <span class="inline-flex items-center gap-1 rounded-full bg-amber-50 text-amber-700 text-[11px] font-bold px-2.5 py-1">
+                                <span class="inline-flex items-center gap-1 rounded-full bg-amber-50 text-amber-700 text-[12px] font-bold px-2.5 py-1">
                                     <span class="material-symbols-outlined !text-sm">build</span>
                                     {{ $showerSummary['broken_numbers']->map(fn ($n) => $n . '番')->implode('、') }}故障中
                                 </span>
