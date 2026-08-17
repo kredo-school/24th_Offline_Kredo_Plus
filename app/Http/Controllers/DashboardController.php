@@ -42,6 +42,7 @@ class DashboardController extends Controller
             'showIntro' => $request->session()->pull('show_intro', false),
             'mainCategories' => MainCategory::allOrdered(),
             'showerSummary' => $showerSummary,
+            'user' => $user,
         ]);
     }
 }

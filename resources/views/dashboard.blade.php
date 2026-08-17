@@ -7,8 +7,14 @@
 @section('content')
     {{-- シャワーページにアクセスする際に性別登録のmodalが表示される（未登録の場合） --}}
     @if (session('showGenderModal'))
-        <div x-data="{ open: true }" x-show="open" x-cloak
-            class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+        <script>
+            document.addEventListener('alpine:init', () => {
+                Alpine.store('genderModal').open = true;
+            });
+        </script>
+    @endif
+    <div x-show="$store.genderModal.open" x-cloak
+    class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 px-4">
             <div class="relative bg-white rounded-[24px] shadow-card p-8 w-full max-w-sm overflow-hidden">
                 {{-- 上部のグラデーションライン --}}
                 <div class="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-400 to-brand-blue"></div>
@@ -80,7 +86,7 @@
                     </div>
 
                     <div class="mt-7 flex justify-center gap-3">
-                        <button type="button" @click="open = false"
+                        <button type="button" @click="$store.genderModal.open = false"
                                 class="text-sm font-semibold text-slate-400 px-5 py-2.5 rounded-full hover:bg-slate-100 transition-colors">
                             キャンセル
                         </button>
@@ -92,7 +98,8 @@
                 </form>
             </div>
         </div>
-    @endif
+    </div>
+    
 
     <!-- Hero -->
     <section class="relative bg-gradient-to-b from-sky-50 via-white to-white pt-8 pb-16 overflow-hidden">
@@ -235,9 +242,10 @@
             <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
 
                 <!-- Shower Information -->
-                <a href="{{ route('shower.entry') }}"
-                    class="relative rounded-[24px] shadow-card hover:shadow-card-hover transition-all duration-300 p-7 overflow-hidden bg-gradient-to-b from-sky-50 to-white block"
-                >
+                @if ($user->gender_locked)
+                    <a href="{{ route('shower.entry') }}"
+                        class="group relative rounded-[24px] shadow-card hover:shadow-card-hover transition-all duration-300 p-7 overflow-hidden bg-gradient-to-b from-sky-50 to-white block"
+                    >
                     <div class="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-400 to-brand-blue"></div>
 
                     {{-- 装飾: シャワーヘッドのイラスト --}}
@@ -330,14 +338,84 @@
                                 </span>
                             @endif
                         </div>
-                    @else
-                        <p class="relative mt-2.5 text-sm text-slate-500 leading-relaxed">お好みの温度や水圧に合った、<br>おすすめのシャワーをご案内します。</p>
-                        <a href="{{ route('shower.entry') }}" class="relative mt-5 inline-flex items-center gap-2 text-sm font-semibold text-brand-blue bg-white border border-brand-blue/40 rounded-full px-5 py-2 hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-all duration-200 shadow-soft">
-                            詳しく見る
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
-                        </a>
                     @endif
-                </a>
+                    </a>
+                @else
+                    <a type="button" @click="$store.genderModal.open = true"
+                        class="group relative rounded-[24px] shadow-card hover:shadow-card-hover transition-all duration-300 p-7 overflow-hidden bg-gradient-to-b from-sky-50 to-white block w-full text-left"
+                    >
+                        <div class="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-400 to-brand-blue"></div>
+
+                    {{-- 装飾: シャワーヘッドのイラスト --}}
+                    <div aria-hidden="true" class="absolute -right-2 top-8 w-36 sm:w-40 pointer-events-none">
+                        <svg viewBox="0 0 160 190" fill="none">
+                            {{-- パイプ --}}
+                            <path d="M150 6c0 38-10 52-46 52" stroke="#c3cee0" stroke-width="9" stroke-linecap="round" fill="none" />
+                            <path d="M150 6c0 38-10 52-46 52" stroke="#eef2f8" stroke-width="3" stroke-linecap="round" fill="none" />
+                            {{-- シャワーヘッド --}}
+                            <g transform="translate(60 60)">
+                                <ellipse cx="0" cy="16" rx="48" ry="14" fill="#c7d2e0" />
+                                <path d="M-48 0a48 24 0 000 24a48 24 0 000-24Z" fill="#eef2f7" />
+                                <ellipse cx="0" cy="0" rx="48" ry="16" fill="#dfe6ee" />
+                                <ellipse cx="0" cy="0" rx="48" ry="16" fill="none" stroke="#c3cee0" stroke-width="2" />
+                                <g fill="#a9b9cf">
+                                    <circle cx="-26" cy="1" r="2" />
+                                    <circle cx="-9" cy="4" r="2" />
+                                    <circle cx="9" cy="4" r="2" />
+                                    <circle cx="26" cy="1" r="2" />
+                                    <circle cx="0" cy="5" r="2" />
+                                </g>
+                            </g>
+                            {{-- 水滴 --}}
+                            <g stroke="#8fbdec" stroke-width="2.5" stroke-linecap="round" opacity="0.85">
+                                <line x1="20" y1="92" x2="14" y2="112" />
+                                <line x1="40" y1="96" x2="37" y2="120" />
+                                <line x1="60" y1="98" x2="60" y2="126" />
+                                <line x1="80" y1="96" x2="83" y2="120" />
+                                <line x1="98" y1="92" x2="104" y2="112" />
+                            </g>
+                        </svg>
+                    </div>
+
+                    {{-- 装飾: 水たまりの波 --}}
+                    <div aria-hidden="true" class="absolute inset-x-0 bottom-0 h-20 pointer-events-none">
+                        <svg viewBox="0 0 400 90" preserveAspectRatio="none" class="w-full h-full">
+                            <path d="M0,55 C70,20 150,85 240,45 C310,18 360,50 400,32 L400,90 L0,90 Z" fill="#dbeafe" />
+                        </svg>
+                    </div>
+                    {{-- 装飾: 泡（バブル） --}}
+                    <div aria-hidden="true" class="absolute right-8 bottom-6 pointer-events-none">
+                        <svg width="60" height="42" viewBox="0 0 60 42" fill="none">
+                            <circle cx="10" cy="28" r="6" fill="#bfdbfe" />
+                            <circle cx="27" cy="15" r="9" fill="#dbeafe" />
+                            <circle cx="45" cy="25" r="4" fill="#bfdbfe" />
+                        </svg>
+                    </div>
+
+                    <div class="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-100 to-sky-50 ring-1 ring-sky-200 flex items-center justify-center mb-5">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2f5fdb" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 11h14"/>
+                            <path d="M6.5 11a5.5 5.5 0 0111 0"/>
+                            <path d="M4 8.5L2.5 7"/>
+                            <path d="M8 15l-.6 1.6M12 15.5v2M16 15l.6 1.6"/>
+                        </svg>
+                    </div>
+                    <p class="relative max-w-[60%] text-xs font-bold text-brand-blue tracking-widest">Shower Information</p>
+                    <h3 class="relative max-w-[60%] mt-1 font-bold text-lg text-slate-800">シャワー情報</h3>
+
+                    <p class="relative mt-2.5 text-sm text-slate-500 leading-relaxed">お好みの温度や水圧に合った、<br>おすすめのシャワーをご案内します。</p>
+                        <span class="relative mt-5 inline-flex items-center gap-2 text-sm font-semibold text-brand-blue bg-white border border-brand-blue/40 rounded-full px-5 py-2 hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-all duration-200 shadow-soft">
+                            詳しく見る
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2.2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 6l6 6-6 6"/>
+                            </svg>
+                        </span>
+                    </a>
+                    
+                @endif
+                
 
                 <!-- English Learning -->
                 <div class="relative rounded-[24px] shadow-card hover:shadow-card-hover transition-all duration-300 p-7 overflow-hidden bg-gradient-to-b from-amber-50 to-white">
