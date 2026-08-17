@@ -3,14 +3,14 @@
 @section('title', 'suggestion form')
  
 @section('content')
-    <div class="min-h-screen bg-brand-red/10 py-12">
+    <div class="bg-brand-red/10 py-12">
         <div class="relative bg-white rounded-[24px] shadow-card p-8 mx-auto max-w-lg overflow-hidden">
                 {{-- 上部のグラデーションライン --}}
                 <div class="absolute top-0 inset-x-0 h-1.5 kredo-bar"></div>
 
                 
-                <form method="POST" action="#">
-                    @csrf
+                <form method="POST" action="{{ route('suggestion.store') }}">
+                    @csrf   
                     <h2 class="font-display font-bold text-4xl text-slate-700 text-center">目安箱</h2>
                     <p class="text-sm text-slate-600 text-center mt-2"><span class="wordmark-kredo font-bold">Kredo</span> <span class="wordmark-plus font-bold">Plus</span> はみなさんのご意見をお待ちしています。</p>
     
@@ -70,7 +70,12 @@
                         </button>
                     </div>
                 </form>
+                @if (session('success'))
+                    <div class="mt-4 p-3 bg-emerald-50 text-emerald-700 rounded-xl text-sm font-semibold text-center">
+                        {{ session('success') }}
+                    </div>
+                @endif
             </div>
-    </div>
+        </div>
 @endsection
  

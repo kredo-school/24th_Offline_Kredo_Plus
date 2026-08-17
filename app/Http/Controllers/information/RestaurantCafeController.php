@@ -21,6 +21,7 @@ class RestaurantCafeController extends Controller
             ->with([
                 'category',
                 'user:id,name',
+                'earthLocation',
                 'likes' => fn ($q) => $q->where('user_id', auth()->id()),
                 'bookmarks' => fn ($q) => $q->where('user_id', auth()->id()),
                 'comments' => fn ($q) => $q->with('user:id,name')->oldest(),

@@ -11,7 +11,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&family=Poppins:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&family=Poppins:wght@600;700;800&family=Caveat:wght@600;700&family=IBM+Plex+Mono:wght@500;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
@@ -205,8 +205,28 @@
         @yield('content')
     </main>
 
-    <footer class="bg-[#334155] text-gray-300 text-center">
-        <p class="py-6 text-sm font-light tracking-wide">&copy; Kredo Plus</p>
+    <footer class="relative bg-[#334155] text-gray-300 text-center">
+        {{-- 波型ディバイダー: main の一部を覆わず自然に高さを足すだけなので、
+             どのページ（青/オレンジ/緑テーマ）の直下に来ても崩れない --}}
+        <div aria-hidden="true" class="leading-[0]">
+            <svg viewBox="0 0 1440 48" preserveAspectRatio="none" class="w-full h-6 sm:h-8 block">
+                <path d="M0,24 C220,48 360,0 600,16 C860,32 1000,2 1220,18 C1320,24 1400,20 1440,16 L1440,48 L0,48 Z"
+                      fill="#334155" />
+            </svg>
+        </div>
+
+        <div class="max-w-[1140px] mx-auto px-6 pt-0 pb-7 flex flex-col items-center gap-2.5">
+            <div class="flex items-center gap-2 text-slate-200">
+                <svg width="18" height="15" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 3 C13 2, 16 2.5, 17.5 4 L13.5 37 C9.5 36.5, 7 35, 5.5 33.5 Z" fill="#7c9cf0" />
+                    <path d="M13 22 L31 3 C34 2, 36.5 3.5, 37.5 6.5 L16.5 25.5 C14.5 24.8, 13.4 23.6, 13 22 Z" fill="#f0947f" />
+                    <path d="M13.5 23.5 L32 32.5 C32.5 35.5, 31 37.8, 28.5 38.5 L12 27 C12.2 25.5, 12.7 24.4, 13.5 23.5 Z" fill="#a9d488" />
+                    <path d="M40.5 6.5h3.5v4h4v3.5h-4v4h-3.5v-4h-4V10.5h4z" fill="#f7c862" />
+                </svg>
+                <span class="font-display font-bold text-sm tracking-wide text-white">Kredo Plus</span>
+            </div>
+            <p class="text-xs font-light tracking-wide text-slate-400">&copy; Kredo Plus. All rights reserved.</p>
+        </div>
     </footer>
 
     @stack('scripts')

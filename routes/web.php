@@ -17,6 +17,13 @@ use App\Http\Controllers\ShowerController;
 use App\Http\Controllers\GenderController;
 use App\Http\Middleware\EnsureGenderIsSet;
 use App\Http\Controllers\UserShowerPreferenceController;
+use App\Http\Controllers\Shower\ShowerReportController;
+use App\Http\Controllers\Shower\ShowerPriorityController;
+use App\Http\Controllers\Shower\ShowerCapacityReportController;
+use App\Http\Controllers\Shower\ShowerMalfunctionReportController;
+use App\Http\Controllers\Shower\ShowerScatterDataController;
+use App\Http\Controllers\Shower\ShowerTrendDataController;
+use App\Http\Controllers\Shower\ShowerCommentController;
 // Information
 use App\Http\Controllers\Information\InformationController;
 use App\Http\Controllers\Information\CarinderiaController;
@@ -30,7 +37,16 @@ use App\Http\Controllers\EarthController;
 use App\Http\Controllers\EarthLocationController;
 //Admin
 use App\Http\Controllers\Admin\AdminUserController;
-use App\Http\Controllers\SuggestionBoxController;
+
+    // 目安箱
+    use App\Http\Controllers\SuggestionBoxController;
+    use App\Http\Controllers\SuggestionController;
+    use App\Http\Controllers\Admin\AdminSuggestionController;
+    // シャワー管理
+    use App\Http\Controllers\Admin\AdminShowerMalfunctionController;
+    use App\Models\Shower\ShowerMalfunctionReport;
+    use App\Models\Shower\ShowerCapacityReport;
+
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -145,6 +161,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // シャワーの好み
     Route::post('/shower/preference', [UserShowerPreferenceController::class, 'update'])->name('shower.preference.update');
+    // 温度・水圧の重視項目
+    Route::post('/shower/priority', [ShowerPriorityController::class, 'update'])->name('shower.priority.update');
+
+    // シャワー状態管理
+    // 投稿情報をゲット
+    Route::post('/shower/report', [ShowerReportController::class, 'store'])->name('shower.report.store');
+    // 満室報告
+    Route::post('/shower/capacity', [ShowerCapacityReportController::class, 'store'])->name('shower.capacity.store');
+    // 故障報告
+    Route::post('/shower/malfunction', [ShowerMalfunctionReportController::class, 'store'])->name('shower.malfunction.store');
+
+    // 統計表示
+    // 散布図（二次元チャート）
+    Route::get('/shower/scatter-data', ShowerScatterDataController::class)->name('shower.scatter-data');
+    // パフォーマンストレンド（折れ線グラフ）
+    Route::get('/shower/trend-data', ShowerTrendDataController::class)->name('shower.trend-data');
+    // コメント
+    Route::get('/shower/comments', ShowerCommentController::class)->name('shower.comments');
 
     // ============================================================
     // Information
@@ -199,6 +233,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // suggestion box  目安箱
     Route::get('/suggestion-box', [SuggestionBoxController::class, 'suggestion'])->name('suggestion');
+    // 送信・管理
+    Route::get('/suggestion', [SuggestionController::class, 'create'])->name('suggestion');
+    Route::post('/suggestion', [SuggestionController::class, 'store'])->name('suggestion.store');
 });  // auth, verified group
 
 //Profile    下記コードデフォルトのままです。
@@ -237,8 +274,20 @@ Route::post(
 // Admin (管理者画面)
     Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
         Route::get('/dashboard', function () {
-            return view('admin.dashboard'); // admin/dashboard.blade.php を表示
+            return view('admin.dashboard', [ // admin/dashboard.blade.php を表示
+                'brokenShowers' => ShowerMalfunctionReport::currentlyBroken(),
+                'maleFull' => ShowerCapacityReport::isCurrentlyFull('male'),
+                'femaleFull' => ShowerCapacityReport::isCurrentlyFull('female'),
+            ]); 
         })->name('dashboard');
 
         Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
-    });
+
+        // シャワー故障報告の受け取り・修理報告
+        Route::get('/shower/malfunctions', [AdminShowerMalfunctionController::class, 'index'])->name('shower.malfunctions.index');
+        Route::post('/shower/malfunctions/{gender}/{showerNumber}/fix', [AdminShowerMalfunctionController::class, 'fix'])->name('shower.malfunctions.fix');
+        
+        // 目安箱受け取り
+        Route::get('/suggestions/data', [AdminSuggestionController::class, 'data'])->name('suggestions.data');
+        Route::patch('/suggestions/{suggestion}', [AdminSuggestionController::class, 'update'])->name('suggestions.update');
+        });

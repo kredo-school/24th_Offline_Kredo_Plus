@@ -9,6 +9,12 @@ import { stores } from "./stores";
 let map;
 const markers = [];
 
+let locations = [];
+
+export function setLocations(data) {
+    locations = data;
+}
+
 
 let activeMarker = null;
 
@@ -18,9 +24,9 @@ let activeMarker = null;
 
 const destination = {
 
-    lat: 10.3157,
+    lat: 10.3297,
 
-    lng: 123.8854
+    lng: 123.9064
 
 };
 
@@ -47,31 +53,65 @@ const pinIcon = L.divIcon({
     iconAnchor: [20, 50]
 
 });
+// ==============================
+// School / IT Park Pin
+// ==============================
+
+const schoolIcon = L.divIcon({
+
+    className: "our-school-pin",
+
+    html: `
+        <div class="school-pin-wrapper">
+
+            <div class="school-pulse"></div>
+
+            <div class="school-circle">
+                <img
+                    src="/images/earth/our-school.png"
+                    alt="Our School"
+                >
+            </div>
+
+            <div class="school-label">
+                Kredo
+            </div>
+
+        </div>
+    `,
+
+    iconSize: [60, 70],
+    iconAnchor: [30, 35],
+    popupAnchor: [0, -35]
+
+});
+
+
 
 // ==============================
 // Pin Color
 // ==============================
 
-function getPinColor(type){
+function getPinColor(section) {
 
-    switch(type){
+    switch (section) {
 
-        case "Carinderia":
-            return "#4285F4";
+        case "carinderia":
+            return "#2f5bfd";
 
-        case "Restaurant & Cafe":
-            return "#EA4335";
+        case "restaurant-cafe":
+            return "#e05237";
 
-        case "Travel":
-            return "#FBBC05";
+        case "travel":
+            return "#f5b52e";
+
+        case "other":
+            return "#5eab35";
 
         default:
-            return "#34A853";
-
+            return "#64748b";
     }
-
 }
-
 // ==============================
 // Initialize
 // ==============================
@@ -114,7 +154,26 @@ export function initializeFlatMap() {
 
     );
 
-}
+    // ==============================
+    // School Pin
+    // ==============================
+
+    L.marker(
+
+        [
+            destination.lat,
+            destination.lng
+        ],
+
+        {
+            icon: schoolIcon,
+            zIndexOffset: 1000
+        }
+
+    ).addTo(map);
+
+
+    }
 
 // ==============================
 // Show
@@ -183,31 +242,82 @@ function addPins() {
 
     activeMarker = null;
 
-    stores.forEach((store, index) => {
+    locations.forEach((location, index) => {
 
         setTimeout(() => {
+
+            // =========================
+            // Category
+            // =========================
+
+            const section =
+                location.post?.category?.section;
+
+            console.log(
+                "📍場所:",
+                location.place_name,
+                "カテゴリー:",
+                section,
+                "category:",
+                location.post?.category
+            );
+
+            const color =
+                getPinColor(section);
+            // =========================
+            // Pin Icon
+            // =========================
+
+            const locationPinIcon = L.divIcon({
+
+                className: "drop-pin",
+
+                html: `
+                    <div class="pin-wrapper">
+
+                        <div
+                            class="pin"
+                            style="background:${color};"
+                        >
+
+                            <div class="pin-center"></div>
+
+                        </div>
+
+                        <div class="pin-shadow"></div>
+
+                    </div>
+                `,
+
+                iconSize: [40, 50],
+
+                iconAnchor: [20, 50]
+
+            });
+
+            // =========================
+            // Marker
+            // =========================
 
             const marker = L.marker(
 
                 [
-
-                    store.lat,
-
-                    store.lng
-
+                    Number(location.latitude),
+                    Number(location.longitude)
                 ],
 
                 {
-
-                    icon: pinIcon
-
+                    icon: locationPinIcon
                 }
 
             ).addTo(map);
 
             markers.push(marker);
 
-            // 落下アニメーション
+            // =========================
+            // Drop Animation
+            // =========================
+
             setTimeout(() => {
 
                 const el = marker.getElement();
@@ -220,68 +330,63 @@ function addPins() {
 
             }, 30);
 
+
             // =========================
             // Hover
             // =========================
 
-    marker.on("mouseover", (event) => {
+            marker.on("mouseover", (event) => {
 
-        const el = marker.getElement();
+                const el = marker.getElement();
 
-        if (!el) return;
+                if (el) {
+                    el.classList.add("hover-pin");
+                }
 
-        if (marker !== activeMarker) {
+                showHoverCard(
+                    location,
+                    event.originalEvent.pageX,
+                    event.originalEvent.pageY
+                );
 
-            el.classList.add("hover-pin");
-
-        }
-
-        const position = map.latLngToContainerPoint(marker.getLatLng());
-
-        const rect = map.getContainer().getBoundingClientRect();
-
-        showHoverCard(
-
-        store,
-
-        event.originalEvent.pageX,
-        event.originalEvent.pageY
-
-
-    );
-
-
-    });
-
+            });
 
             marker.on("mouseout", () => {
 
                 const el = marker.getElement();
 
-                if (!el) return;
-
-                el.classList.remove("hover-pin");
+                if (el) {
+                    el.classList.remove("hover-pin");
+                }
 
                 hideHoverCard();
 
-            });
+});
 
             // =========================
             // Click
             // =========================
 
+
+
+
+
             marker.on("click", () => {
 
-                // 前に選択されていたピンを戻す
                 if (activeMarker) {
 
-                    const oldEl = activeMarker.getElement();
+                    const oldEl =
+                        activeMarker.getElement();
 
                     if (oldEl) {
 
-                        oldEl.classList.remove("active-pin");
+                        oldEl.classList.remove(
+                            "active-pin"
+                        );
 
-                        oldEl.classList.remove("hover-pin");
+                        oldEl.classList.remove(
+                            "hover-pin"
+                        );
 
                     }
 
@@ -289,23 +394,27 @@ function addPins() {
 
                 activeMarker = marker;
 
-                const el = marker.getElement();
+                const el =
+                    marker.getElement();
 
                 if (el) {
 
-                    el.classList.remove("hover-pin");
+                    el.classList.remove(
+                        "hover-pin"
+                    );
 
-                    el.classList.add("active-pin");
+                    el.classList.add(
+                        "active-pin"
+                    );
 
                 }
 
-            setSelectedStore(store);
-            showStoreCard(store);
+                console.log(
+                    "選択した場所:",
+                    location
+                );
 
             });
-
-
-
 
         }, index * 350);
 

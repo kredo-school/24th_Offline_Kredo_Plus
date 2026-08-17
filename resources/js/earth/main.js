@@ -5,7 +5,8 @@ import { gsap } from "gsap";
 import {
     initializeFlatMap,
     showFlatMap,
-    hideFlatMap
+    hideFlatMap,
+    setLocations
 } from "./flat-map";
 
 import { showStoreCard } from "./store-card";
@@ -18,6 +19,7 @@ import { createPin } from "./pin-manager";
 // Flat Map
 // ==========================================
 
+setLocations(locations);
 initializeFlatMap();
 
 // ==========================================
@@ -281,6 +283,7 @@ window.addEventListener("showGlobe", () => {
     isFlatMap = false;
 
 });
+
 
 // ==========================================
 // Export

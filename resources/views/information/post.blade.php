@@ -110,7 +110,7 @@
                     <select name="category_id" id="categorySelect" class="rc-field-input">
 
                         <option value="">
-                            まずメインカテゴリーを選んでください
+                            まずはメインカテゴリーを選んでね
                         </option>
 
                         @foreach ($categories as $category)

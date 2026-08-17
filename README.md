@@ -66,3 +66,6 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 ローカルサーバー起動
 php artisan serve --host=0.0.0.0 --port=8000
 npm run dev -- --host
+
+地球儀アニメーション表示方法
+Terminalで再度、npm run dev、npm install 、npm runを実行

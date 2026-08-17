@@ -3,16 +3,19 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Database\Seeders\CategorySeeder;
 use Database\Seeders\English\IeltsMaterialSeeder;
 use Database\Seeders\English\IeltsSlideSeeder;
 use Database\Seeders\English\IeltsTopicSeeder;
 use Database\Seeders\English\LearningContentSeeder;
+use Database\Seeders\MainCategorySeeder;
 use Database\Seeders\English\ToeicQuestionSeeder;
 use Database\Seeders\English\ToeicSlideSeeder;
 use Database\Seeders\English\TypingCategorySeeder;
 use Database\Seeders\English\TypingMaterialSeeder;
 use Database\Seeders\English\VocabularyWordSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -29,6 +32,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'password' => Hash::make('zxcvzxcv'),
         ]);
 
         $this->call(AdminSeeder::class);

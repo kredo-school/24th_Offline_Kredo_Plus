@@ -51,6 +51,13 @@
                 <span>📈</span> サービス使用状況分析
             </button>
 
+            <!-- 目安箱 -->
+            <button @click="currentTab = 'suggestions'" 
+                    :class="currentTab === 'suggestions' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-left">
+                <span>📮</span> 目安箱
+            </button>
+
         </nav>
     </aside>
 
@@ -125,21 +132,55 @@
                         <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
                             <span>🚿</span> 寮シャワー使用状況サマリー
                         </h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                             <div class="p-4 bg-sky-50 rounded-xl border border-sky-100 flex justify-between items-center">
                                 <div>
                                     <p class="text-xs font-bold text-sky-600">男子寮</p>
-                                    <p class="text-lg font-bold text-slate-800 mt-0.5">空きあり (2/4)</p>
+                                    <p class="text-lg font-bold text-slate-800 mt-0.5">{{ $maleFull ? '満室' : '空きあり' }}</p>
                                 </div>
-                                <span class="px-2.5 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">快適</span>
+                                <span class="px-2.5 py-1 {{ $maleFull ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700' }} text-xs font-bold rounded-full">
+                                    {{ $maleFull ? '混雑中' : '快適' }}
+                                </span>
                             </div>
                             <div class="p-4 bg-rose-50 rounded-xl border border-rose-100 flex justify-between items-center">
                                 <div>
                                     <p class="text-xs font-bold text-rose-600">女子寮</p>
-                                    <p class="text-lg font-bold text-slate-800 mt-0.5">使用中 (4/4)</p>
+                                    <p class="text-lg font-bold text-slate-800 mt-0.5">{{ $femaleFull ? '満室' : '空きあり' }}</p>
                                 </div>
-                                <span class="px-2.5 py-1 bg-rose-100 text-rose-700 text-xs font-bold rounded-full">混雑中</span>
+                                <span class="px-2.5 py-1 {{ $femaleFull ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700' }} text-xs font-bold rounded-full">
+                                    {{ $femaleFull ? '混雑中' : '快適' }}
+                                </span>
                             </div>
+                        </div>
+
+                        {{-- ↓ここから故障報告の情報 --}}
+                        <div class="pt-4 border-t border-slate-100">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-xs font-bold text-slate-700">⚠️ 故障中のシャワー ({{ $brokenShowers->count() }}件)</p>
+                                <a href="{{ route('admin.shower.malfunctions.index') }}" class="text-xs font-semibold text-brand-blue hover:underline">詳細・履歴を見る →</a>
+                            </div>
+
+                            @forelse ($brokenShowers as $report)
+                                <div class="flex items-center justify-between p-3 bg-amber-50 rounded-xl border border-amber-100 text-xs mb-2">
+                                    <div>
+                                        <span class="font-bold text-slate-800">
+                                            {{ $report->gender === 'male' ? '男子寮' : '女子寮' }} {{ $report->shower_number }}番
+                                        </span>
+                                        <span class="text-slate-400 ml-2">{{ $report->created_at->diffForHumans() }}</span>
+                                        @if ($report->comment)
+                                            <p class="text-slate-500 mt-1">{{ $report->comment }}</p>
+                                        @endif
+                                    </div>
+                                    <form action="{{ route('admin.shower.malfunctions.fix', [$report->gender, $report->shower_number]) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="px-3 py-1.5 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 transition">
+                                            修理完了
+                                        </button>
+                                    </form>
+                                </div>
+                            @empty
+                                <p class="text-xs text-slate-400">現在、故障中のシャワーはありません。</p>
+                            @endforelse
                         </div>
                     </div>
 
@@ -1076,6 +1117,116 @@
                 </div>
             </div>
 
+        </div>
+
+        <!-- ⑦ 目安箱の中身 -->
+        <div
+            x-show="currentTab === 'suggestions'"
+            x-cloak
+            x-data="{
+                statusFilter: 'all',
+                items: [],
+                editingNote: {},
+
+                get filteredItems() {
+                    if (this.statusFilter === 'all') return this.items;
+                    return this.items.filter(item => item.status === this.statusFilter);
+                },
+
+                async load() {
+                    const response = await fetch('{{ route('admin.suggestions.data') }}');
+                    const data = await response.json();
+                    this.items = data.items;
+                    data.items.forEach(item => { this.editingNote[item.id] = item.admin_note ?? ''; });
+                },
+
+                async updateStatus(item, newStatus) {
+                    const response = await fetch(`/admin/suggestions/${item.id}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({ status: newStatus, admin_note: this.editingNote[item.id] }),
+                    });
+
+                    if (response.ok) {
+                        item.status = newStatus;
+                        item.status_label = {{ Js::from(\App\Models\Suggestion::STATUSES) }}[newStatus];
+                    }
+                },
+            }"
+            x-init="load()"
+        >
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">目安箱</h2>
+                    <p class="text-sm text-slate-500 mt-1">留学生から寄せられたご意見・お困りごとを確認・対応します。</p>
+                </div>
+
+                <div class="flex items-center gap-1 bg-slate-200/80 p-1 rounded-xl text-xs font-bold">
+                    <button @click="statusFilter = 'all'"
+                        :class="statusFilter === 'all' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'"
+                        class="px-3 py-1.5 rounded-lg transition">すべて</button>
+                    @foreach (\App\Models\Suggestion::STATUSES as $value => $label)
+                        <button @click="statusFilter = '{{ $value }}'"
+                            :class="statusFilter === '{{ $value }}' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'"
+                            class="px-3 py-1.5 rounded-lg transition">{{ $label }}</button>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <template x-for="item in filteredItems" :key="item.id">
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[11px] font-bold rounded" x-text="item.category_label"></span>
+                                <span class="text-xs text-slate-400" x-text="item.user_name"></span>
+                                <span class="text-xs text-slate-400" x-text="item.created_at"></span>
+                            </div>
+                            <span
+                                class="px-2 py-0.5 text-[11px] font-bold rounded"
+                                :class="{
+                                    'bg-red-100 text-red-700': item.status === 'pending',
+                                    'bg-amber-100 text-amber-700': item.status === 'in_progress',
+                                    'bg-emerald-100 text-emerald-700': item.status === 'resolved',
+                                }"
+                                x-text="item.status_label"
+                            ></span>
+                        </div>
+
+                        <p class="text-sm text-slate-700 whitespace-pre-line mb-4" x-text="item.comment"></p>
+
+                        <div class="flex flex-col gap-2">
+                            <div class="flex gap-2 items-center">
+                                <select
+                                    x-model="item.status"
+                                    @change="updateStatus(item, item.status)"
+                                    class="text-xs border border-slate-200 rounded-lg px-2 py-1.5"
+                                >
+                                    @foreach (\App\Models\Suggestion::STATUSES as $value => $label)
+                                        <option value="{{ $value }}">{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <textarea
+                                x-model="editingNote[item.id]"
+                                @blur="updateStatus(item, item.status)"
+                                rows="2"
+                                placeholder="対応メモ(内部用)"
+                                class="text-xs border border-slate-200 rounded-lg px-2 py-1.5 resize-none"
+                            ></textarea>
+                        </div>
+                    </div>
+                </template>
+
+                <template x-if="filteredItems.length === 0">
+                    <p class="text-center text-slate-400 text-sm py-12">該当する投稿がありません</p>
+                </template>
+            </div>
         </div>
 
     </main>
