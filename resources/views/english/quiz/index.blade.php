@@ -25,8 +25,8 @@
         <a href="/english/quiz/spelling"
            class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-8 flex flex-col gap-4 no-underline group">
             <div class="flex items-start justify-between">
-                <div class="p-4 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem]">
-                    <span class="material-symbols-outlined text-orange-600 text-3xl">spellcheck</span>
+                <div class="w-11 h-11 shrink-0 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex items-center justify-center">
+                    <span class="material-symbols-outlined text-orange-600 text-xl">spellcheck</span>
                 </div>
                 <div class="text-right">
                     <p class="text-caption text-blue-950/90">最近のスコア</p>
@@ -52,8 +52,8 @@
         <a href="/english/quiz/vocabulary"
            class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-8 flex flex-col gap-4 no-underline group">
             <div class="flex items-start justify-between">
-                <div class="p-4 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem]">
-                    <span class="material-symbols-outlined text-orange-600 text-3xl">psychology</span>
+                <div class="w-11 h-11 shrink-0 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex items-center justify-center">
+                    <span class="material-symbols-outlined text-orange-600 text-xl">psychology</span>
                 </div>
                 <div class="text-right">
                     <p class="text-caption text-blue-950/90">最近のスコア</p>

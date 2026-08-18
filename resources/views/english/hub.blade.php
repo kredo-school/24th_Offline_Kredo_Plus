@@ -22,7 +22,7 @@
             <div class="w-full lg:w-[380px] bg-surface-container-lowest rounded-[0.75rem] shadow-md p-6 shrink-0">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-11 h-11 shrink-0 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex items-center justify-center">
-                        <span class="material-symbols-outlined text-orange-600">military_tech</span>
+                        <span class="material-symbols-outlined text-orange-600 text-xl">military_tech</span>
                     </div>
                     <div>
                         <p class="text-caption text-blue-950/90 leading-none mb-1">現在のレベル</p>
@@ -89,8 +89,8 @@
     <a href="{{ route('english.strategy.index') }}"
        class="block bg-orange-50/60 border border-orange-200 rounded-[0.75rem] p-6 mb-8 no-underline text-inherit hover:bg-orange-50 transition-colors">
         <div class="flex items-center gap-5">
-            <div class="w-14 h-14 shrink-0 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex items-center justify-center">
-                <span class="material-symbols-outlined text-orange-600 text-2xl">menu_book</span>
+            <div class="w-11 h-11 shrink-0 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex items-center justify-center">
+                <span class="material-symbols-outlined text-orange-600 text-xl">menu_book</span>
             </div>
             <div class="flex-1 min-w-0">
                 <h3 class="text-label-md font-bold text-blue-950/90 mb-1">試験概要と学習ストラテジー</h3>
@@ -152,8 +152,8 @@
     <section class="flex flex-col sm:flex-row gap-4">
         <a href="{{ route('english.progress') }}"
            class="flex-1 bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-5 flex items-center gap-4 no-underline group">
-            <div class="p-3 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem]">
-                <span class="material-symbols-outlined text-orange-600 text-2xl">trending_up</span>
+            <div class="w-11 h-11 shrink-0 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex items-center justify-center">
+                <span class="material-symbols-outlined text-orange-600 text-xl">trending_up</span>
             </div>
             <div>
                 <h3 class="text-label-md font-bold text-blue-950/90 group-hover:text-orange-600 transition-colors">学習管理</h3>
@@ -163,8 +163,8 @@
         </a>
         <a href="{{ route('english.ranking') }}"
            class="flex-1 bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-5 flex items-center gap-4 no-underline group">
-            <div class="p-3 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem]">
-                <span class="material-symbols-outlined text-orange-600 text-2xl">leaderboard</span>
+            <div class="w-11 h-11 shrink-0 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex items-center justify-center">
+                <span class="material-symbols-outlined text-orange-600 text-xl">leaderboard</span>
             </div>
             <div>
                 <h3 class="text-label-md font-bold text-blue-950/90 group-hover:text-orange-600 transition-colors">ランキング</h3>
