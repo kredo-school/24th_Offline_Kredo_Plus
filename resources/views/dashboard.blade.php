@@ -104,45 +104,6 @@
     <!-- Hero -->
     <section class="relative bg-gradient-to-b from-sky-50 via-white to-white pt-8 pb-16 overflow-hidden">
 
-        {{-- 装飾: 左右の余白にヤシの葉と南国フラワー、紙吹雪ドット（Kredoブランドカラー） --}}
-        <div aria-hidden="true" class="hidden 2xl:block absolute left-8 top-6 w-28 pointer-events-none">
-            <svg viewBox="0 0 120 260" fill="none">
-                <path d="M30 10C50 40 58 90 44 140C34 110 20 70 6 40C16 30 22 18 30 10Z" fill="#5eab35" fill-opacity="0.75" />
-                <path d="M40 4C66 26 82 66 78 118C64 92 46 58 26 30C31 20 35 12 40 4Z" fill="#7cc24a" fill-opacity="0.75" />
-                <path d="M18 20C36 34 50 66 50 104C36 84 20 58 4 40C9 32 13 26 18 20Z" fill="#8fce54" fill-opacity="0.65" />
-                <g transform="translate(30 172)">
-                    <path d="M0-15C5-15 8-8 4-2C8 2 5 9 0 9C-5 9-8 2-4-2C-8-8-5-15 0-15Z" fill="#fff" transform="rotate(0)" />
-                    <path d="M0-15C5-15 8-8 4-2C8 2 5 9 0 9C-5 9-8 2-4-2C-8-8-5-15 0-15Z" fill="#fff" transform="rotate(72)" />
-                    <path d="M0-15C5-15 8-8 4-2C8 2 5 9 0 9C-5 9-8 2-4-2C-8-8-5-15 0-15Z" fill="#fff" transform="rotate(144)" />
-                    <path d="M0-15C5-15 8-8 4-2C8 2 5 9 0 9C-5 9-8 2-4-2C-8-8-5-15 0-15Z" fill="#fff" transform="rotate(216)" />
-                    <path d="M0-15C5-15 8-8 4-2C8 2 5 9 0 9C-5 9-8 2-4-2C-8-8-5-15 0-15Z" fill="#fff" transform="rotate(288)" />
-                    <circle r="3.5" fill="#f5b52e" />
-                </g>
-                <circle cx="14" cy="220" r="4" fill="#2f5fdb" fill-opacity="0.55" />
-                <circle cx="46" cy="238" r="3" fill="#e05237" fill-opacity="0.55" />
-                <circle cx="24" cy="252" r="2.5" fill="#f5b52e" fill-opacity="0.6" />
-            </svg>
-        </div>
-
-        <div aria-hidden="true" class="hidden 2xl:block absolute right-8 top-16 w-28 pointer-events-none">
-            <svg viewBox="0 0 120 260" fill="none">
-                <path d="M90 10C70 40 62 90 76 140C86 110 100 70 114 40C104 30 98 18 90 10Z" fill="#2f5fdb" fill-opacity="0.7" />
-                <path d="M80 4C54 26 38 66 42 118C56 92 74 58 94 30C89 20 85 12 80 4Z" fill="#5b86e6" fill-opacity="0.7" />
-                <path d="M102 20C84 34 70 66 70 104C84 84 100 58 116 40C111 32 107 26 102 20Z" fill="#7ea3ef" fill-opacity="0.6" />
-                <g transform="translate(90 168)">
-                    <path d="M0-14C5-14 7-8 4-2C7 2 5 8 0 8C-5 8-7 2-4-2C-7-8-5-14 0-14Z" fill="#fff" transform="rotate(0)" />
-                    <path d="M0-14C5-14 7-8 4-2C7 2 5 8 0 8C-5 8-7 2-4-2C-7-8-5-14 0-14Z" fill="#fff" transform="rotate(72)" />
-                    <path d="M0-14C5-14 7-8 4-2C7 2 5 8 0 8C-5 8-7 2-4-2C-7-8-5-14 0-14Z" fill="#fff" transform="rotate(144)" />
-                    <path d="M0-14C5-14 7-8 4-2C7 2 5 8 0 8C-5 8-7 2-4-2C-7-8-5-14 0-14Z" fill="#fff" transform="rotate(216)" />
-                    <path d="M0-14C5-14 7-8 4-2C7 2 5 8 0 8C-5 8-7 2-4-2C-7-8-5-14 0-14Z" fill="#fff" transform="rotate(288)" />
-                    <circle r="3.2" fill="#e05237" />
-                </g>
-                <circle cx="100" cy="212" r="4" fill="#5eab35" fill-opacity="0.55" />
-                <circle cx="70" cy="232" r="3" fill="#f5b52e" fill-opacity="0.6" />
-                <circle cx="94" cy="248" r="2.5" fill="#2f5fdb" fill-opacity="0.55" />
-            </svg>
-        </div>
-
         <div class="max-w-[1140px] mx-auto px-6">
 
             <!-- Hero photo slider -->
@@ -175,55 +136,35 @@
                          alt="Cebu">
                 </template>
 
-                {{-- 白いウェーブパネル：写真を透かさず完全に塗りつぶす --}}
-                <div class="absolute inset-y-0 left-0 w-full sm:w-[64%] pointer-events-none">
-                    <svg viewBox="0 0 800 480" preserveAspectRatio="none" class="w-full h-full">
-                        <path d="M0,0 H520 C700,90 340,260 520,480 H0 Z" fill="#ffffff" />
-                    </svg>
-                </div>
+                {{-- 写真の上に文字を乗せても読みやすいよう、下〜左側だけを暗くするグラデーション（ネイビーを効かせて上品に） --}}
+                <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent pointer-events-none"></div>
+                <div aria-hidden="true" class="absolute inset-y-0 left-0 w-full sm:w-3/5 bg-gradient-to-r from-slate-950/55 via-slate-950/10 to-transparent pointer-events-none"></div>
 
                 {{-- 手書き風の挨拶 + タイトル + リード文（下部はイラスト用に余白を多めに確保） --}}
                 <div class="absolute inset-x-0 bottom-0 pl-14 sm:pl-16 pr-8 sm:pr-12 pt-8 sm:pt-12 pb-16 sm:pb-24 sm:max-w-md">
-                    <p class="flex items-center gap-1.5 -mb-1 text-amber-500 text-3xl sm:text-4xl"
-                       style="font-family:'Caveat',cursive;">
-                        Welcome back!
-                    </p>
-                    <h1 class="font-display font-extrabold text-3xl sm:text-4xl leading-tight text-slate-900">
-                        {{ Auth::user()->name }}!
-                    </h1>
-                    <p class="mt-3 text-slate-700 leading-relaxed">今日も素敵な一日を始めましょう！</p>
-                    <p class="text-slate-500 text-sm">セブでの学びと生活を、もっと充実させよう。</p>
-                </div>
-
-                {{-- 装飾: プルメリアの花 + ヤシの葉（左下、カードの角にかけて配置） --}}
-                <div aria-hidden="true" class="absolute left-3 -bottom-1 sm:left-5 sm:bottom-0 w-24 sm:w-32 pointer-events-none">
-                    <svg viewBox="0 0 140 140" fill="none">
-                        <path d="M10 138C14 100 34 74 62 64C48 84 42 112 44 138Z" fill="#5eab35" fill-opacity="0.9" />
-                        <path d="M6 130C20 96 46 78 74 74C56 90 42 112 36 138Z" fill="#7cc24a" fill-opacity="0.9" />
-                        <g transform="translate(80 90) scale(1.1)">
-                            <path d="M0-16C5-16 8-9 4-3C8 1 5 8 0 8C-5 8-8 1-4-3C-8-9-5-16 0-16Z" fill="#ffffff" />
-                            <path d="M0-16C5-16 8-9 4-3C8 1 5 8 0 8C-5 8-8 1-4-3C-8-9-5-16 0-16Z" fill="#ffffff" transform="rotate(72)" />
-                            <path d="M0-16C5-16 8-9 4-3C8 1 5 8 0 8C-5 8-8 1-4-3C-8-9-5-16 0-16Z" fill="#ffffff" transform="rotate(144)" />
-                            <path d="M0-16C5-16 8-9 4-3C8 1 5 8 0 8C-5 8-8 1-4-3C-8-9-5-16 0-16Z" fill="#ffffff" transform="rotate(216)" />
-                            <path d="M0-16C5-16 8-9 4-3C8 1 5 8 0 8C-5 8-8 1-4-3C-8-9-5-16 0-16Z" fill="#ffffff" transform="rotate(288)" />
-                            <circle r="3.5" fill="#f5b52e" />
-                        </g>
-                    </svg>
-                </div>
-
-                {{-- 装飾: 淡いバブル --}}
-                <div aria-hidden="true" class="hidden sm:flex absolute left-36 bottom-16 items-end gap-3 pointer-events-none">
-                    <span class="w-3 h-3 rounded-full bg-sky-200/70"></span>
-                    <span class="w-5 h-5 rounded-full bg-sky-100/60"></span>
+                    <div class="flex items-center gap-3">
+                        <span class="w-1 h-11 sm:h-12 rounded-full bg-gradient-to-b from-amber-300 to-orange-500 shadow-[0_0_12px_rgba(251,191,36,0.6)]"></span>
+                        <div>
+                            <p class="text-amber-300 text-2xl sm:text-3xl leading-none [text-shadow:0_2px_10px_rgba(0,0,0,0.45)]"
+                               style="font-family:'Caveat',cursive;">
+                                Welcome back!
+                            </p>
+                            <h1 class="font-display font-extrabold text-3xl sm:text-4xl leading-tight text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.45)]">
+                                {{ Auth::user()->name }}!
+                            </h1>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-white/90 leading-relaxed [text-shadow:0_1px_6px_rgba(0,0,0,0.4)]">今日も素敵な一日を始めましょう！</p>
+                    <p class="text-white/70 text-sm [text-shadow:0_1px_6px_rgba(0,0,0,0.4)]">セブでの学びと生活を、もっと充実させよう。</p>
                 </div>
 
                 <button type="button" @click="prev()"
-                        class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/70 backdrop-blur-sm flex items-center justify-center text-slate-700 hover:bg-white transition-colors shadow-soft"
+                        class="group absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md ring-1 ring-white/40 flex items-center justify-center text-white hover:bg-white/25 hover:scale-105 transition-all"
                         aria-label="前の写真">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
                 </button>
                 <button type="button" @click="next()"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/70 backdrop-blur-sm flex items-center justify-center text-slate-700 hover:bg-white transition-colors shadow-soft"
+                        class="group absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md ring-1 ring-white/40 flex items-center justify-center text-white hover:bg-white/25 hover:scale-105 transition-all"
                         aria-label="次の写真">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
                 </button>
@@ -231,8 +172,8 @@
                 <div class="absolute bottom-4 inset-x-0 flex justify-center gap-2">
                     <template x-for="(slide, index) in slides" :key="index">
                         <button type="button" @click="goTo(index)"
-                                class="h-2 rounded-full transition-all shadow-sm"
-                                :class="current === index ? 'bg-brand-blue w-6' : 'bg-slate-300/80 w-2'"
+                                class="h-1.5 rounded-full transition-all"
+                                :class="current === index ? 'bg-gradient-to-r from-amber-300 to-orange-500 w-7 shadow-[0_0_8px_rgba(251,191,36,0.7)]' : 'bg-white/50 w-1.5 hover:bg-white/70'"
                                 aria-label="スライドに移動"></button>
                     </template>
                 </div>
