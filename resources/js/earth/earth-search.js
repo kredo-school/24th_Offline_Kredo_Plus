@@ -20,42 +20,49 @@ searchButton.addEventListener("click", async () => {
 
     const data = await response.json();
 
-searchResults.innerHTML = "";
-
-if (data.length === 0) {
-
-    searchResults.innerHTML = "<p>検索結果がありません。</p>";
-
-    return;
-
-}
-
-data.forEach(place => {
-
-    const item = document.createElement("div");
-
-    item.textContent = place.display_name;
-
-    item.style.cursor = "pointer";
-    item.style.padding = "8px";
-    item.style.borderBottom = "1px solid #ddd";
-
-    item.addEventListener("click", () => {
-
-    const lat = Number(place.lat);
-    const lng = Number(place.lon);
-
-    moveMap(lat, lng);
-
-    document.getElementById("place_name").value = searchInput.value;
-    document.getElementById("address").value = place.display_name;
-
     searchResults.innerHTML = "";
 
-});
+    if (data.length === 0) {
 
+        searchResults.innerHTML = "<p>検索結果がありません。</p>";
 
-    searchResults.appendChild(item);
+        return;
 
-});
+    }
+
+    data.forEach(place => {
+
+        const item = document.createElement("div");
+
+        item.textContent = place.display_name;
+
+        item.style.cursor = "pointer";
+        item.style.padding = "8px";
+        item.style.borderBottom = "1px solid #ddd";
+
+        item.addEventListener("click", () => {
+
+            const lat = Number(place.lat);
+            const lng = Number(place.lon);
+
+            moveMap(lat, lng);
+
+            // 店舗名は画面には表示せず、hidden inputに保存
+            document.getElementById("place_name").value = searchInput.value;
+
+            // 住所
+            document.getElementById("address").value = place.display_name;
+
+            // 緯度・経度
+            document.getElementById("latitude").value = lat;
+            document.getElementById("longitude").value = lng;
+
+            searchResults.innerHTML = "";
+
+        });
+
+        searchResults.appendChild(item);
+
+    });
+
 });
