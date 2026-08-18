@@ -15,7 +15,7 @@ $clearTimeFormatted = sprintf('%d:%02d', intdiv($clearTimeSec, 60), $clearTimeSe
         <span class="mx-1">/</span>
         <a href="{{ route('english.ielts.index') }}" class="hover:text-orange-600 transition-colors no-underline">IELTS</a>
         <span class="mx-1">/</span>
-        <span class="text-on-surface font-semibold capitalize">{{ $topicMeta['name'] ?? $topic }} × {{ $score }} 結果</span>
+        <span class="text-blue-950/90 font-semibold capitalize">{{ $topicMeta['name'] ?? $topic }} × {{ $score }} 結果</span>
     </x-english.breadcrumb>
 
     <div class="max-w-2xl mx-auto space-y-6">
@@ -23,23 +23,23 @@ $clearTimeFormatted = sprintf('%d:%02d', intdiv($clearTimeSec, 60), $clearTimeSe
         {{-- 結果カード --}}
         <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8 text-center">
             <div class="text-5xl mb-3">🎉</div>
-            <h1 class="text-headline-lg font-bold text-on-surface mb-2">
+            <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">
                 {{ $topicMeta['name'] ?? ucfirst($topic) }} × IELTS {{ $score }}
             </h1>
-            <p class="text-body-md text-on-surface-variant mb-6">タイピング練習完了！</p>
+            <p class="text-body-md text-blue-950/90 mb-6">タイピング練習完了！</p>
 
             <div class="grid grid-cols-3 gap-4 mb-6">
                 <div class="text-center p-3 bg-surface-container-low rounded-[0.5rem]">
                     <p class="text-headline-lg font-black text-orange-600">{{ $record->wpm }}</p>
-                    <p class="text-caption text-on-surface-variant">WPM</p>
+                    <p class="text-caption text-blue-950/90">WPM</p>
                 </div>
                 <div class="text-center p-3 bg-surface-container-low rounded-[0.5rem]">
                     <p class="text-headline-lg font-black text-orange-600">{{ $record->accuracy }}%</p>
-                    <p class="text-caption text-on-surface-variant">正確率</p>
+                    <p class="text-caption text-blue-950/90">正確率</p>
                 </div>
                 <div class="text-center p-3 bg-surface-container-low rounded-[0.5rem]">
                     <p class="text-headline-lg font-black text-orange-600">{{ $clearTimeFormatted }}</p>
-                    <p class="text-caption text-on-surface-variant">タイム</p>
+                    <p class="text-caption text-blue-950/90">タイム</p>
                 </div>
             </div>
 
@@ -60,12 +60,12 @@ $clearTimeFormatted = sprintf('%d:%02d', intdiv($clearTimeSec, 60), $clearTimeSe
         {{-- ボタン --}}
         <div class="flex flex-col sm:flex-row gap-3">
             <a href="{{ route('english.ielts.typing', [$part, $topic, $score]) }}"
-               class="flex-1 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-on-surface hover:bg-slate-50 transition-all no-underline text-center flex items-center justify-center gap-2">
+               class="flex-1 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-blue-950/90 hover:bg-slate-50 transition-all no-underline text-center flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined text-sm">refresh</span>
                 もう一度
             </a>
             <a href="{{ route('english.ielts.topic', $part) }}"
-               class="flex-1 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-on-surface hover:bg-slate-50 transition-all no-underline text-center flex items-center justify-center gap-2">
+               class="flex-1 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-blue-950/90 hover:bg-slate-50 transition-all no-underline text-center flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined text-sm">list</span>
                 別のトピックを選ぶ
             </a>

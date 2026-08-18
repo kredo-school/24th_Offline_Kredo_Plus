@@ -8,12 +8,12 @@
     <x-english.breadcrumb>
         <a href="{{ route('english.hub') }}" class="hover:text-orange-600 transition-colors no-underline">Home</a>
         <span class="mx-1">/</span>
-        <span class="text-on-surface font-semibold">試験概要</span>
+        <span class="text-blue-950/90 font-semibold">試験概要</span>
     </x-english.breadcrumb>
 
     <div class="mb-8">
-        <h1 class="text-headline-lg font-bold text-on-surface mb-2">試験概要</h1>
-        <p class="text-body-md text-on-surface-variant">TOEIC・IELTSの試験形式・スコアの見方を確認しよう</p>
+        <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">試験概要</h1>
+        <p class="text-body-md text-blue-950/90">TOEIC・IELTSの試験形式・スコアの見方を確認しよう</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl">
@@ -24,8 +24,8 @@
                 <span class="material-symbols-outlined text-orange-600 text-4xl">record_voice_over</span>
             </div>
             <div>
-                <h2 class="text-headline-md font-bold text-on-surface mb-2">IELTS とは</h2>
-                <p class="text-body-md text-on-surface-variant">International English Language Testing System の試験形式・バンドスコア・各セクションの詳細を確認する</p>
+                <h2 class="text-headline-md font-bold text-blue-950/90 mb-2">IELTS とは</h2>
+                <p class="text-body-md text-blue-950/90">International English Language Testing System の試験形式・バンドスコア・各セクションの詳細を確認する</p>
             </div>
             <div class="flex items-center gap-1 text-orange-600 text-label-md font-semibold group-hover:gap-2 transition-all">
                 <span>詳細を見る</span>
@@ -39,8 +39,8 @@
                 <span class="material-symbols-outlined text-orange-600 text-4xl">menu_book</span>
             </div>
             <div>
-                <h2 class="text-headline-md font-bold text-on-surface mb-2">TOEIC とは</h2>
-                <p class="text-body-md text-on-surface-variant">Test of English for International Communication の試験形式・スコア換算・Part別の詳細を確認する</p>
+                <h2 class="text-headline-md font-bold text-blue-950/90 mb-2">TOEIC とは</h2>
+                <p class="text-body-md text-blue-950/90">Test of English for International Communication の試験形式・スコア換算・Part別の詳細を確認する</p>
             </div>
             <div class="flex items-center gap-1 text-orange-600 text-label-md font-semibold group-hover:gap-2 transition-all">
                 <span>詳細を見る</span>

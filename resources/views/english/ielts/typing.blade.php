@@ -40,7 +40,7 @@ window.__TYPING_CONFIG__ = {
           Loading...
         </span>
       </div>
-      <p id="current-question-text" class="text-headline-md text-on-surface font-semibold leading-snug whitespace-pre-line">
+      <p id="current-question-text" class="text-headline-md text-blue-950/90 font-semibold leading-snug whitespace-pre-line">
         Loading question...
       </p>
     </div>
@@ -61,22 +61,22 @@ window.__TYPING_CONFIG__ = {
 {{-- リザルトモーダル --}}
 <div id="result-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
   <div class="bg-surface w-full max-w-md rounded-[0.5rem] p-6 shadow-xl text-center">
-    <h2 class="text-headline-md text-on-surface mb-4 font-bold">Practice Completed! 🎉</h2>
-    <div class="text-left space-y-4 text-on-surface-variant">
+    <h2 class="text-headline-md text-blue-950/90 mb-4 font-bold">Practice Completed! 🎉</h2>
+    <div class="text-left space-y-4 text-blue-950/90">
 
       {{-- Stats --}}
       <div class="grid grid-cols-3 gap-3 text-center">
         <div class="bg-surface-container-low rounded-[0.5rem] p-3">
-          <p class="text-caption text-on-surface-variant">WPM</p>
-          <p id="result-wpm" class="text-headline-md font-black text-on-surface">-</p>
+          <p class="text-caption text-blue-950/90">WPM</p>
+          <p id="result-wpm" class="text-headline-md font-black text-blue-950/90">-</p>
         </div>
         <div class="bg-surface-container-low rounded-[0.5rem] p-3">
-          <p class="text-caption text-on-surface-variant">正答率</p>
-          <p id="result-accuracy" class="text-headline-md font-black text-on-surface">-</p>
+          <p class="text-caption text-blue-950/90">正答率</p>
+          <p id="result-accuracy" class="text-headline-md font-black text-blue-950/90">-</p>
         </div>
         <div class="bg-surface-container-low rounded-[0.5rem] p-3">
-          <p class="text-caption text-on-surface-variant">時間</p>
-          <p id="result-time" class="text-headline-md font-black text-on-surface">-</p>
+          <p class="text-caption text-blue-950/90">時間</p>
+          <p id="result-time" class="text-headline-md font-black text-blue-950/90">-</p>
         </div>
       </div>
 
@@ -88,24 +88,24 @@ window.__TYPING_CONFIG__ = {
 
       {{-- Level bar --}}
       <div class="space-y-1">
-        <div class="flex justify-between text-xs font-bold text-on-surface-variant">
+        <div class="flex justify-between text-xs font-bold text-blue-950/90">
           <span id="level-text">Level 1</span>
           <span>Next Level</span>
         </div>
         <div class="w-full bg-slate-100 rounded-[0.75rem] h-3 overflow-hidden">
           <div id="xp-bar" class="bg-[#b95827] h-full transition-all duration-1000" style="width: 0%"></div>
         </div>
-        <p id="xp-progress-text" class="text-right text-xs text-on-surface-variant">0 / 500 XP</p>
+        <p id="xp-progress-text" class="text-right text-xs text-blue-950/90">0 / 500 XP</p>
       </div>
     </div>
 
     <div class="flex gap-3 mt-6">
       <a href="{{ route('english.ielts.index') }}"
-         class="flex-1 py-3 text-center bg-surface-container-lowest rounded-[0.5rem] shadow-sm font-bold no-underline text-on-surface">
+         class="flex-1 py-3 text-center bg-surface-container-lowest rounded-[0.5rem] shadow-sm font-bold no-underline text-blue-950/90">
         IELTS メニュー
       </a>
       <button id="restart-btn"
-              class="flex-1 py-3 bg-slate-50 text-on-surface rounded-[0.5rem] font-bold shadow-sm">
+              class="flex-1 py-3 bg-slate-50 text-blue-950/90 rounded-[0.5rem] font-bold shadow-sm">
         もう一度
       </button>
       <button id="continue-btn"

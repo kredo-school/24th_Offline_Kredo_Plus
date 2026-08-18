@@ -8,17 +8,17 @@
     <x-english.breadcrumb>
         <a href="{{ route('english.hub') }}" class="hover:text-orange-600 transition-colors no-underline">Home</a>
         <span class="mx-1">/</span>
-        <span class="text-on-surface font-semibold">試験概要と学習ストラテジー</span>
+        <span class="text-blue-950/90 font-semibold">試験概要と学習ストラテジー</span>
     </x-english.breadcrumb>
 
     <div class="mb-8">
-        <h1 class="text-headline-lg font-bold text-on-surface mb-2">試験概要と学習ストラテジー</h1>
-        <p class="text-body-md text-on-surface-variant">TOEIC・IELTSの試験形式や、目標スコア別の学習プランを確認しよう</p>
+        <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">試験概要と学習ストラテジー</h1>
+        <p class="text-body-md text-blue-950/90">TOEIC・IELTSの試験形式や、目標スコア別の学習プランを確認しよう</p>
     </div>
 
     {{-- 試験概要 --}}
     <section class="mb-10">
-        <h2 class="text-headline-md font-bold text-on-surface mb-4 flex items-center gap-2">
+        <h2 class="text-headline-md font-bold text-blue-950/90 mb-4 flex items-center gap-2">
             <span class="material-symbols-outlined text-orange-600">assignment</span>
             試験概要
         </h2>
@@ -29,10 +29,10 @@
                     <span class="material-symbols-outlined text-orange-600">record_voice_over</span>
                 </div>
                 <div class="flex-1">
-                    <h3 class="font-bold text-on-surface">IELTS とは</h3>
-                    <p class="text-caption text-on-surface-variant">試験形式・バンドスコアの詳細を確認する</p>
+                    <h3 class="font-bold text-blue-950/90">IELTS とは</h3>
+                    <p class="text-caption text-blue-950/90">試験形式・バンドスコアの詳細を確認する</p>
                 </div>
-                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-orange-600 transition-colors">chevron_right</span>
+                <span class="material-symbols-outlined text-blue-950/90 group-hover:text-orange-600 transition-colors">chevron_right</span>
             </a>
 
             <a href="/english/overview/toeic"
@@ -41,23 +41,23 @@
                     <span class="material-symbols-outlined text-orange-600">menu_book</span>
                 </div>
                 <div class="flex-1">
-                    <h3 class="font-bold text-on-surface">TOEIC とは</h3>
-                    <p class="text-caption text-on-surface-variant">試験形式・スコア換算の詳細を確認する</p>
+                    <h3 class="font-bold text-blue-950/90">TOEIC とは</h3>
+                    <p class="text-caption text-blue-950/90">試験形式・スコア換算の詳細を確認する</p>
                 </div>
-                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-orange-600 transition-colors">chevron_right</span>
+                <span class="material-symbols-outlined text-blue-950/90 group-hover:text-orange-600 transition-colors">chevron_right</span>
             </a>
         </div>
     </section>
 
     {{-- 学習ストラテジー --}}
-    <h2 class="text-headline-lg font-bold text-on-surface mb-6 flex items-center gap-2">
+    <h2 class="text-headline-lg font-bold text-blue-950/90 mb-6 flex items-center gap-2">
         <span class="material-symbols-outlined text-orange-600">psychology</span>
         学習ストラテジー
     </h2>
 
     {{-- TOEIC --}}
     <section class="mb-10">
-        <h2 class="text-headline-md font-bold text-on-surface mb-4 flex items-center gap-2">
+        <h2 class="text-headline-md font-bold text-blue-950/90 mb-4 flex items-center gap-2">
             <span class="material-symbols-outlined text-orange-600">menu_book</span>
             TOEIC
         </h2>
@@ -69,10 +69,10 @@
                     <span class="material-symbols-outlined text-orange-600">lightbulb</span>
                 </div>
                 <div class="flex-1">
-                    <h3 class="font-bold text-on-surface">{{ $s['label'] }}</h3>
-                    <p class="text-caption text-on-surface-variant">{{ $s['desc'] }}</p>
+                    <h3 class="font-bold text-blue-950/90">{{ $s['label'] }}</h3>
+                    <p class="text-caption text-blue-950/90">{{ $s['desc'] }}</p>
                 </div>
-                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-orange-600 transition-colors">chevron_right</span>
+                <span class="material-symbols-outlined text-blue-950/90 group-hover:text-orange-600 transition-colors">chevron_right</span>
             </a>
             @endforeach
         </div>
@@ -80,7 +80,7 @@
 
     {{-- IELTS --}}
     <section>
-        <h2 class="text-headline-md font-bold text-on-surface mb-4 flex items-center gap-2">
+        <h2 class="text-headline-md font-bold text-blue-950/90 mb-4 flex items-center gap-2">
             <span class="material-symbols-outlined text-orange-600">record_voice_over</span>
             IELTS
         </h2>
@@ -92,10 +92,10 @@
                     <span class="material-symbols-outlined text-orange-600">lightbulb</span>
                 </div>
                 <div class="flex-1">
-                    <h3 class="font-bold text-on-surface">{{ $s['label'] }}</h3>
-                    <p class="text-caption text-on-surface-variant">{{ $s['desc'] }}</p>
+                    <h3 class="font-bold text-blue-950/90">{{ $s['label'] }}</h3>
+                    <p class="text-caption text-blue-950/90">{{ $s['desc'] }}</p>
                 </div>
-                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-orange-600 transition-colors">chevron_right</span>
+                <span class="material-symbols-outlined text-blue-950/90 group-hover:text-orange-600 transition-colors">chevron_right</span>
             </a>
             @endforeach
         </div>

@@ -8,12 +8,12 @@
     <x-english.breadcrumb>
         <a href="{{ route('english.hub') }}" class="hover:text-orange-600 transition-colors no-underline">Home</a>
         <span class="mx-1">/</span>
-        <span class="text-on-surface font-semibold">TOEIC</span>
+        <span class="text-blue-950/90 font-semibold">TOEIC</span>
     </x-english.breadcrumb>
 
     <div class="mb-8">
-        <h1 class="text-headline-lg font-bold text-on-surface mb-2">TOEIC 学習</h1>
-        <p class="text-body-md text-on-surface-variant">TOEICの各Partを学習します</p>
+        <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">TOEIC 学習</h1>
+        <p class="text-body-md text-blue-950/90">TOEICの各Partを学習します</p>
     </div>
 
     <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -26,12 +26,12 @@
                     </span>
                 </div>
                 @if(!$part['available'])
-                <span class="bg-slate-100 text-on-surface-variant text-[10px] font-bold px-2.5 py-1 rounded-[0.75rem] uppercase tracking-wider">Coming Soon</span>
+                <span class="bg-slate-100 text-blue-950/90 text-[10px] font-bold px-2.5 py-1 rounded-[0.75rem] uppercase tracking-wider">Coming Soon</span>
                 @endif
             </div>
             <div>
-                <h3 class="font-bold text-on-surface text-base mb-0.5">{{ $part['name'] }}</h3>
-                <p class="text-caption text-on-surface-variant">{{ $part['desc'] }}</p>
+                <h3 class="font-bold text-blue-950/90 text-base mb-0.5">{{ $part['name'] }}</h3>
+                <p class="text-caption text-blue-950/90">{{ $part['desc'] }}</p>
             </div>
             @if($part['available'])
             <div class="mt-auto">
@@ -44,7 +44,7 @@
             </div>
             @else
             <div class="mt-auto">
-                <button disabled class="w-full bg-slate-50 py-2.5 rounded-[0.75rem] font-label-md text-label-md text-on-surface-variant cursor-not-allowed flex items-center justify-center gap-2">
+                <button disabled class="w-full bg-slate-50 py-2.5 rounded-[0.75rem] font-label-md text-label-md text-blue-950/90 cursor-not-allowed flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined text-sm">lock</span>
                     Coming Soon
                 </button>

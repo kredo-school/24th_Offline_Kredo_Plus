@@ -10,35 +10,35 @@
         <span class="mx-1">/</span>
         <a href="{{ route('english.overview.index') }}" class="hover:text-orange-600 transition-colors no-underline">試験概要</a>
         <span class="mx-1">/</span>
-        <span class="text-on-surface font-semibold">TOEIC</span>
+        <span class="text-blue-950/90 font-semibold">TOEIC</span>
     </x-english.breadcrumb>
 
     <div class="mb-8">
-        <h1 class="text-headline-lg font-bold text-on-surface mb-2">TOEIC 概要</h1>
-        <p class="text-body-md text-on-surface-variant">Test of English for International Communication</p>
+        <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">TOEIC 概要</h1>
+        <p class="text-body-md text-blue-950/90">Test of English for International Communication</p>
     </div>
 
     <div class="max-w-4xl space-y-6">
 
         {{-- 試験概要 --}}
         <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8">
-            <h2 class="text-headline-md font-bold text-on-surface mb-4">試験の基本情報</h2>
+            <h2 class="text-headline-md font-bold text-blue-950/90 mb-4">試験の基本情報</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="p-4 bg-surface-container-low rounded-[0.5rem] text-center">
                     <p class="text-headline-lg font-black text-orange-600">200問</p>
-                    <p class="text-caption text-on-surface-variant">総問題数</p>
+                    <p class="text-caption text-blue-950/90">総問題数</p>
                 </div>
                 <div class="p-4 bg-surface-container-low rounded-[0.5rem] text-center">
                     <p class="text-headline-lg font-black text-orange-600">120分</p>
-                    <p class="text-caption text-on-surface-variant">試験時間</p>
+                    <p class="text-caption text-blue-950/90">試験時間</p>
                 </div>
                 <div class="p-4 bg-surface-container-low rounded-[0.5rem] text-center">
                     <p class="text-headline-lg font-black text-orange-600">990点</p>
-                    <p class="text-caption text-on-surface-variant">満点</p>
+                    <p class="text-caption text-blue-950/90">満点</p>
                 </div>
                 <div class="p-4 bg-surface-container-low rounded-[0.5rem] text-center">
                     <p class="text-headline-lg font-black text-orange-600">7</p>
-                    <p class="text-caption text-on-surface-variant">Part数</p>
+                    <p class="text-caption text-blue-950/90">Part数</p>
                 </div>
             </div>
         </div>
@@ -64,15 +64,15 @@
                     <div class="flex items-center gap-4">
                         <span class="bg-[#b95827] text-white text-caption font-black w-8 h-8 rounded-[0.75rem] flex items-center justify-center flex-shrink-0">{{ $p['part'] }}</span>
                         <div>
-                            <p class="font-bold text-on-surface">{{ $p['name'] }}</p>
-                            <p class="text-caption text-on-surface-variant">{{ $p['questions'] }}問 / {{ $p['time'] }}</p>
+                            <p class="font-bold text-blue-950/90">{{ $p['name'] }}</p>
+                            <p class="text-caption text-blue-950/90">{{ $p['questions'] }}問 / {{ $p['time'] }}</p>
                         </div>
                     </div>
-                    <span class="material-symbols-outlined text-on-surface-variant transition-transform"
+                    <span class="material-symbols-outlined text-blue-950/90 transition-transform"
                           :class="openPart === {{ $p['part'] }} ? 'rotate-180' : ''">expand_more</span>
                 </button>
                 <div x-show="openPart === {{ $p['part'] }}" x-transition class="px-5 pb-5 border-t border-slate-200">
-                    <p class="text-body-md text-on-surface-variant mt-4">{{ $p['desc'] }}</p>
+                    <p class="text-body-md text-blue-950/90 mt-4">{{ $p['desc'] }}</p>
                 </div>
             </div>
             @endforeach
@@ -80,41 +80,41 @@
 
         {{-- スコア換算表 --}}
         <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8">
-            <h2 class="text-headline-md font-bold text-on-surface mb-4">スコア目安と英語力</h2>
+            <h2 class="text-headline-md font-bold text-blue-950/90 mb-4">スコア目安と英語力</h2>
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
                     <thead>
                         <tr class="border-b border-slate-200">
-                            <th class="py-3 px-4 text-label-md text-on-surface-variant">スコア</th>
-                            <th class="py-3 px-4 text-label-md text-on-surface-variant">レベル</th>
-                            <th class="py-3 px-4 text-label-md text-on-surface-variant">目安</th>
+                            <th class="py-3 px-4 text-label-md text-blue-950/90">スコア</th>
+                            <th class="py-3 px-4 text-label-md text-blue-950/90">レベル</th>
+                            <th class="py-3 px-4 text-label-md text-blue-950/90">目安</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200/50 text-body-md">
                         <tr class="hover:bg-surface-container-low/50">
                             <td class="py-3 px-4 font-bold text-orange-600">900+</td>
-                            <td class="py-3 px-4 text-on-surface">上級</td>
-                            <td class="py-3 px-4 text-on-surface-variant">ネイティブと流暢に会話できるレベル</td>
+                            <td class="py-3 px-4 text-blue-950/90">上級</td>
+                            <td class="py-3 px-4 text-blue-950/90">ネイティブと流暢に会話できるレベル</td>
                         </tr>
                         <tr class="hover:bg-surface-container-low/50">
                             <td class="py-3 px-4 font-bold text-orange-600">800+</td>
-                            <td class="py-3 px-4 text-on-surface">中上級</td>
-                            <td class="py-3 px-4 text-on-surface-variant">ビジネスで英語を使える実用レベル</td>
+                            <td class="py-3 px-4 text-blue-950/90">中上級</td>
+                            <td class="py-3 px-4 text-blue-950/90">ビジネスで英語を使える実用レベル</td>
                         </tr>
                         <tr class="hover:bg-surface-container-low/50">
                             <td class="py-3 px-4 font-bold text-orange-600">700+</td>
-                            <td class="py-3 px-4 text-on-surface">中級</td>
-                            <td class="py-3 px-4 text-on-surface-variant">日常業務で英語を活用できるレベル</td>
+                            <td class="py-3 px-4 text-blue-950/90">中級</td>
+                            <td class="py-3 px-4 text-blue-950/90">日常業務で英語を活用できるレベル</td>
                         </tr>
                         <tr class="hover:bg-surface-container-low/50">
                             <td class="py-3 px-4 font-bold text-orange-600">600+</td>
-                            <td class="py-3 px-4 text-on-surface">初中級</td>
-                            <td class="py-3 px-4 text-on-surface-variant">基本的な英語コミュニケーションができる</td>
+                            <td class="py-3 px-4 text-blue-950/90">初中級</td>
+                            <td class="py-3 px-4 text-blue-950/90">基本的な英語コミュニケーションができる</td>
                         </tr>
                         <tr class="hover:bg-surface-container-low/50">
                             <td class="py-3 px-4 font-bold text-orange-600">〜500</td>
-                            <td class="py-3 px-4 text-on-surface">初級</td>
-                            <td class="py-3 px-4 text-on-surface-variant">基礎英語の習得段階</td>
+                            <td class="py-3 px-4 text-blue-950/90">初級</td>
+                            <td class="py-3 px-4 text-blue-950/90">基礎英語の習得段階</td>
                         </tr>
                     </tbody>
                 </table>

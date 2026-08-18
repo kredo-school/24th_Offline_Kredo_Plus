@@ -12,9 +12,9 @@
 
         <div class="relative flex flex-col lg:flex-row lg:items-center gap-8">
             <div class="flex-1">
-                <h1 class="text-display font-black text-on-surface mb-1">英語学習</h1>
+                <h1 class="text-display font-black text-blue-950/90 mb-1">英語学習</h1>
                 <p class="text-headline-md font-bold text-orange-600 mb-3">English Learning</p>
-                <p class="text-body-md text-on-surface-variant max-w-lg">
+                <p class="text-body-md text-blue-950/90 max-w-lg">
                     TOEIC・IELTS対策を中心に、英語力を伸ばすための学習コンテンツをご利用いただけます。
                 </p>
             </div>
@@ -25,8 +25,8 @@
                         <span class="material-symbols-outlined text-orange-600">military_tech</span>
                     </div>
                     <div>
-                        <p class="text-caption text-on-surface-variant leading-none mb-1">現在のレベル</p>
-                        <p class="text-headline-md font-black text-on-surface leading-none">Lv.{{ $levelInfo['level'] }}</p>
+                        <p class="text-caption text-blue-950/90 leading-none mb-1">現在のレベル</p>
+                        <p class="text-headline-md font-black text-blue-950/90 leading-none">Lv.{{ $levelInfo['level'] }}</p>
                     </div>
                 </div>
 
@@ -37,48 +37,48 @@
 
                 <div class="grid grid-cols-3 gap-2 mt-5 pt-4 border-t border-slate-200/30">
                     <div class="text-center">
-                        <p class="text-headline-md font-black text-on-surface">{{ number_format($levelInfo['current_xp']) }}</p>
-                        <p class="text-caption text-on-surface-variant mt-0.5">Total XP</p>
+                        <p class="text-headline-md font-black text-blue-950/90">{{ number_format($levelInfo['current_xp']) }}</p>
+                        <p class="text-caption text-blue-950/90 mt-0.5">Total XP</p>
                     </div>
                     <div class="text-center border-x border-slate-200/30">
                         {{-- 連続日数表示（コメントアウト。トータル学習日数表示に変更したため） --}}
                         {{--
-                        <p class="text-headline-md font-black text-on-surface">🔥 {{ $user->study_streak }}</p>
-                        <p class="text-caption text-on-surface-variant mt-0.5">日連続</p>
+                        <p class="text-headline-md font-black text-blue-950/90">🔥 {{ $user->study_streak }}</p>
+                        <p class="text-caption text-blue-950/90 mt-0.5">日連続</p>
                         --}}
-                        <p class="text-headline-md font-black text-on-surface">{{ $totalStudyDays }}</p>
-                        <p class="text-caption text-on-surface-variant mt-0.5">総学習日数</p>
+                        <p class="text-headline-md font-black text-blue-950/90">{{ $totalStudyDays }}</p>
+                        <p class="text-caption text-blue-950/90 mt-0.5">総学習日数</p>
                     </div>
                     <div class="text-center">
-                        <p class="text-headline-md font-black text-on-surface">{{ $overallProgress }}%</p>
-                        <p class="text-caption text-on-surface-variant mt-0.5">全体進捗率</p>
+                        <p class="text-headline-md font-black text-blue-950/90">{{ $overallProgress }}%</p>
+                        <p class="text-caption text-blue-950/90 mt-0.5">全体進捗率</p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2 mt-2 pt-4 border-t border-slate-200/30">
                     <div class="text-center">
                         @if($examDaysLeft['toeic'] === null)
-                            <p class="text-headline-md font-black text-on-surface">未設定</p>
+                            <p class="text-headline-md font-black text-blue-950/90">未設定</p>
                         @elseif($examDaysLeft['toeic'] > 0)
-                            <p class="text-headline-md font-black text-on-surface">{{ $examDaysLeft['toeic'] }}<span class="text-body-md">日</span></p>
+                            <p class="text-headline-md font-black text-blue-950/90">{{ $examDaysLeft['toeic'] }}<span class="text-body-md">日</span></p>
                         @elseif($examDaysLeft['toeic'] === 0)
-                            <p class="text-headline-md font-black text-on-surface">本日</p>
+                            <p class="text-headline-md font-black text-blue-950/90">本日</p>
                         @else
-                            <p class="text-headline-md font-black text-on-surface">終了</p>
+                            <p class="text-headline-md font-black text-blue-950/90">終了</p>
                         @endif
-                        <p class="text-caption text-on-surface-variant mt-0.5">TOEICまで</p>
+                        <p class="text-caption text-blue-950/90 mt-0.5">TOEICまで</p>
                     </div>
                     <div class="text-center border-l border-slate-200/30">
                         @if($examDaysLeft['ielts'] === null)
-                            <p class="text-headline-md font-black text-on-surface">未設定</p>
+                            <p class="text-headline-md font-black text-blue-950/90">未設定</p>
                         @elseif($examDaysLeft['ielts'] > 0)
-                            <p class="text-headline-md font-black text-on-surface">{{ $examDaysLeft['ielts'] }}<span class="text-body-md">日</span></p>
+                            <p class="text-headline-md font-black text-blue-950/90">{{ $examDaysLeft['ielts'] }}<span class="text-body-md">日</span></p>
                         @elseif($examDaysLeft['ielts'] === 0)
-                            <p class="text-headline-md font-black text-on-surface">本日</p>
+                            <p class="text-headline-md font-black text-blue-950/90">本日</p>
                         @else
-                            <p class="text-headline-md font-black text-on-surface">終了</p>
+                            <p class="text-headline-md font-black text-blue-950/90">終了</p>
                         @endif
-                        <p class="text-caption text-on-surface-variant mt-0.5">IELTSまで</p>
+                        <p class="text-caption text-blue-950/90 mt-0.5">IELTSまで</p>
                     </div>
                 </div>
             </div>
@@ -93,8 +93,8 @@
                 <span class="material-symbols-outlined text-orange-600 text-2xl">menu_book</span>
             </div>
             <div class="flex-1 min-w-0">
-                <h3 class="text-label-md font-bold text-on-surface mb-1">試験概要と学習ストラテジー</h3>
-                <p class="text-caption text-on-surface-variant">TOEIC・IELTSの試験概要や出題形式を確認し、効果的な学習の進め方を学びましょう。</p>
+                <h3 class="text-label-md font-bold text-blue-950/90 mb-1">試験概要と学習ストラテジー</h3>
+                <p class="text-caption text-blue-950/90">TOEIC・IELTSの試験概要や出題形式を確認し、効果的な学習の進め方を学びましょう。</p>
             </div>
             <span class="hidden sm:flex items-center gap-1 text-orange-600 text-label-md font-semibold shrink-0">
                 詳しく見る
@@ -105,7 +105,7 @@
 
     {{-- 機能カードグリッド --}}
     <section class="mb-10">
-        <h2 class="text-headline-md font-bold text-on-surface mb-4 flex items-center gap-2">
+        <h2 class="text-headline-md font-bold text-blue-950/90 mb-4 flex items-center gap-2">
             <span class="material-symbols-outlined text-orange-600">auto_stories</span>
             学習メニュー
         </h2>
@@ -156,10 +156,10 @@
                 <span class="material-symbols-outlined text-orange-600 text-2xl">trending_up</span>
             </div>
             <div>
-                <h3 class="text-label-md font-bold text-on-surface group-hover:text-orange-600 transition-colors">学習管理</h3>
-                <p class="text-caption text-on-surface-variant">進捗・履歴・学習日数を確認</p>
+                <h3 class="text-label-md font-bold text-blue-950/90 group-hover:text-orange-600 transition-colors">学習管理</h3>
+                <p class="text-caption text-blue-950/90">進捗・履歴・学習日数を確認</p>
             </div>
-            <span class="material-symbols-outlined text-on-surface-variant ml-auto">chevron_right</span>
+            <span class="material-symbols-outlined text-blue-950/90 ml-auto">chevron_right</span>
         </a>
         <a href="{{ route('english.ranking') }}"
            class="flex-1 bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-5 flex items-center gap-4 no-underline group">
@@ -167,10 +167,10 @@
                 <span class="material-symbols-outlined text-orange-600 text-2xl">leaderboard</span>
             </div>
             <div>
-                <h3 class="text-label-md font-bold text-on-surface group-hover:text-orange-600 transition-colors">ランキング</h3>
-                <p class="text-caption text-on-surface-variant">週間・月間・総合ランキング</p>
+                <h3 class="text-label-md font-bold text-blue-950/90 group-hover:text-orange-600 transition-colors">ランキング</h3>
+                <p class="text-caption text-blue-950/90">週間・月間・総合ランキング</p>
             </div>
-            <span class="material-symbols-outlined text-on-surface-variant ml-auto">chevron_right</span>
+            <span class="material-symbols-outlined text-blue-950/90 ml-auto">chevron_right</span>
         </a>
     </section>
 
