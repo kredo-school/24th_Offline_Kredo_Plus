@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
 
     <link
@@ -66,6 +67,23 @@
             color: rgba(36, 30, 26, 0.55);
             font-size: 14px;
             line-height: 1.7;
+        }
+
+        /* Error */
+
+        .error-box {
+            margin-bottom: 20px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: #FFF1F0;
+            border: 1px solid #F0C5C2;
+            color: #C0392B;
+            font-size: 13px;
+        }
+
+        .error-box ul {
+            margin: 0;
+            padding-left: 20px;
         }
 
         /* Card */
@@ -161,7 +179,8 @@
             overflow: hidden;
             border-radius: 20px;
             border: 1px solid #E5DED6;
-            box-shadow: inset 0 0 0 1px rgba(36, 30, 26, 0.02);
+            box-shadow:
+                inset 0 0 0 1px rgba(36, 30, 26, 0.02);
         }
 
         #map {
@@ -186,7 +205,8 @@
 
         .save-button:hover {
             transform: translateY(-1px);
-            box-shadow: 0 8px 20px rgba(181, 139, 106, 0.25);
+            box-shadow:
+                0 8px 20px rgba(181, 139, 106, 0.25);
         }
 
         /* Responsive */
@@ -222,6 +242,7 @@
 
 </head>
 
+
 <body>
 
 <div class="page">
@@ -243,38 +264,48 @@
                 店舗を検索して、地図上の位置を設定してください。
             </p>
 
-    @if ($errors->any())
-        <div style="color:#c0392b; border:1px solid #c0392b; padding:10px; margin-bottom:10px;">
-            <ul style="margin:0; padding-left:20px;">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
         </div>
-    @endif
 
-<form method="POST" action="{{ route('earth.location.store') }}">
-    @csrf
-        <div>
-            <label>店舗名</label><br>
-            <input type="text" id="place_name" name="place_name" value="{{ old('place_name') }}">
-        </div>
+
+        {{-- Validation Errors --}}
+        @if ($errors->any())
+
+            <div class="error-box">
+
+                <ul>
+
+                    @foreach ($errors->all() as $error)
+
+                        <li>
+                            {{ $error }}
+                        </li>
+
+                    @endforeach
+
+                </ul>
+
+            </div>
+
+        @endif
 
 
         {{-- Main Card --}}
         <div class="card">
 
-            <form method="POST"
+            <form
+                method="POST"
                 action="{{ route('earth.location.store') }}">
 
                 @csrf
 
 
-                {{-- 店舗名 hidden --}}
+                {{-- 店舗名 --}}
+                {{-- 画面には表示せず、検索結果から自動設定 --}}
                 <input
                     type="hidden"
                     id="place_name"
-                    name="place_name">
+                    name="place_name"
+                    value="{{ old('place_name') }}">
 
 
                 {{-- Search --}}
@@ -320,8 +351,8 @@
                         id="address"
                         name="address"
                         class="input"
-                        placeholder="住所"
-                    >
+                        value="{{ old('address') }}"
+                        placeholder="住所">
 
                 </div>
 
@@ -347,12 +378,14 @@
                 <input
                     type="hidden"
                     id="latitude"
-                    name="latitude">
+                    name="latitude"
+                    value="{{ old('latitude') }}">
 
                 <input
                     type="hidden"
                     id="longitude"
-                    name="longitude">
+                    name="longitude"
+                    value="{{ old('longitude') }}">
 
 
                 {{-- Save --}}
@@ -374,45 +407,10 @@
 </div>
 
 
-        <div>
-            <label>住所</label><br>
-            <input type="text" id="address" name="address" value="{{ old('address') }}">
-        </div>
-        <div>
-
-        <label>地図</label>
-
-        <div id="map"
-            style="height:500px; width:100%; border:1px solid #ccc;">
-        </div>
-
-        </div>
-
-        <br>
-
-        <div>
-            <label>Latitude</label><br>
-            <input type="text" id="latitude" name="latitude" readonly>
-        </div>
-
-        <br>
-
-        <div>
-            <label>Longitude</label><br>
-            <input type="text" id="longitude" name="longitude" readonly>
-        </div>
-
-        <br>
-
-        <button type="submit">
-            保存
-        </button>
-
-    </form>
-
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 @vite('resources/js/earth/earth-location-create.js')
 
 </body>
+
 </html>

@@ -62,6 +62,7 @@ class InformationController extends Controller
         }
 
         // テキスト系の入力内容を保存
+        $draft['main_category'] = $request->input('main_category');
         $draft['category_id'] = $request->input('category_id');
         $draft['title'] = $request->input('title');
         $draft['description'] = $request->input('description');
@@ -116,6 +117,7 @@ class InformationController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'main_category' => ['nullable', 'string'],
             'category_id' => ['required', 'exists:categories,id'],
             'title'       => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],

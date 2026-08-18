@@ -6,7 +6,7 @@ export default defineConfig({
         host: '0.0.0.0',
         cors: true,
         hmr: {
-            host: '10.20.60.160', // MacのIPアドレス
+            host: 'localhost', // MacのIPアドレス
         },
     },
 
