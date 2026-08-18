@@ -47,7 +47,7 @@ body.loaded .fade-up-3 { animation-delay: .32s; }
     display: flex; align-items: center; justify-content: center;
     flex-direction: column; gap: 20px;
 }
-#intro.leave { animation: curtainUp .8s cubic-bezier(.76,0,.24,1) .1s both; }
+#intro.leave { animation: curtainUp 1.1s cubic-bezier(.76,0,.24,1) .1s both; }
 @keyframes curtainUp { to { transform: translateY(-100%); } }
 
 .intro-ribbon { opacity: 0; transform-origin: 20% 55%; }
