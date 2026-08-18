@@ -270,8 +270,8 @@
                     intro.addEventListener('animationend', finish, {
                         once: true
                     });
-                    setTimeout(finish, 1200);
-                }, 1900);
+                    setTimeout(finish, 1300);
+                }, 2600);
             })();
         </script>
     @else
