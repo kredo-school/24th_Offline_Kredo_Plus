@@ -60,9 +60,16 @@ class OtherController extends Controller
         // 上部の「メインカテゴリー一覧ボタン」用。既存4つ+今後追加された分すべて
         $allMainCategories = MainCategory::allOrdered();
 
+        // URLの ?category=◯◯ でサブカテゴリーの選択状態を復元する(リロードしてもAllに戻らないようにするため)。
+        // ルート自体は増やさずクエリパラメータだけなので他のページには影響しない。
+        $initialCategory = request()->query('category');
+        if ($initialCategory && !$subCategories->contains('name', $initialCategory)) {
+            $initialCategory = null;
+        }
+
         return view(
             'information.other.index',
-            compact('posts', 'categoryColors', 'section', 'subCategories', 'allMainCategories')
+            compact('posts', 'categoryColors', 'section', 'subCategories', 'allMainCategories', 'initialCategory')
         );
     }
 }
