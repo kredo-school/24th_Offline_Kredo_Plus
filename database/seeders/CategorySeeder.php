@@ -26,7 +26,7 @@ class CategorySeeder extends Seeder
             'section' => 'other',
             'name' => 'Money Exchange',
             'sort_order' => 2,
-            'hero_image' => 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=1600&auto=format&fit=crop',
+            'hero_image' => 'https://images.unsplash.com/photo-1580519542036-c47de6196ba5?q=80&w=1600&auto=format&fit=crop',
             'description' => '安心・便利な両替サービス。留学生活のお金まわりをサポート。',
         ]);
         Category::updateOrCreate(['slug' => 'sim-card'], [

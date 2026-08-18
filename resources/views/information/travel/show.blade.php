@@ -60,7 +60,7 @@
          エリア未選択時は$section(Travelページ自体、アドミンが登録)の内容を表示 -->
     <section class="relative overflow-hidden rounded-3xl mb-0 min-h-[280px] sm:min-h-[340px] md:min-h-[380px] p-8 md:p-10 bg-cover bg-center shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]"
       style="background-image: url('{{ $currentArea->hero_image ?? $section?->hero_image ?? 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=1600&auto=format&fit=crop' }}');">
-      <div class="absolute inset-0 bg-gradient-to-r from-white/95 from-3% via-white/55 via-20% to-transparent to-35% pointer-events-none"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-white/95 from-3% via-white/60 via-25% to-transparent to-50% pointer-events-none"></div>
       <div class="relative flex flex-col lg:flex-row gap-8 w-full">
         <div class="flex-1">
           <h1 class="text-display font-black text-blue-950/90 mb-1">留学情報</h1>
