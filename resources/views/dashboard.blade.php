@@ -183,13 +183,13 @@
                 </div>
 
                 {{-- 手書き風の挨拶 + タイトル + リード文（下部はイラスト用に余白を多めに確保） --}}
-                <div class="absolute inset-x-0 bottom-0 px-8 sm:px-12 pt-8 sm:pt-12 pb-16 sm:pb-24 sm:max-w-md">
-                    <p class="flex items-center gap-1.5 -mb-1 text-amber-500 text-2xl sm:text-3xl"
+                <div class="absolute inset-x-0 bottom-0 pl-14 sm:pl-16 pr-8 sm:pr-12 pt-8 sm:pt-12 pb-16 sm:pb-24 sm:max-w-md">
+                    <p class="flex items-center gap-1.5 -mb-1 text-amber-500 text-3xl sm:text-4xl"
                        style="font-family:'Caveat',cursive;">
-                        Welcome back! <span class="text-xl sm:text-2xl">✨</span>
+                        Welcome back!
                     </p>
                     <h1 class="font-display font-extrabold text-3xl sm:text-4xl leading-tight text-slate-900">
-                        Welcome back,<br>{{ Auth::user()->name }}!
+                        {{ Auth::user()->name }}!
                     </h1>
                     <p class="mt-3 text-slate-700 leading-relaxed">今日も素敵な一日を始めましょう！</p>
                     <p class="text-slate-500 text-sm">セブでの学びと生活を、もっと充実させよう。</p>
