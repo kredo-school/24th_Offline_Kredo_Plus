@@ -27,15 +27,15 @@ $clearTimeFormatted = sprintf('%d:%02d', intdiv($clearTimeSec, 60), $clearTimeSe
             <p class="text-body-md text-blue-950/90 mb-6">タイピング完了！</p>
 
             <div class="grid grid-cols-3 gap-4 mb-6">
-                <div class="text-center p-3 bg-surface-container-low rounded-[0.5rem]">
+                <div class="text-center p-3 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.5rem]">
                     <p class="text-headline-lg font-black text-orange-600">{{ $record->wpm }}</p>
                     <p class="text-caption text-blue-950/90">WPM</p>
                 </div>
-                <div class="text-center p-3 bg-surface-container-low rounded-[0.5rem]">
+                <div class="text-center p-3 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.5rem]">
                     <p class="text-headline-lg font-black text-orange-600">{{ $record->accuracy }}%</p>
                     <p class="text-caption text-blue-950/90">正確率</p>
                 </div>
-                <div class="text-center p-3 bg-surface-container-low rounded-[0.5rem]">
+                <div class="text-center p-3 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.5rem]">
                     <p class="text-headline-lg font-black text-orange-600">{{ $clearTimeFormatted }}</p>
                     <p class="text-caption text-blue-950/90">タイム</p>
                 </div>
@@ -50,7 +50,7 @@ $clearTimeFormatted = sprintf('%d:%02d', intdiv($clearTimeSec, 60), $clearTimeSe
             </div>
             @endif
 
-            <div class="bg-orange-600/10 rounded-[0.5rem] p-4">
+            <div class="bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.5rem] p-4">
                 <p class="text-label-md font-bold text-orange-600 mb-1">獲得 XP</p>
                 <p class="text-headline-lg font-black text-orange-600">+{{ $record->xp_gained }} XP</p>
             </div>

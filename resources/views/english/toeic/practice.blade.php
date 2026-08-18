@@ -58,7 +58,7 @@
                         <button
                             @click="repeatConversationAudio()"
                             type="button"
-                            class="w-full md:w-auto px-8 py-2.5 bg-orange-600/10 text-orange-600 rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-orange-600/20 transition-all"
+                            class="w-full md:w-auto px-8 py-2.5 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:ring-orange-300 transition-all"
                         >
                             <span class="material-symbols-outlined text-sm">replay</span>
                             Repeat Audio ({{ $part == 3 ? 'Conversation' : 'Talk' }})
@@ -180,7 +180,7 @@
                         <button
                             @click="repeatAudio()"
                             type="button"
-                            class="w-full py-2.5 bg-orange-600/10 text-orange-600 rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-orange-600/20 transition-all"
+                            class="w-full py-2.5 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:ring-orange-300 transition-all"
                         >
                             <span class="material-symbols-outlined text-sm">replay</span>
                             Repeat Audio (A–D)
@@ -201,7 +201,7 @@
                         <button
                             @click="repeatAudio()"
                             type="button"
-                            class="w-full md:w-auto px-8 py-2.5 bg-orange-600/10 text-orange-600 rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-orange-600/20 transition-all"
+                            class="w-full md:w-auto px-8 py-2.5 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:ring-orange-300 transition-all"
                         >
                             <span class="material-symbols-outlined text-sm">replay</span>
                             Repeat Audio

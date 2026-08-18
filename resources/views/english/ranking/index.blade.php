@@ -32,7 +32,7 @@
         <div class="bg-surface-container-lowest rounded-[0.5rem] shadow-sm overflow-hidden mb-4">
             <table class="w-full text-left">
                 <thead>
-                    <tr class="bg-surface-container-low border-b border-slate-200">
+                    <tr class="bg-gradient-to-br from-orange-100 to-amber-50 border-b border-orange-200">
                         <th class="py-4 px-4 text-label-md text-blue-950/90 text-center w-16">順位</th>
                         <th class="py-4 px-4 text-label-md text-blue-950/90">ユーザー</th>
                         <th class="py-4 px-4 text-label-md text-blue-950/90 text-center">Level</th>
@@ -50,7 +50,7 @@
                         $xpDisplay = $period === 'total' ? $entry->total_xp : ($entry->period_xp ?? 0);
                         $isMe = $entry->id === $user->id;
                     @endphp
-                    <tr class="{{ $rank <= 3 ? 'bg-orange-600/5 font-semibold' : '' }} {{ $isMe ? 'bg-orange-600/10 ring-1 ring-inset ring-orange-600/30' : '' }} hover:bg-surface-container-low/50 transition-colors">
+                    <tr class="{{ $rank <= 3 ? 'bg-gradient-to-br from-orange-100 to-amber-50 font-semibold' : '' }} {{ $isMe ? 'bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-inset ring-orange-300' : '' }} hover:bg-surface-container-low/50 transition-colors">
                         <td class="py-4 px-4 text-center font-bold">
                             @if($rank === 1) <span class="text-xl">🥇</span>
                             @elseif($rank === 2) <span class="text-xl">🥈</span>
@@ -63,7 +63,7 @@
                             @if($isMe)<span class="ml-1 text-caption text-orange-600 font-bold">（あなた）</span>@endif
                         </td>
                         <td class="py-4 px-4 text-center">
-                            <span class="bg-orange-600/10 text-orange-600 text-caption font-bold px-2 py-0.5 rounded-[0.75rem]">Lv.{{ $level }}</span>
+                            <span class="bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 text-caption font-bold px-2 py-0.5 rounded-[0.75rem]">Lv.{{ $level }}</span>
                         </td>
                         <td class="py-4 px-4 text-center text-blue-950/90">{{ $entry->total_study_days }}日</td>
                         <td class="py-4 px-4 text-right font-bold text-orange-600">{{ number_format($xpDisplay) }} <span class="text-caption font-normal text-blue-950/90">XP</span></td>
@@ -87,18 +87,18 @@
         @endif
 
         {{-- 自分の順位（下部固定表示） --}}
-        <div class="bg-orange-600/10 border-2 border-orange-600 rounded-[0.5rem] p-4">
-            <p class="text-caption text-orange-600 font-bold mb-2">あなたの順位</p>
+        <div class="bg-gradient-to-br from-blue-50 to-sky-100 border-2 border-blue-600 rounded-[0.5rem] p-4">
+            <p class="text-caption text-blue-600 font-bold mb-2">あなたの順位</p>
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
-                    <span class="text-headline-md font-black text-orange-600">{{ $myRank }}位</span>
+                    <span class="text-headline-md font-black text-blue-600">{{ $myRank }}位</span>
                     <div>
                         <p class="font-bold text-blue-950/90">{{ $user->name }}</p>
-                        <span class="bg-orange-600/10 text-orange-600 text-caption font-bold px-2 py-0.5 rounded-[0.75rem]">Lv.{{ $levelInfo['level'] }}</span>
+                        <span class="bg-gradient-to-br from-blue-50 to-sky-100 ring-1 ring-blue-200 text-blue-600 text-caption font-bold px-2 py-0.5 rounded-[0.75rem]">Lv.{{ $levelInfo['level'] }}</span>
                     </div>
                 </div>
                 <div class="text-right">
-                    <p class="font-black text-orange-600 text-headline-md">{{ number_format($levelInfo['current_xp']) }}</p>
+                    <p class="font-black text-blue-600 text-headline-md">{{ number_format($levelInfo['current_xp']) }}</p>
                     <p class="text-caption text-blue-950/90">Total XP</p>
                 </div>
             </div>

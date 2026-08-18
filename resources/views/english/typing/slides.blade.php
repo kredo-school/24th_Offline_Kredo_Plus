@@ -34,7 +34,7 @@
     <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8 mb-6 max-w-3xl mx-auto">
         @if($slide)
         <div class="flex items-center gap-2 mb-6">
-            <span class="bg-orange-600/10 text-orange-600 text-caption font-bold px-3 py-1 rounded-[0.75rem] uppercase tracking-wider">
+            <span class="bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 text-caption font-bold px-3 py-1 rounded-[0.75rem] uppercase tracking-wider">
                 {{ $slide->slide_type }}
             </span>
             <h2 class="text-headline-md font-bold text-blue-950/90">{{ $slide->title }}</h2>

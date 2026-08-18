@@ -21,7 +21,7 @@
         <a href="/english/ielts/speaking/{{ $partNum }}/topic"
            class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-6 flex flex-col gap-4 no-underline group">
             <div class="flex items-start justify-between">
-                <div class="p-3 bg-orange-600/10 rounded-[0.75rem]">
+                <div class="p-3 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem]">
                     <span class="material-symbols-outlined text-orange-600 text-2xl">{{ $p['icon'] }}</span>
                 </div>
                 @if($p['badge'])

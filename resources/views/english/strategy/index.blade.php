@@ -25,7 +25,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <a href="/english/overview/ielts"
                class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-6 flex items-center gap-4 no-underline group">
-                <div class="p-3 bg-orange-600/10 rounded-[0.75rem] flex-shrink-0">
+                <div class="p-3 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex-shrink-0">
                     <span class="material-symbols-outlined text-orange-600">record_voice_over</span>
                 </div>
                 <div class="flex-1">
@@ -37,7 +37,7 @@
 
             <a href="/english/overview/toeic"
                class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-6 flex items-center gap-4 no-underline group">
-                <div class="p-3 bg-orange-600/10 rounded-[0.75rem] flex-shrink-0">
+                <div class="p-3 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex-shrink-0">
                     <span class="material-symbols-outlined text-orange-600">menu_book</span>
                 </div>
                 <div class="flex-1">
@@ -65,7 +65,7 @@
             @foreach($toeicStrategies as $s)
             <a href="/english/strategy/{{ $s['exam'] }}/{{ $s['level'] }}"
                class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-6 flex items-center gap-4 no-underline group">
-                <div class="p-3 bg-orange-600/10 rounded-[0.75rem] flex-shrink-0">
+                <div class="p-3 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex-shrink-0">
                     <span class="material-symbols-outlined text-orange-600">lightbulb</span>
                 </div>
                 <div class="flex-1">
@@ -88,7 +88,7 @@
             @foreach($ieltsStrategies as $s)
             <a href="/english/strategy/{{ $s['exam'] }}/{{ $s['level'] }}"
                class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-6 flex items-center gap-4 no-underline group">
-                <div class="p-3 bg-orange-600/10 rounded-[0.75rem] flex-shrink-0">
+                <div class="p-3 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex-shrink-0">
                     <span class="material-symbols-outlined text-orange-600">lightbulb</span>
                 </div>
                 <div class="flex-1">

@@ -21,7 +21,7 @@ $pageTitle = isset($content)
 
     <div class="mb-8">
         <div class="flex items-center gap-3 mb-2">
-            <span class="bg-orange-600/10 text-orange-600 text-label-md font-bold px-3 py-1 rounded-[0.75rem] uppercase">{{ strtoupper($exam) }}</span>
+            <span class="bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 text-label-md font-bold px-3 py-1 rounded-[0.75rem] uppercase">{{ strtoupper($exam) }}</span>
             <span class="bg-slate-100 text-blue-950/90 text-label-md font-bold px-3 py-1 rounded-[0.75rem]">目標: {{ $level }}{{ $exam === 'toeic' ? '点' : '' }}</span>
         </div>
         <h1 class="text-headline-lg font-bold text-blue-950/90">{{ $pageTitle }}</h1>

@@ -28,7 +28,7 @@
            class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-6 flex flex-col gap-3 no-underline group">
             <div class="flex items-center justify-between">
                 <span class="text-display font-black text-orange-600">{{ $scoreVal }}</span>
-                <span class="bg-orange-600/10 text-orange-600 text-label-md font-bold px-3 py-1 rounded-[0.75rem]">{{ $s['level'] }}</span>
+                <span class="bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 text-label-md font-bold px-3 py-1 rounded-[0.75rem]">{{ $s['level'] }}</span>
             </div>
             <p class="text-body-md text-blue-950/90">{{ $s['desc'] }}</p>
             <div class="mt-auto flex items-center gap-1 text-orange-600 text-label-md font-semibold group-hover:gap-2 transition-all">

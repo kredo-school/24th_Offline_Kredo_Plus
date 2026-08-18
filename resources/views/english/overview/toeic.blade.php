@@ -8,7 +8,7 @@
     <x-english.breadcrumb>
         <a href="{{ route('english.hub') }}" class="hover:text-orange-600 transition-colors no-underline">Home</a>
         <span class="mx-1">/</span>
-        <a href="{{ route('english.overview.index') }}" class="hover:text-orange-600 transition-colors no-underline">試験概要</a>
+        <a href="{{ route('english.strategy.index') }}" class="hover:text-orange-600 transition-colors no-underline">試験概要と学習ストラテジー</a>
         <span class="mx-1">/</span>
         <span class="text-blue-950/90 font-semibold">TOEIC</span>
     </x-english.breadcrumb>
@@ -24,19 +24,19 @@
         <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8">
             <h2 class="text-headline-md font-bold text-blue-950/90 mb-4">試験の基本情報</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="p-4 bg-surface-container-low rounded-[0.5rem] text-center">
+                <div class="p-4 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.5rem] text-center">
                     <p class="text-headline-lg font-black text-orange-600">200問</p>
                     <p class="text-caption text-blue-950/90">総問題数</p>
                 </div>
-                <div class="p-4 bg-surface-container-low rounded-[0.5rem] text-center">
+                <div class="p-4 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.5rem] text-center">
                     <p class="text-headline-lg font-black text-orange-600">120分</p>
                     <p class="text-caption text-blue-950/90">試験時間</p>
                 </div>
-                <div class="p-4 bg-surface-container-low rounded-[0.5rem] text-center">
+                <div class="p-4 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.5rem] text-center">
                     <p class="text-headline-lg font-black text-orange-600">990点</p>
                     <p class="text-caption text-blue-950/90">満点</p>
                 </div>
-                <div class="p-4 bg-surface-container-low rounded-[0.5rem] text-center">
+                <div class="p-4 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.5rem] text-center">
                     <p class="text-headline-lg font-black text-orange-600">7</p>
                     <p class="text-caption text-blue-950/90">Part数</p>
                 </div>
@@ -120,6 +120,12 @@
                 </table>
             </div>
         </div>
+
+        <a href="{{ route('english.strategy.index') }}"
+           class="block py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-blue-950/90 hover:bg-slate-50 transition-all no-underline text-center flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-sm">arrow_back</span>
+            戻る
+        </a>
 
     </div>
 

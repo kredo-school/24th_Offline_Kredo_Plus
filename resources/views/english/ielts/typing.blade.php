@@ -25,18 +25,18 @@ window.__TYPING_CONFIG__ = {
 
     {{-- IELTS ヘッダー --}}
     <div class="mb-4 text-center">
-      <span class="inline-flex items-center gap-2 bg-orange-600/10 text-orange-600 text-label-md font-bold px-4 py-1.5 rounded-[0.75rem]">
+      <span class="inline-flex items-center gap-2 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 text-label-md font-bold px-4 py-1.5 rounded-[0.75rem]">
         <span class="material-symbols-outlined text-sm">record_voice_over</span>
         {{ ucfirst($topic) }} × IELTS {{ $score }}
       </span>
     </div>
 
-    <div class="mb-8 p-6 bg-surface-container-low rounded-[0.5rem] shadow-sm">
+    <div class="mb-8 p-6 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.5rem] shadow-sm">
       <div class="flex items-center justify-between mb-3">
         <p class="text-label-md text-orange-600 font-bold">
           IELTS Speaking Part {{ $part }} - {{ ucfirst($topic) }}
         </p>
-        <span id="question-progress" class="text-sm bg-orange-600/10 text-orange-600 px-3 py-1 rounded-[0.75rem] font-bold">
+        <span id="question-progress" class="text-sm bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 px-3 py-1 rounded-[0.75rem] font-bold">
           Loading...
         </span>
       </div>
@@ -66,22 +66,22 @@ window.__TYPING_CONFIG__ = {
 
       {{-- Stats --}}
       <div class="grid grid-cols-3 gap-3 text-center">
-        <div class="bg-surface-container-low rounded-[0.5rem] p-3">
+        <div class="bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.5rem] p-3">
           <p class="text-caption text-blue-950/90">WPM</p>
           <p id="result-wpm" class="text-headline-md font-black text-blue-950/90">-</p>
         </div>
-        <div class="bg-surface-container-low rounded-[0.5rem] p-3">
+        <div class="bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.5rem] p-3">
           <p class="text-caption text-blue-950/90">正答率</p>
           <p id="result-accuracy" class="text-headline-md font-black text-blue-950/90">-</p>
         </div>
-        <div class="bg-surface-container-low rounded-[0.5rem] p-3">
+        <div class="bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.5rem] p-3">
           <p class="text-caption text-blue-950/90">時間</p>
           <p id="result-time" class="text-headline-md font-black text-blue-950/90">-</p>
         </div>
       </div>
 
       {{-- XP --}}
-      <div class="text-center py-4 bg-orange-600/10 rounded-[0.5rem]">
+      <div class="text-center py-4 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.5rem]">
         <p class="text-sm text-orange-600 font-bold">XP GAINED</p>
         <p id="gained-xp-text" class="text-4xl font-black text-orange-600">Calculating...</p>
       </div>

@@ -266,7 +266,7 @@ $sectionLabels = [
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
                     <thead>
-                        <tr class="bg-surface-container-low border-b border-slate-200">
+                        <tr class="bg-gradient-to-br from-orange-100 to-amber-50 border-b border-orange-200">
                             <th class="py-3 px-6 text-label-md text-blue-950/90">種別</th>
                             <th class="py-3 px-6 text-label-md text-blue-950/90">日付</th>
                             <th class="py-3 px-6 text-label-md text-blue-950/90 text-right">獲得XP</th>
