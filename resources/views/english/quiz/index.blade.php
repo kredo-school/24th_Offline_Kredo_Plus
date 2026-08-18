@@ -11,9 +11,12 @@
         <span class="text-blue-950/90 font-semibold">クイズ</span>
     </x-english.breadcrumb>
 
-    <div class="mb-8">
-        <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">クイズ</h1>
-        <p class="text-body-md text-blue-950/90">スペルや語彙の力をクイズで試そう</p>
+    <div class="mb-8 flex items-start justify-between gap-4">
+        <div>
+            <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">クイズ</h1>
+            <p class="text-body-md text-blue-950/90">スペルや語彙の力をクイズで試そう</p>
+        </div>
+        <x-english.section-switcher current="quiz" />
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl">

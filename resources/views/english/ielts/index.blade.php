@@ -11,9 +11,12 @@
         <span class="text-blue-950/90 font-semibold">IELTS</span>
     </x-english.breadcrumb>
 
-    <div class="mb-8">
-        <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">IELTS Speaking</h1>
-        <p class="text-body-md text-blue-950/90">スピーキングの各パートをタイピングで練習します</p>
+    <div class="mb-8 flex items-start justify-between gap-4">
+        <div>
+            <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">IELTS Speaking</h1>
+            <p class="text-body-md text-blue-950/90">スピーキングの各パートをタイピングで練習します</p>
+        </div>
+        <x-english.section-switcher current="ielts" />
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">

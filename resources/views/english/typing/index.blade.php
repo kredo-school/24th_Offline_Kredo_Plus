@@ -11,9 +11,12 @@
         <span class="text-blue-950/90 font-semibold">タイピング練習</span>
     </x-english.breadcrumb>
 
-    <div class="mb-8">
-        <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">タイピング練習</h1>
-        <p class="text-body-md text-blue-950/90">教材を選んでタイピングスキルを向上させよう</p>
+    <div class="mb-8 flex items-start justify-between gap-4">
+        <div>
+            <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">タイピング練習</h1>
+            <p class="text-body-md text-blue-950/90">教材を選んでタイピングスキルを向上させよう</p>
+        </div>
+        <x-english.section-switcher current="typing" />
     </div>
 
     @forelse($categories as $category)
