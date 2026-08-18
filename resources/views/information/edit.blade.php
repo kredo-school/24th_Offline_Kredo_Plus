@@ -279,39 +279,55 @@
             </div>
 
 
-            {{-- Location(投稿画面と同じ仮ボタン) --}}
+            {{-- Location --}}
             <div>
 
                 <label class="rc-field-label">
                     LOCATION
                 </label>
 
-                <!-- Carinderiaのみ表示 -->
-                <div id="carinderiaLocation" style="display:none;">
-                    <button type="button" class="rc-save-btn"
-                        style="background:#f8fafc;color:#4736F0;border:1px solid #4736F0;">
+                @if ($earthLocation)
 
-                        <i class="fa-solid fa-store"></i>
-                        <span>店舗を選択</span>
+                    {{-- 既に登録されている場所 --}}
+                    <div id="mapLocation">
 
-                    </button>
-                </div>
+                            <a href="{{ route('earth.location.edit', $earthLocation) }}"
+                                class="rc-save-btn"
+                                style="background:#f8fafc;color:#4736F0;border:1px solid #4736F0;text-decoration:none;">
 
-                <!-- Restaurant / Travel / Other -->
-                <div id="mapLocation">
+                                <i class="fa-solid fa-location-dot"></i>
 
-                    <button type="button" class="rc-save-btn"
-                        style="background:#f8fafc;color:#4736F0;border:1px solid #4736F0;">
+                                <span>
+                                    {{ $earthLocation->place_name }}
+                                </span>
 
-                        <i class="fa-solid fa-location-dot"></i>
-                        <span>場所を追加</span>
+                            </a>
 
-                    </button>
+                        </div>
 
-                </div>
+                    @else
+
+
+                    {{-- 位置情報が登録されていない場合 --}}
+                    <div id="mapLocation">
+
+                        <button type="button"
+                            class="rc-save-btn"
+                            style="background:#f8fafc;color:#4736F0;border:1px solid #4736F0;">
+
+                            <i class="fa-solid fa-location-dot"></i>
+
+                            <span>
+                                場所を追加
+                            </span>
+
+                        </button>
+
+                    </div>
+
+                @endif
 
             </div>
-
 
             {{-- Save --}}
             <div>
