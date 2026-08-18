@@ -14,7 +14,7 @@ $levelLabel = strtoupper(explode('-', $level)[0]) . ' ' . explode('-', $level)[1
         <span class="mx-1">/</span>
         <a href="{{ route('english.vocabulary.index') }}" class="hover:text-orange-600 transition-colors no-underline">英単語</a>
         <span class="mx-1">/</span>
-        <span class="text-on-surface font-semibold">語彙クイズ</span>
+        <span class="text-blue-950/90 font-semibold">語彙クイズ</span>
     </x-english.breadcrumb>
 
     <div x-data="vocabQuizApp({
@@ -25,8 +25,8 @@ $levelLabel = strtoupper(explode('-', $level)[0]) . ' ' . explode('-', $level)[1
         {{-- ヘッダー --}}
         <div class="mb-6">
             <div class="flex items-center justify-between mb-2">
-                <h1 class="text-headline-md font-bold text-on-surface">{{ $levelLabel }} 語彙クイズ</h1>
-                <span class="text-label-md text-on-surface-variant"
+                <h1 class="text-headline-md font-bold text-blue-950/90">{{ $levelLabel }} 語彙クイズ</h1>
+                <span class="text-label-md text-blue-950/90"
                       x-text="`問題 ${currentIndex + 1} / ${questions.length}`"></span>
             </div>
             <div class="w-full bg-slate-100 rounded-[0.75rem] h-2 overflow-hidden">
@@ -38,7 +38,7 @@ $levelLabel = strtoupper(explode('-', $level)[0]) . ' ' . explode('-', $level)[1
         <div x-show="!isComplete" class="max-w-2xl mx-auto">
             {{-- 問題文 --}}
             <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8 mb-6 text-center">
-                <p class="text-caption text-on-surface-variant mb-2">次の単語の意味は？</p>
+                <p class="text-caption text-blue-950/90 mb-2">次の単語の意味は？</p>
                 <p class="text-display font-black text-orange-600" x-text="current.word"></p>
             </div>
 
@@ -63,7 +63,7 @@ $levelLabel = strtoupper(explode('-', $level)[0]) . ' ' . explode('-', $level)[1
                         :disabled="selectedOption === null"
                         :class="selectedOption !== null
                             ? 'bg-[#b95827] text-white hover:opacity-90'
-                            : 'bg-slate-50 text-on-surface-variant cursor-not-allowed'"
+                            : 'bg-slate-50 text-blue-950/90 cursor-not-allowed'"
                         class="w-full py-3 rounded-[0.75rem] font-label-md text-label-md transition-all">
                     回答する
                 </button>
@@ -83,14 +83,14 @@ $levelLabel = strtoupper(explode('-', $level)[0]) . ' ' . explode('-', $level)[1
         <div x-show="isComplete" class="text-center max-w-md mx-auto">
             <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8 mb-6">
                 <div class="text-5xl mb-4">🎉</div>
-                <h2 class="text-headline-lg font-bold text-on-surface mb-2">クイズ完了！</h2>
-                <p class="text-body-md text-on-surface-variant mb-2">スコア</p>
+                <h2 class="text-headline-lg font-bold text-blue-950/90 mb-2">クイズ完了！</h2>
+                <p class="text-body-md text-blue-950/90 mb-2">スコア</p>
                 <p class="text-display font-black text-orange-600" x-text="`${score} / ${questions.length}`"></p>
                 <p class="text-body-md text-orange-600 font-bold mt-3" x-text="`+${gainedXp} XP 獲得！`"></p>
             </div>
             <div class="flex gap-3">
                 <button @click="restart()"
-                        class="flex-1 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-on-surface hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
+                        class="flex-1 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-blue-950/90 hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined text-sm">refresh</span>
                     もう一度
                 </button>

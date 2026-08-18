@@ -12,12 +12,12 @@
         <span class="mx-1">/</span>
         <a href="{{ route('english.ielts.topic', $part) }}" class="hover:text-orange-600 transition-colors no-underline">Part {{ $part }}</a>
         <span class="mx-1">/</span>
-        <span class="text-on-surface font-semibold capitalize">{{ $topic }}</span>
+        <span class="text-blue-950/90 font-semibold capitalize">{{ $topic }}</span>
     </x-english.breadcrumb>
 
     <div class="mb-8">
-        <h1 class="text-headline-lg font-bold text-on-surface mb-2">目標スコアを選択</h1>
-        <p class="text-body-md text-on-surface-variant">
+        <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">目標スコアを選択</h1>
+        <p class="text-body-md text-blue-950/90">
             <span class="font-semibold text-orange-600 capitalize">{{ $topic }}</span> × IELTS Speaking Part {{ $part }}
         </p>
     </div>
@@ -28,9 +28,9 @@
            class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-6 flex flex-col gap-3 no-underline group">
             <div class="flex items-center justify-between">
                 <span class="text-display font-black text-orange-600">{{ $scoreVal }}</span>
-                <span class="bg-orange-600/10 text-orange-600 text-label-md font-bold px-3 py-1 rounded-[0.75rem]">{{ $s['level'] }}</span>
+                <span class="bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 text-label-md font-bold px-3 py-1 rounded-[0.75rem]">{{ $s['level'] }}</span>
             </div>
-            <p class="text-body-md text-on-surface-variant">{{ $s['desc'] }}</p>
+            <p class="text-body-md text-blue-950/90">{{ $s['desc'] }}</p>
             <div class="mt-auto flex items-center gap-1 text-orange-600 text-label-md font-semibold group-hover:gap-2 transition-all">
                 <span>このスコアで学ぶ</span>
                 <span class="material-symbols-outlined text-sm">arrow_forward</span>

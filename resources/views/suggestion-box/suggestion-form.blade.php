@@ -3,8 +3,8 @@
 @section('title', 'suggestion form')
  
 @section('content')
-    <div class="bg-brand-red/10 py-12">
-        <div class="relative bg-white rounded-[24px] shadow-card p-8 mx-auto max-w-lg overflow-hidden">
+    <div class="bg-brand-red/10 min-h-screen flex items-center justify-center">
+        <div class="relative bg-white rounded-[24px] shadow-card p-8 mx-auto max-w-lg w-full overflow-hidden">
                 {{-- 上部のグラデーションライン --}}
                 <div class="absolute top-0 inset-x-0 h-1.5 kredo-bar"></div>
 

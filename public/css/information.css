@@ -418,3 +418,11 @@ textarea.rc-field-input {
     background: #dc2626;
     color: #ffffff;
 }
+
+#categorySelect {
+    color: #9ca3af;
+}
+
+#categorySelect:valid {
+    color: var(--ink);
+}

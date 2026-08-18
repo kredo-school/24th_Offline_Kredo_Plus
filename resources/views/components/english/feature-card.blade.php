@@ -17,17 +17,17 @@
         <div class="w-11 h-11 shrink-0 {{ $accent['icon'] }} rounded-[0.75rem] flex items-center justify-center">
             <span class="material-symbols-outlined text-xl">{{ $icon }}</span>
         </div>
-        <h3 class="font-headline-md text-base text-on-surface font-bold">{{ $title }}</h3>
+        <h3 class="font-headline-md text-base text-blue-950/90 font-bold">{{ $title }}</h3>
         @if($badge)
         <span class="ml-auto shrink-0 {{ $accent['badge'] }} text-[10px] font-bold px-2.5 py-1 rounded-[0.75rem] uppercase tracking-wider">{{ $badge }}</span>
         @endif
     </div>
 
-    <p class="text-caption text-on-surface-variant">{{ $description }}</p>
+    <p class="text-caption text-blue-950/90">{{ $description }}</p>
 
     @if($progress !== null)
     <div class="mt-auto pt-1">
-        <div class="flex justify-between text-caption text-on-surface-variant mb-1">
+        <div class="flex justify-between text-caption text-blue-950/90 mb-1">
             <span>進捗</span>
             <span>{{ $progress }}%</span>
         </div>

@@ -1,7 +1,7 @@
 <div x-data="showerGauge('pressure')">
 
     <div class="flex items-center gap-2 mb-2">
-        <span class="font-bold text-blue-950">水圧</span>
+        <span class="font-bold text-blue-950">水圧（水量）</span>
         <button
             type="button"
             @click="$store.showerPriority.toggle('pressure')"

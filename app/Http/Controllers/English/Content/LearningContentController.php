@@ -8,15 +8,6 @@ use App\Models\English\LearningContent;
 class LearningContentController extends Controller
 {
     /**
-     * 試験概要 メニュー (S23)
-     * GET /english/overview
-     */
-    public function overviewIndex()
-    {
-        return view('english.overview.index');
-    }
-
-    /**
      * 試験概要 詳細 (S24: IELTS / S25: TOEIC)
      * GET /english/overview/{exam}
      */
@@ -28,7 +19,7 @@ class LearningContentController extends Controller
         $view = match ($exam) {
             'ielts' => 'english.overview.ielts',
             'toeic' => 'english.overview.toeic',
-            default => 'english.overview.index',
+            default => abort(404),
         };
 
         return view($view, compact('exam', 'content'));

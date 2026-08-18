@@ -22,7 +22,7 @@ $wordsJson = $favorites->map(fn($f) => [
         <span class="mx-1">/</span>
         <a href="{{ route('english.vocabulary.index') }}" class="hover:text-orange-600 transition-colors no-underline">英単語</a>
         <span class="mx-1">/</span>
-        <span class="text-on-surface font-semibold">お気に入り</span>
+        <span class="text-blue-950/90 font-semibold">お気に入り</span>
     </x-english.breadcrumb>
 
     <div class="mb-8 flex items-center gap-3">
@@ -30,8 +30,8 @@ $wordsJson = $favorites->map(fn($f) => [
             <span class="material-symbols-outlined text-red-500 text-2xl">favorite</span>
         </div>
         <div>
-            <h1 class="text-headline-lg font-bold text-on-surface">お気に入り単語</h1>
-            <p class="text-body-md text-on-surface-variant">登録した単語をまとめて確認・管理できます</p>
+            <h1 class="text-headline-lg font-bold text-blue-950/90">お気に入り単語</h1>
+            <p class="text-body-md text-blue-950/90">登録した単語をまとめて確認・管理できます</p>
         </div>
     </div>
 
@@ -43,8 +43,8 @@ $wordsJson = $favorites->map(fn($f) => [
         {{-- 単語がない場合 --}}
         <template x-if="visibleWords.length === 0">
             <div class="text-center py-20 bg-surface-container-lowest rounded-[0.75rem] shadow-sm">
-                <span class="material-symbols-outlined text-5xl text-on-surface-variant/40 mb-4 block">favorite_border</span>
-                <p class="text-body-lg text-on-surface-variant mb-6">お気に入り単語がありません</p>
+                <span class="material-symbols-outlined text-5xl text-blue-950/90/40 mb-4 block">favorite_border</span>
+                <p class="text-body-lg text-blue-950/90 mb-6">お気に入り単語がありません</p>
                 <a href="{{ route('english.vocabulary.index') }}"
                    class="inline-flex items-center gap-2 px-6 py-3 bg-[#b95827] text-white rounded-[0.75rem] font-label-md text-label-md hover:opacity-90 transition-all no-underline">
                     <span class="material-symbols-outlined text-sm">style</span>
@@ -56,7 +56,7 @@ $wordsJson = $favorites->map(fn($f) => [
         {{-- 単語一覧 --}}
         <template x-if="visibleWords.length > 0">
             <div>
-                <p class="text-body-md text-on-surface-variant mb-4">
+                <p class="text-body-md text-blue-950/90 mb-4">
                     <span x-text="visibleWords.length"></span>語のお気に入り
                 </p>
 
@@ -67,8 +67,8 @@ $wordsJson = $favorites->map(fn($f) => [
                             {{-- 単語情報 --}}
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2 flex-wrap mb-1">
-                                    <span class="text-headline-sm font-bold text-on-surface" x-text="word.word"></span>
-                                    <span class="text-caption bg-slate-100 text-on-surface-variant px-2 py-0.5 rounded-[0.75rem]"
+                                    <span class="text-headline-sm font-bold text-blue-950/90" x-text="word.word"></span>
+                                    <span class="text-caption bg-slate-100 text-blue-950/90 px-2 py-0.5 rounded-[0.75rem]"
                                           x-text="word.levelLabel"></span>
                                     <span x-show="word.isLearned"
                                           class="text-caption bg-green-100 text-green-700 px-2 py-0.5 rounded-[0.75rem] flex items-center gap-1">
@@ -76,7 +76,7 @@ $wordsJson = $favorites->map(fn($f) => [
                                         覚えた
                                     </span>
                                 </div>
-                                <p class="text-body-md text-on-surface-variant" x-text="word.meaning"></p>
+                                <p class="text-body-md text-blue-950/90" x-text="word.meaning"></p>
                             </div>
 
                             {{-- アクションボタン --}}
@@ -92,7 +92,7 @@ $wordsJson = $favorites->map(fn($f) => [
                                 <button @click="toggleFavorite(word.id)"
                                         class="inline-flex items-center gap-1 px-4 py-2 border border-red-200 text-red-500 rounded-[0.75rem] text-label-md font-label-md hover:bg-red-50 transition-all text-sm">
                                     <span class="material-symbols-outlined text-sm"
-                                          :class="isFavorite(word.id) ? 'text-red-500' : 'text-on-surface-variant'"
+                                          :class="isFavorite(word.id) ? 'text-red-500' : 'text-blue-950/90'"
                                           style="font-variation-settings: 'FILL' 1">favorite</span>
                                     <span x-text="isFavorite(word.id) ? '解除' : '追加'"></span>
                                 </button>
@@ -104,7 +104,7 @@ $wordsJson = $favorites->map(fn($f) => [
                 {{-- フラッシュカード一覧へ戻るリンク --}}
                 <div class="mt-8 text-center">
                     <a href="{{ route('english.vocabulary.index') }}"
-                       class="inline-flex items-center gap-2 px-6 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-on-surface hover:bg-slate-50 transition-all no-underline">
+                       class="inline-flex items-center gap-2 px-6 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-blue-950/90 hover:bg-slate-50 transition-all no-underline">
                         <span class="material-symbols-outlined text-sm">arrow_back</span>
                         単語レベル一覧へ
                     </a>

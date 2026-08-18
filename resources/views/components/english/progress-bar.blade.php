@@ -4,10 +4,10 @@
     @if($label || ($current !== null && $total !== null))
     <div class="flex items-center justify-between mb-1">
         @if($label)
-        <span class="text-caption text-on-surface-variant font-semibold">{{ $label }}</span>
+        <span class="text-caption text-blue-950/90 font-semibold">{{ $label }}</span>
         @endif
         @if($current !== null && $total !== null)
-        <span class="text-caption text-on-surface-variant">{{ $current }} / {{ $total }}</span>
+        <span class="text-caption text-blue-950/90">{{ $current }} / {{ $total }}</span>
         @endif
     </div>
     @endif

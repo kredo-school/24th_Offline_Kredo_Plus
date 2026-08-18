@@ -8,12 +8,15 @@
     <x-english.breadcrumb>
         <a href="{{ route('english.hub') }}" class="hover:text-orange-600 transition-colors no-underline">Home</a>
         <span class="mx-1">/</span>
-        <span class="text-on-surface font-semibold">IELTS</span>
+        <span class="text-blue-950/90 font-semibold">IELTS</span>
     </x-english.breadcrumb>
 
-    <div class="mb-8">
-        <h1 class="text-headline-lg font-bold text-on-surface mb-2">IELTS Speaking</h1>
-        <p class="text-body-md text-on-surface-variant">スピーキングの各パートをタイピングで練習します</p>
+    <div class="mb-8 flex items-start justify-between gap-4">
+        <div>
+            <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">IELTS Speaking</h1>
+            <p class="text-body-md text-blue-950/90">スピーキングの各パートをタイピングで練習します</p>
+        </div>
+        <x-english.section-switcher current="ielts" />
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -21,16 +24,16 @@
         <a href="/english/ielts/speaking/{{ $partNum }}/topic"
            class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-6 flex flex-col gap-4 no-underline group">
             <div class="flex items-start justify-between">
-                <div class="p-3 bg-orange-600/10 rounded-[0.75rem]">
+                <div class="p-3 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem]">
                     <span class="material-symbols-outlined text-orange-600 text-2xl">{{ $p['icon'] }}</span>
                 </div>
                 @if($p['badge'])
-                <span class="bg-slate-100 text-on-surface-variant text-[10px] font-bold px-2.5 py-1 rounded-[0.75rem] uppercase tracking-wider">{{ $p['badge'] }}</span>
+                <span class="bg-slate-100 text-blue-950/90 text-[10px] font-bold px-2.5 py-1 rounded-[0.75rem] uppercase tracking-wider">{{ $p['badge'] }}</span>
                 @endif
             </div>
             <div>
-                <h3 class="text-headline-md font-bold text-on-surface mb-2">{{ $p['name'] }}</h3>
-                <p class="text-body-md text-on-surface-variant">{{ $p['desc'] }}</p>
+                <h3 class="text-headline-md font-bold text-blue-950/90 mb-2">{{ $p['name'] }}</h3>
+                <p class="text-body-md text-blue-950/90">{{ $p['desc'] }}</p>
             </div>
             <div class="mt-auto flex items-center gap-1 text-orange-600 text-label-md font-semibold group-hover:gap-2 transition-all">
                 <span>始める</span>

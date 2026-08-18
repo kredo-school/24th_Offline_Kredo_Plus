@@ -1,3 +1,4 @@
+@props(['brokenShowerNumbers' => collect()])
 {{-- 故障報告 --}}
 <div x-data="{ open: false }">
 
@@ -31,9 +32,23 @@
                 <p class="text-slate-500 text-sm font-semibold">シャワー番号</p>
                 <div class="flex items-center mt-2 mb-4 gap-1">
                     @for ($i = 1; $i <= 7; $i++)
+                        @php $isBroken = $brokenShowerNumbers->contains($i); @endphp
                         <div>
-                            <input id="defected-shower-{{$i}}" type="checkbox" name="defected_shower[]" value="{{$i}}" class="peer hidden">
-                            <label for="defected-shower-{{$i}}" class="flex rounded-full w-10 h-10 border-2 border-amber-300 text-md font-semibold text-amber-300 items-center justify-center cursor-pointer transition-transform duration-200 hover:scale-110 active:scale-95 peer-checked:bg-amber-300 peer-checked:text-white">{{$i}}</label>
+                            <input
+                                id="defected-shower-{{$i}}"
+                                type="checkbox"
+                                name="defected_shower[]"
+                                value="{{$i}}"
+                                class="peer hidden"
+                                {{ $isBroken ? 'disabled' : '' }}
+                            >
+                            <label
+                                for="defected-shower-{{$i}}"
+                                class="flex rounded-full w-10 h-10 border-2 text-md font-semibold items-center justify-center transition-transform duration-200
+                                    {{ $isBroken
+                                        ? 'border-slate-200 text-slate-300 cursor-not-allowed'
+                                        : 'border-amber-300 text-amber-300 cursor-pointer hover:scale-110 active:scale-95 peer-checked:bg-amber-300 peer-checked:text-white' }}"
+                            >{{$i}}</label>
                         </div>
                     @endfor
                 </div>

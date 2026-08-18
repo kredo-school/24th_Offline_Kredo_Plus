@@ -7,8 +7,14 @@
 @section('content')
     {{-- シャワーページにアクセスする際に性別登録のmodalが表示される（未登録の場合） --}}
     @if (session('showGenderModal'))
-        <div x-data="{ open: true }" x-show="open" x-cloak
-            class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+        <script>
+            document.addEventListener('alpine:init', () => {
+                Alpine.store('genderModal').open = true;
+            });
+        </script>
+    @endif
+    <div x-show="$store.genderModal.open" x-cloak
+    class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 px-4">
             <div class="relative bg-white rounded-[24px] shadow-card p-8 w-full max-w-sm overflow-hidden">
                 {{-- 上部のグラデーションライン --}}
                 <div class="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-400 to-brand-blue"></div>
@@ -80,7 +86,7 @@
                     </div>
 
                     <div class="mt-7 flex justify-center gap-3">
-                        <button type="button" @click="open = false"
+                        <button type="button" @click="$store.genderModal.open = false"
                                 class="text-sm font-semibold text-slate-400 px-5 py-2.5 rounded-full hover:bg-slate-100 transition-colors">
                             キャンセル
                         </button>
@@ -92,7 +98,8 @@
                 </form>
             </div>
         </div>
-    @endif
+    </div>
+    
 
     <!-- Hero -->
     <section class="relative bg-gradient-to-b from-sky-50 via-white to-white pt-8 pb-16 overflow-hidden">
@@ -176,13 +183,13 @@
                 </div>
 
                 {{-- 手書き風の挨拶 + タイトル + リード文（下部はイラスト用に余白を多めに確保） --}}
-                <div class="absolute inset-x-0 bottom-0 px-8 sm:px-12 pt-8 sm:pt-12 pb-16 sm:pb-24 sm:max-w-md">
-                    <p class="flex items-center gap-1.5 -mb-1 text-amber-500 text-2xl sm:text-3xl"
+                <div class="absolute inset-x-0 bottom-0 pl-14 sm:pl-16 pr-8 sm:pr-12 pt-8 sm:pt-12 pb-16 sm:pb-24 sm:max-w-md">
+                    <p class="flex items-center gap-1.5 -mb-1 text-amber-500 text-3xl sm:text-4xl"
                        style="font-family:'Caveat',cursive;">
-                        Welcome back! <span class="text-xl sm:text-2xl">✨</span>
+                        Welcome back!
                     </p>
                     <h1 class="font-display font-extrabold text-3xl sm:text-4xl leading-tight text-slate-900">
-                        Welcome back,<br>{{ Auth::user()->name }}!
+                        {{ Auth::user()->name }}!
                     </h1>
                     <p class="mt-3 text-slate-700 leading-relaxed">今日も素敵な一日を始めましょう！</p>
                     <p class="text-slate-500 text-sm">セブでの学びと生活を、もっと充実させよう。</p>
@@ -235,9 +242,10 @@
             <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
 
                 <!-- Shower Information -->
-                <a href="{{ route('shower.entry') }}"
-                    class="relative rounded-[24px] shadow-card hover:shadow-card-hover transition-all duration-300 p-7 overflow-hidden bg-gradient-to-b from-sky-50 to-white block"
-                >
+                @if ($user->gender_locked)
+                    <a href="{{ route('shower.entry') }}"
+                        class="group relative rounded-[24px] shadow-card hover:shadow-card-hover transition-all duration-300 p-7 overflow-hidden bg-gradient-to-b from-sky-50 to-white block"
+                    >
                     <div class="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-400 to-brand-blue"></div>
 
                     {{-- 装飾: シャワーヘッドのイラスト --}}
@@ -298,16 +306,16 @@
                     <h3 class="relative max-w-[60%] mt-1 font-bold text-lg text-slate-800">シャワー情報</h3>
 
                     @if ($showerSummary)
-                        <div class="relative mt-4 flex items-center gap-3">
+                        <div class="relative mt-6 flex items-center gap-3">
                             @if ($showerSummary['recommended_number'])
                                 <span class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand-blue text-white font-black text-4xl shadow-md shrink-0">
                                     {{ $showerSummary['recommended_number'] }}
                                 </span>
                                 <div class="flex flex-col gap-1">
-                                    <span class="text-[10px] font-bold text-slate-400 ps-1">おすすめシャワー</span>
+                                    <span class="text-[12px] font-bold text-slate-400 ps-1">おすすめシャワー</span>
                                     <div class="flex gap-1.5">
-                                        <span class="inline-block rounded-full bg-rose-100 text-rose-600 text-[11px] font-bold px-2 py-0.5">{{ $showerSummary['temperature_label'] }}</span>
-                                        <span class="inline-block rounded-full bg-sky-100 text-sky-600 text-[11px] font-bold px-2 py-0.5">{{ $showerSummary['pressure_label'] }}</span>
+                                        <span class="inline-block rounded-full bg-rose-100 text-rose-600 text-[12px] font-bold px-2 py-0.5">{{ $showerSummary['temperature_label'] }}</span>
+                                        <span class="inline-block rounded-full bg-sky-100 text-sky-600 text-[12px] font-bold px-2 py-0.5">{{ $showerSummary['pressure_label'] }}</span>
                                     </div>
                                 </div>
                             @else
@@ -317,27 +325,97 @@
 
                         <div class="relative mt-3 flex flex-wrap gap-1.5">
                             @if ($showerSummary['is_full'])
-                                <span class="inline-flex items-center gap-1 rounded-full bg-red-50 text-red-600 text-[11px] font-bold px-2.5 py-1">
+                                <span class="inline-flex items-center gap-1 rounded-full bg-red-50 text-red-600 text-[12px] font-bold px-2.5 py-1">
                                     <span class="material-symbols-outlined !text-sm">error</span>
                                     満室({{ $showerSummary['full_reported_minutes_ago'] }}分前)
                                 </span>
                             @endif
 
                             @if ($showerSummary['broken_numbers']->isNotEmpty())
-                                <span class="inline-flex items-center gap-1 rounded-full bg-amber-50 text-amber-700 text-[11px] font-bold px-2.5 py-1">
+                                <span class="inline-flex items-center gap-1 rounded-full bg-amber-50 text-amber-700 text-[12px] font-bold px-2.5 py-1">
                                     <span class="material-symbols-outlined !text-sm">build</span>
                                     {{ $showerSummary['broken_numbers']->map(fn ($n) => $n . '番')->implode('、') }}故障中
                                 </span>
                             @endif
                         </div>
-                    @else
-                        <p class="relative mt-2.5 text-sm text-slate-500 leading-relaxed">お好みの温度や水圧に合った、<br>おすすめのシャワーをご案内します。</p>
-                        <a href="{{ route('shower.entry') }}" class="relative mt-5 inline-flex items-center gap-2 text-sm font-semibold text-brand-blue bg-white border border-brand-blue/40 rounded-full px-5 py-2 hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-all duration-200 shadow-soft">
-                            詳しく見る
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
-                        </a>
                     @endif
-                </a>
+                    </a>
+                @else
+                    <a type="button" @click="$store.genderModal.open = true"
+                        class="group relative rounded-[24px] shadow-card hover:shadow-card-hover transition-all duration-300 p-7 overflow-hidden bg-gradient-to-b from-sky-50 to-white block w-full text-left"
+                    >
+                        <div class="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-400 to-brand-blue"></div>
+
+                    {{-- 装飾: シャワーヘッドのイラスト --}}
+                    <div aria-hidden="true" class="absolute -right-2 top-8 w-36 sm:w-40 pointer-events-none">
+                        <svg viewBox="0 0 160 190" fill="none">
+                            {{-- パイプ --}}
+                            <path d="M150 6c0 38-10 52-46 52" stroke="#c3cee0" stroke-width="9" stroke-linecap="round" fill="none" />
+                            <path d="M150 6c0 38-10 52-46 52" stroke="#eef2f8" stroke-width="3" stroke-linecap="round" fill="none" />
+                            {{-- シャワーヘッド --}}
+                            <g transform="translate(60 60)">
+                                <ellipse cx="0" cy="16" rx="48" ry="14" fill="#c7d2e0" />
+                                <path d="M-48 0a48 24 0 000 24a48 24 0 000-24Z" fill="#eef2f7" />
+                                <ellipse cx="0" cy="0" rx="48" ry="16" fill="#dfe6ee" />
+                                <ellipse cx="0" cy="0" rx="48" ry="16" fill="none" stroke="#c3cee0" stroke-width="2" />
+                                <g fill="#a9b9cf">
+                                    <circle cx="-26" cy="1" r="2" />
+                                    <circle cx="-9" cy="4" r="2" />
+                                    <circle cx="9" cy="4" r="2" />
+                                    <circle cx="26" cy="1" r="2" />
+                                    <circle cx="0" cy="5" r="2" />
+                                </g>
+                            </g>
+                            {{-- 水滴 --}}
+                            <g stroke="#8fbdec" stroke-width="2.5" stroke-linecap="round" opacity="0.85">
+                                <line x1="20" y1="92" x2="14" y2="112" />
+                                <line x1="40" y1="96" x2="37" y2="120" />
+                                <line x1="60" y1="98" x2="60" y2="126" />
+                                <line x1="80" y1="96" x2="83" y2="120" />
+                                <line x1="98" y1="92" x2="104" y2="112" />
+                            </g>
+                        </svg>
+                    </div>
+
+                    {{-- 装飾: 水たまりの波 --}}
+                    <div aria-hidden="true" class="absolute inset-x-0 bottom-0 h-20 pointer-events-none">
+                        <svg viewBox="0 0 400 90" preserveAspectRatio="none" class="w-full h-full">
+                            <path d="M0,55 C70,20 150,85 240,45 C310,18 360,50 400,32 L400,90 L0,90 Z" fill="#dbeafe" />
+                        </svg>
+                    </div>
+                    {{-- 装飾: 泡（バブル） --}}
+                    <div aria-hidden="true" class="absolute right-8 bottom-6 pointer-events-none">
+                        <svg width="60" height="42" viewBox="0 0 60 42" fill="none">
+                            <circle cx="10" cy="28" r="6" fill="#bfdbfe" />
+                            <circle cx="27" cy="15" r="9" fill="#dbeafe" />
+                            <circle cx="45" cy="25" r="4" fill="#bfdbfe" />
+                        </svg>
+                    </div>
+
+                    <div class="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-100 to-sky-50 ring-1 ring-sky-200 flex items-center justify-center mb-5">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2f5fdb" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 11h14"/>
+                            <path d="M6.5 11a5.5 5.5 0 0111 0"/>
+                            <path d="M4 8.5L2.5 7"/>
+                            <path d="M8 15l-.6 1.6M12 15.5v2M16 15l.6 1.6"/>
+                        </svg>
+                    </div>
+                    <p class="relative max-w-[60%] text-xs font-bold text-brand-blue tracking-widest">Shower Information</p>
+                    <h3 class="relative max-w-[60%] mt-1 font-bold text-lg text-slate-800">シャワー情報</h3>
+
+                    <p class="relative mt-2.5 text-sm text-slate-500 leading-relaxed">お好みの温度や水圧に合った、<br>おすすめのシャワーをご案内します。</p>
+                        <span class="relative mt-5 inline-flex items-center gap-2 text-sm font-semibold text-brand-blue bg-white border border-brand-blue/40 rounded-full px-5 py-2 hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-all duration-200 shadow-soft">
+                            詳しく見る
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2.2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 6l6 6-6 6"/>
+                            </svg>
+                        </span>
+                    </a>
+                    
+                @endif
+                
 
                 <!-- English Learning -->
                 <div class="relative rounded-[24px] shadow-card hover:shadow-card-hover transition-all duration-300 p-7 overflow-hidden bg-gradient-to-b from-amber-50 to-white">
@@ -484,11 +562,11 @@
         </div>
 
         <div class="relative max-w-[1140px] mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+            <div class="relative bg-white rounded-[20px] shadow-card overflow-hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 items-stretch">
 
-                <!-- Map card -->
-                <div class="relative bg-white rounded-[20px] shadow-card p-4 sm:p-5">
-                    <div class="relative h-[280px] sm:h-[320px] rounded-[14px] overflow-hidden shadow-soft">
+                    <!-- Map -->
+                    <div class="relative h-[280px] sm:h-[320px] md:h-auto">
                         <iframe
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3925.367584168285!2d123.9067527756858!3d10.329718467554015!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33a99907372b64d7%3A0x63390c58a5e55e56!2sSkyrise%204%2C%20Cebu%20City%2C%20Cebu!5e0!3m2!1sja!2sph!4v1715000000000!5m2!1sja!2sph"
                             width="100%"
@@ -499,47 +577,40 @@
                             referrerpolicy="no-referrer-when-downgrade"
                             title="School Location Map">
                         </iframe>
-
-                        <a href="https://www.google.co.jp/maps/place/CampusTop(QQEnglish)+IT+Park+Campus/@10.330136,123.9036374,16z/data=!3m1!4b1!4m6!3m5!1s0x33a9992189a343c3:0xa7758b38dbbe1750!8m2!3d10.330136!4d123.9062123!16s%2Fg%2F11c3k6h1kt?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D"
-                           target="_blank" rel="noopener"
-                           class="absolute left-3 top-3 inline-flex items-center gap-1.5 bg-white/95 backdrop-blur-sm text-slate-700 text-xs font-bold px-3.5 py-2 rounded-full shadow-soft hover:bg-white transition-colors">
-                            マップで開く
-                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Info card -->
-                <div class="relative bg-white rounded-[20px] shadow-card p-6 md:p-8 overflow-hidden flex flex-col justify-center">
-                    <div aria-hidden="true" class="absolute -right-6 -bottom-6 w-32 h-32 pointer-events-none opacity-60">
-                        <svg viewBox="0 0 120 120" fill="none">
-                            <circle cx="70" cy="70" r="42" fill="#eff6ff" />
-                            <circle cx="30" cy="90" r="14" fill="#fef3c7" />
-                        </svg>
                     </div>
 
-                    <div class="relative">
-                        <h3 class="font-display font-bold text-2xl text-slate-800">School Location</h3>
-                        <div class="kredo-bar mt-2 w-16 h-1 rounded-full"></div>
-                        <p class="mt-4 text-slate-600 leading-relaxed">
-                            Kredoのキャンパスは、ITパーク内に位置するSkyrise 4の7階にあります。周辺には多くのカフェや飲食店があり、勉強にも生活にも最適な環境です。また、KredoはQQ Englishと協業してIT×英語留学を提供しており、英語レッスンはQQ Englishの校舎で受講します。
-                        </p>
-
-                        <div class="mt-6 flex items-start gap-3">
-                            <svg class="w-6 h-6 text-brand-red shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                <circle cx="12" cy="10" r="3"></circle>
+                    <!-- Info -->
+                    <div class="relative p-6 md:p-8 overflow-hidden flex flex-col justify-center">
+                        <div aria-hidden="true" class="absolute -right-6 -bottom-6 w-32 h-32 pointer-events-none opacity-60">
+                            <svg viewBox="0 0 120 120" fill="none">
+                                <circle cx="70" cy="70" r="42" fill="#eff6ff" />
+                                <circle cx="30" cy="90" r="14" fill="#fef3c7" />
                             </svg>
-                            <span class="text-slate-700 font-medium">7th Floor, Skyrise 4, Apas, Cebu City, 6000 Cebu</span>
                         </div>
 
-                        <a href="https://www.google.co.jp/maps/place/CampusTop(QQEnglish)+IT+Park+Campus/@10.330136,123.9036374,16z/data=!3m1!4b1!4m6!3m5!1s0x33a9992189a343c3:0xa7758b38dbbe1750!8m2!3d10.330136!4d123.9062123!16s%2Fg%2F11c3k6h1kt?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener" class="mt-8 inline-flex items-center gap-2 bg-brand-blue text-white font-semibold px-8 py-3 rounded-full hover:bg-indigo-700 transition-colors shadow-soft">
-                            Googleマップで開く
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
-                        </a>
-                    </div>
-                </div>
+                        <div class="relative">
+                            <h3 class="font-display font-bold text-2xl text-slate-800">School Location</h3>
+                            <div class="kredo-bar mt-2 w-16 h-1 rounded-full"></div>
+                            <p class="mt-4 text-slate-600 leading-relaxed">
+                                Kredoのキャンパスは、ITパーク内に位置するSkyrise 4の7階にあります。周辺には多くのカフェや飲食店があり、勉強にも生活にも最適な環境です。また、KredoはQQ Englishと協業してIT×英語留学を提供しており、英語レッスンはQQ Englishの校舎で受講します。
+                            </p>
 
+                            <div class="mt-6 flex items-start gap-3">
+                                <svg class="w-6 h-6 text-brand-red shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                                <span class="text-slate-700 font-medium">7th Floor, Skyrise 4, Apas, Cebu City, 6000 Cebu</span>
+                            </div>
+
+                            <a href="https://www.google.co.jp/maps/place/CampusTop(QQEnglish)+IT+Park+Campus/@10.330136,123.9036374,16z/data=!3m1!4b1!4m6!3m5!1s0x33a9992189a343c3:0xa7758b38dbbe1750!8m2!3d10.330136!4d123.9062123!16s%2Fg%2F11c3k6h1kt?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener" class="mt-8 inline-flex items-center gap-2 bg-brand-blue text-white font-semibold px-8 py-3 rounded-full hover:bg-indigo-700 transition-colors shadow-soft">
+                                Googleマップで開く
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </section>

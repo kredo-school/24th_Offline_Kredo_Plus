@@ -83,7 +83,7 @@
             {{-- シャワー情報投稿 --}}
             <x-shower-female.shower-rating-button :broken-shower-numbers="$brokenShowerNumbers" />
             {{-- 故障報告 --}}
-            <x-shower-female.defect-report-button/>
+            <x-shower-female.defect-report-button :broken-shower-numbers="$brokenShowerNumbers" />
         </div>           
     </section>
 

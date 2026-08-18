@@ -8,23 +8,26 @@
     <x-english.breadcrumb>
         <a href="{{ route('english.hub') }}" class="hover:text-orange-600 transition-colors no-underline">Home</a>
         <span class="mx-1">/</span>
-        <span class="text-on-surface font-semibold">タイピング練習</span>
+        <span class="text-blue-950/90 font-semibold">タイピング練習</span>
     </x-english.breadcrumb>
 
-    <div class="mb-8">
-        <h1 class="text-headline-lg font-bold text-on-surface mb-2">タイピング練習</h1>
-        <p class="text-body-md text-on-surface-variant">教材を選んでタイピングスキルを向上させよう</p>
+    <div class="mb-8 flex items-start justify-between gap-4">
+        <div>
+            <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">タイピング練習</h1>
+            <p class="text-body-md text-blue-950/90">教材を選んでタイピングスキルを向上させよう</p>
+        </div>
+        <x-english.section-switcher current="typing" />
     </div>
 
     @forelse($categories as $category)
     <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-6 flex flex-col gap-4 mb-6">
         <div>
-            <h2 class="text-headline-md font-bold text-on-surface mb-1 flex items-center gap-2">
+            <h2 class="text-headline-md font-bold text-blue-950/90 mb-1 flex items-center gap-2">
                 <span class="material-symbols-outlined text-orange-600">keyboard</span>
                 {{ $category->name }}
             </h2>
-            <p class="text-caption text-on-surface-variant mb-3">{{ $category->description }}</p>
-            <div class="flex items-center gap-1 text-caption text-on-surface-variant">
+            <p class="text-caption text-blue-950/90 mb-3">{{ $category->description }}</p>
+            <div class="flex items-center gap-1 text-caption text-blue-950/90">
                 <span class="material-symbols-outlined text-sm">style</span>
                 {{ $category->materials_count }} フレーズを収録・毎回ランダムに10個出題されます
             </div>
@@ -37,14 +40,14 @@
                 練習開始
             </a>
             @else
-            <p class="text-body-md text-on-surface-variant">このカテゴリに教材はありません</p>
+            <p class="text-body-md text-blue-950/90">このカテゴリに教材はありません</p>
             @endif
         </div>
     </div>
     @empty
     <div class="text-center py-16">
-        <span class="material-symbols-outlined text-6xl text-on-surface-variant/40 mb-4 block">keyboard</span>
-        <p class="text-body-lg text-on-surface-variant">タイピング教材がまだ登録されていません</p>
+        <span class="material-symbols-outlined text-6xl text-blue-950/90/40 mb-4 block">keyboard</span>
+        <p class="text-body-lg text-blue-950/90">タイピング教材がまだ登録されていません</p>
     </div>
     @endforelse
 

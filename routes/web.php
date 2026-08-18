@@ -125,7 +125,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // ── 試験概要 ──────────────────────────────────────────────────────
         Route::prefix('overview')->name('overview.')->group(function () {
-            Route::get('/',        [LearningContentController::class, 'overviewIndex'])->name('index');
             Route::get('/{exam}',  [LearningContentController::class, 'overviewShow'])->name('show')->whereIn('exam', config('english.exam_types'));
         });
 
@@ -231,6 +230,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
     // ============================================================
 
+    //入力した後も情報を保持する
+    Route::post('/information/draft',[InformationController::class, 'saveDraft'])->name('information.draft.save');
+    
+
     // suggestion box  目安箱
     Route::get('/suggestion-box', [SuggestionBoxController::class, 'suggestion'])->name('suggestion');
     // 送信・管理
@@ -270,6 +273,17 @@ Route::post(
     '/earth/location',
     [EarthLocationController::class, 'store']
 )->name('earth.location.store');
+// Earth Location 編集
+Route::get(
+    '/earth/location/{earthLocation}/edit',
+    [EarthLocationController::class, 'edit']
+)->name('earth.location.edit');
+
+// Earth Location 更新
+Route::put(
+    '/earth/location/{earthLocation}',
+    [EarthLocationController::class, 'update']
+)->name('earth.location.update');
 
 // Admin (管理者画面)
     Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
@@ -278,7 +292,7 @@ Route::post(
                 'brokenShowers' => ShowerMalfunctionReport::currentlyBroken(),
                 'maleFull' => ShowerCapacityReport::isCurrentlyFull('male'),
                 'femaleFull' => ShowerCapacityReport::isCurrentlyFull('female'),
-            ]); 
+            ]);
         })->name('dashboard');
 
         Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
@@ -286,7 +300,7 @@ Route::post(
         // シャワー故障報告の受け取り・修理報告
         Route::get('/shower/malfunctions', [AdminShowerMalfunctionController::class, 'index'])->name('shower.malfunctions.index');
         Route::post('/shower/malfunctions/{gender}/{showerNumber}/fix', [AdminShowerMalfunctionController::class, 'fix'])->name('shower.malfunctions.fix');
-        
+
         // 目安箱受け取り
         Route::get('/suggestions/data', [AdminSuggestionController::class, 'data'])->name('suggestions.data');
         Route::patch('/suggestions/{suggestion}', [AdminSuggestionController::class, 'update'])->name('suggestions.update');
