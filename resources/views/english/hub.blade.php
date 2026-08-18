@@ -10,7 +10,7 @@
               style="background-image: url('{{ asset('images/english/hub-hero.jpg') }}');">
         <div class="absolute inset-0 bg-gradient-to-r from-white/80 from-5% via-white/25 via-40% to-transparent to-65% pointer-events-none"></div>
 
-        <div class="relative flex flex-col lg:flex-row lg:items-center gap-8">
+        <div class="relative flex flex-col lg:flex-row lg:items-start gap-8">
             <div class="flex-1">
                 <h1 class="text-display font-black text-blue-950/90 mb-1">英語学習</h1>
                 <p class="text-headline-md font-bold text-orange-600 mb-3">English Learning</p>
