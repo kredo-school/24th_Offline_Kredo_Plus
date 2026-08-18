@@ -31,12 +31,61 @@ class InformationController extends Controller
             : route('information.dynamic', $section);
     }
 
+
+    // ============================================================
+    // 場所追加前の投稿内容を一時保存
+    // ============================================================
+
+    public function saveDraft(Request $request)
+    {
+        $validated = $request->validate([
+            'category_id' => ['nullable', 'exists:categories,id'],
+            'title' => ['nullable', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'price' => ['nullable', 'numeric', 'min:0'],
+            'image' => ['nullable', 'image', 'max:5120'],
+        ]);
+
+        // すでに保存されている下書きを取得
+        $draft = session('information_draft', []);
+
+        // 画像が選択されていた場合、一時保存
+        if ($request->hasFile('image')) {
+
+            // 古い一時画像があれば削除
+            if (!empty($draft['image'])) {
+                Storage::disk('public')->delete($draft['image']);
+            }
+
+            $draft['image'] = $request->file('image')
+                ->store('drafts', 'public');
+        }
+
+        // テキスト系の入力内容を保存
+        $draft['category_id'] = $request->input('category_id');
+        $draft['title'] = $request->input('title');
+        $draft['description'] = $request->input('description');
+        $draft['price'] = $request->input('price');
+
+        session([
+            'information_draft' => $draft,
+        ]);
+
+        return response()->json([
+            'success' => true,
+        ]);
+    }
+
+
+    // ============================================================
     // 投稿画面
+    // ============================================================
+
     public function create(Request $request)
     {
         $categories = Category::all();
 
-        // メインカテゴリーの一覧(投稿フォームで「メイン→サブ」の2段階選択に使う)
+        // メインカテゴリーの一覧
         $mainCategories = MainCategory::allOrdered();
 
         $earthLocation = null;
@@ -45,27 +94,39 @@ class InformationController extends Controller
             $earthLocation = EarthLocation::find($request->earth_location_id);
         }
 
-        return view('information.post', compact(
+         // 場所追加から戻ってきた場合だけ、一時保存した投稿データを取得
+         $draft = [];
+
+         if ($request->filled('earth_location_id')) {
+               $draft = session('information_draft', []);
+         }
+         return view('information.post', compact(
             'categories',
             'mainCategories',
-            'earthLocation'
+            'earthLocation',
+            'draft'
         ));
     }
+
+
+    // ============================================================
     // 投稿保存
+    // ============================================================
+
     public function store(Request $request)
     {
         $validated = $request->validate([
-                'category_id' => ['required', 'exists:categories,id'],
-                'title'       => ['required', 'string', 'max:255'],
-                'description' => ['nullable', 'string'],
-                'price'       => ['nullable', 'numeric'],
-                'image'       => ['nullable', 'image', 'max:5120'],
-            'earth_location_id'=> ['nullable', 'exists:earth_locations,id'],
-
+            'category_id' => ['required', 'exists:categories,id'],
+            'title'       => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'price'       => ['nullable', 'numeric'],
+            'image'       => ['nullable', 'image', 'max:5120'],
+            'earth_location_id' => ['nullable', 'exists:earth_locations,id'],
         ]);
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('posts', 'public');
+            $validated['image'] = $request->file('image')
+                ->store('posts', 'public');
         }
 
         $validated['user_id'] = auth()->id();
@@ -76,7 +137,9 @@ class InformationController extends Controller
         if ($request->filled('earth_location_id')) {
             EarthLocation::where('id', $request->earth_location_id)
                 ->update([
-                    'post_id' => $post->id,
+                    'post_id' =>
+
+                     $post->id,
                 ]);
         }
 
@@ -87,6 +150,7 @@ class InformationController extends Controller
             ->to($this->sectionIndexUrl($section))
             ->with('status', '投稿しました。');
     }
+
 
     // ============================================================
     // 編集画面
@@ -103,13 +167,25 @@ class InformationController extends Controller
 
         $categories = Category::all();
 
-        // メインカテゴリーの一覧(編集フォームで「メイン→サブ」の2段階選択に使う)
+        // メインカテゴリーの一覧
         $mainCategories = MainCategory::allOrdered();
+
+        // 投稿に紐づいている位置情報を取得
+        $earthLocation = EarthLocation::where('post_id', $post->id)->first();
 
         // 投稿のカテゴリーからセクションを取得
         $section = $post->category->section ?? 'restaurant-cafe';
 
-        return view('information.edit', compact('post', 'categories', 'mainCategories', 'section'));
+        return view(
+            'information.edit',
+            compact(
+                'post',
+                'categories',
+                'mainCategories',
+                'section',
+                'earthLocation'
+            )
+        );
     }
 
 
@@ -147,6 +223,7 @@ class InformationController extends Controller
         }
 
         $post->update($validated);
+
         $section = $post->category->section ?? 'restaurant-cafe';
 
         return redirect()
@@ -162,6 +239,7 @@ class InformationController extends Controller
     public function show(Post $post)
     {
         $post->load(['user', 'category']);
+
         $section = $post->category->section ?? 'restaurant-cafe';
 
         // Travelだけ投稿詳細が専用ページ(travel.post.show)なのでそちらへ
@@ -188,7 +266,7 @@ class InformationController extends Controller
         abort_if(
             $post->user_id !== auth()->id(),
             403,
-            'この投稿を削除する権限がありません。'
+            'この投稿を編集する権限がありません。'
         );
 
         // 保存されている画像を削除

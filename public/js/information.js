@@ -81,3 +81,91 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 });
+
+// ============================================================
+// 場所追加前に投稿内容を一時保存
+// ============================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    const addLocationButton =
+        document.getElementById('addLocationButton');
+
+    if (!addLocationButton) {
+        return;
+    }
+
+    addLocationButton.addEventListener('click', async (event) => {
+
+        event.preventDefault();
+
+        const form = addLocationButton.closest('form');
+
+        if (!form) {
+            window.location.href = addLocationButton.href;
+            return;
+        }
+
+        const formData = new FormData();
+
+        const category = form.querySelector('[name="category_id"]');
+        const title = form.querySelector('[name="title"]');
+        const description = form.querySelector('[name="description"]');
+        const price = form.querySelector('[name="price"]');
+        const image = form.querySelector('[name="image"]');
+
+        if (category) {
+            formData.append('category_id', category.value);
+        }
+
+        if (title) {
+            formData.append('title', title.value);
+        }
+
+        if (description) {
+            formData.append('description', description.value);
+        }
+
+        if (price) {
+            formData.append('price', price.value);
+        }
+
+        // 画像を選択している場合だけ保存
+        if (image && image.files.length > 0) {
+            formData.append('image', image.files[0]);
+        }
+
+        const csrfToken =
+            form.querySelector('input[name="_token"]').value;
+
+        try {
+
+            const response = await fetch(
+                '/information/draft',
+                {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                    },
+                    body: formData,
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error('下書き保存に失敗しました');
+            }
+
+            // 保存成功後、位置情報画面へ移動
+            window.location.href = addLocationButton.href;
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert('入力内容の保存に失敗しました。');
+        }
+
+    });
+
+});
