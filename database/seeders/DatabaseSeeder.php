@@ -69,5 +69,10 @@ class DatabaseSeeder extends Seeder
 
         // ----- 試験概要・学習ストラテジー -----
         $this->call(LearningContentSeeder::class);
+
+        // ----- シャワーデータ -----
+        $this->call([
+            ShowerDataSeeder::class,
+        ]);
     }
 }
