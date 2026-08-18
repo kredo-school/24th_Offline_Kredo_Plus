@@ -72,7 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         mainCategorySelect.addEventListener('change', () => {
             filterSubOptions(mainCategorySelect.value);
+            subCategorySelect.style.color = subCategorySelect.value ? 'var(--ink)' : '#9ca3af';
         });
+
+        subCategorySelect.addEventListener('change', () => {
+            subCategorySelect.style.color = subCategorySelect.value ? 'var(--ink)' : '#9ca3af';
+        });
+
+        subCategorySelect.style.color = subCategorySelect.value ? 'var(--ink)' : '#9ca3af';
 
         // バリデーションエラーで戻ってきた時や、編集画面で最初から選ばれている場合
         if (mainCategorySelect.value) {

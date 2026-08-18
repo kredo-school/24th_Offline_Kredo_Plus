@@ -83,7 +83,7 @@
 
                     <select id="mainCategorySelect" class="rc-field-input">
 
-                        <option value="">
+                        <option value="" class="text-gray-400">
                             選択してください
                         </option>
 
@@ -107,10 +107,10 @@
                         CATEGORY
                     </label>
 
-                    <select name="category_id" id="categorySelect" class="rc-field-input">
+                    <select name="category_id" id="categorySelect" class="rc-field-input" required>
 
-                        <option value="">
-                            まずはメインカテゴリーを選んでね
+                        <option value="" class="text-gray-400">
+                            ↑まずはメインカテゴリーを選んでね
                         </option>
 
                         @foreach ($categories as $category)
