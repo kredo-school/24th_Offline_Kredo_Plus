@@ -23,8 +23,8 @@
         @foreach($parts as $part)
         <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-6 flex flex-col gap-3 {{ !$part['available'] ? 'opacity-60' : '' }}">
             <div class="flex items-start justify-between">
-                <div class="p-2 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem]">
-                    <span class="material-symbols-outlined text-orange-600">
+                <div class="w-11 h-11 shrink-0 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex items-center justify-center">
+                    <span class="material-symbols-outlined text-orange-600 text-xl">
                         {{ $part['available'] ? 'menu_book' : 'headphones' }}
                     </span>
                 </div>

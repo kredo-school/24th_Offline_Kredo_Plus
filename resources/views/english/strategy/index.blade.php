@@ -25,8 +25,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <a href="/english/overview/ielts"
                class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-6 flex items-center gap-4 no-underline group">
-                <div class="p-3 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex-shrink-0">
-                    <span class="material-symbols-outlined text-orange-600">record_voice_over</span>
+                <div class="w-11 h-11 shrink-0 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex items-center justify-center">
+                    <span class="material-symbols-outlined text-orange-600 text-xl">record_voice_over</span>
                 </div>
                 <div class="flex-1">
                     <h3 class="font-bold text-blue-950/90">IELTS とは</h3>
@@ -37,8 +37,8 @@
 
             <a href="/english/overview/toeic"
                class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-6 flex items-center gap-4 no-underline group">
-                <div class="p-3 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex-shrink-0">
-                    <span class="material-symbols-outlined text-orange-600">menu_book</span>
+                <div class="w-11 h-11 shrink-0 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex items-center justify-center">
+                    <span class="material-symbols-outlined text-orange-600 text-xl">menu_book</span>
                 </div>
                 <div class="flex-1">
                     <h3 class="font-bold text-blue-950/90">TOEIC とは</h3>
@@ -65,8 +65,8 @@
             @foreach($toeicStrategies as $s)
             <a href="/english/strategy/{{ $s['exam'] }}/{{ $s['level'] }}"
                class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-6 flex items-center gap-4 no-underline group">
-                <div class="p-3 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex-shrink-0">
-                    <span class="material-symbols-outlined text-orange-600">lightbulb</span>
+                <div class="w-11 h-11 shrink-0 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex items-center justify-center">
+                    <span class="material-symbols-outlined text-orange-600 text-xl">lightbulb</span>
                 </div>
                 <div class="flex-1">
                     <h3 class="font-bold text-blue-950/90">{{ $s['label'] }}</h3>
@@ -88,8 +88,8 @@
             @foreach($ieltsStrategies as $s)
             <a href="/english/strategy/{{ $s['exam'] }}/{{ $s['level'] }}"
                class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-6 flex items-center gap-4 no-underline group">
-                <div class="p-3 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex-shrink-0">
-                    <span class="material-symbols-outlined text-orange-600">lightbulb</span>
+                <div class="w-11 h-11 shrink-0 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem] flex items-center justify-center">
+                    <span class="material-symbols-outlined text-orange-600 text-xl">lightbulb</span>
                 </div>
                 <div class="flex-1">
                     <h3 class="font-bold text-blue-950/90">{{ $s['label'] }}</h3>
