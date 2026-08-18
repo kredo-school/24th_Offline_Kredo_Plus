@@ -35,8 +35,9 @@
   .heart-btn i { transition: transform .2s ease; }
   .heart-btn.liked i { transform: scale(1.15); }
 
-  ::-webkit-scrollbar { width: 10px; height: 10px; }
-  ::-webkit-scrollbar-thumb { background: #E3E0FF; border-radius: 8px; }
+  /* 横スライド系のスクロールバーは非表示に(色付きにはしない。他ページと同じくページ全体は標準のスクロールバーのまま) */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; }
 
   @keyframes riseIn {
     from { opacity: 0; transform: translateY(14px) scale(.98); }
@@ -72,15 +73,26 @@
         }
         return [$c->name => ['image' => $img, 'description' => $c->description]];
       });
+      // URLの?category=◯◯が指定されていれば、初回表示からそのサブカテゴリーのヒーローを出す
+      // (JSのみに頼らないことで、リロード直後の一瞬デフォルトが見えてしまうのを防ぐ)
+      $initialHeroImage = $heroImage;
+      $initialHeroTitle = $section->name ?? 'Carinderia';
+      $initialHeroDesc = $defaultHeroDescription;
+      if ($initialCategory && $subCategoryHero->has($initialCategory)) {
+        $customHero = $subCategoryHero->get($initialCategory);
+        $initialHeroImage = $customHero['image'] ?: $initialHeroImage;
+        $initialHeroDesc = $customHero['description'] ?: $initialHeroDesc;
+        $initialHeroTitle = $initialCategory;
+      }
     @endphp
     <section id="heroImg" class="relative overflow-hidden rounded-3xl mb-0 min-h-[280px] sm:min-h-[340px] md:min-h-[380px] p-8 md:p-10 bg-cover bg-center shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]"
-      style="background-image: url('{{ $heroImage }}');">
-      <div class="absolute inset-0 bg-gradient-to-r from-white/80 from-5% via-white/25 via-40% to-transparent to-65% pointer-events-none"></div>
+      style="background-image: url('{{ $initialHeroImage }}');">
+      <div class="absolute inset-0 bg-gradient-to-r from-white/95 from-3% via-white/55 via-20% to-transparent to-35% pointer-events-none"></div>
       <div class="relative flex flex-col lg:flex-row gap-8 w-full">
         <div class="flex-1">
           <h1 class="text-display font-black text-blue-950/90 mb-1">留学情報</h1>
-          <p id="heroTitle" class="text-headline-md font-bold text-brand-green mb-3">{{ $section->name ?? 'Carinderia' }}</p>
-          <p id="heroDesc" class="text-body-md text-blue-950/90 max-w-md">{{ $defaultHeroDescription }}</p>
+          <p id="heroTitle" class="text-headline-md font-bold text-brand-green mb-3 drop-shadow-[0_1px_3px_rgba(255,255,255,0.9)]">{{ $initialHeroTitle }}</p>
+          <p id="heroDesc" class="text-body-md text-blue-950/90 max-w-md">{{ $initialHeroDesc }}</p>
         </div>
       </div>
     </section>
@@ -92,7 +104,7 @@
   {{--
       メインカテゴリー一覧ボタン。main_categoriesテーブルを動的にループするので、
       アドミンが5つ目以降を追加しても、ここに自動で表示される。
-      1行のみの横スライド形式。携帯は1画面に2つ、PCは1画面に4つ表示、それ以降は横スライドで見る。
+      携帯は2段×2列(4つ)、PCは1画面に4つ表示、それ以降は横スライドで見る。
   --}}
   @php
     $fixedRoutes = [
@@ -102,7 +114,7 @@
       'other'           => 'other.index',
     ];
   @endphp
-  <div class="grid grid-flow-col grid-rows-1 auto-cols-[calc(50%-0.375rem)] sm:auto-cols-[calc(25%-0.5625rem)] gap-3 overflow-x-auto snap-x snap-mandatory pb-1" style="scrollbar-width:none;">
+  <div class="no-scrollbar grid grid-flow-col grid-rows-2 sm:grid-rows-1 auto-cols-[calc(50%-0.375rem)] sm:auto-cols-[calc(25%-0.5625rem)] gap-3 overflow-x-auto snap-x snap-mandatory pb-1" style="scrollbar-width:none;">
     @foreach ($allMainCategories as $mc)
       @php
         $href = isset($fixedRoutes[$mc->key])
@@ -114,6 +126,10 @@
       </a>
     @endforeach
   </div>
+  {{-- カテゴリーが5つ以上(スライドが必要)の時だけ、携帯にヒント表示 --}}
+  @if($allMainCategories->count() > 4)
+  <p class="md:hidden text-center text-[#241E1A]/25 text-xs tracking-[0.3em] mt-1">・・・</p>
+  @endif
 </div>
 
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-3 md:pt-6">
@@ -124,11 +140,11 @@
     </label>
 
     <!-- STORE選択(スマホ用: 横スクロールできるチップ) -->
-    <div class="flex md:hidden gap-2 overflow-x-auto pb-1 mb-2" id="storeNavMobile" style="scrollbar-width:none;">
-      <a href="#" style="--cat-color:rgba(36,30,26,0.6)" class="cat-link-mobile active shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors">All</a>
+    <div class="no-scrollbar flex md:hidden gap-2 overflow-x-auto pb-1 mb-2" id="storeNavMobile" style="scrollbar-width:none;">
+      <a href="#" style="--cat-color:rgba(36,30,26,0.6)" class="cat-link-mobile shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors {{ $initialCategory === null ? 'active' : '' }}">All</a>
       {{-- サブカテゴリー一覧はDBから動的に取得。アドミンが追加しても、この@foreachがそのまま対応する --}}
       @foreach ($subCategories as $cat)
-        <a href="#" data-tag="{{ $cat->name }}" style="--cat-color:{{ $cat->color() }}" class="cat-link-mobile shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors">{{ $cat->name }}</a>
+        <a href="#" data-tag="{{ $cat->name }}" style="--cat-color:{{ $cat->color() }}" class="cat-link-mobile shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors {{ $initialCategory === $cat->name ? 'active' : '' }}">{{ $cat->name }}</a>
       @endforeach
     </div>
   </div>
@@ -143,10 +159,10 @@
         </label>
         <p class="font-mono text-[11px] tracking-[0.18em] text-[#241E1A]/40 mb-3 pl-1">STORE</p>
         <nav class="flex flex-col gap-1 pl-5" id="storeNav">
-          <a href="#" style="--cat-color:rgba(36,30,26,0.6)" class="cat-link active flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A]">All</a>
+          <a href="#" style="--cat-color:rgba(36,30,26,0.6)" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A] {{ $initialCategory === null ? 'active' : '' }}">All</a>
           {{-- サブカテゴリー一覧はDBから動的に取得。アドミンが追加しても、この@foreachがそのまま対応する --}}
           @foreach ($subCategories as $cat)
-            <a href="#" data-tag="{{ $cat->name }}" style="--cat-color:{{ $cat->color() }}" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A]">{{ $cat->name }}</a>
+            <a href="#" data-tag="{{ $cat->name }}" style="--cat-color:{{ $cat->color() }}" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A] {{ $initialCategory === $cat->name ? 'active' : '' }}">{{ $cat->name }}</a>
           @endforeach
         </nav>
       </div>
@@ -294,7 +310,7 @@
   const PAGE_SIZE = 21;
   let currentPage = 1;
   let searchQuery = '';
-  let activeCategory = null; // nullは「All(すべて表示)」を意味する
+  let activeCategory = @json($initialCategory); // nullは「All(すべて表示)」を意味する。URLの?category=◯◯があればそれを初期値にする
   let currentModalItem = null;
 
   function money(v){ return v === null || v === undefined ? '' : Math.trunc(v) + ' PHP'; }
@@ -448,7 +464,12 @@
       : items; // activeCategoryがnull(=All)の時は絞り込まない
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
-      list = list.filter(it => (it.title || '').toLowerCase().includes(q));
+      // タイトルだけでなく、投稿の説明文にも一致したらヒットさせる
+      list = list.filter(it => {
+        const titleMatch = (it.title || '').toLowerCase().includes(q);
+        const descMatch = (it.description || '').toLowerCase().includes(q);
+        return titleMatch || descMatch;
+      });
     }
     return list; // 新着順 = Controllerの latest() 順のまま
   }
@@ -669,6 +690,11 @@
       updateHero(tag);
       renderGrid(currentPage);
       renderPagination();
+
+      // URLにも反映しておく(ページ遷移はしない。リロードした時に選択状態が保たれるようにするため)
+      const url = new URL(window.location.href);
+      if (tag) { url.searchParams.set('category', tag); } else { url.searchParams.delete('category'); }
+      history.replaceState(null, '', url);
     });
   });
 

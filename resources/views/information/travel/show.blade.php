@@ -34,8 +34,9 @@
   .heart-btn i { transition: transform .2s ease; }
   .heart-btn.liked i { transform: scale(1.15); }
 
-  ::-webkit-scrollbar { width: 10px; height: 10px; }
-  ::-webkit-scrollbar-thumb { background: #E3E0FF; border-radius: 8px; }
+  /* 横スライド系のスクロールバーは非表示に(色付きにはしない。他ページと同じくページ全体は標準のスクロールバーのまま) */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; }
 
   @keyframes riseIn {
     from { opacity: 0; transform: translateY(14px) scale(.98); }
@@ -59,11 +60,11 @@
          エリア未選択時は$section(Travelページ自体、アドミンが登録)の内容を表示 -->
     <section class="relative overflow-hidden rounded-3xl mb-0 min-h-[280px] sm:min-h-[340px] md:min-h-[380px] p-8 md:p-10 bg-cover bg-center shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]"
       style="background-image: url('{{ $currentArea->hero_image ?? $section?->hero_image ?? 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=1600&auto=format&fit=crop' }}');">
-      <div class="absolute inset-0 bg-gradient-to-r from-white/80 from-5% via-white/25 via-40% to-transparent to-65% pointer-events-none"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-white/95 from-3% via-white/55 via-20% to-transparent to-35% pointer-events-none"></div>
       <div class="relative flex flex-col lg:flex-row gap-8 w-full">
         <div class="flex-1">
           <h1 class="text-display font-black text-blue-950/90 mb-1">留学情報</h1>
-          <p class="text-headline-md font-bold text-brand-green mb-3">{{ $currentArea->name ?? $section?->name ?? 'Travel & Tourism' }}</p>
+          <p class="text-headline-md font-bold text-brand-green mb-3 drop-shadow-[0_1px_3px_rgba(255,255,255,0.9)]">{{ $currentArea->name ?? $section?->name ?? 'Travel & Tourism' }}</p>
           <p class="text-body-md text-blue-950/90 max-w-md">{{ $currentArea->description ?? $section?->description ?? 'セブの海・自然・カルチャーを、まるごと満喫しよう。' }}</p>
         </div>
       </div>
@@ -76,7 +77,7 @@
   {{--
       メインカテゴリー一覧ボタン。main_categoriesテーブルを動的にループするので、
       アドミンが5つ目以降を追加しても、ここに自動で表示される。
-      1行のみの横スライド形式。携帯は1画面に2つ、PCは1画面に4つ表示、それ以降は横スライドで見る。
+      携帯は2段×2列(4つ)、PCは1画面に4つ表示、それ以降は横スライドで見る。
   --}}
   @php
     $fixedRoutes = [
@@ -86,7 +87,7 @@
       'other'           => 'other.index',
     ];
   @endphp
-  <div class="grid grid-flow-col grid-rows-1 auto-cols-[calc(50%-0.375rem)] sm:auto-cols-[calc(25%-0.5625rem)] gap-3 overflow-x-auto snap-x snap-mandatory pb-1" style="scrollbar-width:none;">
+  <div class="no-scrollbar grid grid-flow-col grid-rows-2 sm:grid-rows-1 auto-cols-[calc(50%-0.375rem)] sm:auto-cols-[calc(25%-0.5625rem)] gap-3 overflow-x-auto snap-x snap-mandatory pb-1" style="scrollbar-width:none;">
     @foreach ($allMainCategories as $mc)
       @php
         $href = isset($fixedRoutes[$mc->key])
@@ -98,6 +99,10 @@
       </a>
     @endforeach
   </div>
+  {{-- カテゴリーが5つ以上(スライドが必要)の時だけ、携帯にヒント表示 --}}
+  @if($allMainCategories->count() > 4)
+  <p class="md:hidden text-center text-[#241E1A]/25 text-xs tracking-[0.3em] mt-1">・・・</p>
+  @endif
 </div>
 
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-3 md:pt-8">
@@ -108,7 +113,7 @@
     </label>
 
     <!-- AREA選択(スマホ用: 横スクロールできるチップ。サイドバーが隠れる代わりにこちらを表示) -->
-    <div class="flex md:hidden gap-2 overflow-x-auto pb-1 mb-2" style="scrollbar-width:none;">
+    <div class="no-scrollbar flex md:hidden gap-2 overflow-x-auto pb-1 mb-2" style="scrollbar-width:none;">
       <a href="{{ route('travel.index') }}"
          class="shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors"
          style="@if(!$currentArea) background:rgba(36,30,26,0.6); color:#fff; @else background:rgba(36,30,26,0.05); color:rgba(36,30,26,0.6); @endif">
@@ -422,7 +427,12 @@
   function getFilteredItems(){
     if (!searchQuery) return items;
     const q = searchQuery.toLowerCase();
-    return items.filter(it => (it.title || '').toLowerCase().includes(q));
+    // タイトルだけでなく、投稿の説明文にも一致したらヒットさせる
+    return items.filter(it => {
+      const titleMatch = (it.title || '').toLowerCase().includes(q);
+      const descMatch = (it.description || '').toLowerCase().includes(q);
+      return titleMatch || descMatch;
+    });
   }
 
   function renderGrid(page){

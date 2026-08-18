@@ -36,12 +36,19 @@ class EarthLocationController extends Controller
 
     public function store(Request $request)
     {
-        $location = EarthLocation::create([
-            'place_name' => $request->place_name,
-            'address' => $request->address,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
+        $validated = $request->validate([
+            'place_name' => ['required', 'string', 'max:255'],
+            'address' => ['required', 'string', 'max:255'],
+            'latitude' => ['required', 'numeric'],
+            'longitude' => ['required', 'numeric'],
+        ], [
+            'place_name.required' => '店舗名を入力してください。',
+            'address.required' => '住所を入力してください。',
+            'latitude.required' => '地図上でピンを立てて位置を選んでください。',
+            'longitude.required' => '地図上でピンを立てて位置を選んでください。',
         ]);
+
+        $location = EarthLocation::create($validated);
 
         return redirect()->route(
             'information.create',

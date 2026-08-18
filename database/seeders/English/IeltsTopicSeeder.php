@@ -36,8 +36,9 @@ class IeltsTopicSeeder extends Seeder
             ],
         ];
 
+        // firstOrCreateではなくupdateOrCreateなので、既にあるslugでも重複エラーにならず何度でも実行できる
         foreach ($topics as $data) {
-            IeltsTopic::create($data);
+            IeltsTopic::updateOrCreate(['slug' => $data['slug']], $data);
         }
     }
 }

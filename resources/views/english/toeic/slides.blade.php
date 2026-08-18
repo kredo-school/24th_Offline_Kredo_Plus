@@ -12,17 +12,17 @@
             <span class="mx-1">/</span>
             <a href="{{ route('english.toeic.index') }}" class="hover:text-orange-600 transition-colors no-underline">TOEIC</a>
             <span class="mx-1">/</span>
-            <span class="text-on-surface font-semibold">Part {{ $part }} スライド</span>
+            <span class="text-blue-950/90 font-semibold">Part {{ $part }} スライド</span>
         </x-english.breadcrumb>
 
         <div class="flex items-center justify-between mb-3">
             <div>
-                <h1 class="text-headline-md font-bold text-on-surface">Part {{ $part }} - {{ ucfirst($slide->slide_type) }}</h1>
-                <p class="text-caption text-on-surface-variant">ステップ {{ $step }} / {{ $totalSteps }}</p>
+                <h1 class="text-headline-md font-bold text-blue-950/90">Part {{ $part }} - {{ ucfirst($slide->slide_type) }}</h1>
+                <p class="text-caption text-blue-950/90">ステップ {{ $step }} / {{ $totalSteps }}</p>
             </div>
             @if($canSkip)
             <a href="/english/toeic/{{ $part }}/practice"
-               class="px-4 py-2 bg-surface-container-lowest rounded-[0.75rem] shadow-sm text-label-md text-on-surface-variant hover:text-orange-600 transition-all no-underline flex items-center gap-1">
+               class="px-4 py-2 bg-surface-container-lowest rounded-[0.75rem] shadow-sm text-label-md text-blue-950/90 hover:text-orange-600 transition-all no-underline flex items-center gap-1">
                 スキップして問題へ
                 <span class="material-symbols-outlined text-sm">skip_next</span>
             </a>
@@ -34,13 +34,13 @@
     {{-- スライドカード --}}
     <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8 mb-6 max-w-3xl mx-auto">
         <div class="flex items-center gap-2 mb-4">
-            <span class="bg-orange-600/10 text-orange-600 text-caption font-bold px-3 py-1 rounded-[0.75rem] uppercase tracking-wider">
+            <span class="bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 text-caption font-bold px-3 py-1 rounded-[0.75rem] uppercase tracking-wider">
                 {{ $slide->slide_type }}
             </span>
-            <h2 class="text-headline-md font-bold text-on-surface">{{ $slide->title }}</h2>
+            <h2 class="text-headline-md font-bold text-blue-950/90">{{ $slide->title }}</h2>
         </div>
 
-        <div class="prose prose-sm max-w-none text-on-surface leading-relaxed">
+        <div class="prose prose-sm max-w-none text-blue-950/90 leading-relaxed">
             {!! $slide->content !!}
         </div>
     </div>
@@ -61,7 +61,7 @@
     {{-- ナビゲーション --}}
     <div class="flex items-center justify-between max-w-3xl mx-auto">
         <a href="/english/toeic/{{ $part }}/slides/{{ $step - 1 }}"
-           class="px-6 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-on-surface hover:bg-slate-50 transition-all no-underline flex items-center gap-2 {{ $step <= 1 ? 'opacity-40 pointer-events-none' : '' }}">
+           class="px-6 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-blue-950/90 hover:bg-slate-50 transition-all no-underline flex items-center gap-2 {{ $step <= 1 ? 'opacity-40 pointer-events-none' : '' }}">
             <span class="material-symbols-outlined text-sm">arrow_back</span>
             前へ
         </a>

@@ -29,11 +29,14 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => Hash::make('zxcvzxcv'),
-        ]);
+        // firstOrCreateなので、既にtest@example.comが存在してても重複エラーにならず何度でも実行できる
+        User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'Test User',
+                'password' => Hash::make('zxcvzxcv'),
+            ]
+        );
 
         $this->call(AdminSeeder::class);
 
@@ -69,5 +72,10 @@ class DatabaseSeeder extends Seeder
 
         // ----- 試験概要・学習ストラテジー -----
         $this->call(LearningContentSeeder::class);
+
+        // ----- シャワーデータ -----
+        $this->call([
+            ShowerDataSeeder::class,
+        ]);
     }
 }

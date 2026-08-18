@@ -53,6 +53,14 @@ class CarinderiaController extends Controller
         // 上部の「メインカテゴリー一覧ボタン」用。既存4つ+今後追加された分すべて
         $allMainCategories = MainCategory::allOrdered();
 
-        return view('information.carinderia.index', compact('posts', 'categoryColors', 'section', 'subCategories', 'allMainCategories'));
+        // URLの ?category=◯◯ でサブカテゴリーの選択状態を復元する(リロードしてもAllに戻らないようにするため)。
+        // ルート自体は増やさずクエリパラメータだけなので他のページには影響しない。
+        // 実在するサブカテゴリー名と完全一致しない値は無視してAll扱いにする。
+        $initialCategory = request()->query('category');
+        if ($initialCategory && !$subCategories->contains('name', $initialCategory)) {
+            $initialCategory = null;
+        }
+
+        return view('information.carinderia.index', compact('posts', 'categoryColors', 'section', 'subCategories', 'allMainCategories', 'initialCategory'));
     }
 }

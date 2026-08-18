@@ -11,17 +11,17 @@
             <span class="mx-1">/</span>
             <a href="{{ route('english.typing.index') }}" class="hover:text-orange-600 transition-colors no-underline">タイピング練習</a>
             <span class="mx-1">/</span>
-            <span class="text-on-surface font-semibold">スライド</span>
+            <span class="text-blue-950/90 font-semibold">スライド</span>
         </x-english.breadcrumb>
 
         <div class="flex items-center justify-between mb-3">
             <div>
-                <h1 class="text-headline-md font-bold text-on-surface">{{ $material->title }}</h1>
-                <p class="text-caption text-on-surface-variant">ステップ {{ $step }} / {{ $totalSteps }}</p>
+                <h1 class="text-headline-md font-bold text-blue-950/90">{{ $material->title }}</h1>
+                <p class="text-caption text-blue-950/90">ステップ {{ $step }} / {{ $totalSteps }}</p>
             </div>
             @if($canSkip)
             <a href="{{ route('english.typing.practice', ['id' => $id]) }}"
-               class="px-4 py-2 bg-surface-container-lowest rounded-[0.75rem] shadow-sm text-label-md text-on-surface-variant hover:text-orange-600 transition-all no-underline flex items-center gap-1">
+               class="px-4 py-2 bg-surface-container-lowest rounded-[0.75rem] shadow-sm text-label-md text-blue-950/90 hover:text-orange-600 transition-all no-underline flex items-center gap-1">
                 スキップ
                 <span class="material-symbols-outlined text-sm">skip_next</span>
             </a>
@@ -34,19 +34,19 @@
     <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8 mb-6 max-w-3xl mx-auto">
         @if($slide)
         <div class="flex items-center gap-2 mb-6">
-            <span class="bg-orange-600/10 text-orange-600 text-caption font-bold px-3 py-1 rounded-[0.75rem] uppercase tracking-wider">
+            <span class="bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 text-caption font-bold px-3 py-1 rounded-[0.75rem] uppercase tracking-wider">
                 {{ $slide->slide_type }}
             </span>
-            <h2 class="text-headline-md font-bold text-on-surface">{{ $slide->title }}</h2>
+            <h2 class="text-headline-md font-bold text-blue-950/90">{{ $slide->title }}</h2>
         </div>
 
-        <div class="prose prose-sm max-w-none text-on-surface leading-relaxed">
+        <div class="prose prose-sm max-w-none text-blue-950/90 leading-relaxed">
             {!! $slide->content !!}
         </div>
         @else
         <div class="text-center py-12">
-            <span class="material-symbols-outlined text-4xl text-on-surface-variant/40 mb-3 block">article</span>
-            <p class="text-body-md text-on-surface-variant">このスライドのコンテンツはまだ追加されていません</p>
+            <span class="material-symbols-outlined text-4xl text-blue-950/90/40 mb-3 block">article</span>
+            <p class="text-body-md text-blue-950/90">このスライドのコンテンツはまだ追加されていません</p>
         </div>
         @endif
     </div>
@@ -67,7 +67,7 @@
     {{-- ナビゲーション --}}
     <div class="flex items-center justify-between max-w-3xl mx-auto">
         <a href="{{ route('english.typing.slides.step', ['id' => $id, 'step' => $step - 1]) }}"
-           class="px-6 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-on-surface hover:bg-slate-50 transition-all no-underline flex items-center gap-2 {{ $step <= 1 ? 'opacity-40 pointer-events-none' : '' }}">
+           class="px-6 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-blue-950/90 hover:bg-slate-50 transition-all no-underline flex items-center gap-2 {{ $step <= 1 ? 'opacity-40 pointer-events-none' : '' }}">
             <span class="material-symbols-outlined text-sm">arrow_back</span>
             前へ
         </a>

@@ -3,7 +3,11 @@
 <div x-data="{ open: false }">
 
     <button
-        @click="open = true"
+        @click="open = true; $nextTick(() => {
+            document.querySelectorAll('.rating-slider').forEach(slider => {
+                slider.dispatchEvent(new Event('resize-slider'));
+            });
+        })"
         class="w-auto rounded-full text-center bg-sky-200 text-sky-700 hover:bg-sky-300 transition-colors font-bold p-3 shadow-md hover:shadow-lg"
     >
         シャワー情報を投稿する
@@ -75,7 +79,7 @@
                     </div>
 
                     {{-- 水圧 --}}
-                    <p class="text-slate-500 text-sm font-semibold">水圧</p>
+                    <p class="text-slate-500 text-sm font-semibold">水圧（水量）</p>
                     <div class="rating-slider mt-1 mb-4" data-role="pressure" data-value="50">
                         <input type="hidden" name="pressure" value="50" data-role-input>
                         <div class="rating-track relative h-8 w-full flex items-center cursor-pointer select-none">
@@ -177,6 +181,7 @@
                     const input = card.querySelector("[data-role-input]");
                     const fillWrap = card.querySelector("[data-role-fill-wrap]");
                     const fillGradient = card.querySelector("[data-role-fill-gradient]");
+                    card.addEventListener("resize-slider", render);
 
                     if (fillGradient) {
                     fillGradient.style.backgroundImage = buildGradientCSS(cfg.stops);

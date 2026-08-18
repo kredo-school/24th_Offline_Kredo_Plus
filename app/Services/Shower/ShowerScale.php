@@ -6,9 +6,9 @@ class ShowerScale
 {
 
     public const CONDITION_TEMPERATURE_LEVELS = [
-        '冷たい' => 2.5,
-        'ぬるい' => 5.0,
-        '温かい' => 7.5,
+        '冷たい' => 0.0,
+        'ぬるい' => 3.3,
+        '温かい' => 6.6,
         '熱い'   => 10.0,
     ];
 
@@ -20,9 +20,9 @@ class ShowerScale
     ];
 
     public const PREFERENCE_TEMPERATURE_LEVELS = [
-        '冷たい' => 2.5,
-        'ぬるい' => 5.0,
-        '温かい' => 7.5,
+        '冷たい' => 0.0,
+        'ぬるい' => 3.3,
+        '温かい' => 6.6,
         '熱い'   => 10.0,
     ];
 

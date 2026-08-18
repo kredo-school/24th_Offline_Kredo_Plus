@@ -16,15 +16,15 @@ $pageTitle = isset($content)
         <span class="mx-1">/</span>
         <a href="{{ route('english.strategy.index') }}" class="hover:text-orange-600 transition-colors no-underline">試験概要と学習ストラテジー</a>
         <span class="mx-1">/</span>
-        <span class="text-on-surface font-semibold">{{ $pageTitle }}</span>
+        <span class="text-blue-950/90 font-semibold">{{ $pageTitle }}</span>
     </x-english.breadcrumb>
 
     <div class="mb-8">
         <div class="flex items-center gap-3 mb-2">
-            <span class="bg-orange-600/10 text-orange-600 text-label-md font-bold px-3 py-1 rounded-[0.75rem] uppercase">{{ strtoupper($exam) }}</span>
-            <span class="bg-slate-100 text-on-surface-variant text-label-md font-bold px-3 py-1 rounded-[0.75rem]">目標: {{ $level }}{{ $exam === 'toeic' ? '点' : '' }}</span>
+            <span class="bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 text-label-md font-bold px-3 py-1 rounded-[0.75rem] uppercase">{{ strtoupper($exam) }}</span>
+            <span class="bg-slate-100 text-blue-950/90 text-label-md font-bold px-3 py-1 rounded-[0.75rem]">目標: {{ $level }}{{ $exam === 'toeic' ? '点' : '' }}</span>
         </div>
-        <h1 class="text-headline-lg font-bold text-on-surface">{{ $pageTitle }}</h1>
+        <h1 class="text-headline-lg font-bold text-blue-950/90">{{ $pageTitle }}</h1>
     </div>
 
     <div class="max-w-3xl space-y-6">
@@ -32,13 +32,13 @@ $pageTitle = isset($content)
         @if(isset($content))
             {{-- DB に登録されたレベル別の戦略コンテンツ --}}
             <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8">
-                <div class="text-body-md text-on-surface leading-relaxed
-                            [&_h2]:text-headline-md [&_h2]:font-bold [&_h2]:text-on-surface [&_h2]:mb-4
-                            [&_h3]:text-body-lg [&_h3]:font-bold [&_h3]:text-on-surface [&_h3]:mt-6 [&_h3]:mb-2 [&_h3:first-child]:mt-0
+                <div class="text-body-md text-blue-950/90 leading-relaxed
+                            [&_h2]:text-headline-md [&_h2]:font-bold [&_h2]:text-blue-950/90 [&_h2]:mb-4
+                            [&_h3]:text-body-lg [&_h3]:font-bold [&_h3]:text-blue-950/90 [&_h3]:mt-6 [&_h3]:mb-2 [&_h3:first-child]:mt-0
                             [&_p]:mb-3
                             [&_ul]:space-y-2 [&_ul]:mb-4
                             [&_li]:flex [&_li]:items-start [&_li]:gap-2 [&_li]:before:content-['•'] [&_li]:before:text-orange-600 [&_li]:before:font-bold
-                            [&_strong]:font-bold [&_strong]:text-on-surface
+                            [&_strong]:font-bold [&_strong]:text-blue-950/90
                             [&_table]:w-full [&_table]:border-collapse [&_table]:my-4">
                     {!! $content->body !!}
                 </div>
@@ -48,7 +48,7 @@ $pageTitle = isset($content)
 
             {{-- 1. おすすめ学習順序 --}}
             <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8">
-                <h2 class="text-headline-md font-bold text-on-surface mb-4 flex items-center gap-2">
+                <h2 class="text-headline-md font-bold text-blue-950/90 mb-4 flex items-center gap-2">
                     <span class="material-symbols-outlined text-orange-600">format_list_numbered</span>
                     おすすめ学習順序
                 </h2>
@@ -57,8 +57,8 @@ $pageTitle = isset($content)
                     <div class="flex items-start gap-4 p-4 bg-surface-container-low rounded-[0.5rem]">
                         <div class="bg-[#b95827] text-white w-8 h-8 rounded-[0.75rem] flex items-center justify-center font-black text-sm flex-shrink-0">{{ $item['step'] }}</div>
                         <div>
-                            <p class="font-bold text-on-surface mb-1">{{ $item['title'] }}</p>
-                            <p class="text-body-md text-on-surface-variant">{{ $item['desc'] }}</p>
+                            <p class="font-bold text-blue-950/90 mb-1">{{ $item['title'] }}</p>
+                            <p class="text-body-md text-blue-950/90">{{ $item['desc'] }}</p>
                         </div>
                     </div>
                     @endforeach
@@ -67,13 +67,13 @@ $pageTitle = isset($content)
 
             {{-- 2. 重点学習ポイント --}}
             <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8">
-                <h2 class="text-headline-md font-bold text-on-surface mb-4 flex items-center gap-2">
+                <h2 class="text-headline-md font-bold text-blue-950/90 mb-4 flex items-center gap-2">
                     <span class="material-symbols-outlined text-orange-600">star</span>
                     重点学習ポイント
                 </h2>
                 <ul class="space-y-2">
                     @foreach($strategy['key_points'] as $point)
-                    <li class="flex items-start gap-2 text-body-md text-on-surface">
+                    <li class="flex items-start gap-2 text-body-md text-blue-950/90">
                         <span class="material-symbols-outlined text-orange-600 text-sm mt-0.5">check_circle</span>
                         {{ $point }}
                     </li>
@@ -83,26 +83,26 @@ $pageTitle = isset($content)
 
             {{-- 3. 学習スケジュール --}}
             <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8">
-                <h2 class="text-headline-md font-bold text-on-surface mb-4 flex items-center gap-2">
+                <h2 class="text-headline-md font-bold text-blue-950/90 mb-4 flex items-center gap-2">
                     <span class="material-symbols-outlined text-orange-600">schedule</span>
                     学習スケジュール（目安）
                 </h2>
                 <ul class="space-y-2">
                     @foreach($strategy['study_schedule'] as $line)
-                    <li class="text-body-md text-on-surface-variant">{{ $line }}</li>
+                    <li class="text-body-md text-blue-950/90">{{ $line }}</li>
                     @endforeach
                 </ul>
             </div>
 
             {{-- 4. よくある間違い --}}
             <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8">
-                <h2 class="text-headline-md font-bold text-on-surface mb-4 flex items-center gap-2">
+                <h2 class="text-headline-md font-bold text-blue-950/90 mb-4 flex items-center gap-2">
                     <span class="material-symbols-outlined text-error">error_outline</span>
                     よくある間違い
                 </h2>
                 <ul class="space-y-2">
                     @foreach($strategy['common_mistakes'] as $mistake)
-                    <li class="flex items-start gap-2 text-body-md text-on-surface">
+                    <li class="flex items-start gap-2 text-body-md text-blue-950/90">
                         <span class="material-symbols-outlined text-error text-sm mt-0.5">close</span>
                         {{ $mistake }}
                     </li>
@@ -119,7 +119,7 @@ $pageTitle = isset($content)
                 {{ strtoupper($exam) }}学習を始める
             </a>
             <a href="{{ route('english.strategy.index') }}"
-               class="flex-1 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-on-surface hover:bg-slate-50 transition-all no-underline text-center flex items-center justify-center gap-2">
+               class="flex-1 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-blue-950/90 hover:bg-slate-50 transition-all no-underline text-center flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined text-sm">arrow_back</span>
                 戻る
             </a>
