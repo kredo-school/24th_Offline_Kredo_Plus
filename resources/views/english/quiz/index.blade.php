@@ -22,7 +22,7 @@
         <a href="/english/quiz/spelling"
            class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-8 flex flex-col gap-4 no-underline group">
             <div class="flex items-start justify-between">
-                <div class="p-4 bg-orange-600/10 rounded-[0.75rem]">
+                <div class="p-4 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem]">
                     <span class="material-symbols-outlined text-orange-600 text-3xl">spellcheck</span>
                 </div>
                 <div class="text-right">
@@ -49,7 +49,7 @@
         <a href="/english/quiz/vocabulary"
            class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-8 flex flex-col gap-4 no-underline group">
             <div class="flex items-start justify-between">
-                <div class="p-4 bg-orange-600/10 rounded-[0.75rem]">
+                <div class="p-4 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem]">
                     <span class="material-symbols-outlined text-orange-600 text-3xl">psychology</span>
                 </div>
                 <div class="text-right">
