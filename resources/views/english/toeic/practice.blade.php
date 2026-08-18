@@ -10,7 +10,7 @@
         <span class="mx-1">/</span>
         <a href="{{ route('english.toeic.index') }}" class="hover:text-orange-600 transition-colors no-underline">TOEIC</a>
         <span class="mx-1">/</span>
-        <span class="text-on-surface font-semibold">Part {{ $part }} 練習問題</span>
+        <span class="text-blue-950/90 font-semibold">Part {{ $part }} 練習問題</span>
     </x-english.breadcrumb>
 
     <div x-data="toeicPractice({
@@ -27,8 +27,8 @@
             {{-- 進捗（会話/トーク単位） --}}
             <div class="mb-6">
                 <div class="flex items-center justify-between mb-2">
-                    <h1 class="text-headline-md font-bold text-on-surface">Part {{ $part }} 練習問題</h1>
-                    <span class="text-label-md text-on-surface-variant font-semibold"
+                    <h1 class="text-headline-md font-bold text-blue-950/90">Part {{ $part }} 練習問題</h1>
+                    <span class="text-label-md text-blue-950/90 font-semibold"
                           x-text="`{{ $part == 3 ? '会話' : 'トーク' }} ${groupIndex + 1} / ${conversationGroups.length}`"></span>
                 </div>
                 <div class="w-full bg-slate-100 rounded-[0.75rem] h-2 overflow-hidden">
@@ -42,7 +42,7 @@
                 <div class="max-w-3xl mx-auto mb-6">
                     <div class="bg-slate-50 rounded-[0.75rem] shadow-sm p-8 flex flex-col items-center text-center gap-4">
                         <span class="material-symbols-outlined text-5xl text-orange-600">headphones</span>
-                        <p class="text-body-md text-on-surface-variant leading-relaxed max-w-xl">
+                        <p class="text-body-md text-blue-950/90 leading-relaxed max-w-xl">
                             @if($part == 3)
                                 Directions: You will hear a conversation between two or more people.
                                 The conversation will not be printed and will be spoken only one time.
@@ -58,7 +58,7 @@
                         <button
                             @click="repeatConversationAudio()"
                             type="button"
-                            class="w-full md:w-auto px-8 py-2.5 bg-orange-600/10 text-orange-600 rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-orange-600/20 transition-all"
+                            class="w-full md:w-auto px-8 py-2.5 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:ring-orange-300 transition-all"
                         >
                             <span class="material-symbols-outlined text-sm">replay</span>
                             Repeat Audio ({{ $part == 3 ? 'Conversation' : 'Talk' }})
@@ -70,7 +70,7 @@
                 <div class="max-w-3xl mx-auto space-y-4 mb-6">
                     <template x-for="(q, qIdx) in currentConversationGroup.questions" :key="q.id">
                         <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-6">
-                            <p class="text-body-lg text-on-surface font-semibold leading-relaxed mb-4">
+                            <p class="text-body-lg text-blue-950/90 font-semibold leading-relaxed mb-4">
                                 <span x-text="`${qIdx + 1}. ${q.question_text}`"></span>
                             </p>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -94,7 +94,7 @@
                                     <p class="font-bold mb-1" :class="groupResults[q.id].is_correct ? 'text-green-700' : 'text-error'">
                                         <span x-text="groupResults[q.id].is_correct ? '✅ 正解！' : '❌ 不正解'"></span>
                                     </p>
-                                    <p class="text-body-md text-on-surface" x-text="groupResults[q.id].explanation"></p>
+                                    <p class="text-body-md text-blue-950/90" x-text="groupResults[q.id].explanation"></p>
                                 </div>
                             </template>
                         </div>
@@ -109,7 +109,7 @@
                             :disabled="!isGroupComplete || isLoading"
                             :class="isGroupComplete && !isLoading
                                 ? 'bg-[#b95827] text-white hover:opacity-90'
-                                : 'bg-slate-50 text-on-surface-variant cursor-not-allowed'"
+                                : 'bg-slate-50 text-blue-950/90 cursor-not-allowed'"
                             class="w-full py-3 rounded-[0.75rem] font-label-md text-label-md transition-all flex items-center justify-center gap-2">
                             <span x-show="isLoading" class="material-symbols-outlined text-sm animate-spin">progress_activity</span>
                             <span x-text="isLoading ? '送信中...' : '回答を提出'"></span>
@@ -137,18 +137,18 @@
             <div x-show="isComplete" class="text-center max-w-md mx-auto">
                 <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8 mb-6">
                     <div class="text-5xl mb-4">🎉</div>
-                    <h2 class="text-headline-lg font-bold text-on-surface mb-2">完了！</h2>
-                    <p class="text-body-md text-on-surface-variant mb-4">スコア</p>
+                    <h2 class="text-headline-lg font-bold text-blue-950/90 mb-2">完了！</h2>
+                    <p class="text-body-md text-blue-950/90 mb-4">スコア</p>
                     <p class="text-display font-black text-orange-600" x-text="`${score} / ${questions.length}`"></p>
-                    <p class="text-caption text-on-surface-variant mt-4">結果を保存中...</p>
+                    <p class="text-caption text-blue-950/90 mt-4">結果を保存中...</p>
                 </div>
             </div>
         @else
             {{-- プログレスバー --}}
             <div class="mb-6">
                 <div class="flex items-center justify-between mb-2">
-                    <h1 class="text-headline-md font-bold text-on-surface">Part {{ $part }} 練習問題</h1>
-                    <span class="text-label-md text-on-surface-variant font-semibold"
+                    <h1 class="text-headline-md font-bold text-blue-950/90">Part {{ $part }} 練習問題</h1>
+                    <span class="text-label-md text-blue-950/90 font-semibold"
                           x-text="`問題 ${currentIndex + 1} / ${questions.length}`"></span>
                 </div>
                 <div class="w-full bg-slate-100 rounded-[0.75rem] h-2 overflow-hidden">
@@ -165,8 +165,8 @@
                         <p class="text-label-md font-bold text-orange-600 mb-4" x-text="current.passage.title"></p>
                         <template x-for="(doc, docIndex) in current.passage.documents" :key="docIndex">
                             <div class="mb-5 last:mb-0">
-                                <p class="font-semibold text-on-surface mb-2" x-show="doc.heading" x-text="doc.heading"></p>
-                                <p class="whitespace-pre-line text-body-md text-on-surface-variant leading-relaxed" x-text="doc.body"></p>
+                                <p class="font-semibold text-blue-950/90 mb-2" x-show="doc.heading" x-text="doc.heading"></p>
+                                <p class="whitespace-pre-line text-body-md text-blue-950/90 leading-relaxed" x-text="doc.body"></p>
                             </div>
                         </template>
                     </div>
@@ -180,7 +180,7 @@
                         <button
                             @click="repeatAudio()"
                             type="button"
-                            class="w-full py-2.5 bg-orange-600/10 text-orange-600 rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-orange-600/20 transition-all"
+                            class="w-full py-2.5 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:ring-orange-300 transition-all"
                         >
                             <span class="material-symbols-outlined text-sm">replay</span>
                             Repeat Audio (A–D)
@@ -193,7 +193,7 @@
                 <div class="max-w-3xl mx-auto mb-6">
                     <div class="bg-slate-50 rounded-[0.75rem] shadow-sm p-8 flex flex-col items-center text-center gap-4">
                         <span class="material-symbols-outlined text-5xl text-orange-600">headphones</span>
-                        <p class="text-body-md text-on-surface-variant leading-relaxed max-w-xl">
+                        <p class="text-body-md text-blue-950/90 leading-relaxed max-w-xl">
                             Directions: You will hear a question or statement and three responses spoken in English.
                             They will not be printed in your test book and will be spoken only one time.
                             Select the best response to the question or statement and mark the letter (A), (B), or (C).
@@ -201,7 +201,7 @@
                         <button
                             @click="repeatAudio()"
                             type="button"
-                            class="w-full md:w-auto px-8 py-2.5 bg-orange-600/10 text-orange-600 rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-orange-600/20 transition-all"
+                            class="w-full md:w-auto px-8 py-2.5 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 rounded-[0.75rem] font-label-md text-label-md flex items-center justify-center gap-2 hover:ring-orange-300 transition-all"
                         >
                             <span class="material-symbols-outlined text-sm">replay</span>
                             Repeat Audio
@@ -213,7 +213,7 @@
                 {{-- 問題文カード（Part2は本番同様、問題文を画面に表示しない） --}}
                 @if($part != 2)
                 <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8 mb-6 max-w-3xl mx-auto">
-                    <p class="text-body-lg text-on-surface font-semibold leading-relaxed"
+                    <p class="text-body-lg text-blue-950/90 font-semibold leading-relaxed"
                        x-text="current.question_text"></p>
                 </div>
                 @endif
@@ -283,7 +283,7 @@
                             :disabled="!selectedId || isLoading"
                             :class="selectedId && !isLoading
                                 ? 'bg-[#b95827] text-white hover:opacity-90'
-                                : 'bg-slate-50 text-on-surface-variant cursor-not-allowed'"
+                                : 'bg-slate-50 text-blue-950/90 cursor-not-allowed'"
                             class="w-full py-3 rounded-[0.75rem] font-label-md text-label-md transition-all flex items-center justify-center gap-2">
                             <span x-show="isLoading" class="material-symbols-outlined text-sm animate-spin">progress_activity</span>
                             <span x-text="isLoading ? '送信中...' : '回答する'"></span>
@@ -295,13 +295,13 @@
                             <p class="font-bold mb-1" :class="isCorrect ? 'text-green-700' : 'text-error'">
                                 <span x-text="isCorrect ? '✅ 正解！' : '❌ 不正解'"></span>
                             </p>
-                            <p class="text-body-md text-on-surface" x-text="explanation"></p>
+                            <p class="text-body-md text-blue-950/90" x-text="explanation"></p>
 
                             {{-- Part1：回答後に音声の文章（A〜D）を表示し、リピート再生と合わせて振り返れるようにする --}}
                             <template x-if="current.image_url">
                                 <div class="mt-3 pt-3 border-t border-slate-200/40 space-y-1.5">
                                     <template x-for="option in current.options" :key="option.id">
-                                        <p class="text-body-md" :class="option.id === correctOptionId ? 'text-green-700 font-semibold' : 'text-on-surface-variant'">
+                                        <p class="text-body-md" :class="option.id === correctOptionId ? 'text-green-700 font-semibold' : 'text-blue-950/90'">
                                             <span class="font-bold uppercase mr-1" x-text="option.label + '.'"></span>
                                             <span x-text="option.option_text"></span>
                                             <span x-show="option.id === correctOptionId">✅</span>
@@ -314,9 +314,9 @@
                             {{-- Part2：回答後に質問文と応答（A〜C）を表示し、リピート再生と合わせて振り返れるようにする --}}
                             @if($part == 2)
                             <div class="mt-3 pt-3 border-t border-slate-200/40 space-y-1.5">
-                                <p class="text-body-md font-semibold text-on-surface mb-2">"<span x-text="current.question_text"></span>"</p>
+                                <p class="text-body-md font-semibold text-blue-950/90 mb-2">"<span x-text="current.question_text"></span>"</p>
                                 <template x-for="option in current.options" :key="option.id">
-                                    <p class="text-body-md" :class="option.id === correctOptionId ? 'text-green-700 font-semibold' : 'text-on-surface-variant'">
+                                    <p class="text-body-md" :class="option.id === correctOptionId ? 'text-green-700 font-semibold' : 'text-blue-950/90'">
                                         <span class="font-bold uppercase mr-1" x-text="option.label + '.'"></span>
                                         <span x-text="option.option_text"></span>
                                         <span x-show="option.id === correctOptionId">✅</span>
@@ -347,10 +347,10 @@
             <div x-show="isComplete" class="text-center max-w-md mx-auto">
                 <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8 mb-6">
                     <div class="text-5xl mb-4">🎉</div>
-                    <h2 class="text-headline-lg font-bold text-on-surface mb-2">完了！</h2>
-                    <p class="text-body-md text-on-surface-variant mb-4">スコア</p>
+                    <h2 class="text-headline-lg font-bold text-blue-950/90 mb-2">完了！</h2>
+                    <p class="text-body-md text-blue-950/90 mb-4">スコア</p>
                     <p class="text-display font-black text-orange-600" x-text="`${score} / ${questions.length}`"></p>
-                    <p class="text-caption text-on-surface-variant mt-4">結果を保存中...</p>
+                    <p class="text-caption text-blue-950/90 mt-4">結果を保存中...</p>
                 </div>
             </div>
         @endif

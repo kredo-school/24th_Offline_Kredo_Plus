@@ -125,7 +125,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // ── 試験概要 ──────────────────────────────────────────────────────
         Route::prefix('overview')->name('overview.')->group(function () {
-            Route::get('/',        [LearningContentController::class, 'overviewIndex'])->name('index');
             Route::get('/{exam}',  [LearningContentController::class, 'overviewShow'])->name('show')->whereIn('exam', config('english.exam_types'));
         });
 

@@ -10,7 +10,7 @@
         <span class="mx-1">/</span>
         <a href="{{ route('english.toeic.index') }}" class="hover:text-orange-600 transition-colors no-underline">TOEIC</a>
         <span class="mx-1">/</span>
-        <span class="text-on-surface font-semibold">Part {{ $part }} 結果</span>
+        <span class="text-blue-950/90 font-semibold">Part {{ $part }} 結果</span>
     </x-english.breadcrumb>
 
     <div class="max-w-2xl mx-auto space-y-6">
@@ -20,20 +20,20 @@
             <div class="text-5xl mb-4">
                 @if($result->accuracy >= 80) 🎉 @elseif($result->accuracy >= 60) 👍 @else 💪 @endif
             </div>
-            <h1 class="text-headline-lg font-bold text-on-surface mb-6">Part {{ $part }} 完了！</h1>
+            <h1 class="text-headline-lg font-bold text-blue-950/90 mb-6">Part {{ $part }} 完了！</h1>
 
             <div class="grid grid-cols-3 gap-4 mb-6">
                 <div class="text-center">
                     <p class="text-display font-black text-orange-600">{{ $result->correct_count }}/{{ $result->total_questions }}</p>
-                    <p class="text-caption text-on-surface-variant">正答数</p>
+                    <p class="text-caption text-blue-950/90">正答数</p>
                 </div>
                 <div class="text-center">
                     <p class="text-display font-black text-orange-600">{{ $result->accuracy }}%</p>
-                    <p class="text-caption text-on-surface-variant">正答率</p>
+                    <p class="text-caption text-blue-950/90">正答率</p>
                 </div>
                 <div class="text-center">
                     <p class="text-display font-black text-orange-600">+{{ $result->xp_gained }}</p>
-                    <p class="text-caption text-on-surface-variant">XP 獲得</p>
+                    <p class="text-caption text-blue-950/90">XP 獲得</p>
                 </div>
             </div>
 
@@ -56,19 +56,19 @@
         <div x-data="{ open: false }" class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm overflow-hidden">
             <button @click="open = !open"
                     class="w-full flex items-center justify-between p-6 text-left hover:bg-slate-50 transition-colors">
-                <span class="font-bold text-on-surface flex items-center gap-2">
+                <span class="font-bold text-blue-950/90 flex items-center gap-2">
                     <span class="material-symbols-outlined text-error">error_outline</span>
                     間違えた問題 ({{ count($wrongAnswers) }}問)
                 </span>
-                <span class="material-symbols-outlined text-on-surface-variant transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
+                <span class="material-symbols-outlined text-blue-950/90 transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
             </button>
             <div x-show="open" x-transition class="px-6 pb-6 space-y-4 border-t border-slate-200">
                 @foreach($wrongAnswers as $wq)
                 <div class="p-4 bg-error-container/20 rounded-[0.5rem] border border-error/20 mt-4">
-                    <p class="text-body-md text-on-surface font-semibold mb-2">{{ $wq['question'] }}</p>
+                    <p class="text-body-md text-blue-950/90 font-semibold mb-2">{{ $wq['question'] }}</p>
                     <p class="text-caption text-error mb-1">あなたの回答: {{ $wq['your_answer'] }}</p>
                     <p class="text-caption text-green-700 mb-2">正解: {{ $wq['correct_answer'] }}</p>
-                    <p class="text-caption text-on-surface-variant">{{ $wq['explanation'] }}</p>
+                    <p class="text-caption text-blue-950/90">{{ $wq['explanation'] }}</p>
                 </div>
                 @endforeach
             </div>
@@ -78,7 +78,7 @@
         {{-- ボタン --}}
         <div class="flex flex-col sm:flex-row gap-3">
             <a href="{{ route('english.toeic.slides', $part) }}"
-               class="flex-1 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-on-surface hover:bg-slate-50 transition-all no-underline text-center flex items-center justify-center gap-2">
+               class="flex-1 py-3 bg-surface-container-lowest rounded-[0.75rem] shadow-sm font-label-md text-label-md text-blue-950/90 hover:bg-slate-50 transition-all no-underline text-center flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined text-sm">refresh</span>
                 もう一度挑戦
             </a>
