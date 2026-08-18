@@ -11,9 +11,12 @@
         <span class="text-blue-950/90 font-semibold">TOEIC</span>
     </x-english.breadcrumb>
 
-    <div class="mb-8">
-        <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">TOEIC 学習</h1>
-        <p class="text-body-md text-blue-950/90">TOEICの各Partを学習します</p>
+    <div class="mb-8 flex items-start justify-between gap-4">
+        <div>
+            <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">TOEIC 学習</h1>
+            <p class="text-body-md text-blue-950/90">TOEICの各Partを学習します</p>
+        </div>
+        <x-english.section-switcher current="toeic" />
     </div>
 
     <div class="grid grid-cols-2 md:grid-cols-3 gap-4">

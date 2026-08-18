@@ -11,9 +11,12 @@
         <span class="text-blue-950/90 font-semibold">クイズ</span>
     </x-english.breadcrumb>
 
-    <div class="mb-8">
-        <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">クイズ</h1>
-        <p class="text-body-md text-blue-950/90">スペルや語彙の力をクイズで試そう</p>
+    <div class="mb-8 flex items-start justify-between gap-4">
+        <div>
+            <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">クイズ</h1>
+            <p class="text-body-md text-blue-950/90">スペルや語彙の力をクイズで試そう</p>
+        </div>
+        <x-english.section-switcher current="quiz" />
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl">
@@ -22,7 +25,7 @@
         <a href="/english/quiz/spelling"
            class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-8 flex flex-col gap-4 no-underline group">
             <div class="flex items-start justify-between">
-                <div class="p-4 bg-orange-600/10 rounded-[0.75rem]">
+                <div class="p-4 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem]">
                     <span class="material-symbols-outlined text-orange-600 text-3xl">spellcheck</span>
                 </div>
                 <div class="text-right">
@@ -49,7 +52,7 @@
         <a href="/english/quiz/vocabulary"
            class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-8 flex flex-col gap-4 no-underline group">
             <div class="flex items-start justify-between">
-                <div class="p-4 bg-orange-600/10 rounded-[0.75rem]">
+                <div class="p-4 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.75rem]">
                     <span class="material-symbols-outlined text-orange-600 text-3xl">psychology</span>
                 </div>
                 <div class="text-right">

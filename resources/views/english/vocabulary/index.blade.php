@@ -11,9 +11,12 @@
         <span class="text-blue-950/90 font-semibold">英単語</span>
     </x-english.breadcrumb>
 
-    <div class="mb-8">
-        <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">英単語学習</h1>
-        <p class="text-body-md text-blue-950/90">レベルを選んでフラッシュカードで語彙を学ぼう</p>
+    <div class="mb-8 flex items-start justify-between gap-4">
+        <div>
+            <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">英単語学習</h1>
+            <p class="text-body-md text-blue-950/90">レベルを選んでフラッシュカードで語彙を学ぼう</p>
+        </div>
+        <x-english.section-switcher current="vocabulary" />
     </div>
 
     {{-- TOEIC セクション --}}
