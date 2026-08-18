@@ -5,12 +5,6 @@
 @section('content')
 <div class="flex-grow max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop py-8 md:py-12">
 
-    <x-english.breadcrumb>
-        <a href="{{ route('dashboard') }}" class="hover:text-orange-600 transition-colors no-underline">ダッシュボード</a>
-        <span class="mx-1">/</span>
-        <span class="text-on-surface font-semibold">英語学習</span>
-    </x-english.breadcrumb>
-
     {{-- ヒーロー: タイトル + 現在のレベルカード --}}
     <section class="relative overflow-hidden rounded-[0.75rem] mb-8 p-8 md:p-10 bg-cover bg-center"
               style="background-image: url('{{ asset('images/english/hub-hero.jpg') }}');">
