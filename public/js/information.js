@@ -115,11 +115,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const formData = new FormData();
 
+        const mainCategory = form.querySelector('#mainCategorySelect');
         const category = form.querySelector('[name="category_id"]');
         const title = form.querySelector('[name="title"]');
         const description = form.querySelector('[name="description"]');
         const price = form.querySelector('[name="price"]');
         const image = form.querySelector('[name="image"]');
+
+        if (mainCategory) {
+        formData.append('main_category', mainCategory.value);
+        }
 
         if (category) {
             formData.append('category_id', category.value);
