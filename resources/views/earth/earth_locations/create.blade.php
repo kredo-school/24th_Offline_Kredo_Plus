@@ -13,11 +13,21 @@
 
     <h1>位置情報入力</h1>
 
+    @if ($errors->any())
+        <div style="color:#c0392b; border:1px solid #c0392b; padding:10px; margin-bottom:10px;">
+            <ul style="margin:0; padding-left:20px;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
 <form method="POST" action="{{ route('earth.location.store') }}">
     @csrf
         <div>
             <label>店舗名</label><br>
-            <input type="text" id="place_name" name="place_name">
+            <input type="text" id="place_name" name="place_name" value="{{ old('place_name') }}">
         </div>
 
         <br>
@@ -45,7 +55,7 @@
 
         <div>
             <label>住所</label><br>
-            <input type="text" id="address" name="address">
+            <input type="text" id="address" name="address" value="{{ old('address') }}">
         </div>
         <div>
 

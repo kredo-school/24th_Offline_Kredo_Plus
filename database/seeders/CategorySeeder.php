@@ -15,19 +15,76 @@ class CategorySeeder extends Seeder
         Category::firstOrCreate(['slug' => 'south-area'], ['section' => 'travel', 'name' => 'South Area', 'sort_order' => 3, 'hero_image' => 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=1600&auto=format&fit=crop', 'description' => 'ホエールシャーク・滝・山と海。アクティブ派に人気の南部エリア。']);
 
         // ---- Other ----
-        Category::firstOrCreate(['slug' => 'laundry'], ['section' => 'other', 'name' => 'Laundry', 'sort_order' => 1]);
-        Category::firstOrCreate(['slug' => 'money-exchange'], ['section' => 'other', 'name' => 'Money Exchange', 'sort_order' => 2]);
-        Category::firstOrCreate(['slug' => 'sim-card'], ['section' => 'other', 'name' => 'SIM Card', 'sort_order' => 3]);
-        Category::firstOrCreate(['slug' => 'hospital'], ['section' => 'other', 'name' => 'Hospital', 'sort_order' => 4]);
-        Category::firstOrCreate(['slug' => 'others'], ['section' => 'other', 'name' => 'Others', 'sort_order' => 5]);
+        Category::updateOrCreate(['slug' => 'laundry'], [
+            'section' => 'other',
+            'name' => 'Laundry',
+            'sort_order' => 1,
+            'hero_image' => 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?q=80&w=1600&auto=format&fit=crop',
+            'description' => '洗濯もあっという間。留学生活の家事をサポートするランドリーサービス。',
+        ]);
+        Category::updateOrCreate(['slug' => 'money-exchange'], [
+            'section' => 'other',
+            'name' => 'Money Exchange',
+            'sort_order' => 2,
+            'hero_image' => 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=1600&auto=format&fit=crop',
+            'description' => '安心・便利な両替サービス。留学生活のお金まわりをサポート。',
+        ]);
+        Category::updateOrCreate(['slug' => 'sim-card'], [
+            'section' => 'other',
+            'name' => 'SIM Card',
+            'sort_order' => 3,
+            'hero_image' => 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1600&auto=format&fit=crop',
+            'description' => '来て早々インターネット環境を確保。SIMカードの購入・設定情報。',
+        ]);
+        Category::updateOrCreate(['slug' => 'hospital'], [
+            'section' => 'other',
+            'name' => 'Hospital',
+            'sort_order' => 4,
+            'hero_image' => 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=1600&auto=format&fit=crop',
+            'description' => 'もしもの時も安心。留学生対応の病院・クリニック情報。',
+        ]);
+        Category::updateOrCreate(['slug' => 'others'], [
+            'section' => 'other',
+            'name' => 'Others',
+            'sort_order' => 5,
+            'hero_image' => 'https://images.unsplash.com/photo-1568992687947-868a62a9f521?q=80&w=1600&auto=format&fit=crop',
+            'description' => 'その他、留学生活に役立つ便利なサービス情報をまとめています。',
+        ]);
 
         // ---- Restaurant & Cafe ----
-        Category::firstOrCreate(['slug' => 'restaurant'], ['section' => 'restaurant-cafe', 'name' => 'Restaurant', 'sort_order' => 1]);
-        Category::firstOrCreate(['slug' => 'cafe'], ['section' => 'restaurant-cafe', 'name' => 'Cafe', 'sort_order' => 2]);
+        Category::updateOrCreate(['slug' => 'restaurant'], [
+            'section' => 'restaurant-cafe',
+            'name' => 'Restaurant',
+            'sort_order' => 1,
+            'hero_image' => 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=1600&auto=format&fit=crop',
+            'description' => '落ち着いた空間でゆったり食事。ディナーにもぴったりなレストラン。',
+        ]);
+        Category::updateOrCreate(['slug' => 'cafe'], [
+            'section' => 'restaurant-cafe',
+            'name' => 'Cafe',
+            'sort_order' => 2,
+            'hero_image' => 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1600&auto=format&fit=crop',
+            'description' => 'コーヒー片手にひと休み。勉強にも作業にも使える居心地の良いカフェ。',
+        ]);
 
         // ---- Carinderia ----
+        // サブカテゴリーを選ぶとヒーロー画像・説明文もそれぞれ切り替わる(未設定のうちはメインカテゴリーの
+        // デフォルトにフォールバックする)。ここではとりあえずの初期画像を入れておき、アドミンが後で
+        // 管理画面から差し替えられるようにしてある。
         Category::where('slug', 'carinderia')->delete();
-        Category::firstOrCreate(['slug' => 'ucma'], ['section' => 'carinderia', 'name' => 'UCMA', 'sort_order' => 1]);
-        Category::firstOrCreate(['slug' => 'w-geonzon'], ['section' => 'carinderia', 'name' => 'W Geonzon', 'sort_order' => 2]);
+        Category::updateOrCreate(['slug' => 'ucma'], [
+            'section' => 'carinderia',
+            'name' => 'UCMA',
+            'sort_order' => 1,
+            'hero_image' => 'https://images.unsplash.com/photo-1512058564366-18510be2db19?q=80&w=1600&auto=format&fit=crop',
+            'description' => '地元で人気のカリンデリア。日替わりのおかずが並ぶ、あったかい家庭の味。',
+        ]);
+        Category::updateOrCreate(['slug' => 'w-geonzon'], [
+            'section' => 'carinderia',
+            'name' => 'W Geonzon',
+            'sort_order' => 2,
+            'hero_image' => 'https://images.unsplash.com/photo-1626200419199-391ae4be7a41?q=80&w=1600&auto=format&fit=crop',
+            'description' => 'ボリューム満点のワンプレート。学生にも嬉しい、コスパ抜群のカリンデリア。',
+        ]);
     }
 }
