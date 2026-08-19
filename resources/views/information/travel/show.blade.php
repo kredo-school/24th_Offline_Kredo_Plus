@@ -64,7 +64,7 @@
       <div class="relative flex flex-col lg:flex-row gap-8 w-full">
         <div class="flex-1">
           <h1 class="text-display font-black text-blue-950/90 mb-1">留学情報</h1>
-          <p class="text-headline-md font-bold text-brand-green mb-3 drop-shadow-[0_1px_3px_rgba(255,255,255,0.9)]">{{ $currentArea->name ?? $section?->name ?? 'Travel & Tourism' }}</p>
+          <p class="text-headline-md font-bold text-brand-yellow mb-3 drop-shadow-[0_1px_3px_rgba(255,255,255,0.9)]">{{ $currentArea->name ?? $section?->name ?? 'Travel & Tourism' }}</p>
           <p class="text-body-md text-blue-950/90 max-w-md whitespace-pre-line">{{ $currentArea->description ?? $section?->description ?? 'セブの海・自然・カルチャーを、まるごと満喫しよう。' }}</p>
         </div>
       </div>
@@ -122,7 +122,7 @@
       @foreach ($areas as $area)
         <a href="{{ route('travel.show', $area->slug) }}"
            class="shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors"
-           style="@if($currentArea && $currentArea->id === $area->id) background:{{ $area->color() }}; color:#fff; @else background:rgba(36,30,26,0.05); color:rgba(36,30,26,0.6); @endif">
+           style="@if($currentArea && $currentArea->id === $area->id) background:{{ $section?->color() ?? '#f5b52e' }}; color:#fff; @else background:rgba(36,30,26,0.05); color:rgba(36,30,26,0.6); @endif">
           {{ $area->name }}
         </a>
       @endforeach
@@ -140,11 +140,12 @@
         </label>
         <p class="font-mono text-[11px] tracking-[0.18em] text-[#241E1A]/40 mb-3 pl-1">AREA</p>
         <nav class="flex flex-col gap-1 pl-5" id="areaNav">
-          <a href="{{ route('travel.index') }}" style="--cat-color:rgba(36,30,26,0.6)" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A] @if(!$currentArea) active @endif">All Areas</a>
+          <a href="{{ route('travel.index') }}" style="--cat-color:{{ $section?->color() ?? '#f5b52e' }}" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A] @if(!$currentArea) active @endif">All Areas</a>
           {{-- カテゴリー一覧はDBから動的に取得。アドミンが追加しても、この@foreachがそのまま対応する --}}
+          {{-- 左のガイドはAll Areasがメインカテゴリーの色、下に行くほど薄くなるグラデーション --}}
           @foreach ($areas as $area)
             <a href="{{ route('travel.show', $area->slug) }}"
-               style="--cat-color:{{ $area->color() }}"
+               style="--cat-color:{{ \App\Models\Category::lighten($section?->color() ?? '#f5b52e', \App\Models\Category::sidebarTint($loop->index)) }}"
                class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A] @if($currentArea && $currentArea->id === $area->id) active @endif">
               {{ $area->name }}
             </a>

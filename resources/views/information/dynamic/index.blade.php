@@ -132,7 +132,7 @@
       <a href="#" style="--cat-color:rgba(36,30,26,0.6)" class="cat-link-mobile shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors {{ $initialCategory === null ? 'active' : '' }}">All</a>
       {{-- サブカテゴリー一覧はDBから動的に取得。アドミンが追加しても、この@foreachがそのまま対応する --}}
       @foreach ($subCategories as $cat)
-        <a href="#" data-tag="{{ $cat->name }}" style="--cat-color:{{ $cat->color() }}" class="cat-link-mobile shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors {{ $initialCategory === $cat->name ? 'active' : '' }}">{{ $cat->name }}</a>
+        <a href="#" data-tag="{{ $cat->name }}" style="--cat-color:{{ $section->color() }}" class="cat-link-mobile shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors {{ $initialCategory === $cat->name ? 'active' : '' }}">{{ $cat->name }}</a>
       @endforeach
     </div>
   </div>
