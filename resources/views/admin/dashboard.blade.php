@@ -86,41 +86,43 @@
                         <span class="p-2 bg-slate-100 rounded-xl text-lg">👥</span>
                     </div>
                     <div class="flex items-baseline gap-2">
-                        <span class="text-3xl font-extrabold text-slate-800">128</span>
-                        <span class="text-xs font-bold text-emerald-600">▲ +12</span>
+                        <span class="text-3xl font-extrabold text-slate-800">{{ number_format($totalUsers) }}</span>
+                        @if($newUsersThisWeek > 0)
+                            <span class="text-xs font-bold text-emerald-600">▲ +{{ $newUsersThisWeek }}</span>
+                        @endif
                     </div>
                 </div>
 
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                     <div class="flex items-center justify-between text-slate-400 mb-3">
-                        <span class="text-xs font-bold uppercase tracking-wider">今日のシャワー利用</span>
+                        <span class="text-xs font-bold uppercase tracking-wider">今日のシャワー情報投稿数</span>
                         <span class="p-2 bg-sky-50 rounded-xl text-lg">🚿</span>
                     </div>
                     <div class="flex items-baseline gap-2">
-                        <span class="text-3xl font-extrabold text-slate-800">42</span>
+                        <span class="text-3xl font-extrabold text-slate-800">{{ number_format($todayShowerUpdates) }}</span>
                         <span class="text-xs text-slate-400">回更新</span>
                     </div>
                 </div>
 
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                     <div class="flex items-center justify-between text-slate-400 mb-3">
-                        <span class="text-xs font-bold uppercase tracking-wider">英語学習（今日）</span>
+                        <span class="text-xs font-bold uppercase tracking-wider">今日の英語学習完了数</span>
                         <span class="p-2 bg-amber-50 rounded-xl text-lg">📖</span>
                     </div>
                     <div class="flex items-baseline gap-2">
-                        <span class="text-3xl font-extrabold text-slate-800">85</span>
+                        <span class="text-3xl font-extrabold text-slate-800">{{ number_format($todayLessonsCompleted) }}</span>
                         <span class="text-xs text-slate-400">レッスン完了</span>
                     </div>
                 </div>
 
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                     <div class="flex items-center justify-between text-slate-400 mb-3">
-                        <span class="text-xs font-bold uppercase tracking-wider">レストラン掲載数</span>
-                        <span class="p-2 bg-rose-50 rounded-xl text-lg">🍕</span>
+                        <span class="text-xs font-bold uppercase tracking-wider">今日の留学情報更新数</span>
+                        <span class="p-2 bg-rose-50 rounded-xl text-lg">🌴</span>
                     </div>
                     <div class="flex items-baseline gap-2">
-                        <span class="text-3xl font-extrabold text-slate-800">24</span>
-                        <span class="text-xs text-slate-400">店舗</span>
+                        <span class="text-3xl font-extrabold text-slate-800">{{ number_format($todayInfoUpdates) }}</span>
+                        <span class="text-xs text-slate-400">件更新</span>
                     </div>
                 </div>
             </div>
