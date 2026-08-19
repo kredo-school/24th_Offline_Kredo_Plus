@@ -272,7 +272,7 @@ textarea.rc-field-input {
     bottom: 0;
     left: 0;
     width: 100%;
-    z-index: 50;
+    z-index: 9999;
     background: #334155;
     border-top: 1px solid rgba(100, 116, 139, 0.4);
     display: flex;
