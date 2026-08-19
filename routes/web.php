@@ -32,6 +32,8 @@ use App\Http\Controllers\Information\OtherController;
 use App\Http\Controllers\Information\RestaurantCafeController;
 use App\Http\Controllers\Information\PostInteractionController;
 use App\Http\Controllers\Information\MainCategoryPageController;
+// Notification　通知
+use App\Http\Controllers\NotificationController;
 //Earth
 use App\Http\Controllers\EarthController;
 use App\Http\Controllers\EarthLocationController;
@@ -264,6 +266,11 @@ Route::prefix('information')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+// ==========================================
+// Notification 通知
+Route::get('/notifications', [NotificationController::class, 'data'])->name('notifications.data');
+Route::post('/notifications/mark-seen', [NotificationController::class, 'markSeen'])->name('notifications.mark-seen');
 
 // Earth
 Route::get('/earth', [EarthController::class, 'index'])->name('earth');
