@@ -15,7 +15,6 @@
 
     <div class="mb-8">
         <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">TOEIC 概要</h1>
-        <p class="text-body-md text-blue-950/90">Test of English for International Communication</p>
     </div>
 
     <div class="max-w-4xl space-y-6">

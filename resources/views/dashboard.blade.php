@@ -120,8 +120,16 @@
                     next() { this.current = (this.current + 1) % this.slides.length },
                     prev() { this.current = (this.current - 1 + this.slides.length) % this.slides.length },
                     goTo(i) { this.current = i },
+                    touchStartX: 0,
+                    onTouchStart(e) { this.touchStartX = e.changedTouches[0].clientX },
+                    onTouchEnd(e) {
+                        const diff = this.touchStartX - e.changedTouches[0].clientX;
+                        if (Math.abs(diff) > 40) { diff > 0 ? this.next() : this.prev() }
+                    },
                  }"
-                 x-init="setInterval(() => next(), 6000)">
+                 x-init="setInterval(() => next(), 6000)"
+                 @touchstart.passive="onTouchStart($event)"
+                 @touchend.passive="onTouchEnd($event)">
 
                 <template x-for="(slide, index) in slides" :key="index">
                     <img :src="slide"
@@ -158,13 +166,21 @@
                     <p class="text-white/70 text-sm [text-shadow:0_1px_6px_rgba(0,0,0,0.4)]">セブでの学びと生活を、もっと充実させよう。</p>
                 </div>
 
+                {{-- スマホでは矢印ボタンの代わりに、写真の左右半分をタップ/スワイプで切り替え --}}
                 <button type="button" @click="prev()"
-                        class="group absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md ring-1 ring-white/40 flex items-center justify-center text-white hover:bg-white/25 hover:scale-105 transition-all"
+                        class="sm:hidden absolute inset-y-0 left-0 w-1/2 pointer-events-auto"
+                        aria-label="前の写真"></button>
+                <button type="button" @click="next()"
+                        class="sm:hidden absolute inset-y-0 right-0 w-1/2 pointer-events-auto"
+                        aria-label="次の写真"></button>
+
+                <button type="button" @click="prev()"
+                        class="hidden sm:flex group absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md ring-1 ring-white/40 items-center justify-center text-white hover:bg-white/25 hover:scale-105 transition-all"
                         aria-label="前の写真">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
                 </button>
                 <button type="button" @click="next()"
-                        class="group absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md ring-1 ring-white/40 flex items-center justify-center text-white hover:bg-white/25 hover:scale-105 transition-all"
+                        class="hidden sm:flex group absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md ring-1 ring-white/40 items-center justify-center text-white hover:bg-white/25 hover:scale-105 transition-all"
                         aria-label="次の写真">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
                 </button>

@@ -15,7 +15,6 @@
 
     <div class="mb-8">
         <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">IELTS 概要</h1>
-        <p class="text-body-md text-blue-950/90">International English Language Testing System</p>
     </div>
 
     <div x-data="{ activeTab: 'listening' }" class="max-w-4xl">
