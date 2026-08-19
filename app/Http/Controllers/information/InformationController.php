@@ -43,7 +43,7 @@ class InformationController extends Controller
             'title' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'price' => ['nullable', 'numeric', 'min:0'],
-            'image' => ['nullable', 'image', 'max:5120'],
+            'image' => ['nullable', 'mimes:jpg,jpeg,png,bmp,gif,svg,webp,heic,heif', 'max:5120'],
         ]);
 
         // すでに保存されている下書きを取得
@@ -57,8 +57,7 @@ class InformationController extends Controller
                 Storage::disk('public')->delete($draft['image']);
             }
 
-            $draft['image'] = $request->file('image')
-                ->store('drafts', 'public');
+            $draft['image'] = $this->storeImage($request->file('image'), 'drafts');
         }
 
         // テキスト系の入力内容を保存
@@ -95,13 +94,13 @@ class InformationController extends Controller
             $earthLocation = EarthLocation::find($request->earth_location_id);
         }
 
-         // 場所追加から戻ってきた場合だけ、一時保存した投稿データを取得
-         $draft = [];
+        // 場所追加から戻ってきた場合だけ、一時保存した投稿データを取得
+        $draft = [];
 
-         if ($request->filled('earth_location_id')) {
-               $draft = session('information_draft', []);
-         }
-         return view('information.post', compact(
+        if ($request->filled('earth_location_id')) {
+            $draft = session('information_draft', []);
+        }
+        return view('information.post', compact(
             'categories',
             'mainCategories',
             'earthLocation',
@@ -122,13 +121,12 @@ class InformationController extends Controller
             'title'       => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'price'       => ['nullable', 'numeric'],
-            'image'       => ['nullable', 'image', 'max:5120'],
+            'image' => ['nullable', 'mimes:jpg,jpeg,png,bmp,gif,svg,webp,heic,heif', 'max:5120'],
             'earth_location_id' => ['nullable', 'exists:earth_locations,id'],
         ]);
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')
-                ->store('posts', 'public');
+            $validated['image'] = $this->storeImage($request->file('image'), 'posts');
         }
 
         $validated['user_id'] = auth()->id();
@@ -141,7 +139,7 @@ class InformationController extends Controller
                 ->update([
                     'post_id' =>
 
-                     $post->id,
+                    $post->id,
                 ]);
         }
 
@@ -209,7 +207,7 @@ class InformationController extends Controller
             'title'       => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:2000'],
             'price'       => ['nullable', 'numeric', 'min:0'],
-            'image'       => ['nullable', 'image', 'max:5120'],
+            'image' => ['nullable', 'mimes:jpg,jpeg,png,bmp,gif,svg,webp,heic,heif', 'max:5120'],
         ]);
 
         // 新しい画像がアップロードされた場合
@@ -220,8 +218,7 @@ class InformationController extends Controller
                 Storage::disk('public')->delete($post->image);
             }
 
-            $validated['image'] = $request->file('image')
-                ->store('posts', 'public');
+            $validated['image'] = $this->storeImage($request->file('image'), 'posts');
         }
 
         $post->update($validated);
@@ -286,5 +283,24 @@ class InformationController extends Controller
         return redirect()
             ->to($this->sectionIndexUrl($section))
             ->with('status', '投稿を削除しました。');
+    }
+
+    // ============================================================
+    // 画像保存（HEICならJPEGに変換してから保存）
+    // ============================================================
+    private function storeImage($file, string $folder): string
+    {
+        $ext = strtolower($file->getClientOriginalExtension());
+
+        if (in_array($ext, ['heic', 'heif'])) {
+            $filename = uniqid() . '.jpg';
+            $destPath = storage_path('app/public/' . $folder . '/' . $filename);
+
+            exec('sips -s format jpeg ' . escapeshellarg($file->getRealPath()) . ' --out ' . escapeshellarg($destPath));
+
+            return $folder . '/' . $filename;
+        }
+
+        return $file->store($folder, 'public');
     }
 }
