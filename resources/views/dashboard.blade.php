@@ -137,8 +137,8 @@
                 </template>
 
                 {{-- 写真の上に文字を乗せても読みやすいよう、下〜左側だけを暗くするグラデーション（ネイビーを効かせて上品に） --}}
-                <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent pointer-events-none"></div>
-                <div aria-hidden="true" class="absolute inset-y-0 left-0 w-full sm:w-3/5 bg-gradient-to-r from-slate-950/55 via-slate-950/10 to-transparent pointer-events-none"></div>
+                <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-t from-slate-950/55 via-slate-950/15 to-transparent pointer-events-none"></div>
+                <div aria-hidden="true" class="absolute inset-y-0 left-0 w-full sm:w-3/5 bg-gradient-to-r from-slate-950/35 via-slate-950/5 to-transparent pointer-events-none"></div>
 
                 {{-- 手書き風の挨拶 + タイトル + リード文（下部はイラスト用に余白を多めに確保） --}}
                 <div class="absolute inset-x-0 bottom-0 pl-14 sm:pl-16 pr-8 sm:pr-12 pt-8 sm:pt-12 pb-16 sm:pb-24 sm:max-w-md">
