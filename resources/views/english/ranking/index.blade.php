@@ -87,18 +87,18 @@
         @endif
 
         {{-- 自分の順位（下部固定表示） --}}
-        <div class="bg-gradient-to-br from-blue-50 to-sky-100 border-2 border-blue-600 rounded-[0.5rem] p-4">
-            <p class="text-caption text-blue-600 font-bold mb-2">あなたの順位</p>
+        <div class="bg-gradient-to-br from-orange-100 to-amber-50 border-2 border-[#b95827] rounded-[0.5rem] p-4">
+            <p class="text-caption text-orange-600 font-bold mb-2">あなたの順位</p>
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
-                    <span class="text-headline-md font-black text-blue-600">{{ $myRank }}位</span>
+                    <span class="text-headline-md font-black text-orange-600">{{ $myRank }}位</span>
                     <div>
                         <p class="font-bold text-blue-950/90">{{ $user->name }}</p>
-                        <span class="bg-gradient-to-br from-blue-50 to-sky-100 ring-1 ring-blue-200 text-blue-600 text-caption font-bold px-2 py-0.5 rounded-[0.75rem]">Lv.{{ $levelInfo['level'] }}</span>
+                        <span class="bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 text-caption font-bold px-2 py-0.5 rounded-[0.75rem]">Lv.{{ $levelInfo['level'] }}</span>
                     </div>
                 </div>
                 <div class="text-right">
-                    <p class="font-black text-blue-600 text-headline-md">{{ number_format($levelInfo['current_xp']) }}</p>
+                    <p class="font-black text-orange-600 text-headline-md">{{ number_format($levelInfo['current_xp']) }}</p>
                     <p class="text-caption text-blue-950/90">Total XP</p>
                 </div>
             </div>
