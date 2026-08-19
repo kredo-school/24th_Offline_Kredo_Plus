@@ -48,6 +48,11 @@ use App\Http\Controllers\Admin\AdminUserController;
     use App\Http\Controllers\Admin\AdminShowerMalfunctionController;
     use App\Models\Shower\ShowerMalfunctionReport;
     use App\Models\Shower\ShowerCapacityReport;
+    use App\Models\Shower\ShowerReport;
+    // English
+    use App\Models\English\StudyLog;
+    use App\Models\Post;
+    use App\Models\User;
 
 
 Route::get('/', function () {
@@ -299,6 +304,11 @@ Route::put(
                 'brokenShowers' => ShowerMalfunctionReport::currentlyBroken(),
                 'maleFull' => ShowerCapacityReport::isCurrentlyFull('male'),
                 'femaleFull' => ShowerCapacityReport::isCurrentlyFull('female'),
+                'totalUsers' => User::count(),
+                'newUsersThisWeek' => User::where('created_at', '>=', now()->subDays(7))->count(),
+                'todayShowerUpdates' => ShowerReport::whereDate('created_at', today())->count(),
+                'todayLessonsCompleted' => StudyLog::whereDate('studied_date', today())->count(),
+                'todayInfoUpdates' => Post::whereDate('updated_at', today())->count(),
             ]);
         })->name('dashboard');
 
