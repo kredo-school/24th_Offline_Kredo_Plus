@@ -70,14 +70,17 @@
                     // 一時保存された下書きを取得
                     $draft = session('information_draft', []);
 
-                    // バリデーションエラー時は old() を優先
-                    $selectedCategoryId = !empty($earthLocation) ? ($draft['category_id'] ?? ''): '';
-                    // 選択中のカテゴリーからメインカテゴリーを逆引き
-                    $selectedCategory = $selectedCategoryId
-                        ? $categories->firstWhere('id', (int) $selectedCategoryId)
-                        : null;
+                    $selectedCategoryId = !empty($earthLocation)
+                    ? ($draft['category_id'] ?? '')
+                    : '';
 
-                    $oldSection = $selectedCategory->section ?? null;
+                $oldSection = !empty($earthLocation)
+                    ? ($draft['main_category'] ?? '')
+                    : '';
+
+                $selectedCategory = $selectedCategoryId
+                    ? $categories->firstWhere('id', (int) $selectedCategoryId)
+                    : null;
                 @endphp                <!-- Main Category -->
 
                 <div>

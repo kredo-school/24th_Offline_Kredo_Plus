@@ -73,9 +73,9 @@ return [
 
     // IELTS Part のメタ情報
     'ielts_part_meta' => [
-        1 => ['name' => 'Speaking Part 1', 'desc' => 'Introduction and interview. Answer questions about yourself and everyday topics.', 'icon' => 'person',  'badge' => null],
-        2 => ['name' => 'Speaking Part 2', 'desc' => 'Long turn. Speak about a given topic for 1-2 minutes.',                         'icon' => 'mic',    'badge' => null],
-        3 => ['name' => 'Speaking Part 3', 'desc' => 'Discussion. Answer more abstract questions related to Part 2 topic.',            'icon' => 'forum',  'badge' => null],
+        1 => ['name' => 'Speaking Part 1', 'desc' => '自己紹介・インタビュー形式。自分自身や身近な話題についての質問に答える', 'icon' => 'person',  'badge' => null],
+        2 => ['name' => 'Speaking Part 2', 'desc' => 'ロングターン。与えられたトピックについて1〜2分間スピーチする',                         'icon' => 'mic',    'badge' => null],
+        3 => ['name' => 'Speaking Part 3', 'desc' => 'ディスカッション。Part 2のトピックに関連したより抽象的な質問に答える',            'icon' => 'forum',  'badge' => null],
     ],
 
     /*
