@@ -151,33 +151,5 @@ class ShowerDataSeeder extends Seeder
         return $candidates[array_rand($candidates)];
     }
 
-    private function seedCapacity(string $gender, $users): void
-    {
-        $daysWithFullReport = collect(range(0, 13))->random(rand(5, 8));
-
-        foreach ($daysWithFullReport as $daysAgo) {
-            $date = Carbon::now()->subDays($daysAgo);
-            $fullTime = $date->copy()->setHour(rand(7, 22))->setMinute(rand(0, 59));
-
-            ShowerCapacityReport::create([
-                'gender' => $gender,
-                'status' => 'full',
-                'user_id' => $users->random()->id,
-                'created_at' => $fullTime,
-                'updated_at' => $fullTime,
-            ]);
-
-            if (rand(1, 10) <= 7) {
-                $vacantTime = $fullTime->copy()->addMinutes(rand(5, 25));
-
-                ShowerCapacityReport::create([
-                    'gender' => $gender,
-                    'status' => 'vacant',
-                    'user_id' => $users->random()->id,
-                    'created_at' => $vacantTime,
-                    'updated_at' => $vacantTime,
-                ]);
-            }
-        }
-    }
+    
 }
