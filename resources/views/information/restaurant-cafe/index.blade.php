@@ -65,7 +65,7 @@
 
 <div class="min-h-screen flex flex-col">
 
-  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-8 md:pt-12">
+  <div class="max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop pt-8 md:pt-12">
     <!-- ヒーローバナー: $sectionの内容(アドミンが登録した画像・タイトル・説明文)をそのまま表示。
          STOREでサブカテゴリーを選ぶと、JSでそのサブカテゴリー専用のヒーローに切り替わる(All選択時は元に戻る) -->
     @php
@@ -100,7 +100,7 @@
         <div class="flex-1">
           <h1 class="text-display font-black text-blue-950/90 mb-1">留学情報</h1>
           <p id="heroTitle" class="text-headline-md font-bold text-brand-green mb-3 drop-shadow-[0_1px_3px_rgba(255,255,255,0.9)]">{{ $initialHeroTitle }}</p>
-          <p id="heroDesc" class="text-body-md text-blue-950/90 max-w-md">{{ $initialHeroDesc }}</p>
+          <p id="heroDesc" class="text-body-md text-blue-950/90 max-w-md whitespace-pre-line">{{ $initialHeroDesc }}</p>
         </div>
       </div>
     </section>
@@ -108,7 +108,7 @@
 
   <br>
 
-  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-4">
+  <div class="max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop pt-4">
   {{--
       メインカテゴリー一覧ボタン。main_categoriesテーブルを動的にループするので、
       アドミンが5つ目以降を追加しても、ここに自動で表示される。
@@ -140,7 +140,7 @@
   @endif
 </div>
 
-  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-3 md:pt-8">
+  <div class="max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop pt-3 md:pt-8">
     <!-- 検索(スマホ用。PCは下のサイドバー内に別途表示) -->
     <label class="relative block mb-4 md:hidden">
       <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-[#241E1A]/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -157,7 +157,7 @@
     </div>
   </div>
 
-  <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-4 flex gap-6">
+  <div class="flex-1 max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop py-4 flex gap-6">
 
     <!-- Sidebar(PC/タブレットのみ。スマホは上の検索欄+チップに置き換え) -->
     <aside id="sidebar" class="hidden md:block w-60 shrink-0">

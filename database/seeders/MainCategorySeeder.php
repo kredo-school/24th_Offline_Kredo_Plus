@@ -21,7 +21,7 @@ class MainCategorySeeder extends Seeder
         MainCategory::firstOrCreate(['key' => 'carinderia'], [
             'name' => 'Carinderia',
             'hero_image' => 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=1600&auto=format&fit=crop',
-            'description' => 'シンプルで美味しい、家庭的な味。近所のカリンデリアの美味しさをお届けします。',
+            'description' => "シンプルで美味しい、家庭的な味。\n近所のカリンデリアの美味しさをお届けします。",
             'sort_order' => 1,
         ]);
         // ↑テスト投稿で管理画面から画像が上書きされていたため、他ページと揃うオシャレな初期画像に強制的に戻す
@@ -33,21 +33,21 @@ class MainCategorySeeder extends Seeder
         MainCategory::firstOrCreate(['key' => 'restaurant-cafe'], [
             'name' => 'Restaurant & Cafe',
             'hero_image' => 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1600&auto=format&fit=crop',
-            'description' => 'ゆったり座れるディナーも、居心地の良いカフェも、ここに全部揃ってます。',
+            'description' => "ゆったり座れるディナーも、\n居心地の良いカフェも、ここに全部揃ってます。",
             'sort_order' => 2,
         ]);
 
         MainCategory::firstOrCreate(['key' => 'travel'], [
             'name' => 'Travel & Tourism',
             'hero_image' => 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=1600&auto=format&fit=crop',
-            'description' => 'セブの海・自然・カルチャーを、まるごと満喫しよう。',
+            'description' => "セブの海・自然・カルチャーを、\nまるごと満喫しよう。",
             'sort_order' => 3,
         ]);
 
         MainCategory::firstOrCreate(['key' => 'other'], [
             'name' => 'Other',
             'hero_image' => 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?q=80&w=800&auto=format&fit=crop',
-            'description' => '留学生活に欠かせない日常サービス:ランドリー・両替・SIMカードなど。',
+            'description' => "留学生活に欠かせない日常サービス:\nランドリー・両替・SIMカードなど。",
             'sort_order' => 4,
         ]);
     }
