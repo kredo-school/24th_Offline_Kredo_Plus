@@ -1,372 +1,299 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
+@extends('layouts.app')
 
+@section('title', '場所を編集 — Kredo Plus')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/information.css') }}">
     <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet/dist/leaflet.css">
+@endpush
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@section('content')
 
-    <title>位置情報を編集 | Kredo Plus</title>
+<div class="rc-edit-wrapper">
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+    {{-- Header --}}
+    <div class="rc-bar">
 
-        body {
-            margin: 0;
-            background: #F7F4EF;
-            color: #241E1A;
-            font-family:
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
-        }
+        <div class="rc-bar-inner">
 
-        .page {
-            min-height: 100vh;
-            padding: 50px 20px 80px;
-        }
+            <div class="rc-bar-left">
 
-        .container {
-            width: 100%;
-            max-width: 900px;
-            margin: 0 auto;
-        }
+                <a
+                    href="{{ route('information.edit', $earthLocation->post_id) }}"
+                    class="rc-back-link">
 
-        /* Header */
+                    <i class="fa-solid fa-arrow-left"></i>
 
-        .header {
-            margin-bottom: 32px;
-        }
+                </a>
 
-        .eyebrow {
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.16em;
-            color: #9A7258;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
+                <span class="rc-page-title">
+                    場所を編集
+                </span>
 
-        h1 {
-            margin: 0;
-            font-size: 32px;
-            line-height: 1.2;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }
-
-        .subtitle {
-            margin-top: 10px;
-            color: rgba(36, 30, 26, 0.55);
-            font-size: 14px;
-            line-height: 1.7;
-        }
-
-        /* Card */
-
-        .card {
-            background: #FFFFFF;
-            border-radius: 24px;
-            padding: 32px;
-            box-shadow:
-                0 10px 30px rgba(36, 30, 26, 0.06);
-        }
-
-        .section {
-            margin-bottom: 28px;
-        }
-
-        .label {
-            display: block;
-            margin-bottom: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #241E1A;
-        }
-
-        /* Search */
-
-        .search-row {
-            display: flex;
-            gap: 10px;
-        }
-
-        .input {
-            width: 100%;
-            height: 50px;
-            border: 1px solid #E5DED6;
-            border-radius: 14px;
-            padding: 0 16px;
-            font-size: 14px;
-            color: #241E1A;
-            background: #FFFEFC;
-            outline: none;
-            transition: 0.2s ease;
-        }
-
-        .input:focus {
-            border-color: #B58B6A;
-            box-shadow: 0 0 0 4px rgba(181, 139, 106, 0.12);
-        }
-
-        .search-button {
-            flex-shrink: 0;
-            height: 50px;
-            padding: 0 22px;
-            border: none;
-            border-radius: 14px;
-            background: #241E1A;
-            color: white;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s ease;
-        }
-
-        .search-button:hover {
-            transform: translateY(-1px);
-            opacity: 0.9;
-        }
-
-        /* Search Results */
-
-        #searchResults {
-            margin-top: 12px;
-            overflow: hidden;
-            border-radius: 14px;
-        }
-
-        #searchResults > div {
-            background: #FAF8F5;
-            border-bottom: 1px solid #E8E1D9 !important;
-            padding: 14px !important;
-            font-size: 13px;
-            line-height: 1.5;
-            transition: 0.2s ease;
-        }
-
-        #searchResults > div:hover {
-            background: #F1ECE6;
-        }
-
-        /* Map */
-
-        .map-wrapper {
-            overflow: hidden;
-            border-radius: 20px;
-            border: 1px solid #E5DED6;
-            box-shadow: inset 0 0 0 1px rgba(36, 30, 26, 0.02);
-        }
-
-        #map {
-            height: 450px !important;
-            width: 100%;
-        }
-
-        /* Save button */
-
-        .save-button {
-            width: 100%;
-            height: 56px;
-            border: none;
-            border-radius: 16px;
-            background: #B58B6A;
-            color: white;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s ease;
-        }
-
-        .save-button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 20px rgba(181, 139, 106, 0.25);
-        }
-
-        /* Responsive */
-
-        @media (max-width: 640px) {
-
-            .page {
-                padding: 30px 14px 50px;
-            }
-
-            .card {
-                padding: 22px;
-                border-radius: 20px;
-            }
-
-            h1 {
-                font-size: 26px;
-            }
-
-            .search-row {
-                flex-direction: column;
-            }
-
-            .search-button {
-                width: 100%;
-            }
-
-            #map {
-                height: 350px !important;
-            }
-        }
-    </style>
-
-</head>
-
-<body>
-
-<div class="page">
-
-    <div class="container">
-
-        {{-- Header --}}
-        <div class="header">
-
-            <div class="eyebrow">
-                Kredo Plus
             </div>
-
-            <h1>
-                位置情報を編集
-            </h1>
-
-            <p class="subtitle">
-                店舗情報や地図上の位置を変更できます。
-            </p>
-
-        </div>
-
-
-        {{-- Main Card --}}
-        <div class="card">
-
-            <form method="POST"
-                action="{{ route('earth.location.update', $earthLocation) }}">
-
-                @csrf
-                @method('PUT')
-
-
-                {{-- 店舗名 hidden --}}
-                <input
-                    type="hidden"
-                    id="place_name"
-                    name="place_name"
-                    value="{{ old('place_name', $earthLocation->place_name) }}">
-
-
-                {{-- Search --}}
-                <div class="section">
-
-                    <label class="label">
-                        店舗を検索
-                    </label>
-
-                    <div class="search-row">
-
-                        <input
-                            type="text"
-                            id="searchInput"
-                            class="input"
-                            placeholder="店舗名を入力してください">
-
-                        <button
-                            type="button"
-                            id="searchButton"
-                            class="search-button">
-
-                            🔍 検索
-
-                        </button>
-
-                    </div>
-
-                    <div id="searchResults"></div>
-
-                </div>
-
-
-                {{-- Address --}}
-                <div class="section">
-
-                    <label class="label">
-                        住所
-                    </label>
-
-                    <input
-                        type="text"
-                        id="address"
-                        name="address"
-                        class="input"
-                        value="{{ old('address', $earthLocation->address) }}"
-                        placeholder="住所"
-                    >
-
-                </div>
-
-
-                {{-- Map --}}
-                <div class="section">
-
-                    <label class="label">
-                        地図上の位置
-                    </label>
-
-                    <div class="map-wrapper">
-
-                        <div id="map"></div>
-
-                    </div>
-
-                </div>
-
-
-                {{-- Hidden Coordinates --}}
-
-                <input
-                    type="hidden"
-                    id="latitude"
-                    name="latitude"
-                    value="{{ old('latitude', $earthLocation->latitude) }}">
-
-                <input
-                    type="hidden"
-                    id="longitude"
-                    name="longitude"
-                    value="{{ old('longitude', $earthLocation->longitude) }}">
-
-
-                {{-- Save --}}
-
-                <button
-                    type="submit"
-                    class="save-button">
-
-                    変更を保存
-
-                </button>
-
-            </form>
 
         </div>
 
     </div>
 
+
+    <main class="rc-main">
+
+        {{-- Error --}}
+        @if ($errors->any())
+
+            <div class="rc-error-box">
+
+                <p>入力内容をご確認ください</p>
+
+                <ul>
+
+                    @foreach ($errors->all() as $error)
+
+                        <li>
+                            {{ $error }}
+                        </li>
+                    @endforeach
+
+                </ul>
+
+            </div>
+
+        @endif
+
+
+        <form
+            method="POST"
+            action="{{ route('earth.location.update', $earthLocation) }}">
+
+            @csrf
+            @method('PUT')
+
+
+            {{-- 店舗名 --}}
+            {{-- 画面には表示しない --}}
+            <input
+                type="hidden"
+                id="place_name"
+                name="place_name"
+                value="{{ old('place_name', $earthLocation->place_name) }}">
+
+
+            {{-- Search --}}
+            <div>
+
+                <label class="rc-field-label">
+                    SEARCH LOCATION
+                </label>
+
+                <div style="
+                    display:flex;
+                    gap:10px;
+                    align-items:stretch;
+                ">
+
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="rc-field-input"
+                        placeholder="店舗名を入力してください">
+
+                    <button
+                        type="button"
+                        id="searchButton"
+                        class="rc-save-btn"
+                        style="
+                            width:auto;
+                            padding:0 20px;
+                            background:#4736F0;
+                            color:#fff;
+                            white-space:nowrap;
+                        ">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                        <span>
+                            検索
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+                {{-- Search Results --}}
+                <div
+                    id="searchResults"
+                    style="
+                        margin-top:10px;
+                    ">
+                </div>
+
+            </div>
+
+
+            {{-- Address --}}
+            <div>
+
+                <label class="rc-field-label">
+                    ADDRESS
+                </label>
+
+                <input
+                    type="text"
+                    id="address"
+                    name="address"
+                    class="rc-field-input"
+                    value="{{ old('address', $earthLocation->address) }}"
+                    placeholder="店舗の住所">
+
+            </div>
+
+
+            {{-- Map --}}
+            <div>
+
+                <label class="rc-field-label">
+                    LOCATION
+                </label>
+
+                <div
+                    style="
+                        overflow:hidden;
+                        border-radius:14px;
+                        border:1px solid #e5e7eb;
+                        margin-top:8px;
+                    ">
+
+                    <div
+                        id="map"
+                        style="
+                            width:100%;
+                            height:450px;
+                        ">
+                    </div>
+
+                </div>
+
+                <p style="
+                    margin:8px 0 0;
+                    font-size:12px;
+                    color:#9ca3af;
+                ">
+                    店舗を検索すると、地図上の位置を変更できます。
+                </p>
+
+            </div>
+
+
+            {{-- Hidden coordinates --}}
+
+            <input
+                type="hidden"
+                id="latitude"
+                name="latitude"
+                value="{{ old('latitude', $earthLocation->latitude) }}">
+
+            <input
+                type="hidden"
+                id="longitude"
+                name="longitude"
+                value="{{ old('longitude', $earthLocation->longitude) }}">
+
+
+            {{-- Update --}}
+
+            <div style="margin-top:30px;">
+
+                <button
+                    type="submit"
+                    class="rc-save-btn"
+                    style="
+                        width:100%;
+                        background:#4736F0;
+                        color:#fff;
+                    ">
+
+                    <i class="fa-solid fa-location-dot"></i>
+
+                    <span>
+                        位置情報を更新
+                    </span>
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </main>
+
+
+    {{-- Footer --}}
+
+    <nav class="rc-footer-nav">
+
+        <a
+            href="{{ route('restaurant-cafe.index') }}"
+            class="rc-nav-item">
+
+            <i
+                class="fa-solid fa-house"
+                style="font-size:20px;">
+            </i>
+
+            <span>
+                Home
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ route('information.create') }}"
+            class="rc-nav-item">
+
+            <div class="rc-nav-post-icon">
+
+                <i class="fa-solid fa-plus"></i>
+
+            </div>
+
+            <span>
+                Post
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ route('earth') }}"
+            class="rc-nav-item active">
+
+            <i
+                class="fa-solid fa-globe"
+                style="font-size:20px;">
+            </i>
+
+            <span>
+                Map
+            </span>
+
+        </a>
+
+    </nav>
+
 </div>
 
+@endsection
+
+
+@push('scripts')
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 @vite('resources/js/earth/earth-location-edit.js')
 
-</body>
-</html>
+@endpush
