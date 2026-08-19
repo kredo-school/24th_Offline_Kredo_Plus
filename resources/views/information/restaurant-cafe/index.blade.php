@@ -99,7 +99,7 @@
       <div class="relative flex flex-col lg:flex-row gap-8 w-full">
         <div class="flex-1">
           <h1 class="text-display font-black text-blue-950/90 mb-1">留学情報</h1>
-          <p id="heroTitle" class="text-headline-md font-bold text-brand-green mb-3 drop-shadow-[0_1px_3px_rgba(255,255,255,0.9)]">{{ $initialHeroTitle }}</p>
+          <p id="heroTitle" class="text-headline-md font-bold text-brand-red mb-3 drop-shadow-[0_1px_3px_rgba(255,255,255,0.9)]">{{ $initialHeroTitle }}</p>
           <p id="heroDesc" class="text-body-md text-blue-950/90 max-w-md whitespace-pre-line">{{ $initialHeroDesc }}</p>
         </div>
       </div>
@@ -152,7 +152,7 @@
       <a href="#" style="--cat-color:rgba(36,30,26,0.6)" class="cat-link-mobile shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors {{ $initialCategory === null ? 'active' : '' }}">All</a>
       {{-- サブカテゴリー一覧はDBから動的に取得。アドミンが追加しても、この@foreachがそのまま対応する --}}
       @foreach ($subCategories as $cat)
-        <a href="#" data-tag="{{ $cat->name }}" style="--cat-color:{{ $cat->color() }}" class="cat-link-mobile shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors {{ $initialCategory === $cat->name ? 'active' : '' }}">{{ $cat->name }}</a>
+        <a href="#" data-tag="{{ $cat->name }}" style="--cat-color:{{ $section?->color() ?? '#e05237' }}" class="cat-link-mobile shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors {{ $initialCategory === $cat->name ? 'active' : '' }}">{{ $cat->name }}</a>
       @endforeach
     </div>
   </div>
@@ -168,10 +168,11 @@
         </label>
         <p class="font-mono text-[11px] tracking-[0.18em] text-[#241E1A]/40 mb-3 pl-1">STORE</p>
         <nav class="flex flex-col gap-1 pl-5" id="storeNav">
-          <a href="#" style="--cat-color:rgba(36,30,26,0.6)" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A] {{ $initialCategory === null ? 'active' : '' }}">All</a>
+          <a href="#" style="--cat-color:{{ $section?->color() ?? '#e05237' }}" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A] {{ $initialCategory === null ? 'active' : '' }}">All</a>
           {{-- サブカテゴリー一覧はDBから動的に取得。アドミンが追加しても、この@foreachがそのまま対応する --}}
+          {{-- 左のガイドはAllがメインカテゴリーの色、下に行くほど薄くなるグラデーション --}}
           @foreach ($subCategories as $cat)
-            <a href="#" data-tag="{{ $cat->name }}" style="--cat-color:{{ $cat->color() }}" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A] {{ $initialCategory === $cat->name ? 'active' : '' }}">{{ $cat->name }}</a>
+            <a href="#" data-tag="{{ $cat->name }}" style="--cat-color:{{ \App\Models\Category::lighten($section?->color() ?? '#e05237', \App\Models\Category::sidebarTint($loop->index)) }}" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A] {{ $initialCategory === $cat->name ? 'active' : '' }}">{{ $cat->name }}</a>
           @endforeach
         </nav>
       </div>
