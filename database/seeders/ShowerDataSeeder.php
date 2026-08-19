@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Shower\ShowerCapacityReport;
 use App\Models\Shower\ShowerMalfunctionReport;
 use App\Models\Shower\ShowerReport;
 use App\Models\User;
@@ -24,11 +23,8 @@ class ShowerDataSeeder extends Seeder
                 continue;
             }
 
-            // 先に故障データを作り、期間を記録しておく
             $brokenPeriods = $this->seedMalfunctions($gender, $users);
-
             $this->seedReports($gender, $users, $brokenPeriods);
-            $this->seedCapacity($gender, $users);
         }
     }
 

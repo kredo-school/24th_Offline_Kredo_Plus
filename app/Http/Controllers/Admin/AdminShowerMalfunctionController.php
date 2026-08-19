@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Shower\ShowerMalfunctionReport;
+use App\Services\Shower\ShowerNotificationService;
 use Illuminate\Http\Request;
 
 class AdminShowerMalfunctionController extends Controller
@@ -18,7 +19,7 @@ class AdminShowerMalfunctionController extends Controller
         ]);
     }
 
-    public function fix(Request $request, string $gender, int $showerNumber)
+    public function fix(Request $request, string $gender, int $showerNumber, ShowerNotificationService $notificationService)
     {
         ShowerMalfunctionReport::create([
             'gender' => $gender,
@@ -27,6 +28,8 @@ class AdminShowerMalfunctionController extends Controller
             'user_id' => $request->user()->id,
             'comment' => null,
         ]);
+
+        $notificationService->malfunctionFixed($gender, $showerNumber);
 
         return back()->with('success', "{$gender} {$showerNumber}番の修理完了を記録しました");
     }
