@@ -149,7 +149,7 @@
                 <div aria-hidden="true" class="absolute inset-y-0 left-0 w-full sm:w-3/5 bg-gradient-to-r from-slate-950/35 via-slate-950/5 to-transparent pointer-events-none"></div>
 
                 {{-- 手書き風の挨拶 + タイトル + リード文（下部はイラスト用に余白を多めに確保） --}}
-                <div class="absolute inset-x-0 bottom-0 pl-14 sm:pl-16 pr-8 sm:pr-12 pt-8 sm:pt-12 pb-16 sm:pb-24 sm:max-w-md">
+                <div class="absolute inset-x-0 bottom-0 pl-14 sm:pl-16 pr-8 sm:pr-12 pt-8 sm:pt-12 pb-8 sm:pb-12 sm:max-w-md">
                     <div class="flex items-center gap-3">
                         <span class="w-1 h-11 sm:h-12 rounded-full bg-gradient-to-b from-amber-300 to-orange-500 shadow-[0_0_12px_rgba(251,191,36,0.6)]"></span>
                         <div>
