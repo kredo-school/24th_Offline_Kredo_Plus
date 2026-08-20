@@ -29,7 +29,7 @@
                 </a>
 
                 <span class="rc-page-title">
-                    場所を編集
+                    位置情報を編集
                 </span>
 
             </div>
@@ -72,7 +72,7 @@
             @method('PUT')
 
 
-            {{-- 店舗名 --}}
+            {{--　場所 --}}
             {{-- 画面には表示しない --}}
             <input
                 type="hidden"
@@ -98,7 +98,7 @@
                         type="text"
                         id="searchInput"
                         class="rc-field-input"
-                        placeholder="店舗名を入力してください">
+                        placeholder="位置情報を入力してください">
 
                     <button
                         type="button"
@@ -147,7 +147,7 @@
                     name="address"
                     class="rc-field-input"
                     value="{{ old('address', $earthLocation->address) }}"
-                    placeholder="店舗の住所">
+                    placeholder="住所">
 
             </div>
 

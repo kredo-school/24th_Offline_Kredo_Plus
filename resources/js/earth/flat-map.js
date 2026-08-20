@@ -155,10 +155,10 @@ export function initializeFlatMap() {
     );
 
     // ==============================
-    // School Pin
+    // School Pin (戻るボタン)
     // ==============================
 
-    L.marker(
+    const schoolMarker = L.marker(
 
         [
             destination.lat,
@@ -172,9 +172,14 @@ export function initializeFlatMap() {
 
     ).addTo(map);
 
+    schoolMarker.on("click", () => {
+
+        history.back();
+
+    });
+
 
     }
-
 // ==============================
 // Show
 // ==============================
@@ -185,41 +190,38 @@ export function showFlatMap() {
 
     container.style.display = "block";
 
-    setTimeout(() => {
+    // 最初は透明
+    container.style.opacity = "0";
 
-        map.invalidateSize();
+    map.invalidateSize();
 
-        map.flyTo(
+    // Flat Mapをフェードイン
+    requestAnimationFrame(() => {
 
-            [
+        container.style.opacity = "1";
 
-                destination.lat,
+    });
 
-                destination.lng
+    // Cebuへスムーズに移動
+    map.flyTo(
+        [
+            destination.lat,
+            destination.lng
+        ],
+        17,
+        {
+            duration: 1.2
+        }
+    );
 
-            ],
-
-            17,
-
-            {
-
-                duration: 2
-
-            }
-
-        );
-
-    }, 200);
-
+    // ピンを早めに表示
     setTimeout(() => {
 
         addPins();
 
-    }, 2200);
+    }, 700);
 
-}
-
-// ==============================
+}// ==============================
 // Hide
 // ==============================
 
@@ -416,8 +418,7 @@ function addPins() {
 
             });
 
-        }, index * 350);
+        }, index * 120);
 
     });
-
 }

@@ -63,7 +63,7 @@
     @endif
 
     <!-- Header -->
-    <header class="w-full bg-white sticky top-0 z-30 shadow-[0_1px_0_rgba(15,23,42,0.06)]">
+    <header class="w-full bg-white sticky top-0 z-[1050] shadow-[0_1px_0_rgba(15,23,42,0.06)]">
         <div class="max-w-[1140px] mx-auto flex items-center justify-between px-6 py-4">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 group">
                 <svg width="40" height="34" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -273,7 +273,7 @@
         この会社紹介用フッターは表示しない(下に重なって見えてしまうため)。
         新しいページでこの固定ナビを使う時は、routeIs() の一覧にルート名を足すだけでOK。
     --}}
-    @unless (request()->routeIs(['carinderia.*', 'restaurant-cafe.*', 'travel.*', 'other.*', 'information.*']))
+    @unless (request()->routeIs(['carinderia.*', 'restaurant-cafe.*', 'travel.*', 'other.*', 'information.*','earth.*']))
         <footer class="relative bg-[#334155] text-gray-300 text-center">
             {{-- 波型ディバイダー: main の一部を覆わず自然に高さを足すだけなので、
                  どのページ（青/オレンジ/緑テーマ）の直下に来ても崩れない --}}

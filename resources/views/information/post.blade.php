@@ -202,7 +202,7 @@
                             style="background:#f8fafc;color:#4736F0;border:1px solid #4736F0;">
 
                             <i class="fa-solid fa-store"></i>
-                            <span>店舗を選択</span>
+                            <span>場所を選択</span>
 
                         </button>
                     </div>
@@ -216,7 +216,7 @@
                         style="background:#f8fafc;color:#4736F0;border:1px solid #4736F0;">
 
                         <i class="fa-solid fa-location-dot"></i>
-                        <span>場所を追加</span>
+                        <span>位置情報を追加</span>
                     </a>
 
                     </div>

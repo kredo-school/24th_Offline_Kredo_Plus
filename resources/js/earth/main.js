@@ -172,50 +172,43 @@ function flyToDestination(name){
 // Journey
 // ==========================================
 
-function startJourney(){
+function startJourney() {
 
-    audio.play().catch(()=>{});
-
+    audio.play().catch(() => {});
 
     showTravelMessage();
 
-    controls.autoRotate=false;
+    controls.autoRotate = false;
 
-    setTimeout(()=>{
+    // セブへ移動
+    globe.pointOfView(
+        destination,
+        2000
+    );
 
-        globe.pointOfView(
-
-            destination,
-
-            5000
-
-        );
-
-    },800);
-
-    setTimeout(()=>{
+    // 少し早めにFlat Mapへ切り替え
+    setTimeout(() => {
 
         hideTravelMessage();
 
-    setTimeout(() => {
+        // Flat Mapを先に表示
+        showFlatMap();
 
-    globeDiv.style.opacity = "0";
+        // 地球をフェードアウト
+        globeDiv.style.opacity = "0";
 
-    showFlatMap();
+        // 地球が消えるのと同時にFlat Mapを表示
 
-    setTimeout(() => {
+        setTimeout(() => {
 
-        globeDiv.style.display = "none";
+            globeDiv.style.display = "none";
 
-        isFlatMap = true;
+            isFlatMap = true;
 
-    }, 600);
+        }, 600);
 
-}, 1200);
-
-    },6000);
+    }, 2000);
 }
-
 // ==========================================
 // Auto Start
 // ==========================================
@@ -244,17 +237,11 @@ mapButton.addEventListener("click", () => {
 
     if (!isFlatMap) {
 
-        globeDiv.style.opacity = "0";
-
         showFlatMap();
 
-        setTimeout(() => {
-
-            globeDiv.style.display = "none";
-
-        }, 600);
-
-        mapButton.style.display = "none";
+        requestAnimationFrame(() => {
+            globeDiv.style.opacity = "0";
+        });        mapButton.style.display = "none";
 
         isFlatMap = true;
 
