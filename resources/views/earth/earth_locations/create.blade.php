@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', '場所を追加 — Kredo Plus')
+@section('title', '位置情報を追加 — Kredo Plus')
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/information.css') }}">
@@ -27,7 +27,7 @@
                 </a>
 
                 <span class="rc-page-title">
-                    場所を追加
+                    位置情報を追加
                 </span>
 
             </div>
@@ -68,7 +68,7 @@
             @csrf
 
 
-            {{-- 店舗名 --}}
+            {{-- 場所 --}}
             {{-- 画面には表示しない --}}
             <input
                 type="hidden"
@@ -94,7 +94,7 @@
                         type="text"
                         id="searchInput"
                         class="rc-field-input"
-                        placeholder="店舗名を入力してください">
+                        placeholder="位置情報を入力してください">
 
                     <button
                         type="button"
@@ -141,7 +141,7 @@
                     name="address"
                     class="rc-field-input"
                     value="{{ old('address') }}"
-                    placeholder="店舗の住所">
+                    placeholder="住所">
 
             </div>
 

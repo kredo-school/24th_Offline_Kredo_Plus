@@ -297,8 +297,8 @@ $sectionLabels = [
         {{-- お気に入り単語 --}}
         <a href="{{ route('english.vocabulary.favorites') }}"
            class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-6 flex items-center gap-4 no-underline group">
-            <div class="p-3 bg-red-100 rounded-[0.75rem]">
-                <span class="material-symbols-outlined text-red-500 text-2xl">favorite</span>
+            <div class="w-11 h-11 shrink-0 bg-red-100 rounded-[0.75rem] flex items-center justify-center">
+                <span class="material-symbols-outlined text-red-500 text-xl">favorite</span>
             </div>
             <div class="flex-1">
                 <h3 class="font-bold text-blue-950/90 group-hover:text-orange-600 transition-colors">お気に入り単語</h3>

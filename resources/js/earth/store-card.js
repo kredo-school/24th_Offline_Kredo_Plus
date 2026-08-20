@@ -46,12 +46,6 @@ export function showStoreCard(store) {
 
                 <span>
 
-                    ⭐ ${store.rating}
-
-                </span>
-
-                <span>
-
                     ${store.price}
 
                 </span>

@@ -50,33 +50,31 @@ body{
    Globe
 ========================================== */
 
-#globeViz{
+#globeViz {
+    position: fixed;
+    top: 72px;
+    left: 0;
+    right: 0;
+    bottom: 0;
 
-    position:fixed;
+    z-index: 1;
 
-    inset:0;
-
-    transition:opacity .6s;
-
+    transition: opacity .6s;
 }
-
 /* ==========================================
    Flat Map
 ========================================== */
 
-#flat-map{
-
-    position:fixed;
-
-    inset:0;
-
-    z-index:1000;
-
-    display:none;
-
-}
-
-/* ==========================================
+#flat-map {
+    position: fixed;
+    top: 72px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    display: none;
+    transition: opacity .6s;
+}/* ==========================================
    Globe Button
 ========================================== */
 
@@ -1021,21 +1019,17 @@ body{
 }
 
 #flat-map {
+    position: fixed;
 
-    position:fixed;
+    top: 72px;
+    left: 0;
+    right: 0;
+    bottom: 0;
 
-    inset:0;
+    z-index: 1;
 
-    width:100%;
-
-    height:100%;
-
-    z-index:10;
-
-    display:none;
-
+    display: none;
 }
-
 /* ==============================
    Active Pin
 ============================== */
@@ -1215,7 +1209,7 @@ body{
 
         opacity:0;
 
-        transform:translateY(8px);
+        transform:translate(-50%, -100%) translateY(8px);
 
     }
 
@@ -1223,7 +1217,7 @@ body{
 
         opacity:1;
 
-        transform:translateY(0);
+        transform:translate(-50%, -100%)translateY(0);
 
     }
 
@@ -1236,6 +1230,7 @@ body{
 .our-school-pin {
     background: transparent !important;
     border: none !important;
+    cursor: pointer;
 }
 
 .school-pin-wrapper {

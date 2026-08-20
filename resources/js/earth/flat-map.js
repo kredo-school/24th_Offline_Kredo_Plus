@@ -155,10 +155,10 @@ export function initializeFlatMap() {
     );
 
     // ==============================
-    // School Pin
+    // School Pin (戻るボタン)
     // ==============================
 
-    L.marker(
+    const schoolMarker = L.marker(
 
         [
             destination.lat,
@@ -172,9 +172,14 @@ export function initializeFlatMap() {
 
     ).addTo(map);
 
+    schoolMarker.on("click", () => {
+
+        history.back();
+
+    });
+
 
     }
-
 // ==============================
 // Show
 // ==============================
@@ -185,41 +190,38 @@ export function showFlatMap() {
 
     container.style.display = "block";
 
-    setTimeout(() => {
+    // 最初は透明
+    container.style.opacity = "0";
 
-        map.invalidateSize();
+    map.invalidateSize();
 
-        map.flyTo(
+    // Flat Mapをフェードイン
+    requestAnimationFrame(() => {
 
-            [
+        container.style.opacity = "1";
 
-                destination.lat,
+    });
 
-                destination.lng
+    // Cebuへスムーズに移動
+    map.flyTo(
+        [
+            destination.lat,
+            destination.lng
+        ],
+        17,
+        {
+            duration: 1.2
+        }
+    );
 
-            ],
-
-            17,
-
-            {
-
-                duration: 2
-
-            }
-
-        );
-
-    }, 200);
-
+    // ピンを早めに表示
     setTimeout(() => {
 
         addPins();
 
-    }, 2200);
+    }, 700);
 
-}
-
-// ==============================
+}// ==============================
 // Hide
 // ==============================
 
@@ -371,53 +373,42 @@ function addPins() {
 
 
 
-            marker.on("click", () => {
+marker.on("click", () => {
 
-                if (activeMarker) {
+    if (activeMarker) {
+        const oldEl = activeMarker.getElement();
+        if (oldEl) {
+            oldEl.classList.remove("active-pin");
+            oldEl.classList.remove("hover-pin");
+        }
+    }
 
-                    const oldEl =
-                        activeMarker.getElement();
+    activeMarker = marker;
+    const el = marker.getElement();
+    if (el) {
+        el.classList.remove("hover-pin");
+        el.classList.add("active-pin");
+    }
 
-                    if (oldEl) {
+    // ホバーカードは閉じておく
+    hideHoverCard();
 
-                        oldEl.classList.remove(
-                            "active-pin"
-                        );
+    // 大きい情報カードを表示
+    const post = location.post;
 
-                        oldEl.classList.remove(
-                            "hover-pin"
-                        );
-
-                    }
-
-                }
-
-                activeMarker = marker;
-
-                const el =
-                    marker.getElement();
-
-                if (el) {
-
-                    el.classList.remove(
-                        "hover-pin"
-                    );
-
-                    el.classList.add(
-                        "active-pin"
-                    );
-
-                }
-
-                console.log(
-                    "選択した場所:",
-                    location
-                );
-
-            });
-
-        }, index * 350);
-
+    showStoreCard({
+        image: post?.image ? `/storage/${post.image}` : "",
+        name: post?.title ?? location.place_name,
+        rating: post?.rating ?? "-",
+        price: post?.price ?? "",
+        category: post?.category?.name ?? "Other",
+        city: location.place_name,
+        country: "",
+        description: post?.description ?? ""
     });
 
+});
+        }, index * 120);
+
+    });
 }
