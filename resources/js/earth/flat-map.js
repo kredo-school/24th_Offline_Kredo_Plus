@@ -373,51 +373,41 @@ function addPins() {
 
 
 
-            marker.on("click", () => {
+marker.on("click", () => {
 
-                if (activeMarker) {
+    if (activeMarker) {
+        const oldEl = activeMarker.getElement();
+        if (oldEl) {
+            oldEl.classList.remove("active-pin");
+            oldEl.classList.remove("hover-pin");
+        }
+    }
 
-                    const oldEl =
-                        activeMarker.getElement();
+    activeMarker = marker;
+    const el = marker.getElement();
+    if (el) {
+        el.classList.remove("hover-pin");
+        el.classList.add("active-pin");
+    }
 
-                    if (oldEl) {
+    // ホバーカードは閉じておく
+    hideHoverCard();
 
-                        oldEl.classList.remove(
-                            "active-pin"
-                        );
+    // 大きい情報カードを表示
+    const post = location.post;
 
-                        oldEl.classList.remove(
-                            "hover-pin"
-                        );
+    showStoreCard({
+        image: post?.image ? `/storage/${post.image}` : "",
+        name: post?.title ?? location.place_name,
+        rating: post?.rating ?? "-",
+        price: post?.price ?? "",
+        category: post?.category?.name ?? "Other",
+        city: location.place_name,
+        country: "",
+        description: post?.description ?? ""
+    });
 
-                    }
-
-                }
-
-                activeMarker = marker;
-
-                const el =
-                    marker.getElement();
-
-                if (el) {
-
-                    el.classList.remove(
-                        "hover-pin"
-                    );
-
-                    el.classList.add(
-                        "active-pin"
-                    );
-
-                }
-
-                console.log(
-                    "選択した場所:",
-                    location
-                );
-
-            });
-
+});
         }, index * 120);
 
     });
