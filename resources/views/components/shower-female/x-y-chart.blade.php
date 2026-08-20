@@ -62,23 +62,14 @@
 {{-- スマホ --}}
 <div class="sm:hidden mb-2">
 
-    {{-- 1段目：タイトル --}}
-    <h3 class="text-headline-sm font-bold text-blue-950 mb-2">
-        シャワー状態散布図
-    </h3>
+    {{-- 1段目：タイトル ＋ フィルター --}}
+    <div class="flex items-center justify-between gap-2"
+        :class="brokenNumbers.length > 0 ? 'mb-2' : ''">
 
-    {{-- 2段目：故障シャワー ＋ フィルター --}}
-    <div class="flex items-center justify-between gap-2">
-
-        {{-- 故障シャワー --}}
-        <div class="flex flex-wrap items-center gap-2 min-w-0">
-            <template x-for="number in brokenNumbers" :key="number">
-                <span class="inline-flex items-center gap-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold px-2.5 py-1">
-                    <span class="material-symbols-outlined !text-sm">build</span>
-                    <span x-text="number + '番 故障中'"></span>
-                </span>
-            </template>
-        </div>
+        {{-- タイトル --}}
+        <h3 class="text-headline-sm font-bold text-blue-950">
+            シャワー状態散布図
+        </h3>
 
         {{-- フィルターボタン --}}
         <div
@@ -99,7 +90,7 @@
                 x-show="filterOpen"
                 x-cloak
                 x-transition
-                class="absolute right-0 mt-2 z-20 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 flex flex-col gap-1 w-32"
+                class="absolute right-0 mt-2 z-50 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 flex flex-col gap-1 w-32"
             >
                 <template x-for="option in [
                     { value: 'latest', label: '最新' },
@@ -122,6 +113,21 @@
         </div>
 
     </div>
+
+    {{-- 故障シャワーがある場合だけ表示 --}}
+    <div
+        x-show="brokenNumbers.length > 0"
+        x-cloak
+        class="flex flex-wrap items-center gap-2"
+    >
+        <template x-for="number in brokenNumbers" :key="number">
+            <span class="inline-flex items-center gap-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold px-2.5 py-1">
+                <span class="material-symbols-outlined !text-sm">build</span>
+                <span x-text="number + '番 故障中'"></span>
+            </span>
+        </template>
+    </div>
+
 </div>
 
     <div class="relative h-[225px] sm:h-[450px] rounded-xl bg-blue-500/10">
