@@ -21,11 +21,11 @@
             <div class="rc-bar-left">
 
                 <a
-                    href="{{ route('information.create') }}"
+                    href="javascript:void(0)"
+                    onclick="history.back()"
                     class="rc-back-link">
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
-
                 <span class="rc-page-title">
                     位置情報を追加
                 </span>
@@ -69,6 +69,11 @@
 
 
             {{-- 場所 --}}
+            <input
+                type="hidden"
+                name="post_id"
+                value="{{ request('post_id', old('post_id')) }}">
+
             {{-- 画面には表示しない --}}
             <input
                 type="hidden"

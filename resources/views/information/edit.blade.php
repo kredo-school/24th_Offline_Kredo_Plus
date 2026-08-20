@@ -311,18 +311,17 @@
                     {{-- 位置情報が登録されていない場合 --}}
                     <div id="mapLocation">
 
-                        <button type="button"
-                            class="rc-save-btn"
-                            style="background:#f8fafc;color:#4736F0;border:1px solid #4736F0;">
+                    <a href="{{ route('earth.location.create', ['post_id' => $post->id]) }}"
+                        class="rc-save-btn"
+                        style="background:#f8fafc;color:#4736F0;border:1px solid #4736F0;text-decoration:none;">
 
-                            <i class="fa-solid fa-location-dot"></i>
+                        <i class="fa-solid fa-location-dot"></i>
 
-                            <span>
-                                場所を追加
-                            </span>
+                        <span>
+                            場所を追加
+                        </span>
 
-                        </button>
-
+                    </a>
                     </div>
 
                 @endif
