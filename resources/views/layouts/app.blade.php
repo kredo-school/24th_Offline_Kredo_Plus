@@ -126,78 +126,138 @@
                     @endif
                 </nav>
 
-                <div class="relative"
-                    x-data="{
-                        open: false,
-                        notifications: [],
-                        unreadCount: 0,
+                {{-- 通知 --}}
+<div
+    class="relative flex items-center"
+    x-data="{
+        open: false,
+        notifications: [],
+        unreadCount: 0,
 
-                        async load() {
-                            const response = await fetch('{{ route('notifications.data') }}');
-                            const data = await response.json();
-                            this.notifications = data.notifications;
-                            this.unreadCount = data.unread_count;
-                        },
+        async load() {
+            const response = await fetch('{{ route('notifications.data') }}');
+            const data = await response.json();
+            this.notifications = data.notifications;
+            this.unreadCount = data.unread_count;
+        },
 
-                        async toggle() {
-                            this.open = !this.open;
+        async toggle() {
+            this.open = !this.open;
 
-                            if (this.open) {
-                                await fetch('{{ route('notifications.mark-seen') }}', {
-                                    method: 'POST',
-                                    headers: {
-                                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-                                        'Accept': 'application/json',
-                                    },
-                                });
-                                this.unreadCount = 0;
-                            }
-                        },
-                    }"
-                    x-init="load()"
-                    @click.outside="open = false"
-                >
-                    <button @click="toggle()" class="relative text-slate-500 hover:text-brand-blue transition-colors" aria-label="通知">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                            <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M13.7 21a2 2 0 01-3.4 0" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" />
-                        </svg>
-                        <span
-                            x-show="unreadCount > 0"
-                            class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"
-                        ></span>
-                    </button>
+            if (this.open) {
+                await fetch('{{ route('notifications.mark-seen') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                        'Accept': 'application/json',
+                    },
+                });
 
-                    <div x-show="open" x-cloak
-                        x-transition:enter="transition ease-out duration-150"
-                        x-transition:enter-start="opacity-0 scale-95"
-                        x-transition:enter-end="opacity-100 scale-100"
-                        x-transition:leave="transition ease-in duration-100"
-                        x-transition:leave-start="opacity-100 scale-100"
-                        x-transition:leave-end="opacity-0 scale-95"
-                        class="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-card border border-slate-100 overflow-hidden z-40 max-h-96 overflow-y-auto"
-                    >
-                        <div class="px-4 py-3 border-b border-slate-100 font-bold text-slate-700 text-sm sticky top-0 bg-white">
-                            通知
-                        </div>
+                this.unreadCount = 0;
+            }
+        },
+    }"
+    x-init="load()"
+    @click.outside="open = false"
+>
 
-                        <template x-for="notification in notifications" :key="notification.id">
-                            <div
-                                class="px-4 py-3 border-b border-slate-50 text-sm"
-                                :class="notification.is_unread ? 'bg-sky-50/60' : ''"
-                            >
-                                <p class="text-slate-700" x-text="notification.message"></p>
-                                <p class="text-xs text-slate-400 mt-1" x-text="notification.created_at"></p>
-                            </div>
-                        </template>
+    {{-- 通知ボタン --}}
+    <button
+        @click="toggle()"
+        class="relative flex items-center text-slate-500 hover:text-brand-blue transition-colors"
+        aria-label="通知"
+    >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path
+                d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+            <path
+                d="M13.7 21a2 2 0 01-3.4 0"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+            />
+        </svg>
 
-                        <template x-if="notifications.length === 0">
-                            <p class="px-4 py-8 text-center text-sm text-slate-400">通知はありません</p>
-                        </template>
-                    </div>
-                </div>
+        <span
+            x-show="unreadCount > 0"
+            class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"
+        ></span>
+    </button>
+
+
+    {{-- PC通知パネル --}}
+    <div
+        x-show="open"
+        x-cloak
+        x-transition:enter="transition ease-out duration-150"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-100"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        class="hidden sm:block absolute right-0 top-14 w-80 bg-white rounded-2xl shadow-card border border-slate-100 overflow-hidden z-40 max-h-96 overflow-y-auto"
+    >
+        <div class="px-4 py-3 border-b border-slate-100 font-bold text-slate-700 text-sm sticky top-0 bg-white">
+            通知
+        </div>
+
+        <template x-for="notification in notifications" :key="notification.id">
+            <div
+                class="px-4 py-3 border-b border-slate-50 text-sm"
+                :class="notification.is_unread ? 'bg-sky-50/60' : ''"
+            >
+                <p class="text-slate-700" x-text="notification.message"></p>
+                <p class="text-xs text-slate-400 mt-1" x-text="notification.created_at"></p>
+            </div>
+        </template>
+
+        <template x-if="notifications.length === 0">
+            <p class="px-4 py-8 text-center text-sm text-slate-400">
+                通知はありません
+            </p>
+        </template>
+    </div>
+
+
+    {{-- スマホ通知パネル --}}
+    <div
+        x-show="open"
+        x-cloak
+        x-transition:enter="transition ease-out duration-150"
+        x-transition:enter-start="opacity-0 -translate-y-2"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-100"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 -translate-y-2"
+        class="sm:hidden fixed top-20 left-4 right-4 z-50 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden max-h-[70vh] overflow-y-auto"
+    >
+        <div class="px-4 py-3 border-b border-slate-100 font-bold text-slate-700 text-sm sticky top-0 bg-white z-10">
+            通知
+        </div>
+
+        <template x-for="notification in notifications" :key="notification.id">
+            <div
+                class="px-4 py-3 border-b border-slate-50 text-sm"
+                :class="notification.is_unread ? 'bg-sky-50/60' : ''"
+            >
+                <p class="text-slate-700" x-text="notification.message"></p>
+                <p class="text-xs text-slate-400 mt-1" x-text="notification.created_at"></p>
+            </div>
+        </template>
+
+        <template x-if="notifications.length === 0">
+            <p class="px-4 py-8 text-center text-sm text-slate-400">
+                通知はありません
+            </p>
+        </template>
+    </div>
+
+</div>
 
                 <div class="relative" x-data="{ open: false }" @click.outside="open = false">
                     <button @click="open = !open"
