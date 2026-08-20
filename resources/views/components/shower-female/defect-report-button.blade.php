@@ -6,7 +6,7 @@
         @click="open = true"
         class="w-auto rounded-full text-center bg-yellow-300/40 text-yellow-700 hover:bg-yellow-300 transition-colors font-bold p-3 shadow-md hover:shadow-lg"
     >
-        故障を報告する
+        故障を<br class="sm:hidden">報告する
     </button>
 
     <div
@@ -17,7 +17,7 @@
     >
         <div
             @click.outside="open = false"
-            class="relative overflow-hidden bg-white rounded-[24px] p-6 w-96"
+            class="relative overflow-hidden bg-white rounded-[24px] p-6 w-full max-w-sm mx-4"
         >
 
             <div class="absolute top-0 inset-x-0 h-1.5 rounded-t-[24px] bg-gradient-to-r from-yellow-100 to-amber-500"></div>

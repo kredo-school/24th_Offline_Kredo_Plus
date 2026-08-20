@@ -10,7 +10,7 @@
         })"
         class="w-auto rounded-full text-center bg-sky-200 text-sky-700 hover:bg-sky-300 transition-colors font-bold p-3 shadow-md hover:shadow-lg"
     >
-        シャワー情報を投稿する
+        シャワー情報を<br class="sm:hidden">投稿する
     </button>
 
     <div
@@ -21,7 +21,7 @@
     >
         <div
             @click.outside="open = false"
-            class="relative overflow-hidden bg-white rounded-[24px] p-6 w-106"
+            class="relative overflow-hidden bg-white rounded-[24px] p-6 w-full max-w-md mx-4"
         >
 
             <div class="absolute top-0 inset-x-0 h-1.5 rounded-t-[24px] bg-gradient-to-r from-sky-400 to-brand-blue"></div>

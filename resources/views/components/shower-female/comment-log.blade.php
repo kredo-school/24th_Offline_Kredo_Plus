@@ -47,7 +47,8 @@
 >
     
 
-    <div class="flex gap-2 m-6 justify-between">
+    {{-- PC表示 --}}
+    <div class="hidden sm:flex gap-2 m-6 justify-between">
 
         {{-- シャワー番号 --}}
         <div class="flex flex-col justify-center gap-1.5">
@@ -104,49 +105,52 @@
         </div>
 
     </div>
-    
 
-    
 
 
     <div class="space-y-stack-sm">
         <template x-for="item in items" :key="item.id">
-            <div class="bg-white rounded-xl p-4 mb-4 overflow-hidden shadow-lg flex items-center gap-4">
+            <div
+                class="bg-white rounded-xl p-4 mb-4 overflow-hidden shadow-lg"
+                x-data="{ expanded: false }"
+            >
+                {{-- 1行目: アイコン・番号・日時・ラベル --}}
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-blue-600">shower</span>
+                    </div>
 
-                {{-- アイコン --}}
-                <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-blue-600">shower</span>
+                    <div class="shrink-0 w-10 text-center">
+                        <p class="text-2xl font-black text-blue-950 leading-none" x-text="item.shower_number"></p>
+                    </div>
+
+                    <div class="shrink-0 whitespace-nowrap">
+                        <p class="font-label-sm text-label-sm text-on-surface-variant" x-text="item.created_at"></p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-1 sm:gap-2 shrink-0 ml-auto sm:ml-0">
+                        <span
+                            class="rounded-full px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-bold text-white shadow-sm text-center"
+                            :style="{ backgroundColor: temperatureColor(item.temperature_label) }"
+                            x-text="item.temperature_label"
+                        ></span>
+                        <span
+                            class="rounded-full px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-bold text-white shadow-sm text-center"
+                            :style="{ backgroundColor: pressureColor(item.pressure_label) }"
+                            x-text="item.pressure_label"
+                        ></span>
+                    </div>
                 </div>
 
-                {{-- シャワー番号(大きく、数字のみ) --}}
-                <div class="shrink-0 w-10 text-center">
-                    <p class="text-2xl font-black text-blue-950 leading-none" x-text="item.shower_number"></p>
+                {{-- 2行目: コメント本文(クリックで全文展開) --}}
+                <div x-show="item.comment" class="mt-3 pt-3 border-t border-slate-100">
+                    <p
+                        @click="expanded = !expanded"
+                        class="text-sm text-slate-600 cursor-pointer"
+                        :class="expanded ? '' : 'truncate'"
+                        x-text="item.comment"
+                    ></p>
                 </div>
-
-                {{-- 投稿日時 --}}
-                <div class="shrink-0 whitespace-nowrap">
-                    <p class="font-label-sm text-label-sm text-on-surface-variant" x-text="item.created_at"></p>
-                </div>
-
-                {{-- 温度・水圧ラベル(バッジ表示) --}}
-                <div class="flex gap-2 shrink-0">
-                    <span
-                        class="rounded-full px-3 py-1.5 text-xs font-bold text-white shadow-sm"
-                        :style="{ backgroundColor: temperatureColor(item.temperature_label) }"
-                        x-text="item.temperature_label"
-                    ></span>
-                    <span
-                        class="rounded-full px-3 py-1.5 text-xs font-bold text-white shadow-sm"
-                        :style="{ backgroundColor: pressureColor(item.pressure_label) }"
-                        x-text="item.pressure_label"
-                    ></span>
-                </div>
-
-                {{-- コメント本文 --}}
-                <div class="flex-1 min-w-0 px-2">
-                    <p x-show="item.comment" x-text="item.comment" class="text-sm text-slate-600 truncate"></p>
-                </div>
-
             </div>
         </template>
 

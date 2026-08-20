@@ -17,7 +17,7 @@
                     <h1 class="text-display font-black text-blue-950/90 mb-1">シャワー情報</h1>
                     <p class="text-headline-md font-bold text-blue-700 mb-3">Shower Information</p>
                     <p class="text-body-md text-blue-950 max-w-lg">
-                        好みに応じたおすすめのシャワーをご案内します。
+                        好みに応じたおすすめのシャワーを<br class="sm:hidden">ご案内します。
                     </p>
                 </div>
 
@@ -45,14 +45,20 @@
                     </div>
                     <div class="w-full grid grid-cols-2 text-center">
                         <div class="border-e border-outline-950/30 pe-5 h-full flex flex-col">
-                            <p class="text-caption text-blue-950 leading-none mb-1">おすすめシャワー</p>
+                            <p class="text-caption text-blue-950 leading-none mb-1">
+                                <span class="sm:hidden">おすすめ</span>
+                                <span class="hidden sm:inline">おすすめシャワー</span>
+                            </p>
                             <div class="flex-1 flex items-center justify-center">
                                 <p class="text-4xl font-black text-blue-600 leading-none"
                                     x-text="$store.showerPriority.recommendation ? $store.showerPriority.recommendation.shower_number : '—'"></p>
                             </div>
                         </div>
                         <div class="ps-5">
-                            <p class="text-caption text-blue-950 leading-none mb-1">好みとのマッチ度</p>
+                            <p class="text-caption text-blue-950 leading-none mb-1">
+                                <span class="sm:hidden">マッチ度</span>
+                                <span class="hidden sm:inline">好みとのマッチ度</span>
+                            </p>
                             <p class="text-headline-md font-black text-blue-950 leading-none"
                                 x-text="$store.showerPriority.recommendation ? $store.showerPriority.recommendation.match_percent + ' %' : '—'"></p>
                             <x-shower-male.preference-setup />
