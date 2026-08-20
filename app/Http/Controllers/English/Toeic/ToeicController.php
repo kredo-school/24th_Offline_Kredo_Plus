@@ -105,6 +105,13 @@ class ToeicController extends Controller
             ['last_step' => $step]
         );
 
+        // 学習時間の計測開始（スライド初回閲覧時刻）。complete() で回収してtotal_study_timeに加算する。
+        // 既に開始済みならそのまま（スライドを行き来しても計測をリセットしない）。
+        $timerKey = "toeic_started_at_{$part}";
+        if (!session()->has($timerKey)) {
+            session([$timerKey => now()]);
+        }
+
         return view('english.toeic.slides', compact('part', 'step', 'totalSteps', 'canSkip', 'slide'));
     }
 
@@ -273,7 +280,14 @@ class ToeicController extends Controller
         $totalQuestions  = count($answers);
         $xp              = $this->xpService->calcToeicXp($correctCount, $totalQuestions);
 
-        DB::transaction(function () use ($user, $part, $answers, $correctCount, $totalQuestions, $xp) {
+        // 学習時間 = スライド初回閲覧〜回答完了までの経過時間（開始記録が無ければ0秒扱い）
+        $timerKey  = "toeic_started_at_{$part}";
+        $startedAt = session($timerKey);
+        // Carbon 3 の diffInSeconds() はデフォルトで符号付き（$absolute=false）を返すため、
+        // 明示的に絶対値を指定する（付けないと経過時間が負の数になりDB挿入エラーになる）。
+        $studySeconds = $startedAt ? max(0, (int) now()->diffInSeconds($startedAt, true)) : 0;
+
+        DB::transaction(function () use ($user, $part, $answers, $correctCount, $totalQuestions, $xp, $studySeconds) {
             // ToeicResult 保存
             $result = $user->toeicResults()->create([
                 'part'            => $part,
@@ -301,7 +315,7 @@ class ToeicController extends Controller
             $this->xpService->addXp($user, $xp);
 
             // StudyLog 記録（total_study_time + streak も内部で更新）
-            $this->studyLogService->log($user, 'toeic', $result->id, $xp, 0);
+            $this->studyLogService->log($user, 'toeic', $result->id, $xp, $studySeconds);
 
             // セクション進捗を更新（DBに登録された全問題に一度でも解答したら完了とする）
             $isFullyCovered = $this->toeicQuestionsCoveragePercent($user, $part) >= 100;
@@ -316,6 +330,7 @@ class ToeicController extends Controller
                 'toeic_result_id'           => $result->id,
                 "toeic_answers_{$part}"     => null,
                 "toeic_practice_{$part}"    => null,
+                "toeic_started_at_{$part}"  => null,
             ]);
         });
 
