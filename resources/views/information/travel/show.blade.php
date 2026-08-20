@@ -38,6 +38,11 @@
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; }
 
+  /* お楽しみ機能: Carinderiaボタンにカーソルを合わせた時だけニワトリのカーソルになる */
+  .chicken-cursor-hover:hover {
+    cursor: url('{{ asset("images/carinderia/chicken-cursor.png") }}') 20 22, pointer;
+  }
+
   @keyframes riseIn {
     from { opacity: 0; transform: translateY(14px) scale(.98); }
     to { opacity: 1; transform: translateY(0) scale(1); }
@@ -94,7 +99,7 @@
           ? route($fixedRoutes[$mc->key])
           : route('information.dynamic', $mc->key);
       @endphp
-      <a href="{{ $href }}" class="snap-start flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity" style="background:{{ $mc->color() }}">
+      <a href="{{ $href }}" class="snap-start flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity {{ $mc->key === 'carinderia' ? 'chicken-cursor-hover' : '' }}" style="background:{{ $mc->color() }}">
         {{ $mc->name }}
       </a>
     @endforeach
