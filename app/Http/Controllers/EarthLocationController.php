@@ -37,8 +37,8 @@ class EarthLocationController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'place_name' => ['required', 'string', 'max:255'],
-            'address' => ['required', 'string', 'max:255'],
+            'place_name' => ['nullable', 'string', 'max:255'],
+            'address' => ['nullable', 'string', 'max:255'],
             'latitude' => ['required', 'numeric'],
             'longitude' => ['required', 'numeric'],
         ], [

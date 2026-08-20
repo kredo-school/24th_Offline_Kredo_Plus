@@ -48,7 +48,7 @@ $sectionLabels = [
                 </div>
             </div>
             --}}
-            <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-6 flex items-center gap-4">
+            <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-6 flex items-center justify-center gap-4">
                 <svg width="56" height="54" viewBox="0 0 104 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="shrink-0">
                     {{-- しっぽ --}}
                     <path d="M76 82 Q92 78 96 66 Q88 70 78 74 Z" fill="#8b5e3c"/>

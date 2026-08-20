@@ -48,6 +48,7 @@ class User extends Authenticatable
         'preferred_temperature',
         'preferred_pressure',
         'shower_priority_factor',
+        'notifications_last_seen_at',
     ];
 
     /**

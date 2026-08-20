@@ -4,10 +4,18 @@
 
 @section('content')
 <style>
-  .flashcard-inner { transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard-inner { transition: transform 0.6s; transform-style: preserve-3d; will-change: transform; }
   .flashcard-inner.flipped { transform: rotateY(180deg); }
-  .flashcard-front, .flashcard-back { -webkit-backface-visibility: hidden; backface-visibility: hidden; }
-  .flashcard-back { transform: rotateY(180deg); }
+  {{-- iOS Safari対策: backface-visibility:hidden な要素はGPUレイヤーが確定するまで
+       中の動的テキストが初期描画されず、タップ(=repaint)後にしか表示されないことがあるため、
+       translateZ(0) で最初からレイヤーを確定させる --}}
+  .flashcard-front, .flashcard-back {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  .flashcard-back { -webkit-transform: rotateY(180deg) translateZ(0); transform: rotateY(180deg) translateZ(0); }
 </style>
 
 @php
