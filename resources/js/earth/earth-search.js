@@ -9,7 +9,7 @@ searchButton.addEventListener("click", async () => {
     const keyword = searchInput.value;
 
     if (!keyword) {
-        alert("店舗名を入力してください");
+        alert("場所を入力してください");
         return;
     }
 
@@ -47,7 +47,7 @@ searchButton.addEventListener("click", async () => {
 
             moveMap(lat, lng);
 
-            // 店舗名は画面には表示せず、hidden inputに保存
+            // 場所は画面には表示せず、hidden inputに保存
             document.getElementById("place_name").value = searchInput.value;
 
             // 住所

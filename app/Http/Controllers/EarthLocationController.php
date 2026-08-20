@@ -42,7 +42,7 @@ class EarthLocationController extends Controller
             'latitude' => ['required', 'numeric'],
             'longitude' => ['required', 'numeric'],
         ], [
-            'place_name.required' => '店舗名を入力してください。',
+            'place_name.required' => '場所を入力してください。',
             'address.required' => '住所を入力してください。',
             'latitude.required' => '地図上でピンを立てて位置を選んでください。',
             'longitude.required' => '地図上でピンを立てて位置を選んでください。',
