@@ -4,7 +4,7 @@
  
 @section('content')
     <div class="bg-brand-red/10 min-h-screen flex items-center justify-center">
-        <div class="relative bg-white rounded-[24px] shadow-card p-8 mx-auto max-w-lg w-full overflow-hidden">
+        <div class="relative bg-white rounded-[24px] shadow-card p-8 mx-4 sm:mx-auto max-w-lg w-full overflow-hidden">
                 {{-- 上部のグラデーションライン --}}
                 <div class="absolute top-0 inset-x-0 h-1.5 kredo-bar"></div>
 
@@ -12,7 +12,7 @@
                 <form method="POST" action="{{ route('suggestion.store') }}">
                     @csrf   
                     <h2 class="font-display font-bold text-4xl text-slate-700 text-center">目安箱</h2>
-                    <p class="text-sm text-slate-600 text-center mt-2"><span class="wordmark-kredo font-bold">Kredo</span> <span class="wordmark-plus font-bold">Plus</span> はみなさんのご意見をお待ちしています。</p>
+                    <p class="text-sm text-slate-600 text-center mt-2"><span class="wordmark-kredo font-bold">Kredo</span> <span class="wordmark-plus font-bold">Plus</span> は<br class="sm:hidden">みなさんのご意見をお待ちしています。</p>
     
                     
                     {{-- カテゴリー --}}
