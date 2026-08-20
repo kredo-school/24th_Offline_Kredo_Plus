@@ -112,13 +112,132 @@
     {{-- <x-shower-male.trend-table /> --}}
 
     {{-- comments コメント欄 --}}
-    <section class="mt-6">
-        <h2 class="text-headline-md font-bold text-blue-950 mb-4 flex items-center gap-2">
-            <span class="material-symbols-outlined text-blue-700 translate-y-[4px]">chat</span>
-            コメント
-        </h2>
+    <section
+        class="space-y-stack-md mt-6"
+        x-data="{
+            showerNumber: 'all',
+            temperatureLabel: null,
+            pressureLabel: null,
+            items: [],
+            total: 0,
+            showingAll: false,
 
-        <x-shower-male.comment-log
+            async load(all = false) {
+                this.showingAll = all;
+                const limit = all ? 1000 : 5;
+                const params = new URLSearchParams({
+                    shower_number: this.showerNumber,
+                    limit,
+                });
+                if (this.temperatureLabel) params.set('temperature_label', this.temperatureLabel);
+                if (this.pressureLabel) params.set('pressure_label', this.pressureLabel);
+
+                const response = await fetch(`{{ route('shower.comments') }}?${params}`);
+                const data = await response.json();
+                this.items = data.items;
+                this.total = data.total;
+            },
+
+            temperatureColor(label) {
+                return {
+                    '冷たい': '#60a5fa',
+                    'ぬるい': '#34d399',
+                    '温かい': '#fbbf24',
+                    '熱い': '#ef4444',
+                }[label] ?? '#94a3b8';
+            },
+
+            pressureColor(label) {
+                return {
+                    '無し': '#93c5fd',
+                    '弱い': '#60a5fa',
+                    '普通': '#3b82f6',
+                    '強い': '#1e3a8a',
+                }[label] ?? '#94a3b8';
+            },
+        }"
+        x-init="load()"
+    >
+
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-headline-md font-bold text-blue-950 mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-blue-700 translate-y-[2px]">chat</span>
+                コメント
+            </h2>
+
+            {{-- スマホ：フィルター --}}
+            <div
+                class="sm:hidden relative"
+                x-data="{ filterOpen: false }"
+                @click.outside="filterOpen = false"
+            >
+                <button
+                    type="button"
+                    @click="filterOpen = !filterOpen"
+                    class="flex items-center gap-1 rounded-full bg-sky-400 text-white text-xs font-bold px-3.5 py-1.5"
+                >
+                    <span>フィルター</span>
+                    <span class="material-symbols-outlined !text-sm">expand_more</span>
+                </button>
+
+                <div
+                    x-show="filterOpen"
+                    x-cloak
+                    x-transition
+                    class="absolute right-0 mt-2 z-20 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 w-72"
+                >
+                    <p class="text-xs font-bold text-slate-500 mb-1.5 ms-1">シャワー番号</p>
+                    <div class="mb-1.5">
+                        <button
+                            type="button"
+                            @click="showerNumber = 'all'; load(showingAll)"
+                            :class="showerNumber === 'all' ? 'bg-sky-400 text-white' : 'bg-sky-50 text-sky-700'"
+                            class="rounded-full text-xs font-bold px-3 py-1.5 transition-colors"
+                        >すべて</button>
+                    </div>
+                    
+                <div class="flex flex-wrap justify-between gap-1.5 mb-3">
+                    @for ($i = 1; $i <= 7; $i++)
+                        <button
+                            type="button"
+                            @click="showerNumber = '{{ $i }}'; load(showingAll)"
+                            :class="showerNumber === '{{ $i }}' ? 'bg-sky-400 text-white' : 'bg-sky-50 text-sky-700'"
+                            class="rounded-full w-8 h-8 text-xs font-bold transition-colors"
+                        >{{ $i }}</button>
+                    @endfor
+                </div>
+
+                    <p class="text-xs font-bold text-slate-500 mb-1.5 ms-1">温度</p>
+                    <div class="flex flex-wrap justify-between gap-1.5 mb-3">
+                        <template x-for="option in ['冷たい', 'ぬるい', '温かい', '熱い']" :key="'temp-' + option">
+                            <button
+                                type="button"
+                                @click="temperatureLabel = (temperatureLabel === option ? null : option); load(showingAll)"
+                                :class="temperatureLabel === option ? 'bg-rose-400 text-white' : 'bg-rose-50 text-rose-700'"
+                                class="rounded-full text-xs font-bold px-3 py-1.5 transition-colors"
+                                x-text="option"
+                            ></button>
+                        </template>
+                    </div>
+
+                    <p class="text-xs font-bold text-slate-500 mb-1.5 ms-1">水圧</p>
+                    <div class="flex flex-wrap justify-between gap-1.5">
+                        <template x-for="option in ['無し', '弱い', '普通', '強い']" :key="'pressure-' + option">
+                            <button
+                                type="button"
+                                @click="pressureLabel = (pressureLabel === option ? null : option); load(showingAll)"
+                                :class="pressureLabel === option ? 'bg-sky-500 text-white' : 'bg-sky-50 text-sky-700'"
+                                class="rounded-full text-xs font-bold px-3 py-1.5 transition-colors"
+                                x-text="option"
+                            ></button>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+        <x-shower-female.comment-log
         
         />
     </section>

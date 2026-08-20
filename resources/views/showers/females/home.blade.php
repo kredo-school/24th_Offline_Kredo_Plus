@@ -188,24 +188,24 @@
                 >
                     <p class="text-xs font-bold text-slate-500 mb-1.5 ms-1">シャワー番号</p>
                     <div class="mb-1.5">
-    <button
-        type="button"
-        @click="showerNumber = 'all'; load(showingAll)"
-        :class="showerNumber === 'all' ? 'bg-sky-400 text-white' : 'bg-sky-50 text-sky-700'"
-        class="rounded-full text-xs font-bold px-3 py-1.5 transition-colors"
-    >すべて</button>
-</div>
-
-<div class="flex flex-wrap justify-between gap-1.5 mb-3">
-                        @for ($i = 1; $i <= 7; $i++)
-                            <button
-                                type="button"
-                                @click="showerNumber = '{{ $i }}'; load(showingAll)"
-                                :class="showerNumber === '{{ $i }}' ? 'bg-sky-400 text-white' : 'bg-sky-50 text-sky-700'"
-                                class="rounded-full w-8 h-8 text-xs font-bold transition-colors"
-                            >{{ $i }}</button>
-                        @endfor
+                        <button
+                            type="button"
+                            @click="showerNumber = 'all'; load(showingAll)"
+                            :class="showerNumber === 'all' ? 'bg-sky-400 text-white' : 'bg-sky-50 text-sky-700'"
+                            class="rounded-full text-xs font-bold px-3 py-1.5 transition-colors"
+                        >すべて</button>
                     </div>
+                    
+                <div class="flex flex-wrap justify-between gap-1.5 mb-3">
+                    @for ($i = 1; $i <= 7; $i++)
+                        <button
+                            type="button"
+                            @click="showerNumber = '{{ $i }}'; load(showingAll)"
+                            :class="showerNumber === '{{ $i }}' ? 'bg-sky-400 text-white' : 'bg-sky-50 text-sky-700'"
+                            class="rounded-full w-8 h-8 text-xs font-bold transition-colors"
+                        >{{ $i }}</button>
+                    @endfor
+                </div>
 
                     <p class="text-xs font-bold text-slate-500 mb-1.5 ms-1">温度</p>
                     <div class="flex flex-wrap justify-between gap-1.5 mb-3">
