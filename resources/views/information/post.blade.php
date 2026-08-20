@@ -48,11 +48,11 @@
 
                     <label for="imageInput" class="rc-image-box">
 
-                    <img id="imagePreview"
-                        src="{{ !empty($draft['image'])
-                            ? asset('storage/' . $draft['image'])
-                            : 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop' }}"
-                        alt="preview">
+                        <img id="imagePreview"
+                            src="{{ !empty($draft['image'])
+                                ? asset('storage/' . $draft['image'])
+                                : 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop' }}"
+                            alt="preview">
                         <div class="rc-image-overlay">
                             <span class="rc-image-overlay-inner">
                                 <i class="fa-solid fa-camera"></i>
@@ -70,18 +70,14 @@
                     // 一時保存された下書きを取得
                     $draft = session('information_draft', []);
 
-                    $selectedCategoryId = !empty($earthLocation)
-                    ? ($draft['category_id'] ?? '')
-                    : '';
+                    $selectedCategoryId = !empty($earthLocation) ? $draft['category_id'] ?? '' : '';
 
-                $oldSection = !empty($earthLocation)
-                    ? ($draft['main_category'] ?? '')
-                    : '';
+                    $oldSection = $draft['main_category'] ?? request('main_category', '');
 
-                $selectedCategory = $selectedCategoryId
-                    ? $categories->firstWhere('id', (int) $selectedCategoryId)
-                    : null;
-                @endphp                <!-- Main Category -->
+                    $selectedCategory = $selectedCategoryId
+                        ? $categories->firstWhere('id', (int) $selectedCategoryId)
+                        : null;
+                @endphp <!-- Main Category -->
 
                 <div>
 
@@ -124,8 +120,7 @@
                         @foreach ($categories as $category)
                             @php $isOldSelected = $selectedCategoryId == $category->id; @endphp
                             <option value="{{ $category->id }}" data-name="{{ strtolower($category->name) }}"
-                                data-section="{{ $category->section }}"
-                                {{ $isOldSelected ? 'selected' : '' }}
+                                data-section="{{ $category->section }}" {{ $isOldSelected ? 'selected' : '' }}
                                 {{ $isOldSelected ? '' : 'hidden disabled' }}>
 
                                 {{ $category->name }}
@@ -146,8 +141,8 @@
 
                     </label>
 
-                    <input type="text" name="title" class="rc-field-input" value="{{ !empty($earthLocation) ? ($draft['title'] ?? '') : '' }}"
-                        placeholder="店名・タイトル">
+                    <input type="text" name="title" class="rc-field-input"
+                        value="{{ !empty($earthLocation) ? $draft['title'] ?? '' : '' }}" placeholder="店名・タイトル">
 
                 </div>
 
@@ -160,7 +155,7 @@
 
                     </label>
 
-                     <textarea name="description" rows="4" class="rc-field-input" placeholder="説明を入力してください">{{ !empty($earthLocation) ? ($draft['description'] ?? '') : '' }}</textarea>
+                    <textarea name="description" rows="4" class="rc-field-input" placeholder="説明を入力してください">{{ !empty($earthLocation) ? $draft['description'] ?? '' : '' }}</textarea>
                 </div>
                 <!-- Price -->
                 <div>
@@ -169,7 +164,7 @@
                     </label>
 
                     <input type="number" name="price" min="0" step="1" class="rc-field-input"
-                         placeholder="例：450">
+                        placeholder="例：450">
                 </div>
 
                 <!-- Location -->
@@ -179,21 +174,16 @@
                         LOCATION
                     </label>
 
-                    @if($earthLocation)
+                    @if ($earthLocation)
+                        <input type="hidden" name="earth_location_id" value="{{ $earthLocation->id }}">
 
-                    <input
-                    type="hidden"
-                    name="earth_location_id"
-                    value="{{ $earthLocation->id }}">
+                        <div style="margin-top:10px;padding:10px;border:1px solid #ddd;border-radius:8px;">
 
-                    <div style="margin-top:10px;padding:10px;border:1px solid #ddd;border-radius:8px;">
+                            <strong>📍 {{ $earthLocation->place_name }}</strong><br>
 
-                    <strong>📍 {{ $earthLocation->place_name }}</strong><br>
+                            <small>{{ $earthLocation->address }}</small>
 
-                    <small>{{ $earthLocation->address }}</small>
-
-                    </div>
-
+                        </div>
                     @endif
 
                     <!-- Carinderiaのみ表示 -->
@@ -210,14 +200,12 @@
                     <!-- Restaurant / Travel / Other -->
                     <div id="mapLocation">
 
-                    <a href="{{ route('earth.location.create') }}"
-                        id="addLocationButton"
-                        class="rc-save-btn"
-                        style="background:#f8fafc;color:#4736F0;border:1px solid #4736F0;">
+                        <a href="{{ route('earth.location.create') }}" id="addLocationButton" class="rc-save-btn"
+                            style="background:#f8fafc;color:#4736F0;border:1px solid #4736F0;">
 
-                        <i class="fa-solid fa-location-dot"></i>
-                        <span>場所を追加</span>
-                    </a>
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span>場所を追加</span>
+                        </a>
 
                     </div>
 
