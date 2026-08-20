@@ -23,6 +23,9 @@ export function flashcardApp(config) {
         isFlipped:    false,
         learned:      [],
         isDone:       false,
+        // フラッシュカードを開いた時刻（＝このコンポーネント生成時）から計測し、
+        // 10問完了時にcomplete()で経過秒数をduration_secondsとして送信する。
+        startTime:    Date.now(),
 
         get current()  { return this.words[this.currentIndex]; },
         get progress() {
@@ -65,11 +68,15 @@ export function flashcardApp(config) {
         },
 
         async complete() {
+            const durationSeconds = this.startTime
+                ? Math.round((Date.now() - this.startTime) / 1000)
+                : 0;
             try {
                 await post(this.progressUrl, {
                     level:            this.level,
                     is_completed:     true,
                     learned_word_ids: this.learned,
+                    duration_seconds: durationSeconds,
                 });
             } catch {
                 // Non-critical: progress update failure doesn't block UI
@@ -82,6 +89,7 @@ export function flashcardApp(config) {
             this.isFlipped    = false;
             this.learned      = [];
             this.isDone       = false;
+            this.startTime    = Date.now();
         },
     };
 }
