@@ -36,7 +36,7 @@ export function showHoverCard(location, x, y) {
             </div>
 
             <div class="hover-location">
-                📍 ${location.place_name}
+                📍 ${location.place_name || "ー"}
             </div>
 
             <div class="hover-category">
