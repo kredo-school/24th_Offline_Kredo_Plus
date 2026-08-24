@@ -16,6 +16,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use App\Services\Shower\ShowerScale;
 use App\Models\Shower\ShowerReport;
 
@@ -35,6 +36,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'avatar',
         'password',
         'role_id',
         'total_xp',
@@ -45,6 +47,7 @@ class User extends Authenticatable
         'gender_locked',
         'toeic_exam_date',
         'ielts_exam_date',
+        'graduation_date',
         'preferred_temperature',
         'preferred_pressure',
         'shower_priority_factor',
@@ -79,6 +82,7 @@ class User extends Authenticatable
             'gender_locked' => 'boolean',
             'toeic_exam_date' => 'date',
             'ielts_exam_date' => 'date',
+            'graduation_date' => 'date',
             'preferred_temperature' => 'decimal:1',
             'preferred_pressure' => 'decimal:1',
         ];
@@ -143,6 +147,12 @@ class User extends Authenticatable
         return $this->role_id === self::ADMIN_ROLE_ID;
     }
 
+    // プロフィール写真の公開URL
+    public function getAvatarUrlAttribute(): ?string
+    {
+        return $this->avatar ? Storage::disk('public')->url($this->avatar) : null;
+    }
+
     // シャワーの好み登録
 
     public function getPreferredTemperatureLabelAttribute(): string
@@ -165,5 +175,11 @@ class User extends Authenticatable
     public function suggestions()
     {
         return $this->hasMany(Suggestion::class);
+    }
+
+    // マイカレンダー（課題・イベントのメモ）
+    public function calendarNotes()
+    {
+        return $this->hasMany(CalendarNote::class);
     }
 }
