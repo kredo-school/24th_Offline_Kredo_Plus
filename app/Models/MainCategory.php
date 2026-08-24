@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MainCategory extends Model
 {
-    protected $fillable = ['key', 'name', 'hero_image', 'description', 'sort_order'];
+    protected $fillable = ['key', 'name', 'hero_image', 'description', 'sort_order', 'color'];
 
     /** key(例: 'carinderia')を指定して、そのメインカテゴリーの行を1件取得する */
     public static function findByKey(string $key): ?self
@@ -21,11 +21,16 @@ class MainCategory extends Model
     }
 
     /**
-     * 既存4つと同じKredoカラー(Carinderia=青, Restaurant&Cafe=赤, Travel=黄, Other=緑)を
-     * そのまま使い、5個目以降は予備色を順番に割り当てる。
+     * 管理画面(留学情報管理)で手動でカラーを設定していればそれを最優先で使う。
+     * 未設定(null)の場合のみ、これまで通りの自動割り当て
+     * (既存4つ=Kredoカラー固定、5個目以降=予備パレットを順番に割り当て)にフォールバックする。
      */
     public function color(): string
     {
+        if (!empty($this->color)) {
+            return $this->color;
+        }
+
         $fixedColors = [
             'carinderia'      => '#2f5fdb',
             'restaurant-cafe' => '#e05237',

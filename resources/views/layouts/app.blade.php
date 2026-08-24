@@ -309,6 +309,12 @@
                 class="block py-2 text-sm font-semibold {{ request()->routeIs('english.*') ? 'text-brand-yellow' : 'text-slate-600 hover:text-brand-yellow' }}">英語学習</a>
             <a href="{{ route('carinderia.index') }}"
                 class="block py-2 text-sm font-semibold {{ request()->routeIs('carinderia.*') ? 'text-brand-green' : 'text-slate-600 hover:text-brand-green' }}">留学情報</a>
+            <a href="{{ route('suggestion') }}"
+                class="block py-2 text-sm font-semibold {{ request()->routeIs('suggestion') ? 'text-brand-red' : 'text-slate-600 hover:text-brand-red' }}">目安箱</a>
+            @if (auth()->user()?->isAdmin())
+                <a href="{{ route('admin.dashboard') }}"
+                    class="block py-2 text-sm font-semibold {{ request()->routeIs('admin.*') ? 'text-indigo-600' : 'text-slate-600 hover:text-indigo-600' }}">システム管理</a>
+            @endif
             <a href="{{ route('profile.edit') }}"
                 class="block py-2 text-sm font-semibold text-slate-600 hover:text-brand-blue">{{ __('Profile') }}</a>
             <form method="POST" action="{{ route('logout') }}">

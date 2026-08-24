@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', ($currentArea?->name ?? 'All Areas') . ' — Kredo Plus Travel')
+@section('title', $category->name . ' — Kredo Plus')
 
 @section('content')
 
@@ -9,38 +9,32 @@
   .font-display { font-family: 'Poppins', 'Noto Sans JP', sans-serif; }
   .font-mono { font-family: 'IBM Plex Mono', monospace; }
 
-  /* signature: 手書き風の下線が AREA の選択状態にじわっと伸びる */
-  /* --cat-color をエリアごとに変えることで、下線・選択時の文字色・バッジ色を全部統一する */
-  .cat-link { position: relative; --cat-color: #2f5fdb; }
-  .cat-link::before {
-    content: '';
-    position: absolute;
-    left: -20px;
-    top: 50%;
-    width: 3px;
-    height: 0%;
-    background: var(--cat-color);
-    border-radius: 2px;
-    transform: translateY(-50%);
-    transition: height .25s ease;
+  /* egg: 卵っぽい黄色 / St Nino: ボルドー(赤)→金のグラデーション(赤みを強めた濃いめの配色) */
+  .secret-title.is-egg { color: #F0C419; }
+  .secret-title.is-st-nino {
+    background: linear-gradient(90deg, #6E0F1A 0%, #C41E3A 45%, #FFD700 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
-  .cat-link.active::before,
-  .cat-link:hover::before { height: 70%; }
-  .cat-link.active { font-weight: 700; }
 
-  .food-card { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; }
-  .food-card:hover { transform: translateY(-4px); }
-
-  .heart-btn i { transition: transform .2s ease; }
-  .heart-btn.liked i { transform: scale(1.15); }
-
-  /* 横スライド系のスクロールバーは非表示に(色付きにはしない。他ページと同じくページ全体は標準のスクロールバーのまま) */
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; }
 
   /* お楽しみ機能: Carinderiaボタンにカーソルを合わせた時だけニワトリのカーソルになる */
   .chicken-cursor-hover:hover {
     cursor: url('{{ asset("images/carinderia/chicken-cursor.png") }}') 20 22, pointer;
+  }
+
+  .food-card { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; }
+  .food-card:hover { transform: translateY(-4px); }
+
+  .heart-btn svg { transition: transform .2s ease, fill .2s ease, stroke .2s ease; }
+  .heart-btn.liked svg { fill: #CE7043; stroke: #CE7043; transform: scale(1.15); }
+
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   }
 
   @keyframes riseIn {
@@ -55,22 +49,25 @@
   .avatar-initial { display:flex; align-items:center; justify-content:center; background:#E3E0FF; color:#4736F0; font-weight:600; }
 </style>
 
-<div class="text-[#241E1A] pb-24 pb-24">
-
+<div class="text-[#241E1A] pb-24">
 
 <div class="min-h-screen flex flex-col">
 
   <div class="max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop pt-8 md:pt-12">
-    <!-- ヒーローバナー: エリア選択中は$currentArea(エリア独自)の画像・説明文を優先。
-         エリア未選択時は$section(Travelページ自体、アドミンが登録)の内容を表示 -->
+    {{-- ヒーローバナー: このカテゴリー(egg / St Nino)専用。切り替えは無く常に固定表示 --}}
+    @php
+      $heroImage = $category->hero_image ?? 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?q=80&w=800&auto=format&fit=crop';
+      $heroImage = \Illuminate\Support\Str::startsWith($heroImage, ['http://', 'https://']) ? $heroImage : asset($heroImage);
+      $titleClass = $category->slug === 'egg' ? 'is-egg' : 'is-st-nino';
+    @endphp
     <section class="relative overflow-hidden rounded-3xl mb-0 min-h-[280px] sm:min-h-[340px] md:min-h-[380px] p-8 md:p-10 bg-cover bg-center shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]"
-      style="background-image: url('{{ $currentArea->hero_image ?? $section?->hero_image ?? 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=1600&auto=format&fit=crop' }}');">
+      style="background-image: url('{{ $heroImage }}');">
       <div class="absolute inset-0 bg-gradient-to-r from-white/95 from-3% via-white/60 via-25% to-transparent to-50% pointer-events-none"></div>
       <div class="relative flex flex-col lg:flex-row gap-8 w-full">
         <div class="flex-1">
           <h1 class="text-display font-black text-blue-950/90 mb-1">留学情報</h1>
-          <p class="text-headline-md font-bold text-brand-yellow mb-3 drop-shadow-[0_1px_3px_rgba(255,255,255,0.9)]">{{ $currentArea->name ?? $section?->name ?? 'Travel & Tourism' }}</p>
-          <p class="text-body-md text-blue-950/90 max-w-md whitespace-pre-line">{{ $currentArea->description ?? $section?->description ?? 'セブの海・自然・カルチャーを、まるごと満喫しよう。' }}</p>
+          <p class="secret-title {{ $titleClass }} text-headline-md font-bold mb-3 drop-shadow-[0_1px_3px_rgba(255,255,255,0.9)]">{{ $category->name }}</p>
+          <p class="text-body-md text-blue-950/90 max-w-md whitespace-pre-line">{{ $category->description }}</p>
         </div>
       </div>
     </section>
@@ -79,11 +76,7 @@
   <br>
 
   <div class="max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop pt-4">
-  {{--
-      メインカテゴリー一覧ボタン。main_categoriesテーブルを動的にループするので、
-      アドミンが5つ目以降を追加しても、ここに自動で表示される。
-      携帯は2段×2列(4つ)、PCは1画面に4つ表示、それ以降は横スライドで見る。
-  --}}
+  {{-- 通常ページと同じ、メインカテゴリー一覧ボタン --}}
   @php
     $fixedRoutes = [
       'carinderia'      => 'carinderia.index',
@@ -98,7 +91,7 @@
         $href = isset($fixedRoutes[$mc->key])
           ? route($fixedRoutes[$mc->key])
           : route('information.dynamic', $mc->key);
-        $isCurrentMain = $mc->key === 'travel';
+        $isCurrentMain = $mc->key === 'other';
       @endphp
       <a href="{{ $href }}" @if($isCurrentMain) data-active="true" @endif class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity {{ $mc->key === 'carinderia' ? 'chicken-cursor-hover' : '' }}" style="background:{{ $mc->color() }}">
         {{ $mc->name }}
@@ -106,39 +99,22 @@
     @endforeach
   </div>
   @include('information.partials.main-cat-nav-script')
-  {{-- カテゴリーが5つ以上(スライドが必要)の時だけ、携帯にヒント表示 --}}
   @if($allMainCategories->count() > 4)
   <p class="md:hidden text-center text-[#241E1A]/25 text-xs tracking-[0.3em] mt-1">・・・</p>
   @endif
 </div>
 
   <div class="max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop pt-3 md:pt-8">
-    <!-- 検索(スマホ用。PCは下のサイドバー内に別途表示) -->
+    <!-- 検索(スマホ用) -->
     <label class="relative block mb-4 md:hidden">
       <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-[#241E1A]/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="searchInputMobile" placeholder="タイトルを検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
     </label>
-
-    <!-- AREA選択(スマホ用: 横スクロールできるチップ。サイドバーが隠れる代わりにこちらを表示) -->
-    <div class="no-scrollbar flex md:hidden gap-2 overflow-x-auto pb-1 mb-2" style="scrollbar-width:none;">
-      <a href="{{ route('travel.index') }}"
-         class="shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors"
-         style="@if(!$currentArea) background:rgba(36,30,26,0.6); color:#fff; @else background:rgba(36,30,26,0.05); color:rgba(36,30,26,0.6); @endif">
-        All Areas
-      </a>
-      @foreach ($areas as $area)
-        <a href="{{ route('travel.show', $area->slug) }}"
-           class="shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors"
-           style="@if($currentArea && $currentArea->id === $area->id) background:{{ $section?->color() ?? '#f5b52e' }}; color:#fff; @else background:rgba(36,30,26,0.05); color:rgba(36,30,26,0.6); @endif">
-          {{ $area->name }}
-        </a>
-      @endforeach
-    </div>
   </div>
 
   <div class="flex-1 max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop py-4 flex gap-6">
 
-    <!-- Sidebar(PC/タブレットのみ。スマホは上の検索欄+チップに置き換え) -->
+    <!-- Sidebar(PC/タブレットのみ) -->
     <aside id="sidebar" class="hidden md:block w-60 shrink-0">
       <div class="sticky top-24">
         <label class="relative block mb-6">
@@ -146,33 +122,18 @@
           <input type="text" id="searchInput" placeholder="タイトルを検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
         </label>
         <p class="font-mono text-[11px] tracking-[0.18em] text-[#241E1A]/40 mb-3 pl-1">AREA</p>
-        <nav class="flex flex-col gap-1 pl-5" id="areaNav">
-          <a href="{{ route('travel.index') }}" style="--cat-color:{{ $section?->color() ?? '#f5b52e' }}" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A] @if(!$currentArea) active @endif">All Areas</a>
-          {{-- カテゴリー一覧はDBから動的に取得。アドミンが追加しても、この@foreachがそのまま対応する --}}
-          {{-- 左のガイドはAll Areasがメインカテゴリーの色、下に行くほど薄くなるグラデーション --}}
-          @foreach ($areas as $area)
-            <a href="{{ route('travel.show', $area->slug) }}"
-               style="--cat-color:{{ \App\Models\Category::lighten($section?->color() ?? '#f5b52e', \App\Models\Category::sidebarTint($loop->index)) }}"
-               class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A] @if($currentArea && $currentArea->id === $area->id) active @endif">
-              {{ $area->name }}
-            </a>
-          @endforeach
-        </nav>
+        <p class="secret-title {{ $titleClass }} text-sm font-bold py-2 pl-1">{{ $category->name }}</p>
       </div>
     </aside>
 
     <!-- Main -->
     <main class="flex-1 min-w-0">
-
-      <!-- Toolbar: 件数表示 -->
       <div class="flex items-center justify-between mb-4">
         <p id="resultCount" class="text-sm text-[#241E1A]/50"></p>
       </div>
 
-      <!-- Grid -->
       <div id="foodGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
 
-      <!-- Pagination -->
       <div class="flex items-center justify-center gap-2 mt-8" id="pagination"></div>
     </main>
   </div>
@@ -182,22 +143,16 @@
 <div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-[#241E1A]/40 backdrop-blur-sm">
   <div class="modal-panel bg-[#FFFFFF] rounded-2xl w-full max-w-3xl overflow-hidden shadow-[0_24px_60px_-12px_rgba(36,30,26,0.35)] opacity-0 translate-y-3 flex flex-col md:flex-row md:h-[520px]">
 
-    <!-- 左: 写真(固定) -->
     <div class="relative w-full md:w-1/2 h-64 md:h-full shrink-0">
       <img id="modalImg" src="" class="w-full h-full object-cover" alt="">
       <span id="modalTag" class="absolute top-3 left-3 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full"></span>
       <button onclick="closeModal()" class="md:hidden absolute top-3 right-3 bg-[#241E1A]/50 hover:bg-[#241E1A]/70 text-white w-7 h-7 rounded-full flex items-center justify-center" aria-label="閉じる">✕</button>
     </div>
 
-    <!-- 右: ヘッダー + 説明 + アクション -->
     <div class="w-full md:w-1/2 flex flex-col min-h-0">
-
-      <!-- ヘッダー: 投稿者 + 編集/削除ボタン -->
       <div class="flex items-center justify-between gap-2 px-4 py-3 border-b border-[#241E1A]/10 shrink-0">
         <div class="flex items-center gap-2 min-w-0">
-          <div id="modalAvatarWrap" class="shrink-0">
-            <div id="modalAvatar" class="avatar-initial w-8 h-8 rounded-full shrink-0 text-xs"></div>
-          </div>
+          <div id="modalAvatar" class="avatar-initial w-8 h-8 rounded-full shrink-0 text-xs"></div>
           <div class="leading-tight min-w-0">
             <p id="modalName" class="text-sm font-semibold truncate"></p>
             <p id="modalTime" class="text-xs text-[#241E1A]/40"></p>
@@ -205,7 +160,6 @@
         </div>
 
         <div class="flex items-center gap-1 shrink-0">
-          <!-- 投稿主だけに表示される操作ボタン(アイコンのみ) -->
           <div id="ownerActions" class="hidden items-center gap-1">
             <button id="modalEditBtn" class="w-8 h-8 flex items-center justify-center rounded-full text-[#4736F0] hover:bg-[#F1F0FF] transition-colors active:scale-90" aria-label="編集">
               <i class="fa-solid fa-edit text-[15px]"></i>
@@ -220,7 +174,6 @@
         </div>
       </div>
 
-      <!-- スクロール領域: タイトル・説明・コメント一覧 -->
       <div class="flex-1 overflow-y-auto px-4 py-3 min-h-0">
         <h3 id="modalTitle" class="font-display font-semibold text-lg mb-1"></h3>
         <p id="modalDesc" class="text-sm text-[#241E1A]/60 mb-4"></p>
@@ -229,7 +182,6 @@
         <div id="commentList" class="space-y-3"></div>
       </div>
 
-      <!-- アクションバー: ♡ 💬(左) / 🌐マップ(右) -->
       <div class="px-4 pt-2 pb-1 border-t border-[#241E1A]/10 shrink-0">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
@@ -250,7 +202,6 @@
         <p id="modalLikeCount" class="text-xs font-semibold mt-1.5 mb-2"></p>
       </div>
 
-      <!-- コメント投稿フォーム -->
       <form id="commentForm" class="flex items-center gap-2 px-4 py-3 border-t border-[#241E1A]/10 shrink-0">
         <input type="text" id="commentInput" class="flex-1 border border-[#241E1A]/10 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]" placeholder="コメントを書く...">
         <button type="submit" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-[#4736F0] text-white hover:bg-[#372AC2] transition-colors active:scale-90">
@@ -261,47 +212,29 @@
   </div>
 </div>
 
-<!-- 削除用の隠しフォーム(投稿ごとにactionだけJSで差し替える) -->
 <form id="deleteForm" method="POST" class="hidden">
   @csrf
   @method('DELETE')
 </form>
 
 <script>
-  // ---- AREAごとの色: DBのcategoriesテーブルから動的に生成(アドミンが追加しても自動対応) ----
-  const areaColors = {
-    @foreach ($areas as $area)
-      '{{ $area->name }}': '{{ $area->color() }}',
-    @endforeach
-  };
-  function colorOf(tag){ return areaColors[tag] || '#2f5fdb'; }
+  const badgeColor = @json($badgeColor);
+  function colorOf(){ return badgeColor; }
 
-  // ---- 投稿データ(現在のカテゴリー絞り込み済み、Controllerから渡される) ----
   const items = @json($posts);
-
-  // ---- 現在ログイン中のユーザー(Auth::id()。未ログインならnull) ----
   const currentUserId = {{ auth()->id() ?? 'null' }};
   const routeBase = @json(url('information'));
   const postsRouteBase = @json(url('information/posts'));
   const loginUrl = @json(route('login'));
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-  const PAGE_SIZE = 9;
+  const PAGE_SIZE = 21;
   let currentPage = 1;
   let searchQuery = '';
   let currentModalItem = null;
 
   function initials(name){
     return (name || '?').trim().charAt(0).toUpperCase();
-  }
-
-  // 投稿者アバター: 写真が登録されていればImage、無ければ従来通りイニシャル円
-  function avatarHtml(user, sizeClass, textSizeClass){
-    const name = user ? user.name : '不明なユーザー';
-    if (user && user.avatar_url) {
-      return `<img src="${user.avatar_url}" alt="${name}" class="${sizeClass} rounded-full object-cover shrink-0">`;
-    }
-    return `<div class="avatar-initial ${sizeClass} rounded-full shrink-0 ${textSizeClass}">${initials(name)}</div>`;
   }
 
   function timeAgo(dateStr){
@@ -316,7 +249,6 @@
     return diffDay + '日前';
   }
 
-  // ---- 検索語をHTML内で安全に太字ハイライトする ----
   function escapeRegExp(str){
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
@@ -326,7 +258,6 @@
     return text.replace(re, '<strong class="bg-[#F1F0FF] text-[#4736F0] rounded px-0.5">$1</strong>');
   }
 
-  // ---- いいねのトグル(サーバーに保存。未ログインならログイン画面へ) ----
   function toggleLike(it){
     if (currentUserId === null) { window.location.href = loginUrl; return; }
 
@@ -343,7 +274,6 @@
       .catch(() => alert('通信エラーが発生しました。もう一度お試しください。'));
   }
 
-  // ---- いいねボタンの見た目を、カード側・モーダル側の両方で更新 ----
   function updateLikeUI(it){
     const cardBtn = document.querySelector(`.food-card[data-post-id="${it.id}"] .card-like-btn`);
     if (cardBtn) {
@@ -360,7 +290,6 @@
     }
   }
 
-  // ---- お気に入り(保存)のトグル(サーバーに保存。未ログインならログイン画面へ) ----
   function toggleBookmark(it){
     if (currentUserId === null) { window.location.href = loginUrl; return; }
 
@@ -376,7 +305,6 @@
       .catch(() => alert('通信エラーが発生しました。もう一度お試しください。'));
   }
 
-  // ---- 保存ボタンの見た目を、カード側・モーダル側の両方で更新 ----
   function updateBookmarkUI(it){
     const cardBtn = document.querySelector(`.food-card[data-post-id="${it.id}"] .card-save-btn`);
     if (cardBtn) {
@@ -392,7 +320,6 @@
     }
   }
 
-  // ---- コメント一覧の描画 ----
   function renderComments(it){
     const list = document.getElementById('commentList');
     list.innerHTML = '';
@@ -423,7 +350,6 @@
     list.scrollTop = list.scrollHeight;
   }
 
-  // ---- コメント削除(本人のコメントのみ。サーバー側でも権限チェック済み) ----
   function deleteComment(commentId){
     fetch(`${postsRouteBase}/comments/${commentId}`, {
       method: 'DELETE',
@@ -442,26 +368,31 @@
       .catch(() => alert('コメントの削除に失敗しました。もう一度お試しください。'));
   }
 
-  // ---- タイトルに検索語が含まれるかで絞り込み ----
   function getFilteredItems(){
-    if (!searchQuery) return items;
-    const q = searchQuery.toLowerCase();
-    // タイトルだけでなく、投稿の説明文にも一致したらヒットさせる
-    return items.filter(it => {
-      const titleMatch = (it.title || '').toLowerCase().includes(q);
-      const descMatch = (it.description || '').toLowerCase().includes(q);
-      return titleMatch || descMatch;
-    });
+    let filtered = items;
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(it => {
+        const titleMatch = (it.title || '').toLowerCase().includes(q);
+        const descMatch = (it.description || '').toLowerCase().includes(q);
+        return titleMatch || descMatch;
+      });
+    }
+    return filtered;
   }
 
   function renderGrid(page){
-    const filtered = getFilteredItems();
-    document.getElementById('resultCount').textContent = `${filtered.length} spots found`;
+    const sorted = getFilteredItems();
+    document.getElementById('resultCount').textContent = `${sorted.length} posts found`;
 
     const grid = document.getElementById('foodGrid');
     grid.innerHTML = '';
     const start = (page - 1) * PAGE_SIZE;
-    const pageItems = filtered.slice(start, start + PAGE_SIZE);
+    const pageItems = sorted.slice(start, start + PAGE_SIZE);
+
+    if (pageItems.length === 0) {
+      grid.innerHTML = `<p class="text-sm text-[#241E1A]/40 py-16 text-center col-span-full">まだ投稿がありません。</p>`;
+    }
 
     pageItems.forEach((it, idx) => {
       const titleHtml = searchQuery ? highlightMatch(it.title, searchQuery) : it.title;
@@ -475,20 +406,20 @@
       card.innerHTML = `
         <div class="relative h-40">
           <img src="${it.image_url}" class="w-full h-full object-cover" alt="${it.title}" loading="lazy">
-          <span class="absolute top-2.5 left-2.5 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full" style="background:${colorOf(tag)}">${tag}</span>
+          <span class="absolute top-2.5 left-2.5 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full" style="background:${colorOf()}">${tag}</span>
         </div>
         <div class="p-4">
           <h3 class="font-display font-semibold text-base mb-1 truncate">${titleHtml}</h3>
           <p class="text-sm text-[#241E1A]/55 line-clamp-2 mb-3">${it.description ?? ''}</p>
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-1.5 min-w-0">
-              ${avatarHtml(it.user, 'w-6 h-6', 'text-[10px]')}
+              <div class="avatar-initial w-6 h-6 rounded-full shrink-0 text-[10px]">${initials(userName)}</div>
               <div class="leading-tight min-w-0">
                 <p class="text-xs font-semibold truncate">${userName}</p>
                 <p class="text-[11px] text-[#241E1A]/40">${timeAgo(it.created_at)}</p>
               </div>
               <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                    it.earth_location
+                 it.earth_location
                     ? `${it.earth_location.latitude},${it.earth_location.longitude}`
                     : it.title
                     )}"
@@ -531,14 +462,12 @@
       wrap.appendChild(btn);
     }
 
-    if (totalPages > 1) {
-      const next = document.createElement('button');
-      next.textContent = 'Next';
-      next.className = 'ml-1 px-4 h-9 rounded-lg text-sm font-semibold bg-[#FFFFFF] border border-[#241E1A]/10 text-[#241E1A]/60 hover:border-[#A7A0FF] disabled:opacity-40';
-      next.disabled = currentPage === totalPages;
-      next.onclick = () => { if(currentPage < totalPages){ currentPage++; renderGrid(currentPage); renderPagination(); window.scrollTo({top:0, behavior:'smooth'}); } };
-      wrap.appendChild(next);
-    }
+    const next = document.createElement('button');
+    next.textContent = 'Next';
+    next.className = 'ml-1 px-4 h-9 rounded-lg text-sm font-semibold bg-[#FFFFFF] border border-[#241E1A]/10 text-[#241E1A]/60 hover:border-[#A7A0FF] disabled:opacity-40';
+    next.disabled = currentPage === totalPages;
+    next.onclick = () => { if(currentPage < totalPages){ currentPage++; renderGrid(currentPage); renderPagination(); window.scrollTo({top:0, behavior:'smooth'}); } };
+    wrap.appendChild(next);
   }
 
   function openModal(it){
@@ -547,30 +476,25 @@
     const userName = it.user ? it.user.name : '不明なユーザー';
 
     document.getElementById('modalImg').src = it.image_url;
-    document.getElementById('modalImg').alt = it.title;
     document.getElementById('modalTag').textContent = tag;
-    document.getElementById('modalTag').style.background = colorOf(tag);
+    document.getElementById('modalTag').style.background = colorOf();
     document.getElementById('modalTitle').textContent = it.title;
     document.getElementById('modalDesc').textContent = it.description ?? '';
-    document.getElementById('modalAvatarWrap').innerHTML = avatarHtml(it.user, 'w-8 h-8', 'text-xs');
+    document.getElementById('modalAvatar').textContent = initials(userName);
     document.getElementById('modalName').textContent = userName;
     document.getElementById('modalTime').textContent = timeAgo(it.created_at);
 
-    // マップリンク
     document.getElementById('modalMapLink').href =
      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
       it.earth_location
         ? `${it.earth_location.latitude},${it.earth_location.longitude}`
         : it.title
       )}`;
-
-    // いいねボタンの初期状態
     const modalIcon = document.querySelector('#modalLikeBtn i');
     modalIcon.className = (it.liked_by_me ? 'fa-solid' : 'fa-regular') + ' fa-heart text-[22px]' + (it.liked_by_me ? ' text-[#CE7043]' : '');
     document.getElementById('modalLikeBtn').classList.toggle('liked', !!it.liked_by_me);
     document.getElementById('modalLikeCount').textContent = `${it.likes_count ?? 0}件のいいね`;
 
-    // 保存(お気に入り)ボタンの初期状態
     const modalSaveIcon = document.querySelector('#modalSaveBtn i');
     modalSaveIcon.classList.toggle('fa-solid', !!it.bookmarked_by_me);
     modalSaveIcon.classList.toggle('fa-regular', !it.bookmarked_by_me);
@@ -578,7 +502,6 @@
 
     renderComments(it);
 
-    // 投稿主(user_id)と今ログインしているユーザー(Auth::id())が一致する時だけ、編集・削除ボタンを表示
     const isOwner = currentUserId !== null && it.user_id === currentUserId;
     const ownerActions = document.getElementById('ownerActions');
     ownerActions.classList.toggle('hidden', !isOwner);
@@ -615,17 +538,14 @@
     if(e.target.id === 'detailModal') closeModal();
   });
 
-  // モーダルのいいねボタン(開いている投稿=currentModalItemに対して動作)
   document.getElementById('modalLikeBtn').addEventListener('click', () => {
     if (currentModalItem) toggleLike(currentModalItem);
   });
 
-  // モーダルの保存ボタン
   document.getElementById('modalSaveBtn').addEventListener('click', () => {
     if (currentModalItem) toggleBookmark(currentModalItem);
   });
 
-  // コメント投稿フォーム(サーバーに保存し、成功したら一覧に追加)
   document.getElementById('commentForm').addEventListener('submit', (e) => {
     e.preventDefault();
     if (!currentModalItem) return;
@@ -661,8 +581,6 @@
       .catch(() => alert('コメントの送信に失敗しました。もう一度お試しください。'));
   });
 
-  // 検索ボックス:タイトルに一致したものだけ表示
-  // 検索ボックス:PC用・スマホ用の2つを同期させる(どちらに入力しても両方に反映)
   document.querySelectorAll('#searchInput, #searchInputMobile').forEach(input => {
     input.addEventListener('input', (e) => {
       searchQuery = e.target.value.trim();
@@ -694,6 +612,11 @@
     }
   });
 </script>
+
+@php
+  // フッターのPostリンクを、このカテゴリー固定の投稿フォームに向ける
+  $lockedCategorySlug = $category->slug;
+@endphp
 
 @include('information.footer.footer_nav')
 </div>

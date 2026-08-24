@@ -4,6 +4,7 @@ namespace App\Services\Shower;
 
 use App\Models\Shower\ShowerMalfunctionReport;
 use App\Models\User;
+use Illuminate\Support\Collection;
 
 class ShowerRecommendationService
 {
@@ -15,11 +16,18 @@ class ShowerRecommendationService
     /**
      * @return array{shower_number:int, match_percent:int, temperature:float, pressure:float}|null
      */
-    public function recommend(User $user, string $period = '24h'): ?array
-    {
-        $conditions = $this->aggregator->getConditions($user->gender, $period);
 
-        if ($conditions->isEmpty()) {
+    /**
+     * @param string|null $period 指定した場合はその期間のみで計算(フォールバックなし)。
+     *                            nullの場合は24h→3d→7d→14dの順にフォールバックする。
+     */
+    public function recommend(User $user, ?string $period = null): ?array
+    {
+        $conditions = $period !== null
+            ? $this->aggregator->getConditions($user->gender, $period)
+            : $this->conditionsWithFallback($user->gender);
+
+        if ($conditions === null || $conditions->isEmpty()) {
             return null;
         }
 
@@ -82,6 +90,19 @@ class ShowerRecommendationService
         unset($best['temperature_distance'], $best['pressure_distance'], $best['_weighted_distance']);
 
         return $best;
+    }
+
+    private function conditionsWithFallback(string $gender): ?Collection
+    {
+        foreach (['24h', '3d', '7d', '14d'] as $period) {
+            $conditions = $this->aggregator->getConditions($gender, $period);
+
+            if ($conditions->isNotEmpty()) {
+                return $conditions;
+            }
+        }
+
+        return null;
     }
 
     private function tiebreakDistance(array $candidate, ?string $priorityFactor): float

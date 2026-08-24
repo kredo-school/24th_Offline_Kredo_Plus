@@ -2,21 +2,17 @@
 <div
     class="bg-white rounded-2xl p-6 border-none shadow-lg"
     x-data="{
-        period: '24h',
+        period: 'latest',
         points: [],
         brokenNumbers: [],
-
-        get recommendedNumber() {
-            return this.$store.showerPriority.recommendation
-                ? this.$store.showerPriority.recommendation.shower_number
-                : null;
-        },
+        recommendedNumber: null,
 
         async load() {
             const response = await fetch(`{{ route('shower.scatter-data') }}?period=${this.period}`);
             const data = await response.json();
             this.points = data.points;
             this.brokenNumbers = data.broken_numbers;
+            this.recommendedNumber = data.recommended_number;
         },
     }"
     x-init="load()"

@@ -51,6 +51,25 @@ class CategorySeeder extends Seeder
             'description' => "その他、留学生活に役立つ便利なサービス情報を\nまとめています。",
         ]);
 
+        // ---- Other(隠しカテゴリー) ----
+        // Otherページの隠しリンク経由でのみアクセスできる、通常一覧・投稿フォームには出てこないカテゴリー。
+        Category::updateOrCreate(['slug' => 'egg'], [
+            'section' => 'other',
+            'name' => 'Egg',
+            'sort_order' => 6,
+            'is_hidden' => true,
+            'hero_image' => 'https://images.unsplash.com/photo-1518569656558-1f25e69d93d7?q=80&w=1600&auto=format&fit=crop',
+            'description' => "セブのたまご屋さんの紹介。",
+        ]);
+        Category::updateOrCreate(['slug' => 'st-nino'], [
+            'section' => 'other',
+            'name' => 'St Nino',
+            'sort_order' => 7,
+            'is_hidden' => true,
+            'hero_image' => 'images/other/st-nino-hero.jpg',
+            'description' => "みんなのお気に入りの\nSanto Niñoスポットの紹介。",
+        ]);
+
         // ---- Restaurant & Cafe ----
         Category::updateOrCreate(['slug' => 'restaurant'], [
             'section' => 'restaurant-cafe',

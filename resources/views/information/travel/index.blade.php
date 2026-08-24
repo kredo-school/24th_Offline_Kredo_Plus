@@ -26,7 +26,7 @@
   }
   .cat-link.active::before,
   .cat-link:hover::before { height: 70%; }
-  .cat-link.active { color: var(--cat-color); font-weight: 600; }
+  .cat-link.active { font-weight: 700; }
 
   .food-card { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; }
   .food-card:hover { transform: translateY(-4px); }

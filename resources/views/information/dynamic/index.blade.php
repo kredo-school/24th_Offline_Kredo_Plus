@@ -34,7 +34,7 @@
   .cat-link.active::before,
   .cat-link:hover::before { height: 70%; }
 
-  .cat-link.active { color: var(--cat-color); font-weight: 600; }
+  .cat-link.active { font-weight: 700; }
 
   /* スマホ用のSTOREチップ(横スクロール)。デスクトップの縦サイドバーの代わりに表示 */
   .cat-link-mobile { --cat-color: #4736F0; background: rgba(36,30,26,0.05); color: rgba(36,30,26,0.6); }
@@ -76,21 +76,26 @@
 
 <div class="min-h-screen flex flex-col">
 
-  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6">
-    <!-- ヒーローバナー: $sectionの内容(アドミンが登録した画像・タイトル・説明文)をそのまま表示 -->
-    <div class="relative h-52 sm:h-64 rounded-3xl overflow-hidden shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]">
-      <img src="{{ $section->hero_image ?? 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1600&auto=format&fit=crop' }}" class="absolute inset-0 w-full h-full object-cover" alt="{{ $section->name }}">
-      <div class="absolute inset-0 bg-gradient-to-t from-[#241E1A]/80 via-[#241E1A]/25 to-transparent"></div>
-      <div class="relative h-full flex flex-col justify-end p-6 sm:p-8">
-        <h1 class="font-display text-4xl sm:text-5xl font-bold text-white">{{ $section->name }}</h1>
-        <p class="text-white/85 mt-1 text-sm sm:text-base">{{ $section->description ?? '' }}</p>
+  <div class="max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop pt-8 md:pt-12">
+    <!-- ヒーローバナー: サブカテゴリー選択中は$currentArea(サブカテゴリー独自)の画像・説明文を優先。
+         未選択時は$section(メインカテゴリー自体、アドミンが登録)の内容を表示。
+         既存のtravel/show.blade.php等と同じデザインに統一。 -->
+    <section class="relative overflow-hidden rounded-3xl mb-0 min-h-[280px] sm:min-h-[340px] md:min-h-[380px] p-8 md:p-10 bg-cover bg-center shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]"
+      style="background-image: url('{{ $currentArea->hero_image ?? $section->hero_image ?? 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1600&auto=format&fit=crop' }}');">
+      <div class="absolute inset-0 bg-gradient-to-r from-white/95 from-3% via-white/60 via-25% to-transparent to-50% pointer-events-none"></div>
+      <div class="relative flex flex-col lg:flex-row gap-8 w-full">
+        <div class="flex-1">
+          <h1 class="text-display font-black text-blue-950/90 mb-1">留学情報</h1>
+          <p class="text-headline-md font-bold mb-3 drop-shadow-[0_1px_3px_rgba(255,255,255,0.9)]" style="color: {{ $currentArea?->color() ?? $section->color() }}">{{ $currentArea->name ?? $section->name }}</p>
+          <p class="text-body-md text-blue-950/90 max-w-md whitespace-pre-line">{{ $currentArea->description ?? $section->description ?? '' }}</p>
+        </div>
       </div>
-    </div>
+    </section>
   </div>
 
   <br>
 
-  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-4">
+  <div class="max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop pt-4">
   {{--
       メインカテゴリー一覧ボタン。既存4ページは直書きの4つだけだが、
       このページ(新しく追加された分専用)はDBに登録されている全メインカテゴリーを
@@ -107,42 +112,53 @@
   {{--
       携帯は2段×2列(4つ)、PCは1画面に4つ表示、それ以降は横スライドで見る。
   --}}
-  <div class="no-scrollbar grid grid-flow-col grid-rows-2 sm:grid-rows-1 auto-cols-[calc(50%-0.375rem)] sm:auto-cols-[calc(25%-0.5625rem)] gap-3 overflow-x-auto snap-x snap-mandatory pb-1" style="scrollbar-width:none;">
+  <div id="mainCatNav" class="no-scrollbar grid grid-flow-col grid-rows-2 sm:grid-rows-1 auto-cols-[calc(50%-0.375rem)] sm:auto-cols-[calc(25%-0.5625rem)] gap-3 overflow-x-auto pb-1" style="scrollbar-width:none;">
     @foreach ($allMainCategories as $mc)
       @php
         $href = isset($fixedRoutes[$mc->key])
           ? route($fixedRoutes[$mc->key])
           : route('information.dynamic', $mc->key);
+        $isCurrentMain = $mc->key === $section->key;
       @endphp
-      <a href="{{ $href }}" class="snap-start flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity {{ $mc->key === 'carinderia' ? 'chicken-cursor-hover' : '' }}" style="background:{{ $mc->color() }}">
+      <a href="{{ $href }}" @if($isCurrentMain) data-active="true" @endif class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity {{ $mc->key === 'carinderia' ? 'chicken-cursor-hover' : '' }}" style="background:{{ $mc->color() }}">
         {{ $mc->name }}
       </a>
     @endforeach
   </div>
+  @include('information.partials.main-cat-nav-script')
   {{-- カテゴリーが5つ以上(スライドが必要)の時だけ、携帯にヒント表示 --}}
   @if($allMainCategories->count() > 4)
   <p class="md:hidden text-center text-[#241E1A]/25 text-xs tracking-[0.3em] mt-1">・・・</p>
   @endif
 </div>
 
-  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-3 md:pt-8">
+  <div class="max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop pt-3 md:pt-8">
     <!-- 検索(スマホ用。PCは下のサイドバー内に別途表示) -->
     <label class="relative block mb-4 md:hidden">
       <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-[#241E1A]/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="searchInputMobile" placeholder="タイトルを検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
     </label>
 
-    <!-- STORE選択(スマホ用: 横スクロールできるチップ。サイドバーが隠れる代わりにこちらを表示) -->
-    <div class="no-scrollbar flex md:hidden gap-2 overflow-x-auto pb-1 mb-2" id="storeNavMobile" style="scrollbar-width:none;">
-      <a href="#" style="--cat-color:rgba(36,30,26,0.6)" class="cat-link-mobile shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors {{ $initialCategory === null ? 'active' : '' }}">All</a>
-      {{-- サブカテゴリー一覧はDBから動的に取得。アドミンが追加しても、この@foreachがそのまま対応する --}}
+    <!-- STORE選択(スマホ用: 横スクロールできるチップ。サイドバーが隠れる代わりにこちらを表示。
+         サブカテゴリーごとの専用ページ(/information/{key}/{slug})への本物のリンクにして、
+         選んだサブカテゴリーのヒーロー画像・説明文がちゃんと出るようにする -->
+    <div class="no-scrollbar flex md:hidden gap-2 overflow-x-auto pb-1 mb-2" style="scrollbar-width:none;">
+      <a href="{{ route('information.dynamic', $section->key) }}"
+         class="shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors"
+         style="@if(!$currentArea) background:rgba(36,30,26,0.6); color:#fff; @else background:rgba(36,30,26,0.05); color:rgba(36,30,26,0.6); @endif">
+        All
+      </a>
       @foreach ($subCategories as $cat)
-        <a href="#" data-tag="{{ $cat->name }}" style="--cat-color:{{ $section->color() }}" class="cat-link-mobile shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors {{ $initialCategory === $cat->name ? 'active' : '' }}">{{ $cat->name }}</a>
+        <a href="{{ route('information.dynamic.show', [$section->key, $cat->slug]) }}"
+           class="shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors"
+           style="@if($currentArea && $currentArea->id === $cat->id) background:{{ $section->color() }}; color:#fff; @else background:rgba(36,30,26,0.05); color:rgba(36,30,26,0.6); @endif">
+          {{ $cat->name }}
+        </a>
       @endforeach
     </div>
   </div>
 
-  <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-4 flex gap-6">
+  <div class="flex-1 max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop py-4 flex gap-6">
 
     <!-- Sidebar(PC/タブレットのみ。スマホは上の検索欄+チップに置き換え) -->
     <aside id="sidebar" class="hidden md:block w-60 shrink-0">
@@ -152,11 +168,16 @@
           <input type="text" id="searchInput" placeholder="タイトルを検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
         </label>
         <p class="font-mono text-[11px] tracking-[0.18em] text-[#241E1A]/40 mb-3 pl-1">STORE</p>
-        <nav class="flex flex-col gap-1 pl-5" id="storeNav">
-          <a href="#" style="--cat-color:rgba(36,30,26,0.6)" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A] {{ $initialCategory === null ? 'active' : '' }}">All</a>
+        <nav class="flex flex-col gap-1 pl-5">
+          <a href="{{ route('information.dynamic', $section->key) }}" style="--cat-color:{{ $section->color() }}" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A] @if(!$currentArea) active @endif">All</a>
           {{-- サブカテゴリー一覧はDBから動的に取得。アドミンが追加しても、この@foreachがそのまま対応する --}}
+          {{-- 左のガイドはAllがメインカテゴリーの色、下に行くほど薄くなるグラデーション --}}
           @foreach ($subCategories as $cat)
-            <a href="#" data-tag="{{ $cat->name }}" style="--cat-color:{{ $cat->color() }}" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A] {{ $initialCategory === $cat->name ? 'active' : '' }}">{{ $cat->name }}</a>
+            <a href="{{ route('information.dynamic.show', [$section->key, $cat->slug]) }}"
+               style="--cat-color:{{ \App\Models\Category::lighten($section->color(), \App\Models\Category::sidebarTint($loop->index)) }}"
+               class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A] @if($currentArea && $currentArea->id === $cat->id) active @endif">
+              {{ $cat->name }}
+            </a>
           @endforeach
         </nav>
       </div>
@@ -285,7 +306,8 @@
 
   const PAGE_SIZE = 21;
   let currentPage = 1;
-  let activeCategory = @json($initialCategory); // nullは「All(すべて表示)」を意味する。URLの?category=◯◯があればそれを初期値にする
+  // サブカテゴリーの絞り込みはURL(/information/{key}または/information/{key}/{slug})でサーバー側が
+  // 既に済ませているので、ここでは検索(searchQuery)だけをクライアント側で絞り込む。
   let searchQuery = '';
   let currentModalItem = null;
 
@@ -441,9 +463,8 @@
   }
 
   function getFilteredItems(){
-    let filtered = activeCategory
-      ? items.filter(it => it.category && it.category.name === activeCategory)
-      : items; // activeCategoryがnull(=All)の時は絞り込まない
+    // items自体がサーバー側で既にサブカテゴリー絞り込み済みなので、ここでは検索だけ絞り込む
+    let filtered = items;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       // タイトルだけでなく、投稿の説明文にも一致したらヒットさせる
@@ -659,26 +680,10 @@
   });
 
   // STOREカテゴリ選択(デスクトップの縦サイドバー・スマホの横チップ、両方に対応。クリックで絞り込み+再描画)
-  document.querySelectorAll('#storeNav .cat-link, #storeNavMobile .cat-link-mobile').forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const tag = link.dataset.tag || null; // "All"リンクはdata-tagが無いのでnull
-      document.querySelectorAll('#storeNav .cat-link, #storeNavMobile .cat-link-mobile').forEach(l => {
-        l.classList.toggle('active', (l.dataset.tag || null) === tag);
-      });
-      activeCategory = tag;
-      currentPage = 1;
-      renderGrid(currentPage);
-      renderPagination();
+  // STOREカテゴリ選択は本物のリンク(/information/{key}または/information/{key}/{slug})に変更したので、
+  // ここでのJSによる絞り込み・URL書き換えは不要になった(サーバー側が既に絞り込み済みのitemsを渡してくる)。
 
-      // URLにも反映しておく(ページ遷移はしない。リロードした時に選択状態が保たれるようにするため)
-      const url = new URL(window.location.href);
-      if (tag) { url.searchParams.set('category', tag); } else { url.searchParams.delete('category'); }
-      history.replaceState(null, '', url);
-    });
-  });
-
-  // 検索ボックス:タイトルに一致したものだけ表示
+// 検索ボックス:タイトルに一致したものだけ表示
   // 検索ボックス:PC用・スマホ用の2つを同期させる(どちらに入力しても両方に反映)
   document.querySelectorAll('#searchInput, #searchInputMobile').forEach(input => {
     input.addEventListener('input', (e) => {

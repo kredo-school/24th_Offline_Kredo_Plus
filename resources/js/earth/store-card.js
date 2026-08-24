@@ -60,8 +60,7 @@ export function showStoreCard(store) {
 
             <p class="location">
 
-                📍 ${store.city}, ${store.country}
-
+                📍 ${store.city || "ー"}
             </p>
 
             <p class="description">

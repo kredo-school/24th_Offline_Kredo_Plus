@@ -28,7 +28,7 @@
   .cat-link.active::before,
   .cat-link:hover::before { height: 70%; }
 
-  .cat-link.active { color: var(--cat-color); font-weight: 600; }
+  .cat-link.active { font-weight: 700; }
 
   /* スマホ用のSTOREチップ(横スクロール)。デスクトップの縦サイドバーの代わりに表示 */
   .cat-link-mobile { --cat-color: #4736F0; background: rgba(36,30,26,0.05); color: rgba(36,30,26,0.6); }
@@ -47,6 +47,54 @@
   /* お楽しみ機能: Carinderiaボタンにカーソルを合わせた時だけニワトリのカーソルになる */
   .chicken-cursor-hover:hover {
     cursor: url('{{ asset("images/carinderia/chicken-cursor.png") }}') 20 22, pointer;
+  }
+
+  /* お楽しみ機能: STORE一覧のOthersの下にある隠しリンク(egg / St Nino)。
+     普段は完全に透明で、ホバー時だけ文字がふわっと浮かび上がる。
+     (カーソル画像は付けない方針に変更。ホバーで見た目が変わると隠しリンクだとバレてしまうため) */
+  .secret-link {
+    display: block;
+    width: 100%;
+    padding: 8px 0;
+    text-decoration: none;
+    cursor: default;
+  }
+  .secret-link span {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity .3s ease, transform .3s ease;
+    font-weight: 800;
+    font-size: 14px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  /* カーソルを3秒間合わせっぱなしにしないと表示されない(すぐには浮かび上がらない) */
+  .secret-link:hover span {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity .6s ease 3s, transform .6s ease 3s;
+  }
+  .secret-link-egg span { color: #F0C419; }
+  .secret-link-stnino span {
+    background: linear-gradient(90deg, #6E0F1A 0%, #C41E3A 45%, #FFD700 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* お楽しみ機能: Eggの隠しリンクをクリックした瞬間だけ、クリック位置に実写の卵が割れる
+     コマ送り(6枚の連番画像)が一瞬再生されてからページ遷移するエモート。
+     CSSアニメーションのタイミング制御がうまく動かなかったため、単純にimgのsrcを
+     setIntervalで順番に差し替えるだけのシンプルな方式に変更した。 */
+  #eggEmote {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    width: 90px;
+    height: auto;
+    transform: translate(-50%, -62%);
   }
 
   .material-symbols-outlined {
@@ -127,18 +175,20 @@
       'other'           => 'other.index',
     ];
   @endphp
-  <div class="no-scrollbar grid grid-flow-col grid-rows-2 sm:grid-rows-1 auto-cols-[calc(50%-0.375rem)] sm:auto-cols-[calc(25%-0.5625rem)] gap-3 overflow-x-auto snap-x snap-mandatory pb-1" style="scrollbar-width:none;">
+  <div id="mainCatNav" class="no-scrollbar grid grid-flow-col grid-rows-2 sm:grid-rows-1 auto-cols-[calc(50%-0.375rem)] sm:auto-cols-[calc(25%-0.5625rem)] gap-3 overflow-x-auto pb-1" style="scrollbar-width:none;">
     @foreach ($allMainCategories as $mc)
       @php
         $href = isset($fixedRoutes[$mc->key])
           ? route($fixedRoutes[$mc->key])
           : route('information.dynamic', $mc->key);
+        $isCurrentMain = $mc->key === 'other';
       @endphp
-      <a href="{{ $href }}" class="snap-start flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity {{ $mc->key === 'carinderia' ? 'chicken-cursor-hover' : '' }}" style="background:{{ $mc->color() }}">
+      <a href="{{ $href }}" @if($isCurrentMain) data-active="true" @endif class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity {{ $mc->key === 'carinderia' ? 'chicken-cursor-hover' : '' }}" style="background:{{ $mc->color() }}">
         {{ $mc->name }}
       </a>
     @endforeach
   </div>
+  @include('information.partials.main-cat-nav-script')
   {{-- カテゴリーが5つ以上(スライドが必要)の時だけ、携帯にヒント表示 --}}
   @if($allMainCategories->count() > 4)
   <p class="md:hidden text-center text-[#241E1A]/25 text-xs tracking-[0.3em] mt-1">・・・</p>
@@ -179,6 +229,10 @@
           @foreach ($subCategories as $cat)
             <a href="#" data-tag="{{ $cat->name }}" style="--cat-color:{{ \App\Models\Category::lighten($section?->color() ?? '#5eab35', \App\Models\Category::sidebarTint($loop->index)) }}" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A] {{ $initialCategory === $cat->name ? 'active' : '' }}">{{ $cat->name }}</a>
           @endforeach
+
+          {{-- お楽しみ機能: 隠しリンク。普段は見えないが、この位置にカーソルを合わせると文字が浮かび上がる --}}
+          <a href="{{ route('other.secret', 'egg') }}" id="eggSecretLink" class="secret-link secret-link-egg" aria-hidden="true"><span>Egg</span></a>
+          <a href="{{ route('other.secret', 'st-nino') }}" class="secret-link secret-link-stnino" aria-hidden="true"><span>St Nino</span></a>
         </nav>
       </div>
     </aside>
@@ -735,6 +789,46 @@
 
   renderGrid(currentPage);
   renderPagination();
+
+  // ---- お楽しみ機能: Eggの隠しリンクをクリックした瞬間、実写の卵が割れるコマ送りを再生してから移動する ----
+  (function () {
+    const eggFrames = [
+      '{{ asset("images/other/egg-seq-1.webp") }}',
+      '{{ asset("images/other/egg-seq-2.webp") }}',
+      '{{ asset("images/other/egg-seq-3.webp") }}',
+      '{{ asset("images/other/egg-seq-4.webp") }}',
+      '{{ asset("images/other/egg-seq-5.webp") }}',
+      '{{ asset("images/other/egg-seq-6.webp") }}',
+    ];
+    // 初回クリックで画像がまだ読み込まれておらず一瞬遅れて見えることがないよう、先読みしておく
+    eggFrames.forEach((src) => { const im = new Image(); im.src = src; });
+
+    document.getElementById('eggSecretLink')?.addEventListener('click', function (e) {
+      e.preventDefault();
+      const href = this.getAttribute('href');
+
+      const img = document.createElement('img');
+      img.id = 'eggEmote';
+      img.src = eggFrames[0];
+      // カーソルと「Egg」の文字に被らないよう、クリック位置より少し右にずらして表示する
+      img.style.left = (e.clientX + 55) + 'px';
+      img.style.top = e.clientY + 'px';
+      document.body.appendChild(img);
+
+      const frameDelay = 140;
+      let frameIndex = 0;
+      const timer = setInterval(() => {
+        frameIndex++;
+        if (frameIndex >= eggFrames.length) {
+          clearInterval(timer);
+          return;
+        }
+        img.src = eggFrames[frameIndex];
+      }, frameDelay);
+
+      setTimeout(() => { window.location.href = href; }, frameDelay * eggFrames.length + 550);
+    });
+  })();
 </script>
 
 <!-- Back to top -->
