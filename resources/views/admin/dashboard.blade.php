@@ -263,8 +263,14 @@
                                     (user.email && user.email.toLowerCase().includes(searchQuery.toLowerCase()))">
                             <td class="py-4 px-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-9 h-9 rounded-full bg-slate-800 text-white font-bold flex items-center justify-center text-xs shrink-0"
-                                         x-text="user.name ? user.name.charAt(0) : '?'"></div>
+                                    <template x-if="user.avatar_url">
+                                        <img :src="user.avatar_url" :alt="user.name"
+                                             class="w-9 h-9 rounded-full object-cover shrink-0">
+                                    </template>
+                                    <template x-if="!user.avatar_url">
+                                        <div class="w-9 h-9 rounded-full bg-brand-blue text-white font-bold flex items-center justify-center text-xs shrink-0"
+                                             x-text="user.name ? user.name.charAt(0).toUpperCase() : '?'"></div>
+                                    </template>
                                     <div>
                                         <p class="font-bold text-slate-800 leading-tight" x-text="user.name || '名前未設定'"></p>
                                         <p class="text-xs text-slate-400 mt-0.5" x-text="user.email || ''"></p>

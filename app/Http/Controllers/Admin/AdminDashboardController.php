@@ -26,6 +26,7 @@ class AdminDashboardController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'avatar_url' => $user->avatar_url,
                 'dorm' => $user->gender === 'female' ? '女子寮 (Female)' : ($user->gender === 'male' ? '男子寮 (Male)' : '未設定'),
                 'registered_at' => $user->created_at ? $user->created_at->format('Y/m/d') : '-',
                 'last_active' => $user->updated_at ? $user->updated_at->diffForHumans() : '未アクティブ',
