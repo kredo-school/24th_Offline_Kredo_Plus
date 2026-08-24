@@ -11,7 +11,7 @@ class ShowerNotificationService
         Notification::create([
             'gender' => $gender,
             'type' => 'capacity_full',
-            'message' => '現在満室です。',
+            'message' => '現在シャワーが満室です。',
         ]);
     }
 
@@ -20,7 +20,7 @@ class ShowerNotificationService
         Notification::create([
             'gender' => $gender,
             'type' => 'capacity_vacant',
-            'message' => '満室が解除されました。',
+            'message' => 'シャワーの満室が解除されました。',
         ]);
     }
 
