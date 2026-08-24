@@ -62,16 +62,17 @@
 {{-- スマホ --}}
 <div class="sm:hidden mb-2">
 
-    {{-- 1段目：タイトル ＋ フィルター --}}
-    <div class="flex items-center justify-between gap-2"
-        :class="brokenNumbers.length > 0 ? 'mb-2' : ''">
-
-        {{-- タイトル --}}
+    {{-- 故障シャワーなし --}}
+    <div
+        x-show="brokenNumbers.length === 0"
+        x-cloak
+        class="flex items-center justify-between gap-2"
+    >
         <h3 class="text-headline-sm font-bold text-blue-950">
             シャワー状態散布図
         </h3>
 
-        {{-- フィルターボタン --}}
+        {{-- フィルター --}}
         <div
             class="relative shrink-0"
             x-data="{ filterOpen: false }"
@@ -111,21 +112,74 @@
                 </template>
             </div>
         </div>
-
     </div>
 
-    {{-- 故障シャワーがある場合だけ表示 --}}
+
+    {{-- 故障シャワーあり --}}
     <div
         x-show="brokenNumbers.length > 0"
         x-cloak
-        class="flex flex-wrap items-center gap-2"
     >
-        <template x-for="number in brokenNumbers" :key="number">
-            <span class="inline-flex items-center gap-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold px-2.5 py-1">
-                <span class="material-symbols-outlined !text-sm">build</span>
-                <span x-text="number + '番 故障中'"></span>
-            </span>
-        </template>
+        {{-- 1行目：タイトル --}}
+        <h3 class="text-headline-sm font-bold text-blue-950 mb-2">
+            シャワー状態散布図
+        </h3>
+
+        {{-- 2行目：故障シャワー ＋ フィルター --}}
+        <div class="flex items-center justify-between gap-2">
+
+            {{-- 故障シャワー --}}
+            <div class="flex flex-wrap items-center gap-2 min-w-0">
+                <template x-for="number in brokenNumbers" :key="number">
+                    <span class="inline-flex items-center gap-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold px-2.5 py-1">
+                        <span class="material-symbols-outlined !text-sm">build</span>
+                        <span x-text="number + '番 故障中'"></span>
+                    </span>
+                </template>
+            </div>
+
+            {{-- フィルター --}}
+            <div
+                class="relative shrink-0"
+                x-data="{ filterOpen: false }"
+                @click.outside="filterOpen = false"
+            >
+                <button
+                    type="button"
+                    @click="filterOpen = !filterOpen"
+                    class="flex items-center gap-1 rounded-full bg-sky-400 text-white text-xs font-bold px-3.5 py-1.5"
+                >
+                    <span x-text="{ 'latest': '最新', '24h': '24時間', '3d': '3日間', '7d': '7日間', '14d': '14日間' }[period]"></span>
+                    <span class="material-symbols-outlined !text-sm">expand_more</span>
+                </button>
+
+                <div
+                    x-show="filterOpen"
+                    x-cloak
+                    x-transition
+                    class="absolute right-0 mt-2 z-50 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 flex flex-col gap-1 w-32"
+                >
+                    <template x-for="option in [
+                        { value: 'latest', label: '最新' },
+                        { value: '24h', label: '24時間' },
+                        { value: '3d', label: '3日間' },
+                        { value: '7d', label: '7日間' },
+                        { value: '14d', label: '14日間' },
+                    ]" :key="option.value">
+                        <button
+                            type="button"
+                            @click="period = option.value; load(); filterOpen = false"
+                            :class="period === option.value
+                                ? 'bg-sky-400 text-white'
+                                : 'text-sky-700 hover:bg-sky-50'"
+                            class="rounded-lg text-xs font-bold px-3 py-2 text-left transition-colors"
+                            x-text="option.label"
+                        ></button>
+                    </template>
+                </div>
+            </div>
+
+        </div>
     </div>
 
 </div>
