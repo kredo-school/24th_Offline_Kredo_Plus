@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\CalendarNote;
+use App\Models\Post;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -29,11 +30,37 @@ class ProfileController extends Controller
             ? $user->calendarNotes()->whereDate('note_date', $selectedDate)->oldest()->get()
             : collect();
 
+        $postTab = $request->query('post_tab', 'mine');
+        if (!in_array($postTab, ['mine', 'liked', 'saved'], true)) {
+            $postTab = 'mine';
+        }
+
+        $postCounts = [
+            'mine' => $user->posts()->count(),
+            'liked' => $user->likes()->count(),
+            'saved' => $user->bookmarks()->count(),
+        ];
+
+        $posts = $this->buildPostQuery($user, $postTab)
+            ->with([
+                'user:id,name,avatar',
+                'category',
+                'likes' => fn ($q) => $q->where('user_id', $user->id),
+                'bookmarks' => fn ($q) => $q->where('user_id', $user->id),
+            ])
+            ->withCount('likes')
+            ->latest()
+            ->limit(12)
+            ->get();
+
         return view('profile.edit', [
             'user' => $user,
             'calendar' => $calendar,
             'selectedDate' => $selectedDate,
             'selectedNotes' => $selectedNotes,
+            'postTab' => $postTab,
+            'postCounts' => $postCounts,
+            'posts' => $posts,
         ]);
     }
 
@@ -137,6 +164,19 @@ class ProfileController extends Controller
             'month' => $request->input('month'),
             'date' => $noteDate,
         ]));
+    }
+
+    /**
+     * プロフィール画面の「投稿一覧」タブ切り替え用のクエリを組み立てる。
+     * mine: 自分が投稿した投稿 / liked: いいねした投稿 / saved: 保存した投稿
+     */
+    private function buildPostQuery(User $user, string $postTab)
+    {
+        return match ($postTab) {
+            'liked' => Post::whereHas('likes', fn ($q) => $q->where('user_id', $user->id)),
+            'saved' => Post::whereHas('bookmarks', fn ($q) => $q->where('user_id', $user->id)),
+            default => Post::where('user_id', $user->id),
+        };
     }
 
     /**
