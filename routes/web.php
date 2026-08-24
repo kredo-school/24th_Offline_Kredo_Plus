@@ -244,6 +244,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // マイカレンダー（卒業予定日・課題/イベントメモ）
+    Route::post('/profile/graduation-date', [ProfileController::class, 'updateGraduationDate'])->name('profile.graduation-date');
+    Route::post('/profile/calendar/notes', [ProfileController::class, 'storeCalendarNote'])->name('profile.calendar.notes.store');
+    Route::delete('/profile/calendar/notes/{calendarNote}', [ProfileController::class, 'destroyCalendarNote'])->name('profile.calendar.notes.destroy');
 });
 
 // information
