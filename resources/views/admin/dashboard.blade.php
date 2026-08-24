@@ -2,7 +2,11 @@
 
 @section('content')
 <!-- x-data で「今どのタブ（メニュー）を開いているか」を管理します (初期値: 'dashboard') -->
-<div x-data="{ currentTab: '{{ session('accountCreated') || $errors->any() ? 'accounts' : 'dashboard' }}' }" class="flex min-h-screen bg-slate-100">
+@php
+    $categoryFormHasError = $errors->addMain->any() || $errors->addSub->any() || $errors->editMain->any() || $errors->editSub->any();
+    $categoryFormMode = $errors->addSub->any() ? 'addSub' : ($errors->editMain->any() ? 'editMain' : ($errors->editSub->any() ? 'editSub' : 'addMain'));
+@endphp
+<div x-data="{ currentTab: '{{ session('accountCreated') || $errors->default->any() ? 'accounts' : ($categoryFormHasError || session('categoryAdminNotice') ? 'posts' : 'dashboard') }}' }" class="flex min-h-screen bg-slate-100">
 
     <!-- 1. 左側：サイドバー -->
     <aside class="w-64 bg-slate-900 text-white p-6 shrink-0 hidden md:block">
@@ -30,11 +34,11 @@
                 <span>🔑</span> アカウント作成
             </button>
 
-            <!-- ポスト管理 -->
+            <!-- 留学情報管理(旧ポスト管理。myu担当) -->
             <button @click="currentTab = 'posts'"
                     :class="currentTab === 'posts' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
                     class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-left">
-                <span>📝</span> ポスト管理
+                <span>🗂️</span> 留学情報管理
             </button>
 
             <!-- お知らせ送信機能 -->
@@ -578,273 +582,326 @@
             </div>
         </div>
 
-        <!-- ③ ポスト管理の中身 -->
-        <div x-show="currentTab === 'posts'" x-cloak x-data="{ 
-            selectedPost: null,
-            searchQuery: '',
-            selectedCategory: 'all',
-            selectedFilter: 'all',
-            adminNotice: '',
-            noticeSent: false,
-            sendPostNotice() {
-                if (!this.adminNotice.trim()) return;
-                this.noticeSent = true;
-                setTimeout(() => {
-                    this.noticeSent = false;
-                    this.adminNotice = '';
-                }, 3000);
+        <!-- ③ 留学情報管理の中身(myu担当。メイン/サブカテゴリーの追加・編集) -->
+        <div x-show="currentTab === 'posts'" x-cloak x-data="{
+            mode: '{{ $categoryFormMode }}',
+            mainCategories: {{ Illuminate\Support\Js::from($adminMainCategories) }},
+            categories: {{ Illuminate\Support\Js::from($adminCategories) }},
+            editMain: { id: '', key: '', name: '', description: '', hero_image: '', sub_count: 0 },
+            editMainColor: '',
+            editMainUseColor: false,
+            addMainUseColor: false,
+            forceDeleteMain: false,
+            editCategory: { id: '', section: '', name: '', description: '', hero_image: '', post_count: 0 },
+            editSubSection: '',
+            forceDeleteSub: false,
+            loadMain(id) {
+                const m = this.mainCategories.find(x => x.id == id);
+                this.forceDeleteMain = false;
+                if (!m) { this.editMain = { id: '', key: '', name: '', description: '', hero_image: '', sub_count: 0 }; this.editMainColor = ''; this.editMainUseColor = false; return; }
+                this.editMain = { id: m.id, key: m.key, name: m.name, description: m.description || '', hero_image: m.hero_image || '', sub_count: m.sub_count || 0 };
+                this.editMainColor = m.color || '';
+                this.editMainUseColor = !!m.color;
             },
-            posts: [
-                {
-                    id: 101,
-                    title: 'IT Parkおすすめカフェ「Abaca」のWiFi環境',
-                    content: 'IT Park内にあるAbaca Baking Companyは電源も豊富でコンセント席が多く、作業に最適です！コーヒーも美味しいですが、週末の午後は混雑するので午前中がおすすめ。',
-                    category: 'レストラン',
-                    user_name: 'Kanna Yamada',
-                    user_email: 'kanna@example.com',
-                    created_at: '2026/07/20 14:30',
-                    likes: 45,
-                    comments_count: 8,
-                    reported_count: 0,
-                    report_reasons: [],
-                    status: 'published'
-                },
-                {
-                    id: 102,
-                    title: '深夜の騒音について（男子寮3F）',
-                    content: '昨日の夜1時過ぎまで3Fのラウンジで大声で話しているグループがいてうるさかったです。ルールを守ってください。',
-                    category: '生活情報',
-                    user_name: 'Mateo Sato',
-                    user_email: 'mateo@example.com',
-                    created_at: '2026/07/21 02:15',
-                    likes: 3,
-                    comments_count: 12,
-                    reported_count: 3,
-                    report_reasons: ['個人攻撃・誹謗中傷の可能性', '不適切な表現'],
-                    status: 'reported'
-                },
-                {
-                    id: 103,
-                    title: 'カレンデリアでの注文のコツまとめ',
-                    content: 'ローカル食堂（カレンデリア）で指差し注文する時のコツをまとめました！お腹を壊さないためのスープの選び方も解説しています。',
-                    category: 'レストラン',
-                    user_name: 'Ren Suzuki',
-                    user_email: 'ren@example.com',
-                    created_at: '2026/07/18 19:00',
-                    likes: 88,
-                    comments_count: 15,
-                    reported_count: 0,
-                    report_reasons: [],
-                    status: 'published'
-                }
-            ],
-            get filteredPosts() {
-                return this.posts.filter(post => {
-                    const matchesSearch = post.title.toLowerCase().includes(this.searchQuery.toLowerCase()) || 
-                                          post.content.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-                                          post.user_name.toLowerCase().includes(this.searchQuery.toLowerCase());
-                    const matchesCategory = this.selectedCategory === 'all' || post.category === this.selectedCategory;
-                    const matchesFilter = this.selectedFilter === 'all' || 
-                                         (this.selectedFilter === 'reported' && post.reported_count > 0) ||
-                                         (this.selectedFilter === 'hidden' && post.status === 'hidden');
-                    return matchesSearch && matchesCategory && matchesFilter;
-                });
-            }
+            loadCategory(id) {
+                const c = this.categories.find(x => x.id == id);
+                this.forceDeleteSub = false;
+                this.editCategory = c ? { id: c.id, section: c.section, name: c.name, description: c.description || '', hero_image: c.hero_image || '', post_count: c.post_count || 0 } : { id: '', section: '', name: '', description: '', hero_image: '', post_count: 0 };
+            },
         }">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-slate-800">留学情報管理</h2>
+                <p class="text-sm text-slate-500 mt-1">メインカテゴリー・サブカテゴリーの追加や編集を行います。</p>
+            </div>
 
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+            @if (session('categoryAdminNotice'))
+                @php $noticeIsError = session('categoryAdminNotice')['type'] === 'error'; @endphp
+                <div class="max-w-2xl mb-6 p-4 rounded-xl text-xs font-bold
+                            {{ $noticeIsError ? 'bg-rose-50 border border-rose-200 text-rose-700' : 'bg-emerald-50 border border-emerald-200 text-emerald-800' }}">
+                    {{ $noticeIsError ? '⚠️' : '✅' }} {{ session('categoryAdminNotice')['message'] }}
+                </div>
+            @endif
+
+            <!-- モード切り替えボタン -->
+            <div class="flex flex-wrap gap-2 mb-6">
+                <button type="button" @click="mode = 'addMain'"
+                        :class="mode === 'addMain' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'"
+                        class="px-4 py-2.5 rounded-xl text-xs font-bold transition">➕ 新規メインカテゴリー</button>
+                <button type="button" @click="mode = 'addSub'"
+                        :class="mode === 'addSub' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'"
+                        class="px-4 py-2.5 rounded-xl text-xs font-bold transition">➕ 新規サブカテゴリー</button>
+                <button type="button" @click="mode = 'editMain'"
+                        :class="mode === 'editMain' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'"
+                        class="px-4 py-2.5 rounded-xl text-xs font-bold transition">✏️ メインカテゴリー編集</button>
+                <button type="button" @click="mode = 'editSub'"
+                        :class="mode === 'editSub' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'"
+                        class="px-4 py-2.5 rounded-xl text-xs font-bold transition">✏️ サブカテゴリー編集</button>
+            </div>
+
+            <!-- ① 新規メインカテゴリー -->
+            <div x-show="mode === 'addMain'" x-cloak class="max-w-xl bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                @if ($errors->addMain->any())
+                    <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-bold space-y-1">
+                        @foreach ($errors->addMain->all() as $error)
+                            <p>{{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
+                <form method="POST" action="{{ route('admin.main-categories.store') }}" enctype="multipart/form-data" class="space-y-4">
+                    @csrf
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">識別キー(key) <span class="text-rose-500">*</span></label>
+                        <input type="text" name="key" value="{{ old('key') }}" required placeholder="例: souvenir-shop（半角英数字とハイフンのみ）"
+                               class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition">
+                        <p class="text-[11px] text-slate-400 mt-1">URLや内部処理で使う識別子です。後から変更できません。</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">名前 <span class="text-rose-500">*</span></label>
+                        <input type="text" name="name" value="{{ old('name') }}" required
+                               class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">ヒーロー画像</label>
+                        <input type="file" name="hero_image" accept="image/*"
+                               class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">説明文</label>
+                        <textarea name="description" rows="3"
+                                  class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition">{{ old('description') }}</textarea>
+                    </div>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-bold text-slate-700 mb-2">
+                            <input type="checkbox" x-model="addMainUseColor" class="rounded border-slate-300">
+                            カラーを手動で指定する
+                        </label>
+                        <p x-show="!addMainUseColor" class="text-[11px] text-slate-400">指定しない場合は自動で色が割り当てられます。</p>
+                        <div x-show="addMainUseColor" x-cloak class="flex items-center gap-3">
+                            <input type="color" name="color" value="#2f5bfd" x-bind:disabled="!addMainUseColor"
+                                   class="w-12 h-10 rounded-lg border border-slate-200 cursor-pointer">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full py-3 px-6 rounded-xl text-xs font-bold transition bg-slate-900 hover:bg-slate-800 text-white shadow-md">
+                        メインカテゴリーを追加する
+                    </button>
+                </form>
+            </div>
+
+            <!-- ② 新規サブカテゴリー -->
+            <div x-show="mode === 'addSub'" x-cloak class="max-w-xl bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                @if ($errors->addSub->any())
+                    <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-bold space-y-1">
+                        @foreach ($errors->addSub->all() as $error)
+                            <p>{{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
+                <form method="POST" action="{{ route('admin.categories.store') }}" enctype="multipart/form-data" class="space-y-4">
+                    @csrf
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">所属メインカテゴリー <span class="text-rose-500">*</span></label>
+                        <select name="section" required
+                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition">
+                            <option value="">選択してください</option>
+                            @foreach ($adminMainCategories as $mc)
+                                <option value="{{ $mc->key }}" {{ old('section') === $mc->key ? 'selected' : '' }}>{{ $mc->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">名前 <span class="text-rose-500">*</span></label>
+                        <input type="text" name="name" value="{{ old('name') }}" required
+                               class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">ヒーロー画像</label>
+                        <input type="file" name="hero_image" accept="image/*"
+                               class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">説明文</label>
+                        <textarea name="description" rows="3"
+                                  class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition">{{ old('description') }}</textarea>
+                    </div>
+                    <button type="submit" class="w-full py-3 px-6 rounded-xl text-xs font-bold transition bg-slate-900 hover:bg-slate-800 text-white shadow-md">
+                        サブカテゴリーを追加する
+                    </button>
+                </form>
+            </div>
+
+            <!-- ③ メインカテゴリー編集 -->
+            <div x-show="mode === 'editMain'" x-cloak class="max-w-xl bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                @if ($errors->editMain->any())
+                    <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-bold space-y-1">
+                        @foreach ($errors->editMain->all() as $error)
+                            <p>{{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
                 <div>
-                    <h2 class="text-2xl font-bold text-slate-800">ポスト管理</h2>
-                    <p class="text-sm text-slate-500 mt-1">投稿された口コミやコミュニティ記事の確認・通報対応・表示制御を行います。</p>
-                </div>
-
-                <div class="flex flex-wrap items-center gap-3">
-                    <select x-model="selectedCategory" class="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-blue/20">
-                        <option value="all">すべてのカテゴリ</option>
-                        <option value="レストラン">レストラン</option>
-                        <option value="生活情報">生活情報</option>
-                        <option value="英語学習">英語学習</option>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">編集するメインカテゴリーを選択</label>
+                    <select @change="loadMain($event.target.value)"
+                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition">
+                        <option value="">選択してください</option>
+                        <template x-for="mc in mainCategories" :key="mc.id">
+                            <option :value="mc.id" x-text="mc.name"></option>
+                        </template>
                     </select>
+                </div>
 
-                    <select x-model="selectedFilter" class="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-blue/20">
-                        <option value="all">すべてのステータス</option>
-                        <option value="reported">⚠️ 通報ありのみ</option>
-                        <option value="hidden">🔒 非表示のみ</option>
+                <form method="POST" x-show="editMain.id" x-cloak
+                      :action="editMain.id ? '{{ url('admin/main-categories') }}/' + editMain.id : ''"
+                      enctype="multipart/form-data" class="space-y-4 pt-2 border-t border-slate-100">
+                    @csrf
+                    @method('PATCH')
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">識別キー(key)</label>
+                        <input type="text" :value="editMain.key" disabled
+                               class="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium text-slate-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">名前 <span class="text-rose-500">*</span></label>
+                        <input type="text" name="name" x-model="editMain.name" required
+                               class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">現在のヒーロー画像</label>
+                        <img :src="editMain.hero_image" x-show="editMain.hero_image" class="w-full h-32 object-cover rounded-xl border border-slate-200 mb-2">
+                        <input type="file" name="hero_image" accept="image/*"
+                               class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
+                        <p class="text-[11px] text-slate-400 mt-1">新しい画像を選んだ時だけ差し替えられます。</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">説明文</label>
+                        <textarea name="description" x-model="editMain.description" rows="3"
+                                  class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition"></textarea>
+                    </div>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-bold text-slate-700 mb-2">
+                            <input type="checkbox" x-model="editMainUseColor" class="rounded border-slate-300">
+                            カラーを手動で指定する
+                        </label>
+                        <p x-show="!editMainUseColor" class="text-[11px] text-slate-400">指定しない場合は自動で色が割り当てられます。</p>
+                        <div x-show="editMainUseColor" x-cloak class="flex items-center gap-3">
+                            <input type="color" name="color" x-model="editMainColor"
+                                   class="w-12 h-10 rounded-lg border border-slate-200 cursor-pointer">
+                            <span class="text-xs font-mono text-slate-500" x-text="editMainColor"></span>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full py-3 px-6 rounded-xl text-xs font-bold transition bg-slate-900 hover:bg-slate-800 text-white shadow-md">
+                        メインカテゴリーを更新する
+                    </button>
+                </form>
+
+                <form method="POST" x-show="editMain.id" x-cloak
+                      :action="editMain.id ? '{{ url('admin/main-categories') }}/' + editMain.id : ''"
+                      class="space-y-2 pt-1"
+                      onsubmit="return this.force.value === '1'
+                          ? (confirm('サブカテゴリーごと完全に削除されます。よろしいですか？') && confirm('最終確認です。この操作は取り消せません。本当に削除しますか？'))
+                          : confirm('本当にこのメインカテゴリーを削除しますか？');">
+                    @csrf
+                    @method('DELETE')
+                    <input type="hidden" name="force" :value="forceDeleteMain ? '1' : '0'">
+                    <p x-show="editMain.sub_count > 0" x-cloak class="text-[11px] text-rose-500 font-bold">
+                        ⚠️ このメインカテゴリーには現在 <span x-text="editMain.sub_count"></span> 件のサブカテゴリーがあります。
+                    </p>
+                    <label x-show="editMain.sub_count > 0" x-cloak class="flex items-center gap-2 text-[11px] font-bold text-rose-600">
+                        <input type="checkbox" x-model="forceDeleteMain" class="rounded border-rose-300">
+                        中身(サブカテゴリー・投稿)ごと完全に削除する
+                    </label>
+                    <button type="submit"
+                            :disabled="editMain.sub_count > 0 && !forceDeleteMain"
+                            :class="(editMain.sub_count > 0 && !forceDeleteMain) ? 'opacity-40 cursor-not-allowed' : 'hover:bg-rose-50'"
+                            class="w-full py-2.5 px-6 rounded-xl text-xs font-bold transition bg-white border border-rose-200 text-rose-600">
+                        🗑️ このメインカテゴリーを削除する
+                    </button>
+                </form>
+            </div>
+
+            <!-- ④ サブカテゴリー編集 -->
+            <div x-show="mode === 'editSub'" x-cloak class="max-w-xl bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                @if ($errors->editSub->any())
+                    <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-bold space-y-1">
+                        @foreach ($errors->editSub->all() as $error)
+                            <p>{{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">① 対象のメインカテゴリーを選択</label>
+                    <select x-model="editSubSection"
+                            @change="editCategory = { id: '', section: '', name: '', description: '', hero_image: '', post_count: 0 }; forceDeleteSub = false;"
+                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition">
+                        <option value="">選択してください</option>
+                        <template x-for="mc in mainCategories" :key="mc.id">
+                            <option :value="mc.key" x-text="mc.name"></option>
+                        </template>
                     </select>
-
-                    <div class="relative w-full sm:w-60">
-                        <input type="text" x-model="searchQuery" placeholder="キーワード・投稿者検索..." 
-                               class="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition">
-                        <span class="absolute left-3 top-2 text-slate-400 text-xs">🔍</span>
-                    </div>
                 </div>
-            </div>
-
-            <div class="space-y-4 mb-8">
-                <template x-for="post in filteredPosts" :key="post.id">
-                    <div class="bg-white rounded-2xl p-5 border transition shadow-sm hover:shadow-md"
-                         :class="post.reported_count > 0 ? 'border-rose-200 bg-rose-50/20' : 'border-slate-200'">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-slate-800 text-white font-bold flex items-center justify-center text-xs shrink-0"
-                                     x-text="post.user_name.charAt(0)"></div>
-                                <div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="font-bold text-slate-800 text-sm" x-text="post.user_name"></span>
-                                        <span class="px-2 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-bold text-slate-600" x-text="post.category"></span>
-                                        <template x-if="post.status === 'hidden'">
-                                            <span class="px-2 py-0.5 bg-slate-200 text-slate-700 rounded text-[10px] font-extrabold">🔒 非表示中</span>
-                                        </template>
-                                    </div>
-                                    <p class="text-[11px] text-slate-400" x-text="post.created_at"></p>
-                                </div>
-                            </div>
-
-                            <template x-if="post.reported_count > 0">
-                                <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-100 text-rose-700 rounded-lg text-xs font-bold border border-rose-200 shrink-0 self-start sm:self-auto">
-                                    <span>⚠️ 通報</span>
-                                    <span x-text="post.reported_count + '件'"></span>
-                                </div>
-                            </template>
-                        </div>
-
-                        <div class="mb-4">
-                            <h3 class="font-bold text-slate-800 text-base mb-1" x-text="post.title"></h3>
-                            <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed" x-text="post.content"></p>
-                        </div>
-
-                        <div class="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
-                            <div class="flex items-center gap-4 text-slate-400 font-medium">
-                                <span class="flex items-center gap-1 text-amber-600 font-bold">
-                                    <span>♡</span> <span x-text="post.likes"></span>
-                                </span>
-                                <span class="flex items-center gap-1">
-                                    <span>💬</span> <span x-text="post.comments_count + ' コメント'"></span>
-                                </span>
-                            </div>
-
-                            <div class="flex items-center gap-2">
-                                <button @click="post.status = (post.status === 'hidden' ? 'published' : 'hidden')"
-                                        :class="post.status === 'hidden' ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
-                                        class="px-3 py-1.5 rounded-lg font-bold transition">
-                                    <span x-text="post.status === 'hidden' ? '再公開する' : '非表示にする'"></span>
-                                </button>
-
-                                <button @click="selectedPost = post; adminNotice = ''; noticeSent = false;"
-                                        class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg transition">
-                                    詳細・管理
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-
-                <template x-if="filteredPosts.length === 0">
-                    <div class="text-center py-12 bg-white rounded-2xl border border-slate-200">
-                        <p class="text-2xl mb-2">🔍</p>
-                        <p class="text-sm font-bold text-slate-600">該当する投稿が見つかりませんでした</p>
-                        <p class="text-xs text-slate-400 mt-1">検索条件やフィルターを変更してみてください。</p>
-                    </div>
-                </template>
-            </div>
-
-            <!-- 投稿詳細・管理モーダル -->
-            <div x-show="selectedPost" x-cloak 
-                 class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0"
-                 x-transition:enter-end="opacity-100"
-                 x-transition:leave="transition ease-in duration-150"
-                 x-transition:leave-start="opacity-100"
-                 x-transition:leave-end="opacity-0">
-                
-                <div @click.outside="selectedPost = null" 
-                     class="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 space-y-6">
-                    
-                    <div class="flex items-start justify-between pb-4 border-b border-slate-100">
-                        <div class="flex items-center gap-3">
-                            <span class="px-2.5 py-1 bg-brand-blue/10 text-brand-blue font-bold text-xs rounded-lg" x-text="selectedPost?.category"></span>
-                            <span class="text-xs text-slate-400" x-text="selectedPost?.created_at"></span>
-                        </div>
-                        <button @click="selectedPost = null" class="text-slate-400 hover:text-slate-600 text-xl font-bold p-1">✕</button>
-                    </div>
-
-                    <template x-if="selectedPost?.reported_count > 0">
-                        <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl space-y-1.5">
-                            <div class="flex items-center justify-between text-rose-700 font-bold text-xs">
-                                <span class="flex items-center gap-1">⚠️ 寄せられた通報理由</span>
-                                <span x-text="selectedPost?.reported_count + '件の通報'"></span>
-                            </div>
-                            <ul class="list-disc list-inside text-xs text-rose-800 space-y-1">
-                                <template x-for="reason in selectedPost?.report_reasons" :key="reason">
-                                    <li x-text="reason"></li>
-                                </template>
-                            </ul>
-                        </div>
-                    </template>
-
-                    <div class="space-y-2">
-                        <h3 class="text-xl font-bold text-slate-800" x-text="selectedPost?.title"></h3>
-                        <p class="text-xs text-slate-700 leading-relaxed whitespace-pre-line p-4 bg-slate-50 rounded-xl border border-slate-100" x-text="selectedPost?.content"></p>
-                    </div>
-
-                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl text-xs">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-7 h-7 rounded-full bg-slate-800 text-white font-bold flex items-center justify-center text-[11px]"
-                                 x-text="selectedPost?.user_name.charAt(0)"></div>
-                            <div>
-                                <span class="font-bold text-slate-800" x-text="selectedPost?.user_name"></span>
-                                <span class="text-slate-400 ml-1" x-text="'(' + selectedPost?.user_email + ')'"></span>
-                            </div>
-                        </div>
-                        <span class="text-slate-400 font-medium" x-text="'投稿ID: #' + selectedPost?.id"></span>
-                    </div>
-
-                    <div class="space-y-2 pt-2 border-t border-slate-100">
-                        <div class="flex items-center justify-between">
-                            <h4 class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
-                                <span>📩</span> 投稿者への削除理由・注意メッセージ送信
-                            </h4>
-                        </div>
-                        
-                        <div class="space-y-2">
-                            <textarea x-model="adminNotice" rows="2" 
-                                      :placeholder="selectedPost?.user_name + ' さんへこの投稿に関する注意事項や修正・削除理由を送信...'"
-                                      class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition resize-none"></textarea>
-                            
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <template x-if="noticeSent">
-                                        <span class="text-xs font-bold text-emerald-600 flex items-center gap-1 animate-pulse">
-                                            <span>順調に送信されました！投稿者へ通知を送信しました。</span>
-                                        </span>
-                                    </template>
-                                </div>
-                                <button @click="sendPostNotice()" 
-                                        :disabled="!adminNotice.trim()"
-                                        :class="adminNotice.trim() ? 'bg-brand-blue hover:bg-sky-600 text-white' : 'bg-slate-200 text-slate-400 cursor-not-allowed'"
-                                        class="px-4 py-1.5 text-xs font-bold rounded-lg transition">
-                                    通知を送信
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
-                        <button @click="selectedPost.status = (selectedPost.status === 'hidden' ? 'published' : 'hidden')"
-                                :class="selectedPost?.status === 'hidden' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-700 hover:bg-rose-200'"
-                                class="px-4 py-2 text-xs font-bold rounded-xl transition">
-                            <span x-text="selectedPost?.status === 'hidden' ? '🔒 非表示を解除（再公開）' : '🚫 この投稿を非表示にする'"></span>
-                        </button>
-
-                        <button @click="selectedPost = null" class="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-slate-800 transition">
-                            閉じる
-                        </button>
-                    </div>
-
+                <div x-show="editSubSection" x-cloak>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">② 編集するサブカテゴリーを選択</label>
+                    <select @change="loadCategory($event.target.value)"
+                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition">
+                        <option value="">選択してください</option>
+                        <template x-for="c in categories.filter(c => c.section === editSubSection)" :key="c.id">
+                            <option :value="c.id" x-text="c.name"></option>
+                        </template>
+                    </select>
                 </div>
-            </div>
 
+                <form method="POST" x-show="editCategory.id" x-cloak
+                      :action="editCategory.id ? '{{ url('admin/categories') }}/' + editCategory.id : ''"
+                      enctype="multipart/form-data" class="space-y-4 pt-2 border-t border-slate-100">
+                    @csrf
+                    @method('PATCH')
+                    {{-- 所属メインカテゴリーは上の①②で選択済みなので、ここでは表示せずそのまま送信するだけ --}}
+                    <input type="hidden" name="section" x-model="editCategory.section">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">名前 <span class="text-rose-500">*</span></label>
+                        <input type="text" name="name" x-model="editCategory.name" required
+                               class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">現在のヒーロー画像</label>
+                        <img :src="editCategory.hero_image" x-show="editCategory.hero_image" class="w-full h-32 object-cover rounded-xl border border-slate-200 mb-2">
+                        <input type="file" name="hero_image" accept="image/*"
+                               class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
+                        <p class="text-[11px] text-slate-400 mt-1">新しい画像を選んだ時だけ差し替えられます。</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">説明文</label>
+                        <textarea name="description" x-model="editCategory.description" rows="3"
+                                  class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition"></textarea>
+                    </div>
+                    <button type="submit" class="w-full py-3 px-6 rounded-xl text-xs font-bold transition bg-slate-900 hover:bg-slate-800 text-white shadow-md">
+                        サブカテゴリーを更新する
+                    </button>
+                </form>
+
+                <form method="POST" x-show="editCategory.id" x-cloak
+                      :action="editCategory.id ? '{{ url('admin/categories') }}/' + editCategory.id : ''"
+                      class="space-y-2 pt-1"
+                      onsubmit="return this.force.value === '1'
+                          ? (confirm('投稿ごと完全に削除されます。よろしいですか？') && confirm('最終確認です。この操作は取り消せません。本当に削除しますか？'))
+                          : confirm('本当にこのサブカテゴリーを削除しますか？');">
+                    @csrf
+                    @method('DELETE')
+                    <input type="hidden" name="force" :value="forceDeleteSub ? '1' : '0'">
+                    <p x-show="editCategory.post_count > 0" x-cloak class="text-[11px] text-rose-500 font-bold">
+                        ⚠️ このサブカテゴリーには現在 <span x-text="editCategory.post_count"></span> 件の投稿があります。
+                    </p>
+                    <label x-show="editCategory.post_count > 0" x-cloak class="flex items-center gap-2 text-[11px] font-bold text-rose-600">
+                        <input type="checkbox" x-model="forceDeleteSub" class="rounded border-rose-300">
+                        中身(投稿)ごと完全に削除する
+                    </label>
+                    <button type="submit"
+                            :disabled="editCategory.post_count > 0 && !forceDeleteSub"
+                            :class="(editCategory.post_count > 0 && !forceDeleteSub) ? 'opacity-40 cursor-not-allowed' : 'hover:bg-rose-50'"
+                            class="w-full py-2.5 px-6 rounded-xl text-xs font-bold transition bg-white border border-rose-200 text-rose-600">
+                        🗑️ このサブカテゴリーを削除する
+                    </button>
+                </form>
+            </div>
         </div>
 
         <!-- ④ お知らせ送信の中身 -->

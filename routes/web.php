@@ -39,6 +39,7 @@ use App\Http\Controllers\EarthController;
 use App\Http\Controllers\EarthLocationController;
 //Admin
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\AdminCategoryController;
 
     // 目安箱
     use App\Http\Controllers\SuggestionBoxController;
@@ -197,12 +198,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/information/travel/{slug}', [TravelController::class, 'show'])->name('travel.show');
     Route::get('/information/other', [OtherController::class, 'index'])->name('other.index');
 
+    // お楽しみ機能: Otherページの隠しリンク専用ページ(egg / St Nino)。
+    // 通常の一覧・投稿フォームには出てこない隠しカテゴリーの投稿だけを表示する。
+    Route::get('/information/other/secret/{slug}', [OtherController::class, 'secret'])
+        ->whereIn('slug', ['egg', 'st-nino'])
+        ->name('other.secret');
+
     // 5個目以降、アドミンが新しく追加したメインカテゴリー用の汎用ページ(ログイン必須)。
     // 上の4つ(carinderia/restaurant-cafe/travel/other)より必ず後ろに書くこと。
     // (先に書くとURLが食われて、上の4ページが404になってしまう)
     Route::get('/information/{key}', [MainCategoryPageController::class, 'index'])
         ->name('information.dynamic')
         ->where('key', '(?!post$|posts$|carinderia$|restaurant-cafe$|travel$|other$)[a-z0-9\-]+');
+
+    // 5個目以降のメインカテゴリーの、サブカテゴリー単位の絞り込みページ(URL: /information/{key}/{slug})。
+    // travel.show(/information/travel/{slug})の仕組みと同じもの。
+    Route::get('/information/{key}/{slug}', [MainCategoryPageController::class, 'show'])
+        ->name('information.dynamic.show')
+        ->where('key', '(?!post$|posts$|carinderia$|restaurant-cafe$|travel$|other$)[a-z0-9\-]+')
+        ->where('slug', '[a-z0-9\-]+');
 
     // Carinderia (restaurant-cafeと同じパターン)
     Route::prefix('information/carinderia')->name('carinderia.')->group(function () {
@@ -309,10 +323,37 @@ Route::put(
                 'todayShowerUpdates' => ShowerReport::whereDate('created_at', today())->count(),
                 'todayLessonsCompleted' => StudyLog::whereDate('studied_date', today())->count(),
                 'todayInfoUpdates' => Post::whereDate('updated_at', today())->count(),
+                // 留学情報管理タブ用(myu担当): メイン/サブカテゴリー一覧(隠しカテゴリーは管理画面には出さない)
+                // 削除ボタンの「中身が残っているか」の警告表示のため、sub_count / post_count を各行に付与しておく。
+                'adminMainCategories' => (function () {
+                    $mainCategories = \App\Models\MainCategory::orderBy('sort_order')->orderBy('id')->get();
+                    $subCounts = \App\Models\Category::where('is_hidden', false)
+                        ->selectRaw('section, count(*) as cnt')->groupBy('section')->pluck('cnt', 'section');
+                    $mainCategories->each(function ($mc) use ($subCounts) {
+                        $mc->sub_count = (int) ($subCounts[$mc->key] ?? 0);
+                    });
+                    return $mainCategories;
+                })(),
+                'adminCategories' => (function () {
+                    $categories = \App\Models\Category::where('is_hidden', false)->orderBy('section')->orderBy('sort_order')->get();
+                    $postCounts = \App\Models\Post::selectRaw('category_id, count(*) as cnt')->groupBy('category_id')->pluck('cnt', 'category_id');
+                    $categories->each(function ($c) use ($postCounts) {
+                        $c->post_count = (int) ($postCounts[$c->id] ?? 0);
+                    });
+                    return $categories;
+                })(),
             ]);
         })->name('dashboard');
 
         Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
+
+        // 留学情報管理(myu担当): メイン/サブカテゴリーの新規追加・編集
+        Route::post('/main-categories', [AdminCategoryController::class, 'storeMainCategory'])->name('main-categories.store');
+        Route::patch('/main-categories/{mainCategory}', [AdminCategoryController::class, 'updateMainCategory'])->name('main-categories.update');
+        Route::delete('/main-categories/{mainCategory}', [AdminCategoryController::class, 'destroyMainCategory'])->name('main-categories.destroy');
+        Route::post('/categories', [AdminCategoryController::class, 'storeCategory'])->name('categories.store');
+        Route::patch('/categories/{category}', [AdminCategoryController::class, 'updateCategory'])->name('categories.update');
+        Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroyCategory'])->name('categories.destroy');
 
         // シャワー故障報告の受け取り・修理報告
         Route::get('/shower/malfunctions', [AdminShowerMalfunctionController::class, 'index'])->name('shower.malfunctions.index');

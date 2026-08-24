@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Others — Kredo Plus')
+@section('title', $category->name . ' — Kredo Plus')
 
 @section('content')
 
@@ -9,38 +9,16 @@
   .font-display { font-family: 'Poppins', 'Noto Sans JP', sans-serif; }
   .font-mono { font-family: 'IBM Plex Mono', monospace; }
 
-  /* signature: 手書き風の下線が STORE カテゴリの選択状態にじわっと伸びる */
-  /* --cat-color をカテゴリごとに変えることで、下線・選択時の文字色・バッジ色を全部統一する */
-  .cat-link { position: relative; --cat-color: #4736F0; }
-  .cat-link::before {
-    content: '';
-    position: absolute;
-    left: -20px;
-    top: 50%;
-    width: 3px;
-    height: 0%;
-    background: var(--cat-color);
-    border-radius: 2px;
-    transform: translateY(-50%);
-    transition: height .25s ease;
+  /* egg: 卵っぽい黄色 / St Nino: ボルドー(赤)→金のグラデーション(赤みを強めた濃いめの配色) */
+  .secret-title.is-egg { color: #F0C419; }
+  .secret-title.is-st-nino {
+    background: linear-gradient(90deg, #6E0F1A 0%, #C41E3A 45%, #FFD700 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
-  .cat-link.active::before,
-  .cat-link:hover::before { height: 70%; }
-
-  .cat-link.active { font-weight: 700; }
-
-  /* スマホ用のSTOREチップ(横スクロール)。デスクトップの縦サイドバーの代わりに表示 */
-  .cat-link-mobile { --cat-color: #4736F0; background: rgba(36,30,26,0.05); color: rgba(36,30,26,0.6); }
-  .cat-link-mobile.active { background: var(--cat-color); color: #fff; }
-
-  .food-card { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; }
-  .food-card:hover { transform: translateY(-4px); }
-
-  .heart-btn svg { transition: transform .2s ease, fill .2s ease, stroke .2s ease; }
-  .heart-btn.liked svg { fill: #CE7043; stroke: #CE7043; transform: scale(1.15); }
-
-  /* 横スライド系のスクロールバーは非表示に(色付きにはしない。他ページと同じくページ全体は標準のスクロールバーのまま) */
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; }
 
@@ -49,57 +27,15 @@
     cursor: url('{{ asset("images/carinderia/chicken-cursor.png") }}') 20 22, pointer;
   }
 
-  /* お楽しみ機能: STORE一覧のOthersの下にある隠しリンク(egg / St Nino)。
-     普段は完全に透明で、ホバー時だけ文字がふわっと浮かび上がる。
-     (カーソル画像は付けない方針に変更。ホバーで見た目が変わると隠しリンクだとバレてしまうため) */
-  .secret-link {
-    display: block;
-    width: 100%;
-    padding: 8px 0;
-    text-decoration: none;
-    cursor: default;
-  }
-  .secret-link span {
-    display: inline-block;
-    opacity: 0;
-    transform: translateY(4px);
-    transition: opacity .3s ease, transform .3s ease;
-    font-weight: 800;
-    font-size: 14px;
-    white-space: nowrap;
-    pointer-events: none;
-  }
-  /* カーソルを3秒間合わせっぱなしにしないと表示されない(すぐには浮かび上がらない) */
-  .secret-link:hover span {
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity .6s ease 3s, transform .6s ease 3s;
-  }
-  .secret-link-egg span { color: #F0C419; }
-  .secret-link-stnino span {
-    background: linear-gradient(90deg, #6E0F1A 0%, #C41E3A 45%, #FFD700 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-  }
+  .food-card { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; }
+  .food-card:hover { transform: translateY(-4px); }
 
-  /* お楽しみ機能: Eggの隠しリンクをクリックした瞬間だけ、クリック位置に実写の卵が割れる
-     コマ送り(6枚の連番画像)が一瞬再生されてからページ遷移するエモート。
-     CSSアニメーションのタイミング制御がうまく動かなかったため、単純にimgのsrcを
-     setIntervalで順番に差し替えるだけのシンプルな方式に変更した。 */
-  #eggEmote {
-    position: fixed;
-    z-index: 9999;
-    pointer-events: none;
-    width: 90px;
-    height: auto;
-    transform: translate(-50%, -62%);
-  }
+  .heart-btn svg { transition: transform .2s ease, fill .2s ease, stroke .2s ease; }
+  .heart-btn.liked svg { fill: #CE7043; stroke: #CE7043; transform: scale(1.15); }
 
   .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
+  }
 
   @keyframes riseIn {
     from { opacity: 0; transform: translateY(14px) scale(.98); }
@@ -115,45 +51,23 @@
 
 <div class="text-[#241E1A] pb-24">
 
-
 <div class="min-h-screen flex flex-col">
 
   <div class="max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop pt-8 md:pt-12">
-    <!-- ヒーローバナー: $sectionの内容(アドミンが登録した画像・タイトル・説明文)をそのまま表示。
-         STOREでサブカテゴリーを選ぶと、JSでそのサブカテゴリー専用のヒーローに切り替わる(All選択時は元に戻る) -->
+    {{-- ヒーローバナー: このカテゴリー(egg / St Nino)専用。切り替えは無く常に固定表示 --}}
     @php
-      $heroImage = $section->hero_image ?? 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?q=80&w=800&auto=format&fit=crop';
-      // @jsonディレクティブは式中のカンマで引数を区切ってしまうため、カンマを含む文字列は
-      // 先にPHP変数に入れてから@jsonに渡す(直接?? '...'をカンマ入りで書くと壊れる)
-      $defaultHeroDescription = $section->description ?? '留学生活に欠かせない日常サービス:ランドリー・両替・SIMカードなど。';
-      // サブカテゴリーごとのヒーロー画像・説明文をJSに渡す用(未設定のサブカテゴリーはnullのままでOK。JS側でデフォルトにフォールバックする)
-      $subCategoryHero = $subCategories->mapWithKeys(function ($c) {
-        $img = $c->hero_image;
-        if ($img) {
-          $img = \Illuminate\Support\Str::startsWith($img, ['http://', 'https://']) ? $img : asset($img);
-        }
-        return [$c->name => ['image' => $img, 'description' => $c->description]];
-      });
-      // URLの?category=◯◯が指定されていれば、初回表示からそのサブカテゴリーのヒーローを出す
-      // (JSのみに頼らないことで、リロード直後の一瞬デフォルトが見えてしまうのを防ぐ)
-      $initialHeroImage = $heroImage;
-      $initialHeroTitle = $section->name ?? 'Other';
-      $initialHeroDesc = $defaultHeroDescription;
-      if ($initialCategory && $subCategoryHero->has($initialCategory)) {
-        $customHero = $subCategoryHero->get($initialCategory);
-        $initialHeroImage = $customHero['image'] ?: $initialHeroImage;
-        $initialHeroDesc = $customHero['description'] ?: $initialHeroDesc;
-        $initialHeroTitle = $initialCategory;
-      }
+      $heroImage = $category->hero_image ?? 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?q=80&w=800&auto=format&fit=crop';
+      $heroImage = \Illuminate\Support\Str::startsWith($heroImage, ['http://', 'https://']) ? $heroImage : asset($heroImage);
+      $titleClass = $category->slug === 'egg' ? 'is-egg' : 'is-st-nino';
     @endphp
-    <section id="heroImg" class="relative overflow-hidden rounded-3xl mb-0 min-h-[280px] sm:min-h-[340px] md:min-h-[380px] p-8 md:p-10 bg-cover bg-center shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]"
-      style="background-image: url('{{ $initialHeroImage }}');">
+    <section class="relative overflow-hidden rounded-3xl mb-0 min-h-[280px] sm:min-h-[340px] md:min-h-[380px] p-8 md:p-10 bg-cover bg-center shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]"
+      style="background-image: url('{{ $heroImage }}');">
       <div class="absolute inset-0 bg-gradient-to-r from-white/95 from-3% via-white/60 via-25% to-transparent to-50% pointer-events-none"></div>
       <div class="relative flex flex-col lg:flex-row gap-8 w-full">
         <div class="flex-1">
           <h1 class="text-display font-black text-blue-950/90 mb-1">留学情報</h1>
-          <p id="heroTitle" class="text-headline-md font-bold text-brand-green mb-3 drop-shadow-[0_1px_3px_rgba(255,255,255,0.9)]">{{ $initialHeroTitle }}</p>
-          <p id="heroDesc" class="text-body-md text-blue-950/90 max-w-md whitespace-pre-line">{{ $initialHeroDesc }}</p>
+          <p class="secret-title {{ $titleClass }} text-headline-md font-bold mb-3 drop-shadow-[0_1px_3px_rgba(255,255,255,0.9)]">{{ $category->name }}</p>
+          <p class="text-body-md text-blue-950/90 max-w-md whitespace-pre-line">{{ $category->description }}</p>
         </div>
       </div>
     </section>
@@ -162,11 +76,7 @@
   <br>
 
   <div class="max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop pt-4">
-  {{--
-      メインカテゴリー一覧ボタン。main_categoriesテーブルを動的にループするので、
-      アドミンが5つ目以降を追加しても、ここに自動で表示される。
-      携帯は2段×2列(4つ)、PCは1画面に4つ表示、それ以降は横スライドで見る。
-  --}}
+  {{-- 通常ページと同じ、メインカテゴリー一覧ボタン --}}
   @php
     $fixedRoutes = [
       'carinderia'      => 'carinderia.index',
@@ -189,66 +99,41 @@
     @endforeach
   </div>
   @include('information.partials.main-cat-nav-script')
-  {{-- カテゴリーが5つ以上(スライドが必要)の時だけ、携帯にヒント表示 --}}
   @if($allMainCategories->count() > 4)
   <p class="md:hidden text-center text-[#241E1A]/25 text-xs tracking-[0.3em] mt-1">・・・</p>
   @endif
 </div>
 
   <div class="max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop pt-3 md:pt-8">
-    <!-- 検索(スマホ用。PCは下のサイドバー内に別途表示) -->
+    <!-- 検索(スマホ用) -->
     <label class="relative block mb-4 md:hidden">
       <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-[#241E1A]/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="searchInputMobile" placeholder="タイトルを検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
     </label>
-
-    <!-- STORE選択(スマホ用: 横スクロールできるチップ。サイドバーが隠れる代わりにこちらを表示) -->
-    <div class="no-scrollbar flex md:hidden gap-2 overflow-x-auto pb-1 mb-2" id="storeNavMobile" style="scrollbar-width:none;">
-      <a href="#" style="--cat-color:rgba(36,30,26,0.6)" class="cat-link-mobile shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors {{ $initialCategory === null ? 'active' : '' }}">All</a>
-      {{-- サブカテゴリー一覧はDBから動的に取得。アドミンが追加しても、この@foreachがそのまま対応する --}}
-      @foreach ($subCategories as $cat)
-        <a href="#" data-tag="{{ $cat->name }}" style="--cat-color:{{ $section?->color() ?? '#5eab35' }}" class="cat-link-mobile shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-semibold transition-colors {{ $initialCategory === $cat->name ? 'active' : '' }}">{{ $cat->name }}</a>
-      @endforeach
-    </div>
   </div>
 
   <div class="flex-1 max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop py-4 flex gap-6">
 
-    <!-- Sidebar(PC/タブレットのみ。スマホは上の検索欄+チップに置き換え) -->
+    <!-- Sidebar(PC/タブレットのみ) -->
     <aside id="sidebar" class="hidden md:block w-60 shrink-0">
       <div class="sticky top-24">
         <label class="relative block mb-6">
           <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-[#241E1A]/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input type="text" id="searchInput" placeholder="タイトルを検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
         </label>
-        <p class="font-mono text-[11px] tracking-[0.18em] text-[#241E1A]/40 mb-3 pl-1">STORE</p>
-        <nav class="flex flex-col gap-1 pl-5" id="storeNav">
-          <a href="#" style="--cat-color:{{ $section?->color() ?? '#5eab35' }}" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A] {{ $initialCategory === null ? 'active' : '' }}">All</a>
-          {{-- サブカテゴリー一覧はDBから動的に取得。アドミンが追加しても、この@foreachがそのまま対応する --}}
-          {{-- 左のガイドはAllがメインカテゴリーの色、下に行くほど薄くなるグラデーション --}}
-          @foreach ($subCategories as $cat)
-            <a href="#" data-tag="{{ $cat->name }}" style="--cat-color:{{ \App\Models\Category::lighten($section?->color() ?? '#5eab35', \App\Models\Category::sidebarTint($loop->index)) }}" class="cat-link flex items-center justify-between py-2 text-sm text-[#241E1A]/70 hover:text-[#241E1A] {{ $initialCategory === $cat->name ? 'active' : '' }}">{{ $cat->name }}</a>
-          @endforeach
-
-          {{-- お楽しみ機能: 隠しリンク。普段は見えないが、この位置にカーソルを合わせると文字が浮かび上がる --}}
-          <a href="{{ route('other.secret', 'egg') }}" id="eggSecretLink" class="secret-link secret-link-egg" aria-hidden="true"><span>Egg</span></a>
-          <a href="{{ route('other.secret', 'st-nino') }}" class="secret-link secret-link-stnino" aria-hidden="true"><span>St Nino</span></a>
-        </nav>
+        <p class="font-mono text-[11px] tracking-[0.18em] text-[#241E1A]/40 mb-3 pl-1">AREA</p>
+        <p class="secret-title {{ $titleClass }} text-sm font-bold py-2 pl-1">{{ $category->name }}</p>
       </div>
     </aside>
 
     <!-- Main -->
     <main class="flex-1 min-w-0">
-
-      <!-- Toolbar: 件数表示 -->
       <div class="flex items-center justify-between mb-4">
         <p id="resultCount" class="text-sm text-[#241E1A]/50"></p>
       </div>
 
-      <!-- Grid -->
       <div id="foodGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
 
-      <!-- Pagination -->
       <div class="flex items-center justify-center gap-2 mt-8" id="pagination"></div>
     </main>
   </div>
@@ -258,17 +143,13 @@
 <div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-[#241E1A]/40 backdrop-blur-sm">
   <div class="modal-panel bg-[#FFFFFF] rounded-2xl w-full max-w-3xl overflow-hidden shadow-[0_24px_60px_-12px_rgba(36,30,26,0.35)] opacity-0 translate-y-3 flex flex-col md:flex-row md:h-[520px]">
 
-    <!-- 左: 写真(固定) -->
     <div class="relative w-full md:w-1/2 h-64 md:h-full shrink-0">
       <img id="modalImg" src="" class="w-full h-full object-cover" alt="">
       <span id="modalTag" class="absolute top-3 left-3 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full"></span>
       <button onclick="closeModal()" class="md:hidden absolute top-3 right-3 bg-[#241E1A]/50 hover:bg-[#241E1A]/70 text-white w-7 h-7 rounded-full flex items-center justify-center" aria-label="閉じる">✕</button>
     </div>
 
-    <!-- 右: ヘッダー + 説明 + アクション -->
     <div class="w-full md:w-1/2 flex flex-col min-h-0">
-
-      <!-- ヘッダー: 投稿者 + 編集/削除ボタン -->
       <div class="flex items-center justify-between gap-2 px-4 py-3 border-b border-[#241E1A]/10 shrink-0">
         <div class="flex items-center gap-2 min-w-0">
           <div id="modalAvatar" class="avatar-initial w-8 h-8 rounded-full shrink-0 text-xs"></div>
@@ -279,7 +160,6 @@
         </div>
 
         <div class="flex items-center gap-1 shrink-0">
-          <!-- 投稿主だけに表示される操作ボタン(アイコンのみ) -->
           <div id="ownerActions" class="hidden items-center gap-1">
             <button id="modalEditBtn" class="w-8 h-8 flex items-center justify-center rounded-full text-[#4736F0] hover:bg-[#F1F0FF] transition-colors active:scale-90" aria-label="編集">
               <i class="fa-solid fa-edit text-[15px]"></i>
@@ -294,7 +174,6 @@
         </div>
       </div>
 
-      <!-- スクロール領域: タイトル・説明 -->
       <div class="flex-1 overflow-y-auto px-4 py-3 min-h-0">
         <h3 id="modalTitle" class="font-display font-semibold text-lg mb-1"></h3>
         <p id="modalDesc" class="text-sm text-[#241E1A]/60 mb-4"></p>
@@ -303,7 +182,6 @@
         <div id="commentList" class="space-y-3"></div>
       </div>
 
-      <!-- アクションバー: ♡ 💬(左) / 🌐マップ(右) -->
       <div class="px-4 pt-2 pb-1 border-t border-[#241E1A]/10 shrink-0">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
@@ -324,7 +202,6 @@
         <p id="modalLikeCount" class="text-xs font-semibold mt-1.5 mb-2"></p>
       </div>
 
-      <!-- コメント投稿フォーム -->
       <form id="commentForm" class="flex items-center gap-2 px-4 py-3 border-t border-[#241E1A]/10 shrink-0">
         <input type="text" id="commentInput" class="flex-1 border border-[#241E1A]/10 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]" placeholder="コメントを書く...">
         <button type="submit" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-[#4736F0] text-white hover:bg-[#372AC2] transition-colors active:scale-90">
@@ -335,40 +212,16 @@
   </div>
 </div>
 
-<!-- 削除用の隠しフォーム(投稿ごとにactionだけJSで差し替える) -->
 <form id="deleteForm" method="POST" class="hidden">
   @csrf
   @method('DELETE')
 </form>
 
 <script>
-  // ---- カテゴリごとの色(Category::color()と同じ値をサーバーから受け取る) ----
-  const categoryColors = @json($categoryColors);
-  function colorOf(tag){ return categoryColors[tag] || '#4736F0'; }
+  const badgeColor = @json($badgeColor);
+  function colorOf(){ return badgeColor; }
 
-  // ---- サブカテゴリーごとのヒーロー画像・説明文(adminが設定していれば使う。無ければデフォルトに戻す) ----
-  const subCategoryHero = @json($subCategoryHero);
-  const defaultHero = {
-    image: @json($heroImage),
-    title: @json($section->name ?? 'Other'),
-    description: @json($defaultHeroDescription),
-  };
-  function updateHero(tag){
-    const heroImg = document.getElementById('heroImg');
-    const heroTitle = document.getElementById('heroTitle');
-    const heroDesc = document.getElementById('heroDesc');
-    if (!heroImg || !heroTitle || !heroDesc) return;
-    const custom = tag ? subCategoryHero[tag] : null;
-    const nextImage = (custom && custom.image) ? custom.image : defaultHero.image;
-    heroImg.style.backgroundImage = `url('${nextImage}')`;
-    heroTitle.textContent = tag || defaultHero.title;
-    heroDesc.textContent = (custom && custom.description) ? custom.description : defaultHero.description;
-  }
-
-  // ---- 実データ(Post::whereHas('category', section=other)->latest()->get()) ----
   const items = @json($posts);
-
-  // ---- 現在ログイン中のユーザー(Auth::id()。未ログインならnull) ----
   const currentUserId = {{ auth()->id() ?? 'null' }};
   const routeBase = @json(url('information'));
   const postsRouteBase = @json(url('information/posts'));
@@ -377,7 +230,6 @@
 
   const PAGE_SIZE = 21;
   let currentPage = 1;
-  let activeCategory = @json($initialCategory); // nullは「All(すべて表示)」を意味する。URLの?category=◯◯があればそれを初期値にする
   let searchQuery = '';
   let currentModalItem = null;
 
@@ -397,7 +249,6 @@
     return diffDay + '日前';
   }
 
-  // ---- 検索語をHTML内で安全に太字ハイライトする ----
   function escapeRegExp(str){
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
@@ -407,7 +258,6 @@
     return text.replace(re, '<strong class="bg-[#F1F0FF] text-[#4736F0] rounded px-0.5">$1</strong>');
   }
 
-  // ---- いいねのトグル(サーバーに保存。未ログインならログイン画面へ) ----
   function toggleLike(it){
     if (currentUserId === null) { window.location.href = loginUrl; return; }
 
@@ -424,7 +274,6 @@
       .catch(() => alert('通信エラーが発生しました。もう一度お試しください。'));
   }
 
-  // ---- いいねボタンの見た目を、カード側・モーダル側の両方で更新 ----
   function updateLikeUI(it){
     const cardBtn = document.querySelector(`.food-card[data-post-id="${it.id}"] .card-like-btn`);
     if (cardBtn) {
@@ -441,7 +290,6 @@
     }
   }
 
-  // ---- お気に入り(保存)のトグル(サーバーに保存。未ログインならログイン画面へ) ----
   function toggleBookmark(it){
     if (currentUserId === null) { window.location.href = loginUrl; return; }
 
@@ -457,7 +305,6 @@
       .catch(() => alert('通信エラーが発生しました。もう一度お試しください。'));
   }
 
-  // ---- 保存ボタンの見た目を、カード側・モーダル側の両方で更新 ----
   function updateBookmarkUI(it){
     const cardBtn = document.querySelector(`.food-card[data-post-id="${it.id}"] .card-save-btn`);
     if (cardBtn) {
@@ -473,7 +320,6 @@
     }
   }
 
-  // ---- コメント一覧の描画 ----
   function renderComments(it){
     const list = document.getElementById('commentList');
     list.innerHTML = '';
@@ -504,7 +350,6 @@
     list.scrollTop = list.scrollHeight;
   }
 
-  // ---- コメント削除(本人のコメントのみ。サーバー側でも権限チェック済み) ----
   function deleteComment(commentId){
     fetch(`${postsRouteBase}/comments/${commentId}`, {
       method: 'DELETE',
@@ -524,19 +369,16 @@
   }
 
   function getFilteredItems(){
-    let filtered = activeCategory
-      ? items.filter(it => it.category && it.category.name === activeCategory)
-      : items; // activeCategoryがnull(=All)の時は絞り込まない
+    let filtered = items;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
-      // タイトルだけでなく、投稿の説明文にも一致したらヒットさせる
       filtered = filtered.filter(it => {
         const titleMatch = (it.title || '').toLowerCase().includes(q);
         const descMatch = (it.description || '').toLowerCase().includes(q);
         return titleMatch || descMatch;
       });
     }
-    return filtered; // 新着順 = Controllerの latest() 順のまま
+    return filtered;
   }
 
   function renderGrid(page){
@@ -547,6 +389,10 @@
     grid.innerHTML = '';
     const start = (page - 1) * PAGE_SIZE;
     const pageItems = sorted.slice(start, start + PAGE_SIZE);
+
+    if (pageItems.length === 0) {
+      grid.innerHTML = `<p class="text-sm text-[#241E1A]/40 py-16 text-center col-span-full">まだ投稿がありません。</p>`;
+    }
 
     pageItems.forEach((it, idx) => {
       const titleHtml = searchQuery ? highlightMatch(it.title, searchQuery) : it.title;
@@ -560,7 +406,7 @@
       card.innerHTML = `
         <div class="relative h-40">
           <img src="${it.image_url}" class="w-full h-full object-cover" alt="${it.title}" loading="lazy">
-          <span class="absolute top-2.5 left-2.5 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full" style="background:${colorOf(tag)}">${tag}</span>
+          <span class="absolute top-2.5 left-2.5 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full" style="background:${colorOf()}">${tag}</span>
         </div>
         <div class="p-4">
           <h3 class="font-display font-semibold text-base mb-1 truncate">${titleHtml}</h3>
@@ -631,7 +477,7 @@
 
     document.getElementById('modalImg').src = it.image_url;
     document.getElementById('modalTag').textContent = tag;
-    document.getElementById('modalTag').style.background = colorOf(tag);
+    document.getElementById('modalTag').style.background = colorOf();
     document.getElementById('modalTitle').textContent = it.title;
     document.getElementById('modalDesc').textContent = it.description ?? '';
     document.getElementById('modalAvatar').textContent = initials(userName);
@@ -644,13 +490,11 @@
         ? `${it.earth_location.latitude},${it.earth_location.longitude}`
         : it.title
       )}`;
-    // いいねボタンの初期状態
     const modalIcon = document.querySelector('#modalLikeBtn i');
     modalIcon.className = (it.liked_by_me ? 'fa-solid' : 'fa-regular') + ' fa-heart text-[22px]' + (it.liked_by_me ? ' text-[#CE7043]' : '');
     document.getElementById('modalLikeBtn').classList.toggle('liked', !!it.liked_by_me);
     document.getElementById('modalLikeCount').textContent = `${it.likes_count ?? 0}件のいいね`;
 
-    // 保存(お気に入り)ボタンの初期状態
     const modalSaveIcon = document.querySelector('#modalSaveBtn i');
     modalSaveIcon.classList.toggle('fa-solid', !!it.bookmarked_by_me);
     modalSaveIcon.classList.toggle('fa-regular', !it.bookmarked_by_me);
@@ -658,7 +502,6 @@
 
     renderComments(it);
 
-    // 投稿主(user_id)と今ログインしているユーザー(Auth::id())が一致する時だけ、編集・削除ボタンを表示
     const isOwner = currentUserId !== null && it.user_id === currentUserId;
     const ownerActions = document.getElementById('ownerActions');
     ownerActions.classList.toggle('hidden', !isOwner);
@@ -695,17 +538,14 @@
     if(e.target.id === 'detailModal') closeModal();
   });
 
-  // モーダルのいいねボタン(開いている投稿=currentModalItemに対して動作)
   document.getElementById('modalLikeBtn').addEventListener('click', () => {
     if (currentModalItem) toggleLike(currentModalItem);
   });
 
-  // モーダルの保存ボタン
   document.getElementById('modalSaveBtn').addEventListener('click', () => {
     if (currentModalItem) toggleBookmark(currentModalItem);
   });
 
-  // コメント投稿フォーム(サーバーに保存し、成功したら一覧に追加)
   document.getElementById('commentForm').addEventListener('submit', (e) => {
     e.preventDefault();
     if (!currentModalItem) return;
@@ -741,29 +581,6 @@
       .catch(() => alert('コメントの送信に失敗しました。もう一度お試しください。'));
   });
 
-  // STOREカテゴリ選択(デスクトップの縦サイドバー・スマホの横チップ、両方に対応。クリックで絞り込み+再描画)
-  document.querySelectorAll('#storeNav .cat-link, #storeNavMobile .cat-link-mobile').forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const tag = link.dataset.tag || null; // "All"リンクはdata-tagが無いのでnull
-      document.querySelectorAll('#storeNav .cat-link, #storeNavMobile .cat-link-mobile').forEach(l => {
-        l.classList.toggle('active', (l.dataset.tag || null) === tag);
-      });
-      activeCategory = tag;
-      currentPage = 1;
-      updateHero(tag);
-      renderGrid(currentPage);
-      renderPagination();
-
-      // URLにも反映しておく(ページ遷移はしない。リロードした時に選択状態が保たれるようにするため)
-      const url = new URL(window.location.href);
-      if (tag) { url.searchParams.set('category', tag); } else { url.searchParams.delete('category'); }
-      history.replaceState(null, '', url);
-    });
-  });
-
-  // 検索ボックス:タイトルに一致したものだけ表示
-  // 検索ボックス:PC用・スマホ用の2つを同期させる(どちらに入力しても両方に反映)
   document.querySelectorAll('#searchInput, #searchInputMobile').forEach(input => {
     input.addEventListener('input', (e) => {
       searchQuery = e.target.value.trim();
@@ -778,46 +595,6 @@
 
   renderGrid(currentPage);
   renderPagination();
-
-  // ---- お楽しみ機能: Eggの隠しリンクをクリックした瞬間、実写の卵が割れるコマ送りを再生してから移動する ----
-  (function () {
-    const eggFrames = [
-      '{{ asset("images/other/egg-seq-1.webp") }}',
-      '{{ asset("images/other/egg-seq-2.webp") }}',
-      '{{ asset("images/other/egg-seq-3.webp") }}',
-      '{{ asset("images/other/egg-seq-4.webp") }}',
-      '{{ asset("images/other/egg-seq-5.webp") }}',
-      '{{ asset("images/other/egg-seq-6.webp") }}',
-    ];
-    // 初回クリックで画像がまだ読み込まれておらず一瞬遅れて見えることがないよう、先読みしておく
-    eggFrames.forEach((src) => { const im = new Image(); im.src = src; });
-
-    document.getElementById('eggSecretLink')?.addEventListener('click', function (e) {
-      e.preventDefault();
-      const href = this.getAttribute('href');
-
-      const img = document.createElement('img');
-      img.id = 'eggEmote';
-      img.src = eggFrames[0];
-      // カーソルと「Egg」の文字に被らないよう、クリック位置より少し右にずらして表示する
-      img.style.left = (e.clientX + 55) + 'px';
-      img.style.top = e.clientY + 'px';
-      document.body.appendChild(img);
-
-      const frameDelay = 140;
-      let frameIndex = 0;
-      const timer = setInterval(() => {
-        frameIndex++;
-        if (frameIndex >= eggFrames.length) {
-          clearInterval(timer);
-          return;
-        }
-        img.src = eggFrames[frameIndex];
-      }, frameDelay);
-
-      setTimeout(() => { window.location.href = href; }, frameDelay * eggFrames.length + 550);
-    });
-  })();
 </script>
 
 <!-- Back to top -->
@@ -835,6 +612,11 @@
     }
   });
 </script>
+
+@php
+  // フッターのPostリンクを、このカテゴリー固定の投稿フォームに向ける
+  $lockedCategorySlug = $category->slug;
+@endphp
 
 @include('information.footer.footer_nav')
 </div>

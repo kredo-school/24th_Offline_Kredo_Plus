@@ -26,7 +26,7 @@
   }
   .cat-link.active::before,
   .cat-link:hover::before { height: 70%; }
-  .cat-link.active { color: var(--cat-color); font-weight: 600; }
+  .cat-link.active { font-weight: 700; }
 
   .food-card { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; }
   .food-card:hover { transform: translateY(-4px); }
@@ -92,18 +92,20 @@
       'other'           => 'other.index',
     ];
   @endphp
-  <div class="no-scrollbar grid grid-flow-col grid-rows-2 sm:grid-rows-1 auto-cols-[calc(50%-0.375rem)] sm:auto-cols-[calc(25%-0.5625rem)] gap-3 overflow-x-auto snap-x snap-mandatory pb-1" style="scrollbar-width:none;">
+  <div id="mainCatNav" class="no-scrollbar grid grid-flow-col grid-rows-2 sm:grid-rows-1 auto-cols-[calc(50%-0.375rem)] sm:auto-cols-[calc(25%-0.5625rem)] gap-3 overflow-x-auto pb-1" style="scrollbar-width:none;">
     @foreach ($allMainCategories as $mc)
       @php
         $href = isset($fixedRoutes[$mc->key])
           ? route($fixedRoutes[$mc->key])
           : route('information.dynamic', $mc->key);
+        $isCurrentMain = $mc->key === 'travel';
       @endphp
-      <a href="{{ $href }}" class="snap-start flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity {{ $mc->key === 'carinderia' ? 'chicken-cursor-hover' : '' }}" style="background:{{ $mc->color() }}">
+      <a href="{{ $href }}" @if($isCurrentMain) data-active="true" @endif class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity {{ $mc->key === 'carinderia' ? 'chicken-cursor-hover' : '' }}" style="background:{{ $mc->color() }}">
         {{ $mc->name }}
       </a>
     @endforeach
   </div>
+  @include('information.partials.main-cat-nav-script')
   {{-- カテゴリーが5つ以上(スライドが必要)の時だけ、携帯にヒント表示 --}}
   @if($allMainCategories->count() > 4)
   <p class="md:hidden text-center text-[#241E1A]/25 text-xs tracking-[0.3em] mt-1">・・・</p>
