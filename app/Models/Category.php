@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-    protected $fillable = ['section', 'name', 'slug', 'hero_image', 'description', 'sort_order'];
+    protected $fillable = ['section', 'name', 'slug', 'hero_image', 'description', 'sort_order', 'is_hidden'];
+
+    protected $casts = [
+        'is_hidden' => 'boolean',
+    ];
 
     /**
      * Kredoロゴと同じ4色 + 5つ目以降用の予備色。
@@ -38,13 +42,27 @@ class Category extends Model
         return MainCategory::findByKey($this->section)?->color() ?? self::colorPalette()[0];
     }
 
-    /** 指定したsection(travel, other, restaurant-cafeなど)のカテゴリー一覧を並び順で取得 */
-    public static function forSection(string $section)
+    /**
+     * 指定したsection(travel, other, restaurant-cafeなど)のカテゴリー一覧を並び順で取得。
+     * is_hidden=true の隠しカテゴリー(egg / St Ninoなど)は、$includeHidden を true にしない限り除外される。
+     * これにより、Otherページの通常一覧や投稿フォームのカテゴリー選択には自動的に出てこなくなる。
+     */
+    public static function forSection(string $section, bool $includeHidden = false)
     {
         return self::where('section', $section)
+            ->when(!$includeHidden, fn ($q) => $q->where('is_hidden', false))
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get();
+    }
+
+    /** 隠しカテゴリーを slug で1件取得する(秘密ページ・投稿フォームのカテゴリー固定用) */
+    public static function findHiddenBySlug(string $section, string $slug): ?self
+    {
+        return self::where('section', $section)
+            ->where('slug', $slug)
+            ->where('is_hidden', true)
+            ->first();
     }
 
     /**

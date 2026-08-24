@@ -21,7 +21,8 @@
     <span class="text-[10px] font-bold tracking-wide" style="font-family:'Poppins','Noto Sans JP',sans-serif;">Home</span>
   </a>
 
-  <a href="{{ route('information.create', ['main_category' => $currentMainCategory]) }}" class="flex flex-col items-center justify-center gap-1 text-white/70 hover:text-white px-4 py-1 active:scale-90 transition-all duration-200">
+  {{-- $lockedCategorySlug が渡された時だけ、投稿フォームのカテゴリーをそのまま固定する(egg / St Ninoなどの隠しページ専用) --}}
+  <a href="{{ route('information.create', array_filter(['main_category' => $currentMainCategory, 'category' => $lockedCategorySlug ?? null])) }}" class="flex flex-col items-center justify-center gap-1 text-white/70 hover:text-white px-4 py-1 active:scale-90 transition-all duration-200">
     <div class="w-14 h-14 -mt-8 rounded-full flex items-center justify-center shadow-[0_12px_32px_-12px_rgba(30,58,138,0.35)] border-4 border-[#334155]"
          style="background: linear-gradient(135deg, #2f5fdb 0%, #e05237 33%, #f5b52e 66%, #5eab35 100%);">
       <i class="fa-solid fa-plus text-white text-[20px]"></i>

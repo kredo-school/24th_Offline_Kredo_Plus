@@ -83,7 +83,8 @@ class InformationController extends Controller
 
     public function create(Request $request)
     {
-        $categories = Category::all();
+        // 隠しカテゴリー(egg / St Ninoなど)は投稿フォームの通常の選択肢には出さない
+        $categories = Category::where('is_hidden', false)->get();
 
         // メインカテゴリーの一覧
         $mainCategories = MainCategory::allOrdered();
@@ -100,11 +101,27 @@ class InformationController extends Controller
         if ($request->filled('earth_location_id')) {
             $draft = session('information_draft', []);
         }
+
+        // お楽しみ機能: ?category=egg のようなスラッグが付いていたら、
+        // その隠しカテゴリーに投稿先を固定する(メイン/サブカテゴリーの選択欄を隠す)。
+        // 地図で場所を追加→戻ってくる場合はクエリが消えるので、下書き(session)のcategory_idから復元する。
+        $lockedCategory = null;
+
+        if ($request->filled('category')) {
+            $lockedCategory = Category::findHiddenBySlug('other', $request->query('category'));
+        } elseif (!empty($draft['category_id'])) {
+            $draftCategory = Category::find($draft['category_id']);
+            if ($draftCategory && $draftCategory->is_hidden) {
+                $lockedCategory = $draftCategory;
+            }
+        }
+
         return view('information.post', compact(
             'categories',
             'mainCategories',
             'earthLocation',
-            'draft'
+            'draft',
+            'lockedCategory'
         ));
     }
 
@@ -143,6 +160,13 @@ class InformationController extends Controller
                 ]);
         }
 
+        // 隠しカテゴリー(egg / St Ninoなど)に投稿した場合は、通常の一覧ではなく秘密ページへ戻す
+        if ($post->category?->is_hidden) {
+            return redirect()
+                ->route('other.secret', $post->category->slug)
+                ->with('status', '投稿しました。');
+        }
+
         // 投稿したカテゴリーのsectionに応じて、正しい一覧ページへ戻す。
         $section = $post->category->section ?? 'restaurant-cafe';
 
@@ -165,7 +189,8 @@ class InformationController extends Controller
             'この投稿を編集する権限がありません。'
         );
 
-        $categories = Category::all();
+        // 隠しカテゴリー(egg / St Ninoなど)は編集フォームの通常の選択肢には出さない
+        $categories = Category::where('is_hidden', false)->get();
 
         // メインカテゴリーの一覧
         $mainCategories = MainCategory::allOrdered();

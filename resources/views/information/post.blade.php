@@ -77,60 +77,73 @@
                     $selectedCategory = $selectedCategoryId
                         ? $categories->firstWhere('id', (int) $selectedCategoryId)
                         : null;
-                @endphp <!-- Main Category -->
+                @endphp
 
-                <div>
+                @if (!empty($lockedCategory))
+                    {{-- お楽しみ機能: egg / St Ninoなど隠しカテゴリー専用ページからの投稿は、
+                         メイン/サブカテゴリーの選択欄を出さずにカテゴリーを固定する --}}
+                    <div>
+                        <label class="rc-field-label">CATEGORY</label>
+                        <div class="rc-field-input" style="display:flex;align-items:center;">
+                            <strong>{{ $lockedCategory->name }}</strong>
+                        </div>
+                        <input type="hidden" name="category_id" value="{{ $lockedCategory->id }}">
+                    </div>
+                @else
+                    <!-- Main Category -->
+                    <div>
 
-                    <label class="rc-field-label">
-                        MAIN CATEGORY
-                    </label>
+                        <label class="rc-field-label">
+                            MAIN CATEGORY
+                        </label>
 
-                    <select id="mainCategorySelect" class="rc-field-input">
+                        <select id="mainCategorySelect" class="rc-field-input">
 
-                        <option value="" class="text-gray-400">
-                            選択してください
-                        </option>
-
-                        @foreach ($mainCategories as $mainCategory)
-                            <option value="{{ $mainCategory->key }}"
-                                {{ $oldSection === $mainCategory->key ? 'selected' : '' }}>
-
-                                {{ $mainCategory->name }}
-
+                            <option value="" class="text-gray-400">
+                                選択してください
                             </option>
-                        @endforeach
 
-                    </select>
+                            @foreach ($mainCategories as $mainCategory)
+                                <option value="{{ $mainCategory->key }}"
+                                    {{ $oldSection === $mainCategory->key ? 'selected' : '' }}>
 
-                </div>
+                                    {{ $mainCategory->name }}
 
-                <!-- Category (サブカテゴリー: 上で選んだメインカテゴリーの中身だけ表示される) -->
-                <div>
+                                </option>
+                            @endforeach
 
-                    <label class="rc-field-label">
-                        CATEGORY
-                    </label>
+                        </select>
 
-                    <select name="category_id" id="categorySelect" class="rc-field-input" required>
+                    </div>
 
-                        <option value="" class="text-gray-400">
-                            ↑まずはメインカテゴリーを選んでね
-                        </option>
+                    <!-- Category (サブカテゴリー: 上で選んだメインカテゴリーの中身だけ表示される) -->
+                    <div>
 
-                        @foreach ($categories as $category)
-                            @php $isOldSelected = $selectedCategoryId == $category->id; @endphp
-                            <option value="{{ $category->id }}" data-name="{{ strtolower($category->name) }}"
-                                data-section="{{ $category->section }}" {{ $isOldSelected ? 'selected' : '' }}
-                                {{ $isOldSelected ? '' : 'hidden disabled' }}>
+                        <label class="rc-field-label">
+                            CATEGORY
+                        </label>
 
-                                {{ $category->name }}
+                        <select name="category_id" id="categorySelect" class="rc-field-input" required>
 
+                            <option value="" class="text-gray-400">
+                                ↑まずはメインカテゴリーを選んでね
                             </option>
-                        @endforeach
 
-                    </select>
+                            @foreach ($categories as $category)
+                                @php $isOldSelected = $selectedCategoryId == $category->id; @endphp
+                                <option value="{{ $category->id }}" data-name="{{ strtolower($category->name) }}"
+                                    data-section="{{ $category->section }}" {{ $isOldSelected ? 'selected' : '' }}
+                                    {{ $isOldSelected ? '' : 'hidden disabled' }}>
 
-                </div>
+                                    {{ $category->name }}
+
+                                </option>
+                            @endforeach
+
+                        </select>
+
+                    </div>
+                @endif
 
                 <!-- Title -->
                 <div>
