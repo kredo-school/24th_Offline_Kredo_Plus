@@ -27,8 +27,8 @@ class OtherController extends Controller
             ->withCount(['likes', 'comments'])
             ->with([
                 'category',
-                'user:id,name',
-                
+                'user:id,name,avatar',
+
                 // 投稿に紐づいた位置情報
                 'earthLocation',
 
