@@ -210,13 +210,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // (先に書くとURLが食われて、上の4ページが404になってしまう)
     Route::get('/information/{key}', [MainCategoryPageController::class, 'index'])
         ->name('information.dynamic')
-        ->where('key', '(?!post$|posts$|carinderia$|restaurant-cafe$|travel$|other$)[a-z0-9\-]+');
+        ->where('key', '(?!post$|posts$|carinderia$|restaurant-cafe$|travel$|other$|\d+(?:/|$))[a-z0-9\-]+');
 
     // 5個目以降のメインカテゴリーの、サブカテゴリー単位の絞り込みページ(URL: /information/{key}/{slug})。
     // travel.show(/information/travel/{slug})の仕組みと同じもの。
     Route::get('/information/{key}/{slug}', [MainCategoryPageController::class, 'show'])
         ->name('information.dynamic.show')
-        ->where('key', '(?!post$|posts$|carinderia$|restaurant-cafe$|travel$|other$)[a-z0-9\-]+')
+        ->where('key', '(?!post$|posts$|carinderia$|restaurant-cafe$|travel$|other$|\d+(?:/|$))[a-z0-9\-]+')
         ->where('slug', '[a-z0-9\-]+');
 
     // Carinderia (restaurant-cafeと同じパターン)
