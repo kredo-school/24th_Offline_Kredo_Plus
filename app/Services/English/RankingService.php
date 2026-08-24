@@ -44,7 +44,7 @@ class RankingService
 
     private function getTotalRanking(int $perPage): LengthAwarePaginator
     {
-        return User::select(['id', 'name', 'total_xp', 'created_at'])
+        return User::select(['id', 'name', 'avatar', 'total_xp', 'created_at'])
             ->selectSub(
                 StudyLog::selectRaw('COUNT(DISTINCT studied_date)')->whereColumn('user_id', 'users.id'),
                 'total_study_days'
@@ -79,12 +79,13 @@ class RankingService
             ->select([
                 'users.id',
                 'users.name',
+                'users.avatar',
                 'users.total_xp',
                 'users.created_at',
                 DB::raw('SUM(study_logs.xp_gained) as period_xp'),
                 DB::raw('(SELECT COUNT(DISTINCT sl2.studied_date) FROM study_logs sl2 WHERE sl2.user_id = users.id) as total_study_days'),
             ])
-            ->groupBy('users.id', 'users.name', 'users.total_xp', 'users.created_at')
+            ->groupBy('users.id', 'users.name', 'users.avatar', 'users.total_xp', 'users.created_at')
             ->having('period_xp', '>', 0)
             ->orderByDesc('period_xp')
             ->orderBy('users.created_at')
@@ -127,12 +128,13 @@ class RankingService
             ->select([
                 'users.id',
                 'users.name',
+                'users.avatar',
                 'users.total_xp',
                 'users.created_at',
                 DB::raw('SUM(study_logs.xp_gained) as period_xp'),
                 DB::raw('(SELECT COUNT(DISTINCT sl2.studied_date) FROM study_logs sl2 WHERE sl2.user_id = users.id) as total_study_days'),
             ])
-            ->groupBy('users.id', 'users.name', 'users.total_xp', 'users.created_at')
+            ->groupBy('users.id', 'users.name', 'users.avatar', 'users.total_xp', 'users.created_at')
             ->having('period_xp', '>', 0)
             ->orderByDesc('period_xp')
             ->orderBy('users.created_at');

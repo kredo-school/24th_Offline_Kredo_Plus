@@ -59,8 +59,20 @@
                             @endif
                         </td>
                         <td class="py-4 px-4 text-blue-950/90">
-                            {{ $entry->name }}
-                            @if($isMe)<span class="ml-1 text-caption text-orange-600 font-bold">（あなた）</span>@endif
+                            <div class="flex items-center gap-2">
+                                @if ($entry->avatar)
+                                    <img src="/storage/{{ $entry->avatar }}" alt="{{ $entry->name }}"
+                                         class="w-7 h-7 rounded-full object-cover shrink-0">
+                                @else
+                                    <div class="w-7 h-7 rounded-full bg-brand-blue text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                                        {{ Str::of($entry->name)->substr(0, 1)->upper() }}
+                                    </div>
+                                @endif
+                                <span>
+                                    {{ $entry->name }}
+                                    @if($isMe)<span class="ml-1 text-caption text-orange-600 font-bold">（あなた）</span>@endif
+                                </span>
+                            </div>
                         </td>
                         <td class="py-4 px-4 text-center">
                             <span class="bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 text-caption font-bold px-2 py-0.5 rounded-[0.75rem]">Lv.{{ $level }}</span>
@@ -92,6 +104,14 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <span class="text-headline-md font-black text-orange-600">{{ $myRank }}位</span>
+                    @if ($user->avatar_url)
+                        <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}"
+                             class="w-10 h-10 rounded-full object-cover shrink-0">
+                    @else
+                        <div class="w-10 h-10 rounded-full bg-brand-blue text-white text-sm font-bold flex items-center justify-center shrink-0">
+                            {{ Str::of($user->name)->substr(0, 1)->upper() }}
+                        </div>
+                    @endif
                     <div>
                         <p class="font-bold text-blue-950/90">{{ $user->name }}</p>
                         <span class="bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 text-orange-600 text-caption font-bold px-2 py-0.5 rounded-[0.75rem]">Lv.{{ $levelInfo['level'] }}</span>

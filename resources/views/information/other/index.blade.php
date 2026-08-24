@@ -217,7 +217,9 @@
       <!-- ヘッダー: 投稿者 + 編集/削除ボタン -->
       <div class="flex items-center justify-between gap-2 px-4 py-3 border-b border-[#241E1A]/10 shrink-0">
         <div class="flex items-center gap-2 min-w-0">
-          <div id="modalAvatar" class="avatar-initial w-8 h-8 rounded-full shrink-0 text-xs"></div>
+          <div id="modalAvatarWrap" class="shrink-0">
+            <div id="modalAvatar" class="avatar-initial w-8 h-8 rounded-full shrink-0 text-xs"></div>
+          </div>
           <div class="leading-tight min-w-0">
             <p id="modalName" class="text-sm font-semibold truncate"></p>
             <p id="modalTime" class="text-xs text-[#241E1A]/40"></p>
@@ -329,6 +331,15 @@
 
   function initials(name){
     return (name || '?').trim().charAt(0).toUpperCase();
+  }
+
+  // 投稿者アバター: 写真が登録されていればImage、無ければ従来通りイニシャル円
+  function avatarHtml(user, sizeClass, textSizeClass){
+    const name = user ? user.name : '不明なユーザー';
+    if (user && user.avatar_url) {
+      return `<img src="${user.avatar_url}" alt="${name}" class="${sizeClass} rounded-full object-cover shrink-0">`;
+    }
+    return `<div class="avatar-initial ${sizeClass} rounded-full shrink-0 ${textSizeClass}">${initials(name)}</div>`;
   }
 
   function timeAgo(dateStr){
@@ -513,7 +524,7 @@
           <p class="text-sm text-[#241E1A]/55 line-clamp-2 mb-3">${it.description ?? ''}</p>
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-1.5 min-w-0">
-              <div class="avatar-initial w-6 h-6 rounded-full shrink-0 text-[10px]">${initials(userName)}</div>
+              ${avatarHtml(it.user, 'w-6 h-6', 'text-[10px]')}
               <div class="leading-tight min-w-0">
                 <p class="text-xs font-semibold truncate">${userName}</p>
                 <p class="text-[11px] text-[#241E1A]/40">${timeAgo(it.created_at)}</p>
@@ -580,7 +591,7 @@
     document.getElementById('modalTag').style.background = colorOf(tag);
     document.getElementById('modalTitle').textContent = it.title;
     document.getElementById('modalDesc').textContent = it.description ?? '';
-    document.getElementById('modalAvatar').textContent = initials(userName);
+    document.getElementById('modalAvatarWrap').innerHTML = avatarHtml(it.user, 'w-8 h-8', 'text-xs');
     document.getElementById('modalName').textContent = userName;
     document.getElementById('modalTime').textContent = timeAgo(it.created_at);
 

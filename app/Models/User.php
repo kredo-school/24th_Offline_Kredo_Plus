@@ -16,7 +16,6 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Storage;
 use App\Services\Shower\ShowerScale;
 use App\Models\Shower\ShowerReport;
 
@@ -27,6 +26,17 @@ class User extends Authenticatable
 
     public const ADMIN_ROLE_ID = 1;
     public const USER_ROLE_ID = 2;
+
+    /**
+     * JSON/配列化した際に、avatar_url（アクセサ）も一緒に含める。
+     * 投稿一覧などで user を丸ごとJSに渡す箇所で、素の avatar カラムではなく
+     * 表示用URLをそのまま使えるようにするため。
+     *
+     * @var list<string>
+     */
+    protected $appends = [
+        'avatar_url',
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -148,9 +158,12 @@ class User extends Authenticatable
     }
 
     // プロフィール写真の公開URL
+    // Storage::url() は APP_URL のホストで絶対URLを組み立てるため、
+    // APP_URL と実際のアクセス先ホストが異なる開発環境では画像が読み込めなくなる。
+    // そのため常にルート相対パスを返し、今アクセスしているホストから解決させる。
     public function getAvatarUrlAttribute(): ?string
     {
-        return $this->avatar ? Storage::disk('public')->url($this->avatar) : null;
+        return $this->avatar ? '/storage/' . $this->avatar : null;
     }
 
     // シャワーの好み登録
