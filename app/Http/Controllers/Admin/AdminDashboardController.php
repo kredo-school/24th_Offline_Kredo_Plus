@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\English\StudyLog;
+use App\Models\MainCategory;
 use App\Models\Notice;
 use App\Models\Post;
 use App\Models\Shower\ShowerCapacityReport;
@@ -129,8 +131,23 @@ class AdminDashboardController extends Controller
             ];
         });
 
+        // 5. 留学情報管理タブ用(myu担当): メイン/サブカテゴリー一覧(隠しカテゴリーは管理画面には出さない)
+        // 削除ボタンの「中身が残っているか」の警告表示のため、sub_count / post_count を各行に付与しておく。
+        $adminMainCategories = MainCategory::orderBy('sort_order')->orderBy('id')->get();
+        $subCounts = Category::where('is_hidden', false)
+            ->selectRaw('section, count(*) as cnt')->groupBy('section')->pluck('cnt', 'section');
+        $adminMainCategories->each(function ($mc) use ($subCounts) {
+            $mc->sub_count = (int) ($subCounts[$mc->key] ?? 0);
+        });
+
+        $adminCategories = Category::where('is_hidden', false)->orderBy('section')->orderBy('sort_order')->get();
+        $postCounts = Post::selectRaw('category_id, count(*) as cnt')->groupBy('category_id')->pluck('cnt', 'category_id');
+        $adminCategories->each(function ($c) use ($postCounts) {
+            $c->post_count = (int) ($postCounts[$c->id] ?? 0);
+        });
+
         return view('admin.dashboard', array_merge(
-            compact('users', 'notices'),
+            compact('users', 'notices', 'adminMainCategories', 'adminCategories'),
             $stats,
             $analytics
         ));
