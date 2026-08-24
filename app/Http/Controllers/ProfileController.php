@@ -45,6 +45,8 @@ class ProfileController extends Controller
             ->with([
                 'user:id,name,avatar',
                 'category',
+                'earthLocation',
+                'comments' => fn ($q) => $q->with('user:id,name')->oldest(),
                 'likes' => fn ($q) => $q->where('user_id', $user->id),
                 'bookmarks' => fn ($q) => $q->where('user_id', $user->id),
             ])
