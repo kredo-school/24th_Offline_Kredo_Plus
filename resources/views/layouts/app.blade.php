@@ -261,9 +261,13 @@
 
                 <div class="relative" x-data="{ open: false }" @click.outside="open = false">
                     <button @click="open = !open"
-                        class="w-9 h-9 rounded-full bg-brand-blue text-white text-sm font-bold flex items-center justify-center ring-2 ring-sky-100 hover:ring-sky-200 transition-all"
+                        class="w-9 h-9 rounded-full ring-2 ring-sky-100 hover:ring-sky-200 transition-all overflow-hidden {{ Auth::user()->avatar_url ? '' : 'bg-brand-blue text-white text-sm font-bold flex items-center justify-center' }}"
                         aria-label="アカウントメニュー">
-                        {{ Str::of(Auth::user()->name)->substr(0, 1)->upper() }}
+                        @if (Auth::user()->avatar_url)
+                            <img src="{{ Auth::user()->avatar_url }}" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
+                        @else
+                            {{ Str::of(Auth::user()->name)->substr(0, 1)->upper() }}
+                        @endif
                     </button>
                     <div x-show="open" x-transition:enter="transition ease-out duration-150"
                         x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"

@@ -114,9 +114,14 @@
       <div class="p-5 sm:p-6">
         <!-- 投稿者 -->
         <div class="flex items-center gap-2 mb-4">
-          <div class="w-9 h-9 rounded-full bg-brand-100 flex items-center justify-center text-sm font-semibold text-brand-600 shrink-0">
-            {{ mb_substr($post->user->name ?? '?', 0, 1) }}
-          </div>
+          @if ($post->user?->avatar_url)
+            <img src="{{ $post->user->avatar_url }}" alt="{{ $post->user->name }}"
+                 class="w-9 h-9 rounded-full object-cover shrink-0">
+          @else
+            <div class="w-9 h-9 rounded-full bg-brand-100 flex items-center justify-center text-sm font-semibold text-brand-600 shrink-0">
+              {{ mb_substr($post->user->name ?? '?', 0, 1) }}
+            </div>
+          @endif
           <div class="leading-tight">
             <p class="text-sm font-semibold">{{ $post->user->name ?? '不明なユーザー' }}</p>
             <p class="text-xs text-ink/40">{{ $post->created_at?->diffForHumans() }}</p>

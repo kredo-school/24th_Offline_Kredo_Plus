@@ -56,7 +56,7 @@ class MainCategoryPageController extends Controller
             ->withCount(['likes', 'comments'])
             ->with([
                 'category',
-                'user:id,name',
+                'user:id,name,avatar',
                 'earthLocation',
                 'likes' => fn ($q) => $q->where('user_id', auth()->id()),
                 'bookmarks' => fn ($q) => $q->where('user_id', auth()->id()),
