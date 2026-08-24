@@ -65,7 +65,7 @@
         </nav>
     </aside>
 
-    <!-- 2. 右側：メインコンテンツエリア（切り替え表示領域） -->
+    <!-- 2. 右側：メインコンテンツエリア -->
     <main class="flex-1 p-8">
 
         <!-- ① ダッシュボードの中身 -->
@@ -84,49 +84,75 @@
 
             <!-- クイックサマリーカード（4列） -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <div class="flex items-center justify-between text-slate-400 mb-3">
-                        <span class="text-xs font-bold uppercase tracking-wider">総ユーザー数</span>
-                        <span class="p-2 bg-slate-100 rounded-xl text-lg">👥</span>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between text-slate-400 mb-3">
+                            <span class="text-xs font-bold uppercase tracking-wider">今日のログイン率</span>
+                            <span class="p-2 bg-indigo-50 rounded-xl text-lg">👥</span>
+                        </div>
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-3xl font-extrabold text-slate-800">{{ $todayLoginRate ?? '74.2' }}%</span>
+                            <span class="text-xs font-bold text-emerald-600">▲ +3.1%</span>
+                        </div>
                     </div>
-                    <div class="flex items-baseline gap-2">
-                        <span class="text-3xl font-extrabold text-slate-800">{{ number_format($totalUsers) }}</span>
-                        @if($newUsersThisWeek > 0)
-                            <span class="text-xs font-bold text-emerald-600">▲ +{{ $newUsersThisWeek }}</span>
-                        @endif
-                    </div>
-                </div>
-
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <div class="flex items-center justify-between text-slate-400 mb-3">
-                        <span class="text-xs font-bold uppercase tracking-wider">今日のシャワー情報投稿数</span>
-                        <span class="p-2 bg-sky-50 rounded-xl text-lg">🚿</span>
-                    </div>
-                    <div class="flex items-baseline gap-2">
-                        <span class="text-3xl font-extrabold text-slate-800">{{ number_format($todayShowerUpdates) }}</span>
-                        <span class="text-xs text-slate-400">回更新</span>
+                    <div class="pt-3 border-t border-slate-100 flex justify-end">
+                        <button @click="currentTab = 'users'" class="text-xs font-semibold text-brand-blue hover:underline flex items-center gap-1">
+                            詳細を見る <span>→</span>
+                        </button>
                     </div>
                 </div>
 
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <div class="flex items-center justify-between text-slate-400 mb-3">
-                        <span class="text-xs font-bold uppercase tracking-wider">今日の英語学習完了数</span>
-                        <span class="p-2 bg-amber-50 rounded-xl text-lg">📖</span>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between text-slate-400 mb-3">
+                            <span class="text-xs font-bold uppercase tracking-wider">今日の新規投稿</span>
+                            <span class="p-2 bg-sky-50 rounded-xl text-lg">💬</span>
+                        </div>
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-3xl font-extrabold text-slate-800">{{ number_format($todayPostsCount ?? 0) }}</span>
+                            <span class="text-xs text-slate-400">件投稿</span>
+                        </div>
                     </div>
-                    <div class="flex items-baseline gap-2">
-                        <span class="text-3xl font-extrabold text-slate-800">{{ number_format($todayLessonsCompleted) }}</span>
-                        <span class="text-xs text-slate-400">レッスン完了</span>
+                    <div class="pt-3 border-t border-slate-100 flex justify-end">
+                        <button @click="currentTab = 'posts'" class="text-xs font-semibold text-brand-blue hover:underline flex items-center gap-1">
+                            詳細を見る <span>→</span>
+                        </button>
                     </div>
                 </div>
 
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <div class="flex items-center justify-between text-slate-400 mb-3">
-                        <span class="text-xs font-bold uppercase tracking-wider">今日の留学情報更新数</span>
-                        <span class="p-2 bg-rose-50 rounded-xl text-lg">🌴</span>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between text-slate-400 mb-3">
+                            <span class="text-xs font-bold uppercase tracking-wider">今日の英語学習完了数</span>
+                            <span class="p-2 bg-amber-50 rounded-xl text-lg">📖</span>
+                        </div>
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-3xl font-extrabold text-slate-800">{{ number_format($todayLessonsCompleted ?? 0) }}</span>
+                            <span class="text-xs text-slate-400">レッスン完了</span>
+                        </div>
                     </div>
-                    <div class="flex items-baseline gap-2">
-                        <span class="text-3xl font-extrabold text-slate-800">{{ number_format($todayInfoUpdates) }}</span>
-                        <span class="text-xs text-slate-400">件更新</span>
+                    <div class="pt-3 border-t border-slate-100 flex justify-end">
+                        <button @click="currentTab = 'analytics'" class="text-xs font-semibold text-brand-blue hover:underline flex items-center gap-1">
+                            詳細を見る <span>→</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between text-slate-400 mb-3">
+                            <span class="text-xs font-bold uppercase tracking-wider">今日の留学情報更新数</span>
+                            <span class="p-2 bg-rose-50 rounded-xl text-lg">🌴</span>
+                        </div>
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span class="text-3xl font-extrabold text-slate-800">{{ number_format($todayInfoUpdates ?? 0) }}</span>
+                            <span class="text-xs text-slate-400">件更新</span>
+                        </div>
+                    </div>
+                    <div class="pt-3 border-t border-slate-100 flex justify-end">
+                        <button @click="currentTab = 'notice'" class="text-xs font-semibold text-brand-blue hover:underline flex items-center gap-1">
+                            詳細を見る <span>→</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -135,38 +161,19 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-2 space-y-6">
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                            <span>🚿</span> 寮シャワー使用状況サマリー
-                        </h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                            <div class="p-4 bg-sky-50 rounded-xl border border-sky-100 flex justify-between items-center">
-                                <div>
-                                    <p class="text-xs font-bold text-sky-600">男子寮</p>
-                                    <p class="text-lg font-bold text-slate-800 mt-0.5">{{ $maleFull ? '満室' : '空きあり' }}</p>
-                                </div>
-                                <span class="px-2.5 py-1 {{ $maleFull ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700' }} text-xs font-bold rounded-full">
-                                    {{ $maleFull ? '混雑中' : '快適' }}
-                                </span>
-                            </div>
-                            <div class="p-4 bg-rose-50 rounded-xl border border-rose-100 flex justify-between items-center">
-                                <div>
-                                    <p class="text-xs font-bold text-rose-600">女子寮</p>
-                                    <p class="text-lg font-bold text-slate-800 mt-0.5">{{ $femaleFull ? '満室' : '空きあり' }}</p>
-                                </div>
-                                <span class="px-2.5 py-1 {{ $femaleFull ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700' }} text-xs font-bold rounded-full">
-                                    {{ $femaleFull ? '混雑中' : '快適' }}
-                                </span>
-                            </div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                                <span>🛠️</span> 寮設備・故障報告ステータス
+                            </h3>
+                            <a href="{{ route('admin.shower.malfunctions.index') }}" class="text-xs font-semibold text-brand-blue hover:underline">詳細・履歴を見る →</a>
                         </div>
 
-                        {{-- ↓ここから故障報告の情報 --}}
-                        <div class="pt-4 border-t border-slate-100">
-                            <div class="flex items-center justify-between mb-2">
-                                <p class="text-xs font-bold text-slate-700">⚠️ 故障中のシャワー ({{ $brokenShowers->count() }}件)</p>
-                                <a href="{{ route('admin.shower.malfunctions.index') }}" class="text-xs font-semibold text-brand-blue hover:underline">詳細・履歴を見る →</a>
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <p class="text-xs font-bold text-slate-700">⚠️ 現在対応中の故障報告 ({{ isset($brokenShowers) ? $brokenShowers->count() : 0 }}件)</p>
                             </div>
 
-                            @forelse ($brokenShowers as $report)
+                            @forelse ($brokenShowers ?? [] as $report)
                                 <div class="flex items-center justify-between p-3 bg-amber-50 rounded-xl border border-amber-100 text-xs mb-2">
                                     <div>
                                         <span class="font-bold text-slate-800">
@@ -185,7 +192,9 @@
                                     </form>
                                 </div>
                             @empty
-                                <p class="text-xs text-slate-400">現在、故障中のシャワーはありません。</p>
+                                <div class="p-4 bg-slate-50 rounded-xl text-center">
+                                    <p class="text-xs text-slate-500">現在、故障や修繕が必要な設備報告はありません。</p>
+                                </div>
                             @endforelse
                         </div>
                     </div>
@@ -313,7 +322,6 @@
                 }
             ]
         }">
-            
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
                     <h2 class="text-2xl font-bold text-slate-800">ユーザー管理</h2>
@@ -525,10 +533,9 @@
 
                 </div>
             </div>
-
         </div>
 
-        <!-- ⑥ アカウント作成の中身 -->
+        <!-- ③ アカウント作成の中身 -->
         <div x-show="currentTab === 'accounts'" x-cloak>
             <div class="mb-8">
                 <h2 class="text-2xl font-bold text-slate-800">アカウント作成</h2>
@@ -582,7 +589,7 @@
             </div>
         </div>
 
-        <!-- ③ 留学情報管理の中身(myu担当。メイン/サブカテゴリーの追加・編集) -->
+        <!-- ④ 留学情報管理の中身(myu担当。メイン/サブカテゴリーの追加・編集) -->
         <div x-show="currentTab === 'posts'" x-cloak x-data="{
             mode: '{{ $categoryFormMode }}',
             mainCategories: {{ Illuminate\Support\Js::from($adminMainCategories) }},
@@ -903,279 +910,380 @@
                 </form>
             </div>
         </div>
-
-        <!-- ④ お知らせ送信の中身 -->
-        <div x-show="currentTab === 'notice'" x-cloak x-data="{
-            title: '',
+    <!-- ⑤ お知らせ送信の中身 -->
+<div x-show="currentTab === 'notice'" x-cloak x-data="{
+    isModalOpen: false,
+    title: '',
+    category: '重要',
+    content: '',
+    isSending: false,
+    sentSuccess: false,
+    sentHistory: [
+        {
+            id: 1,
+            title: '【重要】週末の寮内Wi-Fiメンテナンスのお知らせ',
             category: '重要',
-            target: 'all',
-            content: '',
-            sendPush: true,
-            isSending: false,
-            sentSuccess: false,
-            sentHistory: [
-                {
-                    id: 1,
-                    title: '【重要】週末の寮内Wi-Fiメンテナンスのお知らせ',
-                    category: '重要',
-                    target: '全員',
-                    sent_at: '2026/07/20 10:00',
-                    content: '今週末の土曜日 深夜2:00〜5:00にかけて、寮内ネットワーク機器の定期メンテナンスを行います。期間中はWi-Fiが一時的に切断されますのでご注意ください。',
-                    push_sent: true
-                },
-                {
-                    id: 2,
-                    title: '今週金曜日にウェルカムパーティを開催します🎉',
-                    category: 'イベント',
-                    target: '全員',
-                    sent_at: '2026/07/15 17:30',
-                    content: '新入生を歓迎する夕食交流会をラウンジで開催します！持ち寄り大歓迎です。みんなで楽しみましょう！',
-                    push_sent: true
-                }
-            ],
-            sendNotice() {
-                if (!this.title.trim() || !this.content.trim()) return;
-                this.isSending = true;
-                
-                setTimeout(() => {
-                    this.sentHistory.unshift({
-                        id: Date.now(),
-                        title: this.title,
-                        category: this.category,
-                        target: this.target === 'all' ? '全員' : (this.target === 'male_dorm' ? '男子寮生のみ' : '女子寮生のみ'),
-                        sent_at: 'たった今',
-                        content: this.content,
-                        push_sent: this.sendPush
-                    });
+            target: '全員',
+            sent_at: '2026/07/20 10:00',
+            content: '今週末の土曜日 深夜2:00〜5:00にかけて、寮内ネットワーク機器の定期メンテナンスを行います。期間中はWi-Fiが一時的に切断されますのでご注意ください。'
+        },
+        {
+            id: 2,
+            title: '今週金曜日にウェルカムパーティを開催します🎉',
+            category: 'イベント',
+            target: '全員',
+            sent_at: '2026/07/15 17:30',
+            content: '新入生を歓迎する夕食交流会をラウンジで開催します！持ち寄り大歓迎です。みんなで楽しみましょう！'
+        }
+    ],
+    sendNotice() {
+        if (!this.title.trim() || !this.content.trim()) return;
+        this.isSending = true;
+        
+        setTimeout(() => {
+            this.sentHistory.unshift({
+                id: Date.now(),
+                title: this.title,
+                category: this.category,
+                target: '全員',
+                sent_at: 'たった今',
+                content: this.content
+            });
 
-                    this.isSending = false;
-                    this.sentSuccess = true;
+            this.isSending = false;
+            this.sentSuccess = true;
 
-                    this.title = '';
-                    this.content = '';
+            this.title = '';
+            this.content = '';
 
-                    setTimeout(() => {
-                        this.sentSuccess = false;
-                    }, 4000);
-                }, 800);
-            }
-        }">
-            
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold text-slate-800">お知らせ送信機能</h2>
-                <p class="text-sm text-slate-500 mt-1">留学生のアプリ内通知やプッシュ通知へ、全体・対象別のお知らせを一斉配信します。</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                
-                <div class="lg:col-span-7 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
-                    <h3 class="font-bold text-slate-800 text-base flex items-center gap-2 border-b border-slate-100 pb-4">
-                        <span>✏️</span> お知らせの新規作成
-                    </h3>
-
-                    <template x-if="sentSuccess">
-                        <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-3 text-emerald-800 text-xs font-bold animate-pulse">
-                            <span class="text-lg">🎉</span>
-                            <span>お知らせの配信が完了しました！留学生のアプリへ正常に通知されました。</span>
-                        </div>
-                    </template>
-
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">お知らせタイトル <span class="text-rose-500">*</span></label>
-                            <input type="text" x-model="title" placeholder="例: 【重要】週末の寮内Wi-Fiメンテナンスについて"
-                                   class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition">
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1.5">配信カテゴリ</label>
-                                <select x-model="category" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-blue/20">
-                                    <option value="重要">🚨 重要なお知らせ</option>
-                                    <option value="イベント">🎉 イベント・交流会</option>
-                                    <option value="生活">🏠 寮・生活情報</option>
-                                    <option value="学習">📖 英語学習</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1.5">配信対象</label>
-                                <select x-model="target" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-blue/20">
-                                    <option value="all">👥 ユーザー全員 (全留学生)</option>
-                                    <option value="male_dorm">👨 男子寮生のみ</option>
-                                    <option value="female_dorm">👩 女子寮生のみ</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">お知らせ本文 <span class="text-rose-500">*</span></label>
-                            <textarea x-model="content" rows="6" placeholder="配信したい内容の詳細を入力してください..."
-                                      class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition resize-none"></textarea>
-                        </div>
-
-                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="text-base">🔔</span>
-                                <div>
-                                    <p class="text-xs font-bold text-slate-800">スマホへの即時プッシュ通知</p>
-                                    <p class="text-[11px] text-slate-400">端末の通知センターへポップアップを配信します</p>
-                                </div>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" x-model="sendPush" class="sr-only peer">
-                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-blue"></div>
-                            </label>
-                        </div>
-
-                        <div class="pt-2">
-                            <button @click="sendNotice()" 
-                                    :disabled="!title.trim() || !content.trim() || isSending"
-                                    :class="title.trim() && content.trim() && !isSending ? 'bg-slate-900 hover:bg-slate-800 text-white shadow-md' : 'bg-slate-200 text-slate-400 cursor-not-allowed'"
-                                    class="w-full py-3 px-6 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
-                                <template x-if="isSending">
-                                    <span class="inline-block animate-spin">🌀</span>
-                                </template>
-                                <span x-text="isSending ? '配信中...' : 'お知らせを一斉配信する 📢'"></span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-5 space-y-6">
-                    <div class="bg-slate-900 p-5 rounded-3xl shadow-lg border border-slate-800 text-white space-y-3">
-                        <div class="flex items-center justify-between text-[11px] text-slate-400 border-b border-slate-800 pb-2">
-                            <span class="font-bold flex items-center gap-1">📱 アプリ内表示イメージ</span>
-                            <span>プレビュー</span>
-                        </div>
-
-                        <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 space-y-2">
-                            <div class="flex items-center justify-between">
-                                <span :class="{
-                                    'bg-rose-500/20 text-rose-300 border-rose-500/30': category === '重要',
-                                    'bg-amber-500/20 text-amber-300 border-amber-500/30': category === 'イベント',
-                                    'bg-sky-500/20 text-sky-300 border-sky-500/30': category === '生活',
-                                    'bg-emerald-500/20 text-emerald-300 border-emerald-500/30': category === '学習'
-                                }" class="px-2 py-0.5 border text-[10px] font-bold rounded-md" x-text="category"></span>
-
-                                <span class="text-[10px] text-slate-400">たった今</span>
-                            </div>
-
-                            <h4 class="font-bold text-sm text-slate-100 leading-snug" x-text="title.trim() ? title : '（タイトルがここに表示されます）'"></h4>
-                            <p class="text-xs text-slate-300 line-clamp-3 leading-relaxed" x-text="content.trim() ? content : '（本文がここに表示されます）'"></p>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <h3 class="font-bold text-slate-800 text-sm mb-4 flex items-center gap-2">
-                            <span>📜</span> 最近の配信履歴
-                        </h3>
-
-                        <div class="space-y-3 max-h-72 overflow-y-auto pr-1">
-                            <template x-for="item in sentHistory" :key="item.id">
-                                <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs space-y-1.5">
-                                    <div class="flex items-center justify-between">
-                                        <span class="px-2 py-0.5 bg-slate-200 text-slate-700 text-[10px] font-bold rounded" x-text="item.category"></span>
-                                        <span class="text-[11px] text-slate-400" x-text="item.sent_at"></span>
-                                    </div>
-                                    <p class="font-bold text-slate-800 leading-snug" x-text="item.title"></p>
-                                    <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1">
-                                        <span x-text="'対象: ' + item.target"></span>
-                                        <template x-if="item.push_sent">
-                                            <span class="text-sky-600 font-bold flex items-center gap-0.5">🔔 プッシュ済</span>
-                                        </template>
-                                    </div>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
+            setTimeout(() => {
+                this.sentSuccess = false;
+                this.isModalOpen = false;
+            }, 1200);
+        }, 800);
+    }
+}">
+    <!-- ヘッダー＆新規作成ボタン -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+            <h2 class="text-2xl font-bold text-slate-800">お知らせ管理</h2>
+            <p class="text-sm text-slate-500 mt-1">留学生のアプリ内通知へ一斉配信した履歴の確認や新規送信を行います。</p>
         </div>
+        <button @click="isModalOpen = true; sentSuccess = false;" 
+                class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition shadow-sm flex items-center justify-center gap-2 shrink-0 self-start sm:self-auto">
+            <span>✏️</span> お知らせを新規作成
+        </button>
+    </div>
 
-        <!-- ⑤ サービス使用状況分析の中身 -->
-        <div x-show="currentTab === 'analytics'" x-cloak x-data="{ range: 'month', subTab: 'all' }">
+    <!-- メイン表示：最近の配信履歴 -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+        <h3 class="font-bold text-slate-800 text-base flex items-center gap-2 border-b border-slate-100 pb-4">
+            <span>📜</span> 最近の配信履歴
+        </h3>
+
+        <div class="space-y-3">
+            <template x-for="item in sentHistory" :key="item.id">
+                <div class="p-4 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-200/80 transition space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-1 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg" x-text="item.category"></span>
+                        <span class="text-xs text-slate-400" x-text="item.sent_at"></span>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-sm" x-text="item.title"></h4>
+                    <p class="text-xs text-slate-600 whitespace-pre-line leading-relaxed" x-text="item.content"></p>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- 新規作成モーダル -->
+    <div x-show="isModalOpen" x-cloak 
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+        
+        <div @click.outside="if(!isSending) isModalOpen = false" 
+             class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 space-y-5">
             
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                    <span>✏️</span> お知らせの新規作成
+                </h3>
+                <button @click="isModalOpen = false" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">✕</button>
+            </div>
+
+            <template x-if="sentSuccess">
+                <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-3 text-emerald-800 text-xs font-bold animate-pulse">
+                    <span class="text-lg">🎉</span>
+                    <span>お知らせの配信が完了しました！</span>
+                </div>
+            </template>
+
+            <div class="space-y-4">
                 <div>
-                    <h2 class="text-2xl font-bold text-slate-800">サービス使用状況分析</h2>
-                    <p class="text-sm text-slate-500 mt-1">留学生の利用動向やKPIの推移を過去データと比較・分析します。</p>
-                </div>
-                
-                <div class="flex items-center gap-1 bg-slate-200/80 p-1 rounded-xl text-xs font-bold self-start sm:self-auto">
-                    <button @click="range = 'week'" 
-                            :class="range === 'week' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'"
-                            class="px-3 py-1.5 rounded-lg transition">今週（前週比）</button>
-                    <button @click="range = 'month'" 
-                            :class="range === 'month' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'"
-                            class="px-3 py-1.5 rounded-lg transition">今月（前月比）</button>
-                    <button @click="range = 'all'" 
-                            :class="range === 'all' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'"
-                            class="px-3 py-1.5 rounded-lg transition">全期間（推移）</button>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-                
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <div class="flex items-center justify-between text-slate-400 mb-2">
-                        <span class="text-xs font-bold uppercase tracking-wider">DAU (1日アクティブ)</span>
-                        <span class="p-2 bg-slate-100 rounded-xl text-base">👥</span>
-                    </div>
-                    <p class="text-3xl font-extrabold text-slate-800">64 <span class="text-xs font-normal text-slate-500">人</span></p>
-                    <div class="mt-3 flex items-center gap-1.5 text-xs font-bold">
-                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-md">▲ +15%</span>
-                        <span class="text-slate-400 font-normal" x-text="range === 'week' ? '前週比' : (range === 'month' ? '前月比' : '昨期比')"></span>
-                    </div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">お知らせタイトル <span class="text-rose-500">*</span></label>
+                    <input type="text" x-model="title" placeholder="例: 【重要】週末の寮内Wi-Fiメンテナンスについて"
+                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition">
                 </div>
 
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <div class="flex items-center justify-between text-slate-400 mb-2">
-                        <span class="text-xs font-bold uppercase tracking-wider">MAU (月間アクティブ)</span>
-                        <span class="p-2 bg-sky-50 rounded-xl text-base">🗓️</span>
-                    </div>
-                    <p class="text-3xl font-extrabold text-slate-800">112 <span class="text-xs font-normal text-slate-500">人</span></p>
-                    <div class="mt-3 flex items-center gap-1.5 text-xs font-bold">
-                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-md">▲ +8%</span>
-                        <span class="text-slate-400 font-normal" x-text="range === 'week' ? '前週比' : (range === 'month' ? '前月比' : '昨期比')"></span>
-                    </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">配信カテゴリ</label>
+                    <select x-model="category" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-blue/20">
+                        <option value="重要">🚨 重要なお知らせ</option>
+                        <option value="イベント">🎉 イベント・交流会</option>
+                        <option value="生活">🏠 寮・生活情報</option>
+                        <option value="学習">📖 英語学習</option>
+                    </select>
                 </div>
 
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <div class="flex items-center justify-between text-slate-400 mb-2">
-                        <span class="text-xs font-bold uppercase tracking-wider">シャワー情報更新</span>
-                        <span class="p-2 bg-sky-50 rounded-xl text-base">🚿</span>
-                    </div>
-                    <p class="text-3xl font-extrabold text-slate-800">342 <span class="text-xs font-normal text-slate-500">回</span></p>
-                    <div class="mt-3 flex items-center gap-1.5 text-xs font-bold">
-                        <span class="px-2 py-0.5 bg-rose-100 text-rose-700 rounded-md">▼ -5%</span>
-                        <span class="text-slate-400 font-normal" x-text="range === 'week' ? '前週比' : (range === 'month' ? '前月比' : '昨期比')"></span>
-                    </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">お知らせ本文 <span class="text-rose-500">*</span></label>
+                    <textarea x-model="content" rows="6" placeholder="配信したい内容の詳細を入力してください..."
+                              class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition resize-none"></textarea>
                 </div>
 
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <div class="flex items-center justify-between text-slate-400 mb-2">
-                        <span class="text-xs font-bold uppercase tracking-wider">学習コンテンツ完了</span>
-                        <span class="p-2 bg-amber-50 rounded-xl text-base">📖</span>
-                    </div>
-                    <p class="text-3xl font-extrabold text-slate-800">1,240 <span class="text-xs font-normal text-slate-500">回</span></p>
-                    <div class="mt-3 flex items-center gap-1.5 text-xs font-bold">
-                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-md">▲ +24%</span>
-                        <span class="text-slate-400 font-normal" x-text="range === 'week' ? '前週比' : (range === 'month' ? '前月比' : '昨期比')"></span>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h3 class="font-bold text-slate-800 mb-4">アクティブユーザー推移グラフ</h3>
-                <div class="h-64 bg-slate-50 rounded-xl border border-dashed border-slate-300 flex items-center justify-center text-slate-400 text-xs font-bold">
-                    📊 チャート表示エリア（Chart.js / ApexCharts 連動可能）
+                <div class="pt-2 flex items-center justify-end gap-3">
+                    <button @click="isModalOpen = false" 
+                            type="button" 
+                            class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition">
+                        キャンセル
+                    </button>
+                    <button @click="sendNotice()" 
+                            :disabled="!title.trim() || !content.trim() || isSending"
+                            :class="title.trim() && content.trim() && !isSending ? 'bg-slate-900 hover:bg-slate-800 text-white shadow-md' : 'bg-slate-200 text-slate-400 cursor-not-allowed'"
+                            class="px-6 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                        <template x-if="isSending">
+                            <span class="inline-block animate-spin">🌀</span>
+                        </template>
+                        <span x-text="isSending ? '配信中...' : 'お知らせを一斉配信する 📢'"></span>
+                    </button>
                 </div>
             </div>
 
+        </div>
+    </div>
+</div>
+    
+
+    <!-- 新規作成モーダル -->
+    <div x-show="isModalOpen" x-cloak 
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+        
+        <div @click.outside="if(!isSending) isModalOpen = false" 
+             class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 space-y-5">
+            
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                    <span>✏️</span> お知らせの新規作成
+                </h3>
+                <button @click="isModalOpen = false" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">✕</button>
+            </div>
+
+            <template x-if="sentSuccess">
+                <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-3 text-emerald-800 text-xs font-bold animate-pulse">
+                    <span class="text-lg">🎉</span>
+                    <span>お知らせの配信が完了しました！</span>
+                </div>
+            </template>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">お知らせタイトル <span class="text-rose-500">*</span></label>
+                    <input type="text" x-model="title" placeholder="例: 【重要】週末の寮内Wi-Fiメンテナンスについて"
+                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">配信カテゴリ</label>
+                    <select x-model="category" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-blue/20">
+                        <option value="重要">🚨 重要なお知らせ</option>
+                        <option value="イベント">🎉 イベント・交流会</option>
+                        <option value="生活">🏠 寮・生活情報</option>
+                        <option value="学習">📖 英語学習</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">お知らせ本文 <span class="text-rose-500">*</span></label>
+                    <textarea x-model="content" rows="6" placeholder="配信したい内容の詳細を入力してください..."
+                              class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition resize-none"></textarea>
+                </div>
+
+                <div class="pt-2 flex items-center justify-end gap-3">
+                    <button @click="isModalOpen = false" 
+                            type="button" 
+                            class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition">
+                        キャンセル
+                    </button>
+                    <button @click="sendNotice()" 
+                            :disabled="!title.trim() || !content.trim() || isSending"
+                            :class="title.trim() && content.trim() && !isSending ? 'bg-slate-900 hover:bg-slate-800 text-white shadow-md' : 'bg-slate-200 text-slate-400 cursor-not-allowed'"
+                            class="px-6 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                        <template x-if="isSending">
+                            <span class="inline-block animate-spin">🌀</span>
+                        </template>
+                        <span x-text="isSending ? '配信中...' : 'お知らせを一斉配信する 📢'"></span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+        <!-- ⑥ サービス使用状況分析の中身 -->
+        <div x-show="currentTab === 'analytics'" x-cloak class="space-y-10">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-800">サービス使用状況分析</h2>
+                <p class="text-sm text-slate-500 mt-1">週次・月次・年次の各期間におけるアクティブ率、英語学習機能の使用率、投稿数などの主要指標を確認します。</p>
+            </div>
+
+            <!-- 1. 週次データ表示 -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                    <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> 週間サマリー (過去7日間)
+                    </h3>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+                            <span>週間アクティブ率 (WAU)</span>
+                            <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">+1.8%</span>
+                        </div>
+                        <p class="text-2xl font-extrabold text-slate-800">71.2 %</p>
+                        <p class="text-[11px] text-slate-400">今週アクティブなユーザー: 91 名</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2 border-l-4 border-l-emerald-500">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+                            <span>英語学習機能の週間使用率</span>
+                            <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">+3.5%</span>
+                        </div>
+                        <p class="text-2xl font-extrabold text-slate-800">54.0 %</p>
+                        <p class="text-[11px] text-slate-400">WAUのうち 49 名が今週利用</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+                            <span>今週の投稿数</span>
+                            <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">+5件</span>
+                        </div>
+                        <p class="text-2xl font-extrabold text-slate-800">34 件</p>
+                        <p class="text-[11px] text-slate-400">前週比 +17% 増</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+                            <span>平均修繕対応時間</span>
+                            <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">-0.8h</span>
+                        </div>
+                        <p class="text-2xl font-extrabold text-slate-800">3.2 時間</p>
+                        <p class="text-[11px] text-slate-400">今週発生した報告: 4 件</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. 月間データ表示 -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                    <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> 月間サマリー (過去30日間)
+                    </h3>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+                            <span>月間アクティブ率 (MAU)</span>
+                            <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">+4.2%</span>
+                        </div>
+                        <p class="text-2xl font-extrabold text-slate-800">88.5 %</p>
+                        <p class="text-[11px] text-slate-400">登録者 128 名中 113 名が利用</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2 border-l-4 border-l-emerald-500">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+                            <span>英語学習機能の月間使用率</span>
+                            <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">+8.1%</span>
+                        </div>
+                        <p class="text-2xl font-extrabold text-slate-800">62.4 %</p>
+                        <p class="text-[11px] text-slate-400">月間アクティブユーザーの 71 名が活用</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+                            <span>今月の月間投稿数</span>
+                            <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">+18件</span>
+                        </div>
+                        <p class="text-2xl font-extrabold text-slate-800">142 件</p>
+                        <p class="text-[11px] text-slate-400">口コミ・質問投稿の合計</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+                            <span>平均修繕対応時間</span>
+                            <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">-1.5h</span>
+                        </div>
+                        <p class="text-2xl font-extrabold text-slate-800">4.8 時間</p>
+                        <p class="text-[11px] text-slate-400">故障報告から完了処理まで</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. 年次データ表示 -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                    <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span> 年次サマリー (過去12ヶ月)
+                    </h3>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+                            <span>年間定着率 (Retention)</span>
+                            <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">+11.5%</span>
+                        </div>
+                        <p class="text-2xl font-extrabold text-slate-800">92.0 %</p>
+                        <p class="text-[11px] text-slate-400">年間累計登録者: 450 名</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2 border-l-4 border-l-emerald-500">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+                            <span>英語学習機能の年間平均使用率</span>
+                            <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">+14.2%</span>
+                        </div>
+                        <p class="text-2xl font-extrabold text-slate-800">58.8 %</p>
+                        <p class="text-[11px] text-slate-400">年間平均利用者数: 264 名</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+                            <span>年間累計投稿数</span>
+                            <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">+320件</span>
+                        </div>
+                        <p class="text-2xl font-extrabold text-slate-800">1,680 件</p>
+                        <p class="text-[11px] text-slate-400">月平均 140 件</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+                            <span>年間平均修繕対応時間</span>
+                            <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">-2.1h</span>
+                        </div>
+                        <p class="text-2xl font-extrabold text-slate-800">5.1 時間</p>
+                        <p class="text-[11px] text-slate-400">年間総件数: 48 件</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- ⑦ 目安箱の中身 -->
@@ -1185,6 +1293,7 @@
             x-data="{
                 statusFilter: 'all',
                 items: [],
+                statuses: {{ Js::from(\App\Models\Suggestion::STATUSES) }},
                 editingNote: {},
 
                 get filteredItems() {
@@ -1193,26 +1302,34 @@
                 },
 
                 async load() {
-                    const response = await fetch('{{ route('admin.suggestions.data') }}');
-                    const data = await response.json();
-                    this.items = data.items;
-                    data.items.forEach(item => { this.editingNote[item.id] = item.admin_note ?? ''; });
+                    try {
+                        const response = await fetch('{{ route('admin.suggestions.data') }}');
+                        const data = await response.json();
+                        this.items = data.items;
+                        data.items.forEach(item => { this.editingNote[item.id] = item.admin_note ?? ''; });
+                    } catch (e) {
+                        console.error('Failed to load suggestions:', e);
+                    }
                 },
 
                 async updateStatus(item, newStatus) {
-                    const response = await fetch(`/admin/suggestions/${item.id}`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-                            'Accept': 'application/json',
-                        },
-                        body: JSON.stringify({ status: newStatus, admin_note: this.editingNote[item.id] }),
-                    });
+                    try {
+                        const response = await fetch(`/admin/suggestions/${item.id}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content,
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({ status: newStatus, admin_note: this.editingNote[item.id] }),
+                        });
 
-                    if (response.ok) {
-                        item.status = newStatus;
-                        item.status_label = {{ Js::from(\App\Models\Suggestion::STATUSES) }}[newStatus];
+                        if (response.ok) {
+                            item.status = newStatus;
+                            item.status_label = this.statuses[newStatus];
+                        }
+                    } catch (e) {
+                        console.error('Failed to update status:', e);
                     }
                 },
             }"
