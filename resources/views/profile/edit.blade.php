@@ -66,7 +66,84 @@
             </div>
         </div>
 
-        <!-- 2. マイカレンダー（卒業予定日・課題/イベントメモ） -->
+        <!-- 2. 留学情報の投稿一覧（投稿した投稿／お気に入り／保存） -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-card border border-slate-100 space-y-6">
+            <div class="flex items-center gap-2 text-brand-blue font-extrabold text-lg">
+                <span class="material-symbols-outlined">grid_view</span>
+                留学情報の投稿
+            </div>
+
+            <!-- タブ切り替え -->
+            <div class="flex gap-2 bg-slate-50 p-1 rounded-xl max-w-lg">
+                @foreach ([
+                    'mine' => '投稿した投稿',
+                    'liked' => 'お気に入り',
+                    'saved' => '保存',
+                ] as $tabKey => $tabLabel)
+                    <a href="{{ route('profile.edit', array_filter(['post_tab' => $tabKey, 'month' => $calendar['month']->format('Y-m')])) }}"
+                       class="flex-1 text-center py-2 text-xs font-bold rounded-lg transition-all {{ $postTab === $tabKey ? 'bg-white shadow-sm text-brand-blue' : 'text-slate-500 hover:text-slate-700' }}">
+                        {{ $tabLabel }}
+                        <span class="{{ $postTab === $tabKey ? 'text-slate-400' : 'text-slate-400' }}">({{ $postCounts[$tabKey] }})</span>
+                    </a>
+                @endforeach
+            </div>
+
+            <!-- 投稿グリッド -->
+            @if ($posts->isEmpty())
+                <div class="flex flex-col items-center justify-center text-center py-10 gap-2">
+                    <span class="material-symbols-outlined text-slate-300 !text-4xl">
+                        @if ($postTab === 'liked') favorite
+                        @elseif ($postTab === 'saved') bookmark
+                        @else post_add
+                        @endif
+                    </span>
+                    <p class="text-sm text-slate-400">
+                        @switch($postTab)
+                            @case('liked')
+                                まだいいねした投稿がありません。
+                                @break
+                            @case('saved')
+                                まだ保存した投稿がありません。
+                                @break
+                            @default
+                                まだ投稿がありません。
+                        @endswitch
+                    </p>
+                </div>
+            @else
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    @foreach ($posts as $post)
+                        <a href="{{ route('information.show', $post) }}"
+                           class="block rounded-2xl overflow-hidden border border-slate-100 hover:shadow-md transition-all bg-white">
+                            <div class="relative h-24 bg-slate-100">
+                                <img src="{{ $post->image_url }}" alt="{{ $post->title }}" class="w-full h-full object-cover">
+                                @if ($post->category)
+                                    <span class="absolute top-1.5 left-1.5 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                          style="background-color: {{ $post->category->color() }}">
+                                        {{ $post->category->name }}
+                                    </span>
+                                @endif
+                            </div>
+                            <div class="p-2.5">
+                                <p class="text-xs font-bold text-slate-700 truncate">{{ $post->title }}</p>
+                                <div class="flex items-center justify-between mt-1.5">
+                                    <span class="text-[11px] text-slate-400 truncate">{{ $post->user->name ?? '不明なユーザー' }}</span>
+                                    <span class="flex items-center gap-2 shrink-0 text-slate-400">
+                                        <span class="flex items-center gap-0.5 text-[11px]">
+                                            <i class="{{ $post->liked_by_me ? 'fa-solid' : 'fa-regular' }} fa-heart text-[#CE7043] text-[11px]"></i>
+                                            {{ $post->likes_count }}
+                                        </span>
+                                        <i class="{{ $post->bookmarked_by_me ? 'fa-solid' : 'fa-regular' }} fa-bookmark text-[11px]"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+
+        <!-- 3. マイカレンダー（卒業予定日・課題/イベントメモ） -->
         <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-card border border-slate-100 space-y-6">
             <div class="flex items-center gap-2 text-brand-blue font-extrabold text-lg">
                 <span class="material-symbols-outlined">calendar_month</span>

@@ -195,4 +195,22 @@ class User extends Authenticatable
     {
         return $this->hasMany(CalendarNote::class);
     }
+
+    // 留学情報: 自分が投稿した投稿
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    // 留学情報: 自分がいいねした投稿（Likeレコード）
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    // 留学情報: 自分が保存した投稿（Bookmarkレコード）
+    public function bookmarks()
+    {
+        return $this->hasMany(Bookmark::class);
+    }
 }
