@@ -205,21 +205,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->whereIn('slug', ['egg', 'st-nino'])
         ->name('other.secret');
 
-    // 5個目以降、アドミンが新しく追加したメインカテゴリー用の汎用ページ(ログイン必須)。
-    // 上の4つ(carinderia/restaurant-cafe/travel/other)より必ず後ろに書くこと。
-    // (先に書くとURLが食われて、上の4ページが404になってしまう)
-    Route::get('/information/{key}', [MainCategoryPageController::class, 'index'])
-        ->name('information.dynamic')
-        ->where('key', '(?!post$|posts$|carinderia$|restaurant-cafe$|travel$|other$|\d+(?:/|$))[a-z0-9\-]+');
-
-    // 5個目以降のメインカテゴリーの、サブカテゴリー単位の絞り込みページ(URL: /information/{key}/{slug})。
-    // travel.show(/information/travel/{slug})の仕組みと同じもの。
-    Route::get('/information/{key}/{slug}', [MainCategoryPageController::class, 'show'])
-        ->name('information.dynamic.show')
-        ->where('key', '(?!post$|posts$|carinderia$|restaurant-cafe$|travel$|other$|\d+(?:/|$))[a-z0-9\-]+')
-        ->where('slug', '[a-z0-9\-]+');
-
     // Carinderia (restaurant-cafeと同じパターン)
+    // ※ 下の「5個目以降の汎用ページ」用ルート(/information/{key}, /information/{key}/{slug})より
+    //   必ず前に書くこと。/information/{post} のような数字1〜2セグメントのURLは
+    //   {key}/{key}/{slug} のパターンにもマッチしてしまうため、後ろに書くと
+    //   投稿詳細・編集ページが汎用ページ側に奪われて404になる。
     Route::prefix('information/carinderia')->name('carinderia.')->group(function () {
         Route::get('/{post}/edit', [CarinderiaController::class, 'edit'])->name('edit');
         Route::put('/{post}', [CarinderiaController::class, 'update'])->name('update');
@@ -237,6 +227,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('information/travel')->name('travel.')->group(function () {
         Route::get('/post/{post}', [TravelController::class, 'showPost'])->name('post.show');
     });
+
+    // 5個目以降、アドミンが新しく追加したメインカテゴリー用の汎用ページ(ログイン必須)。
+    // 上の4つ(carinderia/restaurant-cafe/travel/other)より必ず後ろに書くこと。
+    // (先に書くとURLが食われて、上の4ページが404になってしまう)
+    Route::get('/information/{key}', [MainCategoryPageController::class, 'index'])
+        ->name('information.dynamic')
+        ->where('key', '(?!post$|posts$|carinderia$|restaurant-cafe$|travel$|other$|\d+(?:/|$))[a-z0-9\-]+');
+
+    // 5個目以降のメインカテゴリーの、サブカテゴリー単位の絞り込みページ(URL: /information/{key}/{slug})。
+    // travel.show(/information/travel/{slug})の仕組みと同じもの。
+    Route::get('/information/{key}/{slug}', [MainCategoryPageController::class, 'show'])
+        ->name('information.dynamic.show')
+        ->where('key', '(?!post$|posts$|carinderia$|restaurant-cafe$|travel$|other$|\d+(?:/|$))[a-z0-9\-]+')
+        ->where('slug', '[a-z0-9\-]+');
 
     // いいね・コメント・お気に入り
     Route::prefix('information/posts')->name('posts.')->group(function () {

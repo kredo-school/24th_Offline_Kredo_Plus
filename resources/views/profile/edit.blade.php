@@ -113,8 +113,8 @@
             @else
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                     @foreach ($posts as $post)
-                        <a href="{{ route('information.show', $post) }}"
-                           class="block rounded-2xl overflow-hidden border border-slate-100 hover:shadow-md transition-all bg-white">
+                        <a href="#" data-post-id="{{ $post->id }}" onclick="event.preventDefault(); openPostModal({{ $post->id }})"
+                           class="post-card block rounded-2xl overflow-hidden border border-slate-100 hover:shadow-md transition-all bg-white">
                             <div class="relative h-24 bg-slate-100">
                                 <img src="{{ $post->image_url }}" alt="{{ $post->title }}" class="w-full h-full object-cover">
                                 @if ($post->category)
@@ -129,11 +129,11 @@
                                 <div class="flex items-center justify-between mt-1.5">
                                     <span class="text-[11px] text-slate-400 truncate">{{ $post->user->name ?? '不明なユーザー' }}</span>
                                     <span class="flex items-center gap-2 shrink-0 text-slate-400">
-                                        <span class="flex items-center gap-0.5 text-[11px]">
+                                        <span class="post-card-like flex items-center gap-0.5 text-[11px]">
                                             <i class="{{ $post->liked_by_me ? 'fa-solid' : 'fa-regular' }} fa-heart text-[#CE7043] text-[11px]"></i>
-                                            {{ $post->likes_count }}
+                                            <span class="post-card-like-count">{{ $post->likes_count }}</span>
                                         </span>
-                                        <i class="{{ $post->bookmarked_by_me ? 'fa-solid' : 'fa-regular' }} fa-bookmark text-[11px]"></i>
+                                        <i class="post-card-bookmark {{ $post->bookmarked_by_me ? 'fa-solid' : 'fa-regular' }} fa-bookmark text-[11px]"></i>
                                     </span>
                                 </div>
                             </div>
@@ -502,6 +502,339 @@
         @elseif ($errors->any())
             openProfileModal('info');
         @endif
+    });
+</script>
+
+<!-- 4. 投稿詳細ポップアップ（留学情報の一覧ページと同じモーダル） -->
+<div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+    <div class="modal-panel bg-white rounded-2xl w-full max-w-3xl overflow-hidden shadow-2xl opacity-0 translate-y-3 transition-all duration-200 flex flex-col md:flex-row md:h-[520px]">
+
+        <!-- 左: 写真(固定) -->
+        <div class="relative w-full md:w-1/2 h-64 md:h-full shrink-0">
+            <img id="modalImg" src="" class="w-full h-full object-cover" alt="">
+            <span id="modalTag" class="absolute top-3 left-3 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full" style="background:#2f5fdb"></span>
+            <span id="modalPrice" class="absolute bottom-3 right-3 bg-white/95 font-mono font-semibold text-sm px-2.5 py-1 rounded-lg"></span>
+            <button onclick="closePostModal()" class="md:hidden absolute top-3 right-3 bg-slate-900/50 hover:bg-slate-900/70 text-white w-7 h-7 rounded-full flex items-center justify-center" aria-label="閉じる">✕</button>
+        </div>
+
+        <!-- 右: ヘッダー + 説明 + アクション -->
+        <div class="w-full md:w-1/2 flex flex-col min-h-0">
+
+            <!-- ヘッダー: 投稿者 + 編集/削除ボタン -->
+            <div class="flex items-center justify-between gap-2 px-4 py-3 border-b border-slate-100 shrink-0">
+                <div class="flex items-center gap-2 min-w-0">
+                    <div id="modalAvatarWrap" class="shrink-0"></div>
+                    <div class="leading-tight min-w-0">
+                        <p id="modalName" class="text-sm font-semibold truncate"></p>
+                        <p id="modalTime" class="text-xs text-slate-400"></p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-1 shrink-0">
+                    <!-- 投稿主だけに表示される操作ボタン -->
+                    <div id="postOwnerActions" class="hidden items-center gap-1">
+                        <button id="postModalEditBtn" class="w-8 h-8 flex items-center justify-center rounded-full text-brand-blue hover:bg-sky-50 transition-colors active:scale-90" aria-label="編集">
+                            <i class="fa-solid fa-edit text-[15px]"></i>
+                        </button>
+                        <button id="postModalDeleteBtn" class="w-8 h-8 flex items-center justify-center rounded-full text-rose-600 hover:bg-rose-50 transition-colors active:scale-90" aria-label="削除">
+                            <i class="fa-solid fa-trash text-[14px]"></i>
+                        </button>
+                    </div>
+                    <button onclick="closePostModal()" class="hidden md:flex w-8 h-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors" aria-label="閉じる">
+                        <i class="fa-solid fa-xmark text-[16px]"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- スクロール領域: タイトル・説明・コメント一覧 -->
+            <div class="flex-1 overflow-y-auto px-4 py-3 min-h-0">
+                <h3 id="modalTitle" class="font-bold text-lg mb-1 text-slate-800"></h3>
+                <p id="modalDesc" class="text-sm text-slate-500 mb-4"></p>
+
+                <p class="text-xs font-mono tracking-[0.1em] text-slate-400 mb-2">COMMENTS</p>
+                <div id="postModalCommentList" class="space-y-3"></div>
+            </div>
+
+            <!-- アクションバー -->
+            <div class="px-4 pt-2 pb-1 border-t border-slate-100 shrink-0">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <button id="postModalLikeBtn" class="text-slate-700 hover:text-[#CE7043] transition-colors active:scale-90" aria-label="いいね">
+                            <i class="fa-regular fa-heart text-[22px]"></i>
+                        </button>
+                        <button onclick="document.getElementById('postModalCommentInput').focus()" class="text-slate-700 hover:text-brand-blue transition-colors active:scale-90" aria-label="コメント">
+                            <i class="fa-regular fa-comment text-[22px]"></i>
+                        </button>
+                        <button id="postModalSaveBtn" class="text-slate-700 hover:text-brand-blue transition-colors active:scale-90" aria-label="保存">
+                            <i class="fa-regular fa-bookmark text-[22px]"></i>
+                        </button>
+                    </div>
+                    <a id="postModalMapLink" href="#" target="_blank" class="text-slate-700 hover:text-brand-blue transition-colors active:scale-90" aria-label="マップで見る">
+                        <i class="fa-solid fa-globe text-[22px]"></i>
+                    </a>
+                </div>
+                <p id="postModalLikeCount" class="text-xs font-semibold mt-1.5 mb-2 text-slate-500"></p>
+            </div>
+
+            <!-- コメント投稿フォーム -->
+            <form id="postModalCommentForm" class="flex items-center gap-2 px-4 py-3 border-t border-slate-100 shrink-0">
+                <input type="text" id="postModalCommentInput" class="flex-1 border border-slate-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/30" placeholder="コメントを書く...">
+                <button type="submit" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-brand-blue text-white hover:bg-blue-600 transition-colors active:scale-90">
+                    <i class="fa-solid fa-paper-plane text-sm"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 削除用の隠しフォーム(投稿ごとにactionだけJSで差し替える) -->
+<form id="postDeleteForm" method="POST" class="hidden">
+    @csrf
+    @method('DELETE')
+</form>
+
+<script>
+    // ---- 「留学情報の投稿」タブに表示中の投稿データ(id => post) ----
+    const profilePosts = @json($posts->keyBy('id'));
+    const profileCurrentUserId = {{ auth()->id() ?? 'null' }};
+    const profileInfoRouteBase = @json(url('information'));
+    const profilePostsRouteBase = @json(url('information/posts'));
+    const profileCsrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    let currentPostModalItem = null;
+
+    function postInitials(name) {
+        return (name || '?').trim().charAt(0).toUpperCase();
+    }
+
+    function postAvatarHtml(user, sizeClass, textSizeClass) {
+        const name = user ? user.name : '不明なユーザー';
+        if (user && user.avatar_url) {
+            return `<img src="${user.avatar_url}" alt="${name}" class="${sizeClass} rounded-full object-cover shrink-0">`;
+        }
+        return `<div class="${sizeClass} rounded-full bg-brand-blue text-white font-bold flex items-center justify-center shrink-0 ${textSizeClass}">${postInitials(name)}</div>`;
+    }
+
+    function postMoney(v) {
+        return (v === null || v === undefined) ? '' : Math.trunc(v) + ' PHP';
+    }
+
+    function postTimeAgo(dateStr) {
+        if (!dateStr) return '';
+        const diffSec = Math.max(0, Math.floor((Date.now() - new Date(dateStr)) / 1000));
+        if (diffSec < 60) return 'たった今';
+        const diffMin = Math.floor(diffSec / 60);
+        if (diffMin < 60) return diffMin + '分前';
+        const diffHour = Math.floor(diffMin / 60);
+        if (diffHour < 24) return diffHour + '時間前';
+        const diffDay = Math.floor(diffHour / 24);
+        return diffDay + '日前';
+    }
+
+    function openPostModal(id) {
+        const it = profilePosts[id];
+        if (!it) return;
+        currentPostModalItem = it;
+
+        const tag = it.category ? it.category.name : '';
+        const userName = it.user ? it.user.name : '不明なユーザー';
+
+        document.getElementById('modalImg').src = it.image_url;
+        document.getElementById('modalTag').textContent = tag;
+        document.getElementById('modalPrice').textContent = postMoney(it.price);
+        document.getElementById('modalTitle').textContent = it.title;
+        document.getElementById('modalDesc').textContent = it.description ?? '';
+        document.getElementById('modalAvatarWrap').innerHTML = postAvatarHtml(it.user, 'w-8 h-8', 'text-xs');
+        document.getElementById('modalName').textContent = userName;
+        document.getElementById('modalTime').textContent = postTimeAgo(it.created_at);
+
+        updatePostLikeUI(it);
+        updatePostBookmarkUI(it);
+        renderPostModalComments(it);
+
+        document.getElementById('postModalMapLink').href =
+            `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                it.earth_location
+                    ? `${it.earth_location.latitude},${it.earth_location.longitude}`
+                    : it.title
+            )}`;
+
+        // 投稿主だけに編集・削除ボタンを表示
+        const isOwner = profileCurrentUserId !== null && it.user_id === profileCurrentUserId;
+        const ownerActions = document.getElementById('postOwnerActions');
+        ownerActions.classList.toggle('hidden', !isOwner);
+        ownerActions.classList.toggle('flex', isOwner);
+
+        document.getElementById('postModalEditBtn').onclick = () => {
+            window.location.href = `${profileInfoRouteBase}/${it.id}/edit`;
+        };
+        document.getElementById('postModalDeleteBtn').onclick = () => {
+            if (confirm(`「${it.title}」を削除しますか？この操作は取り消せません。`)) {
+                const form = document.getElementById('postDeleteForm');
+                form.action = `${profileInfoRouteBase}/${it.id}`;
+                form.submit();
+            }
+        };
+
+        const modal = document.getElementById('detailModal');
+        const panel = modal.querySelector('.modal-panel');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        requestAnimationFrame(() => {
+            panel.classList.remove('opacity-0', 'translate-y-3');
+        });
+    }
+
+    function closePostModal() {
+        const modal = document.getElementById('detailModal');
+        const panel = modal.querySelector('.modal-panel');
+        panel.classList.add('opacity-0', 'translate-y-3');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }, 200);
+    }
+
+    document.getElementById('detailModal').addEventListener('click', (e) => {
+        if (e.target.id === 'detailModal') closePostModal();
+    });
+
+    function updatePostLikeUI(it) {
+        const cardLike = document.querySelector(`.post-card[data-post-id="${it.id}"] .post-card-like`);
+        if (cardLike) {
+            const icon = cardLike.querySelector('i');
+            icon.classList.toggle('fa-solid', !!it.liked_by_me);
+            icon.classList.toggle('fa-regular', !it.liked_by_me);
+            cardLike.querySelector('.post-card-like-count').textContent = it.likes_count;
+        }
+        if (currentPostModalItem && currentPostModalItem.id === it.id) {
+            const modalIcon = document.querySelector('#postModalLikeBtn i');
+            modalIcon.className = (it.liked_by_me ? 'fa-solid' : 'fa-regular') + ' fa-heart text-[22px]' + (it.liked_by_me ? ' text-[#CE7043]' : '');
+            document.getElementById('postModalLikeCount').textContent = `${it.likes_count ?? 0}件のいいね`;
+        }
+    }
+
+    function updatePostBookmarkUI(it) {
+        const cardBookmark = document.querySelector(`.post-card[data-post-id="${it.id}"] .post-card-bookmark`);
+        if (cardBookmark) {
+            cardBookmark.classList.toggle('fa-solid', !!it.bookmarked_by_me);
+            cardBookmark.classList.toggle('fa-regular', !it.bookmarked_by_me);
+        }
+        if (currentPostModalItem && currentPostModalItem.id === it.id) {
+            const modalIcon = document.querySelector('#postModalSaveBtn i');
+            modalIcon.classList.toggle('fa-solid', !!it.bookmarked_by_me);
+            modalIcon.classList.toggle('fa-regular', !it.bookmarked_by_me);
+        }
+    }
+
+    document.getElementById('postModalLikeBtn').addEventListener('click', () => {
+        if (!currentPostModalItem) return;
+        if (profileCurrentUserId === null) { window.location.href = '{{ route('login') }}'; return; }
+
+        fetch(`${profilePostsRouteBase}/${currentPostModalItem.id}/like`, {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': profileCsrfToken, 'Accept': 'application/json' },
+        })
+            .then(r => r.json())
+            .then(data => {
+                currentPostModalItem.liked_by_me = data.liked;
+                currentPostModalItem.likes_count = data.likes_count;
+                updatePostLikeUI(currentPostModalItem);
+            })
+            .catch(() => alert('通信エラーが発生しました。もう一度お試しください。'));
+    });
+
+    document.getElementById('postModalSaveBtn').addEventListener('click', () => {
+        if (!currentPostModalItem) return;
+        if (profileCurrentUserId === null) { window.location.href = '{{ route('login') }}'; return; }
+
+        fetch(`${profilePostsRouteBase}/${currentPostModalItem.id}/bookmark`, {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': profileCsrfToken, 'Accept': 'application/json' },
+        })
+            .then(r => r.json())
+            .then(data => {
+                currentPostModalItem.bookmarked_by_me = data.bookmarked;
+                updatePostBookmarkUI(currentPostModalItem);
+            })
+            .catch(() => alert('通信エラーが発生しました。もう一度お試しください。'));
+    });
+
+    function renderPostModalComments(it) {
+        const list = document.getElementById('postModalCommentList');
+        list.innerHTML = '';
+        const comments = it.comments || [];
+
+        if (comments.length === 0) {
+            list.innerHTML = `<p class="text-xs text-slate-300 italic">まだコメントはありません</p>`;
+        } else {
+            comments.forEach(c => {
+                const name = c.user ? c.user.name : (c.user_name || 'ゲスト');
+                const isOwnComment = profileCurrentUserId !== null && c.user_id === profileCurrentUserId;
+                const row = document.createElement('div');
+                row.className = 'flex items-start gap-2';
+                row.innerHTML = `
+                    <div class="w-6 h-6 rounded-full bg-sky-100 flex items-center justify-center text-[10px] font-semibold text-brand-blue shrink-0">${postInitials(name)}</div>
+                    <div class="text-xs leading-snug flex-1 min-w-0">
+                        <span class="font-semibold">${name}</span>
+                        <span class="text-slate-500"> ${c.body}</span>
+                    </div>
+                    ${isOwnComment ? `<button type="button" class="post-comment-delete-btn text-slate-300 hover:text-rose-500 transition-colors shrink-0" aria-label="コメントを削除" data-comment-id="${c.id}"><i class="fa-solid fa-trash-can text-[11px]"></i></button>` : ''}
+                `;
+                list.appendChild(row);
+            });
+            list.querySelectorAll('.post-comment-delete-btn').forEach(btn => {
+                btn.addEventListener('click', () => deletePostComment(btn.dataset.commentId));
+            });
+        }
+        list.scrollTop = list.scrollHeight;
+    }
+
+    function deletePostComment(commentId) {
+        fetch(`${profilePostsRouteBase}/comments/${commentId}`, {
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': profileCsrfToken, 'Accept': 'application/json' },
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (!currentPostModalItem) return;
+                currentPostModalItem.comments = (currentPostModalItem.comments || []).filter(c => String(c.id) !== String(commentId));
+                renderPostModalComments(currentPostModalItem);
+            })
+            .catch(() => alert('コメントの削除に失敗しました。もう一度お試しください。'));
+    }
+
+    document.getElementById('postModalCommentForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!currentPostModalItem) return;
+        if (profileCurrentUserId === null) { window.location.href = '{{ route('login') }}'; return; }
+
+        const input = document.getElementById('postModalCommentInput');
+        const body = input.value.trim();
+        if (!body) return;
+
+        fetch(`${profilePostsRouteBase}/${currentPostModalItem.id}/comments`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': profileCsrfToken,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ body }),
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (!currentPostModalItem.comments) currentPostModalItem.comments = [];
+                currentPostModalItem.comments.push({
+                    id: data.comment.id,
+                    body: data.comment.body,
+                    user_id: data.comment.user_id,
+                    user: { name: data.comment.user_name },
+                    created_at: data.comment.created_at,
+                });
+                input.value = '';
+                renderPostModalComments(currentPostModalItem);
+            })
+            .catch(() => alert('コメントの送信に失敗しました。もう一度お試しください。'));
     });
 </script>
 @endsection
