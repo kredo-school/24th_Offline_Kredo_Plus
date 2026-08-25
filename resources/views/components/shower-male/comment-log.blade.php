@@ -114,9 +114,8 @@
                 class="bg-white rounded-xl p-4 mb-4 overflow-hidden shadow-lg"
                 x-data="{ expanded: false }"
             >
-                {{-- 1行目: アイコン・番号・日時・ラベル --}}
-                <div class="flex items-center gap-4">
-                    {{-- アバター(画像 or シャワーアイコン) --}}
+                {{-- PC表示: 横並び1行(アイコン・ユーザー名/日付・コメント・ラベル) --}}
+                <div class="hidden sm:flex items-center gap-8">
                     <template x-if="item.user_avatar_url">
                         <img :src="item.user_avatar_url" :alt="item.user_name"
                             class="w-12 h-12 rounded-full object-cover shrink-0 bg-slate-100">
@@ -136,28 +135,74 @@
                         <p class="font-label-sm text-label-sm text-on-surface-variant" x-text="item.created_at"></p>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row gap-1 sm:gap-2 shrink-0 ml-auto sm:ml-0">
+                    <div class="flex-1 min-w-0 px-10">
+                        <p
+                            x-show="item.comment"
+                            @click="expanded = !expanded"
+                            class="text-sm text-slate-600 cursor-pointer"
+                            :class="expanded ? '' : 'truncate'"
+                            x-text="item.comment"
+                        ></p>
+                    </div>
+
+                    <div class="flex gap-2 shrink-0">
                         <span
-                            class="rounded-full px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-bold text-white shadow-sm text-center"
+                            class="rounded-full px-3 py-1.5 text-xs font-bold text-white shadow-sm text-center"
                             :style="{ backgroundColor: temperatureColor(item.temperature_label) }"
                             x-text="item.temperature_label"
                         ></span>
                         <span
-                            class="rounded-full px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-bold text-white shadow-sm text-center"
+                            class="rounded-full px-3 py-1.5 text-xs font-bold text-white shadow-sm text-center"
                             :style="{ backgroundColor: pressureColor(item.pressure_label) }"
                             x-text="item.pressure_label"
                         ></span>
                     </div>
                 </div>
 
-                {{-- 2行目: コメント本文(クリックで全文展開) --}}
-                <div x-show="item.comment" class="mt-3 pt-3 border-t border-slate-100">
-                    <p
-                        @click="expanded = !expanded"
-                        class="text-sm text-slate-600 cursor-pointer"
-                        :class="expanded ? '' : 'truncate'"
-                        x-text="item.comment"
-                    ></p>
+                {{-- スマホ表示: 1行目(アイコン・番号・日時・ラベル)+2行目(コメント) --}}
+                <div class="sm:hidden">
+                    <div class="flex items-center gap-4">
+                        <template x-if="item.user_avatar_url">
+                            <img :src="item.user_avatar_url" :alt="item.user_name"
+                                class="w-12 h-12 rounded-full object-cover shrink-0 bg-slate-100">
+                        </template>
+                        <template x-if="!item.user_avatar_url">
+                            <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-blue-600">shower</span>
+                            </div>
+                        </template>
+
+                        <div class="shrink-0 w-10 text-center">
+                            <p class="text-2xl font-black text-blue-950 leading-none" x-text="item.shower_number"></p>
+                        </div>
+
+                        <div class="shrink-0 whitespace-nowrap">
+                            <p class="font-label-sm text-label-sm text-on-surface-variant font-bold" x-text="item.user_name"></p>
+                            <p class="font-label-sm text-label-sm text-on-surface-variant" x-text="item.created_at"></p>
+                        </div>
+
+                        <div class="flex flex-col gap-1 shrink-0 ml-auto">
+                            <span
+                                class="rounded-full px-3 py-1 text-[10px] font-bold text-white shadow-sm text-center"
+                                :style="{ backgroundColor: temperatureColor(item.temperature_label) }"
+                                x-text="item.temperature_label"
+                            ></span>
+                            <span
+                                class="rounded-full px-3 py-1 text-[10px] font-bold text-white shadow-sm text-center"
+                                :style="{ backgroundColor: pressureColor(item.pressure_label) }"
+                                x-text="item.pressure_label"
+                            ></span>
+                        </div>
+                    </div>
+
+                    <div x-show="item.comment" class="mt-3 pt-3 border-t border-slate-100">
+                        <p
+                            @click="expanded = !expanded"
+                            class="text-sm text-slate-600 cursor-pointer"
+                            :class="expanded ? '' : 'truncate'"
+                            x-text="item.comment"
+                        ></p>
+                    </div>
                 </div>
             </div>
         </template>
