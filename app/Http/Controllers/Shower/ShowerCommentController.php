@@ -23,6 +23,7 @@ class ShowerCommentController extends Controller
         $limit = $validated['limit'] ?? 5;
 
         $query = ShowerReport::query()
+            ->with('user')
             ->where('gender', $gender)
             ->orderByDesc('created_at');
 
@@ -49,6 +50,8 @@ class ShowerCommentController extends Controller
             'temperature_label' => ShowerScale::zoneLabel((float) $report->temperature, ShowerScale::CONDITION_TEMPERATURE_LEVELS),
             'pressure_label' => ShowerScale::zoneLabel((float) $report->pressure, ShowerScale::CONDITION_PRESSURE_LEVELS),
             'comment' => $report->comment,
+            'user_name' => $report->user->name ?? '不明',
+            'user_avatar_url' => $report->user->avatar_url ?? null,
         ]);
 
         return response()->json([
