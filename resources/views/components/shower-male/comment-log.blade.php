@@ -116,15 +116,23 @@
             >
                 {{-- 1行目: アイコン・番号・日時・ラベル --}}
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-blue-600">shower</span>
-                    </div>
+                    {{-- アバター(画像 or シャワーアイコン) --}}
+                    <template x-if="item.user_avatar_url">
+                        <img :src="item.user_avatar_url" :alt="item.user_name"
+                            class="w-12 h-12 rounded-full object-cover shrink-0 bg-slate-100">
+                    </template>
+                    <template x-if="!item.user_avatar_url">
+                        <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-blue-600">shower</span>
+                        </div>
+                    </template>
 
                     <div class="shrink-0 w-10 text-center">
                         <p class="text-2xl font-black text-blue-950 leading-none" x-text="item.shower_number"></p>
                     </div>
 
                     <div class="shrink-0 whitespace-nowrap">
+                        <p class="font-label-sm text-label-sm text-on-surface-variant font-bold" x-text="item.user_name"></p>
                         <p class="font-label-sm text-label-sm text-on-surface-variant" x-text="item.created_at"></p>
                     </div>
 
