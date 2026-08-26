@@ -95,14 +95,14 @@ class CategorySeeder extends Seeder
             'section' => 'carinderia',
             'name' => 'UCMA',
             'sort_order' => 1,
-            'hero_image' => 'https://images.unsplash.com/photo-1512058564366-18510be2db19?q=80&w=1600&auto=format&fit=crop',
+            'hero_image' => 'images/carinderia/ucma-sisig-hero.jpg',
             'description' => "地元で人気のカリンデリア。\n日替わりのおかずが並ぶ、あったかい家庭の味。",
         ]);
         Category::updateOrCreate(['slug' => 'w-geonzon'], [
             'section' => 'carinderia',
             'name' => 'W Geonzon',
             'sort_order' => 2,
-            'hero_image' => 'https://images.unsplash.com/photo-1626200419199-391ae4be7a41?q=80&w=1600&auto=format&fit=crop',
+            'hero_image' => 'images/carinderia/bbq-market-hero.jpg',
             'description' => "ボリューム満点のワンプレート。\n学生にも嬉しい、コスパ抜群のカリンデリア。",
         ]);
     }

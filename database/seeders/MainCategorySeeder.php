@@ -20,14 +20,14 @@ class MainCategorySeeder extends Seeder
     {
         MainCategory::firstOrCreate(['key' => 'carinderia'], [
             'name' => 'Carinderia',
-            'hero_image' => 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=1600&auto=format&fit=crop',
+            'hero_image' => 'images/carinderia/w-geonzon-sinigang-hero.jpg',
             'description' => "シンプルで美味しい、家庭的な味。\n近所のカリンデリアの美味しさをお届けします。",
             'sort_order' => 1,
         ]);
         // ↑テスト投稿で管理画面から画像が上書きされていたため、他ページと揃うオシャレな初期画像に強制的に戻す
         // (firstOrCreateだと既存行は更新されないので、hero_imageだけ明示的に上書き。アドミンが後で管理画面から変更すればそちらが優先される)
         MainCategory::where('key', 'carinderia')->update([
-            'hero_image' => 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=1600&auto=format&fit=crop',
+            'hero_image' => 'images/carinderia/w-geonzon-sinigang-hero.jpg',
         ]);
 
         MainCategory::firstOrCreate(['key' => 'restaurant-cafe'], [

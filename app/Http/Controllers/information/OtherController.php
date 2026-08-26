@@ -49,7 +49,7 @@ class OtherController extends Controller
         // カテゴリー名ごとの表示色
         $categoryColors = Category::forSection(self::SECTION)
             ->mapWithKeys(
-                fn ($c) => [$c->name => $c->color()]
+                fn ($c) => [$c->name => ['bg' => $c->backgroundColor(), 'text' => $c->textColor()]]
             );
 
         // このページ自体(メインカテゴリー)のヒーロー画像・タイトル・説明文
@@ -102,7 +102,8 @@ class OtherController extends Controller
 
         // カード上のタグバッジ色(egg=黄色 / St Nino=ボルドー。通常ページのカテゴリー色ロジックとは別の特別配色)
         $badgeColor = $category->slug === 'egg' ? '#F0C419' : '#6E0F1A';
+        $badgeBgColor = Category::lighten($badgeColor, 0.88);
 
-        return view('information.other.secret', compact('posts', 'category', 'allMainCategories', 'badgeColor'));
+        return view('information.other.secret', compact('posts', 'category', 'allMainCategories', 'badgeColor', 'badgeBgColor'));
     }
 }

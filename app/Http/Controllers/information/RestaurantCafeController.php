@@ -31,7 +31,7 @@ class RestaurantCafeController extends Controller
 
         // Restaurant & Cafe のカテゴリー表示色
         $categoryColors = Category::forSection('restaurant-cafe')
-            ->mapWithKeys(fn ($c) => [$c->name => $c->color()]);
+            ->mapWithKeys(fn ($c) => [$c->name => ['bg' => $c->backgroundColor(), 'text' => $c->textColor()]]);
 
         // このページ自体(メインカテゴリー)のヒーロー画像・タイトル・説明文
         $section = MainCategory::findByKey('restaurant-cafe');

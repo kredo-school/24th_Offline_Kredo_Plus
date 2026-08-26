@@ -67,7 +67,7 @@ class MainCategoryPageController extends Controller
 
         // カテゴリー名 => 表示色(投稿カードのタグ色用)
         $categoryColors = Category::forSection($key)
-            ->mapWithKeys(fn ($c) => [$c->name => $c->color()]);
+            ->mapWithKeys(fn ($c) => [$c->name => ['bg' => $c->backgroundColor(), 'text' => $c->textColor()]]);
 
         // サブカテゴリー一覧(STORE欄をDBから動的に表示するため)
         $subCategories = Category::forSection($key);

@@ -28,6 +28,7 @@ class AdminCategoryController extends Controller
             'hero_image' => ['nullable', 'image', 'max:5120'],
             'description' => ['nullable', 'string'],
             'color' => ['nullable', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'text_color' => ['nullable', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
         ]);
 
         $nextSortOrder = (int) MainCategory::max('sort_order') + 1;
@@ -38,6 +39,7 @@ class AdminCategoryController extends Controller
             'hero_image' => $this->storeHeroImage($request, 'main_categories'),
             'description' => $validated['description'] ?? null,
             'color' => $validated['color'] ?: null,
+            'text_color' => $validated['text_color'] ?: null,
             'sort_order' => $nextSortOrder,
         ]);
 
@@ -58,6 +60,7 @@ class AdminCategoryController extends Controller
             'hero_image' => ['nullable', 'image', 'max:5120'],
             'description' => ['nullable', 'string'],
             'color' => ['nullable', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'text_color' => ['nullable', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
         ]);
 
         $mainCategory->update([
@@ -65,6 +68,7 @@ class AdminCategoryController extends Controller
             'hero_image' => $this->storeHeroImage($request, 'main_categories') ?? $mainCategory->hero_image,
             'description' => $validated['description'] ?? null,
             'color' => $validated['color'] ?: null,
+            'text_color' => $validated['text_color'] ?: null,
         ]);
 
         return back()->with('categoryAdminNotice', [

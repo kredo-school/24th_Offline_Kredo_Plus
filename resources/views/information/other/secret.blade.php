@@ -60,7 +60,7 @@
       $heroImage = \Illuminate\Support\Str::startsWith($heroImage, ['http://', 'https://']) ? $heroImage : asset($heroImage);
       $titleClass = $category->slug === 'egg' ? 'is-egg' : 'is-st-nino';
     @endphp
-    <section class="relative overflow-hidden rounded-3xl mb-0 min-h-[280px] sm:min-h-[340px] md:min-h-[380px] p-8 md:p-10 bg-cover bg-center shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]"
+    <section class="relative overflow-hidden rounded-[0.75rem] mb-0 min-h-[280px] sm:min-h-[340px] md:min-h-[380px] p-8 md:p-10 bg-cover bg-center shadow-[0_1px_2px_rgba(36,30,26,0.06),0_8px_24px_-12px_rgba(36,30,26,0.18)]"
       style="background-image: url('{{ $heroImage }}');">
       <div class="absolute inset-0 bg-gradient-to-r from-white/95 from-3% via-white/60 via-25% to-transparent to-50% pointer-events-none"></div>
       <div class="relative flex flex-col lg:flex-row gap-8 w-full">
@@ -93,7 +93,7 @@
           : route('information.dynamic', $mc->key);
         $isCurrentMain = $mc->key === 'other';
       @endphp
-      <a href="{{ $href }}" @if($isCurrentMain) data-active="true" @endif class="flex items-center justify-center text-white rounded-xl py-3 px-3 font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity {{ $mc->key === 'carinderia' ? 'chicken-cursor-hover' : '' }}" style="background:{{ $mc->color() }}">
+      <a href="{{ $href }}" @if($isCurrentMain) data-active="true" @endif class="flex items-center justify-center rounded-full py-3 px-3 font-bold text-lg shadow-sm hover:opacity-90 transition-opacity {{ $mc->key === 'carinderia' ? 'chicken-cursor-hover' : '' }}" style="background:{{ $mc->backgroundColor() }}; color:{{ $mc->textColor() }}">
         {{ $mc->name }}
       </a>
     @endforeach
@@ -108,7 +108,7 @@
     <!-- 検索(スマホ用) -->
     <label class="relative block mb-4 md:hidden">
       <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-[#241E1A]/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="searchInputMobile" placeholder="タイトルを検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
+      <input type="text" id="searchInputMobile" placeholder="検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
     </label>
   </div>
 
@@ -119,9 +119,9 @@
       <div class="sticky top-24">
         <label class="relative block mb-6">
           <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-[#241E1A]/40" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="searchInput" placeholder="タイトルを検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
+          <input type="text" id="searchInput" placeholder="検索" class="w-full bg-[#FFFFFF] border border-[#241E1A]/10 rounded-xl pl-9 pr-3 py-2.5 text-sm placeholder:text-[#241E1A]/40 focus:outline-none focus:ring-2 focus:ring-[#A7A0FF]">
         </label>
-        <p class="font-mono text-[11px] tracking-[0.18em] text-[#241E1A]/40 mb-3 pl-1">AREA</p>
+        <p class="text-xs font-bold text-[#241E1A]/45 tracking-[0.05em] mb-3 pl-1">AREA</p>
         <p class="secret-title {{ $titleClass }} text-sm font-bold py-2 pl-1">{{ $category->name }}</p>
       </div>
     </aside>
@@ -145,7 +145,7 @@
 
     <div class="relative w-full md:w-1/2 h-64 md:h-full shrink-0">
       <img id="modalImg" src="" class="w-full h-full object-cover" alt="">
-      <span id="modalTag" class="absolute top-3 left-3 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full"></span>
+      <span id="modalTag" class="absolute top-3 left-3 text-[11px] font-semibold px-2.5 py-1 rounded-full"></span>
       <button onclick="closeModal()" class="md:hidden absolute top-3 right-3 bg-[#241E1A]/50 hover:bg-[#241E1A]/70 text-white w-7 h-7 rounded-full flex items-center justify-center" aria-label="閉じる">✕</button>
     </div>
 
@@ -175,7 +175,7 @@
       </div>
 
       <div class="flex-1 overflow-y-auto px-4 py-3 min-h-0">
-        <h3 id="modalTitle" class="font-display font-semibold text-lg mb-1"></h3>
+        <h3 id="modalTitle" class="font-bold text-lg mb-1"></h3>
         <p id="modalDesc" class="text-sm text-[#241E1A]/60 mb-4"></p>
 
         <p class="text-xs font-mono tracking-[0.1em] text-[#241E1A]/40 mb-2">COMMENTS</p>
@@ -219,7 +219,8 @@
 
 <script>
   const badgeColor = @json($badgeColor);
-  function colorOf(){ return badgeColor; }
+  const badgeBgColor = @json($badgeBgColor);
+  function colorOf(){ return { bg: badgeBgColor, text: badgeColor }; }
 
   const items = @json($posts);
   const currentUserId = {{ auth()->id() ?? 'null' }};
@@ -255,7 +256,7 @@
   function highlightMatch(text, query){
     if (!query) return text;
     const re = new RegExp('(' + escapeRegExp(query) + ')', 'ig');
-    return text.replace(re, '<strong class="bg-[#F1F0FF] text-[#4736F0] rounded px-0.5">$1</strong>');
+    return text.replace(re, '<strong class="font-extrabold">$1</strong>');
   }
 
   function toggleLike(it){
@@ -383,7 +384,7 @@
 
   function renderGrid(page){
     const sorted = getFilteredItems();
-    document.getElementById('resultCount').textContent = `${sorted.length} posts found`;
+    document.getElementById('resultCount').textContent = `${sorted.length}件見つかりました`;
 
     const grid = document.getElementById('foodGrid');
     grid.innerHTML = '';
@@ -406,7 +407,7 @@
       card.innerHTML = `
         <div class="relative h-40">
           <img src="${it.image_url}" class="w-full h-full object-cover" alt="${it.title}" loading="lazy">
-          <span class="absolute top-2.5 left-2.5 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full" style="background:${colorOf()}">${tag}</span>
+          <span class="absolute top-2.5 left-2.5 text-[11px] font-semibold px-2.5 py-1 rounded-full" style="background:${colorOf().bg}; color:${colorOf().text}">${tag}</span>
         </div>
         <div class="p-4">
           <h3 class="font-display font-semibold text-base mb-1 truncate">${titleHtml}</h3>
@@ -477,7 +478,8 @@
 
     document.getElementById('modalImg').src = it.image_url;
     document.getElementById('modalTag').textContent = tag;
-    document.getElementById('modalTag').style.background = colorOf();
+    document.getElementById('modalTag').style.background = colorOf().bg;
+    document.getElementById('modalTag').style.color = colorOf().text;
     document.getElementById('modalTitle').textContent = it.title;
     document.getElementById('modalDesc').textContent = it.description ?? '';
     document.getElementById('modalAvatar').textContent = initials(userName);
