@@ -3,10 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MainCategory extends Model
 {
     protected $fillable = ['key', 'name', 'hero_image', 'description', 'sort_order'];
+
+    /**
+     * サブカテゴリー（Category）とのリレーション
+     * categories.main_category_key と main_categories.key で紐付け
+     */
+    public function categories(): HasMany
+    {
+        return $this->hasMany(Category::class, 'main_category_key', 'key');
+    }
 
     /** key(例: 'carinderia')を指定して、そのメインカテゴリーの行を1件取得する */
     public static function findByKey(string $key): ?self
