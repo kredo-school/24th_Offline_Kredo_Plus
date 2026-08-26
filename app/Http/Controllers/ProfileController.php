@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\CalendarNote;
+use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Carbon\Carbon;
@@ -55,6 +56,10 @@ class ProfileController extends Controller
             ->limit(12)
             ->get();
 
+        // バッジ・タグの色(背景+文字)をカテゴリー名ごとに引けるようにしておく(JSのモーダル側で使用)
+        $categoryColors = Category::all()
+            ->mapWithKeys(fn ($c) => [$c->name => ['bg' => $c->backgroundColor(), 'text' => $c->textColor()]]);
+
         return view('profile.edit', [
             'user' => $user,
             'calendar' => $calendar,
@@ -63,6 +68,7 @@ class ProfileController extends Controller
             'postTab' => $postTab,
             'postCounts' => $postCounts,
             'posts' => $posts,
+            'categoryColors' => $categoryColors,
         ]);
     }
 
