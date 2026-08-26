@@ -42,7 +42,7 @@ class CarinderiaController extends Controller
 
         // カテゴリー名 => 表示色
         $categoryColors = Category::forSection(self::SECTION)
-            ->mapWithKeys(fn ($c) => [$c->name => $c->color()]);
+            ->mapWithKeys(fn ($c) => [$c->name => ['bg' => $c->backgroundColor(), 'text' => $c->textColor()]]);
 
         // このページ自体(メインカテゴリー)のヒーロー画像・タイトル・説明文
         $section = MainCategory::findByKey(self::SECTION);

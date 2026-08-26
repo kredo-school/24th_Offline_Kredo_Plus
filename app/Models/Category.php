@@ -31,15 +31,30 @@ class Category extends Model
     }
 
     /**
-     * このカテゴリー(サブカテゴリー)に割り当てる色(バッジ・タグ・アクティブ表示すべてに使用)
+     * このカテゴリー(サブカテゴリー)に割り当てる文字色(バッジ・タグ・アクティブ表示すべてに使用)
      * 以前はサブカテゴリーごとに別のパレット色を割り当てていたが、
      * 「メインカテゴリーと同じ色にした方がわかりやすい」との判断で、
      * 親であるメインカテゴリー(sectionが一致するMainCategory)の色をそのまま使う方式に変更。
      * サイドバーの左ガイドだけは例外で、Category::lighten()を使って薄くしたグラデーションを別途使用している。
      */
+    public function textColor(): string
+    {
+        return MainCategory::findByKey($this->section)?->textColor() ?? self::colorPalette()[0];
+    }
+
+    /** このカテゴリー(サブカテゴリー)に割り当てる背景色(薄い方の色)。親メインカテゴリーの背景色をそのまま使う。 */
+    public function backgroundColor(): string
+    {
+        return MainCategory::findByKey($this->section)?->backgroundColor() ?? self::lighten(self::colorPalette()[0], 0.70);
+    }
+
+    /**
+     * @deprecated 新しいコードではtextColor()/backgroundColor()を使うこと。
+     * 既存の呼び出し箇所が残っていても壊れないよう、textColor()のエイリアスとして残す。
+     */
     public function color(): string
     {
-        return MainCategory::findByKey($this->section)?->color() ?? self::colorPalette()[0];
+        return $this->textColor();
     }
 
     /**

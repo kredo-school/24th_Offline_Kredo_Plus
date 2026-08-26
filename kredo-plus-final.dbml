@@ -1,0 +1,645 @@
+// ============================================================
+// Kredo Plus - Final DB Schema (auto-generated from migrations)
+// Generated: 2026-08-25
+// Source of truth: database/migrations/*.php (56 files, applied in
+// chronological order, including renames/alters)
+// ============================================================
+
+Project KredoPlus {
+  database_type: 'MySQL'
+  Note: 'Auto-generated from Laravel migrations. Replace the old draft diagram with this.'
+}
+
+// ------------------------------------------------------------
+// Group: Auth & Framework (Laravel defaults)
+// ------------------------------------------------------------
+
+Table users {
+  id bigint [pk, increment]
+  name varchar
+  email varchar [unique]
+  avatar varchar [null]
+  gender varchar [null, note: "enum: male, female"]
+  gender_locked boolean [default: false]
+  preferred_temperature decimal [default: 7.5]
+  preferred_pressure decimal [default: 6.6]
+  toeic_exam_date date [null]
+  ielts_exam_date date [null]
+  graduation_date date [null]
+  email_verified_at timestamp [null]
+  password varchar
+  role_id tinyint [default: 2]
+  remember_token varchar [null]
+  total_xp bigint [default: 0]
+  study_streak int [default: 0]
+  last_study_date date [null]
+  total_study_time int [default: 0]
+  shower_priority_factor varchar [null, note: "enum: temperature, pressure"]
+  notifications_last_seen_at timestamp [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+}
+
+Table password_reset_tokens {
+  email varchar [pk]
+  token varchar
+  created_at timestamp [null]
+}
+
+Table sessions {
+  id varchar [pk]
+  user_id bigint [null, note: "no FK constraint, index only"]
+  ip_address varchar [null]
+  user_agent text [null]
+  payload longtext
+  last_activity int
+}
+
+Table cache {
+  key varchar [pk]
+  value mediumtext
+  expiration int
+}
+
+Table cache_locks {
+  key varchar [pk]
+  owner varchar
+  expiration int
+}
+
+Table jobs {
+  id bigint [pk, increment]
+  queue varchar
+  payload longtext
+  attempts tinyint
+  reserved_at int [null]
+  available_at int
+  created_at int
+}
+
+Table job_batches {
+  id varchar [pk]
+  name varchar
+  total_jobs int
+  pending_jobs int
+  failed_jobs int
+  failed_job_ids longtext
+  options mediumtext [null]
+  cancelled_at int [null]
+  created_at int
+  finished_at int [null]
+}
+
+Table failed_jobs {
+  id bigint [pk, increment]
+  uuid varchar [unique]
+  connection text
+  queue text
+  payload longtext
+  exception longtext
+  failed_at timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+// ------------------------------------------------------------
+// Group: English Learning - Typing
+// ------------------------------------------------------------
+
+Table typing_categories {
+  id bigint [pk, increment]
+  name varchar [unique]
+  slug varchar [unique]
+  description varchar [null]
+  sort_order int [default: 0]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+}
+
+Table typing_materials {
+  id bigint [pk, increment]
+  category_id bigint [ref: > typing_categories.id]
+  title varchar
+  level varchar
+  prompt text
+  text text
+  xp int [default: 100]
+  sort_order int [default: 0]
+  deleted_at timestamp [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+}
+
+Table typing_slides {
+  id bigint [pk, increment]
+  material_id bigint [ref: > typing_materials.id]
+  step_number int
+  slide_type varchar
+  title varchar
+  content text
+  sort_order int [default: 0]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (material_id, step_number)
+  }
+}
+
+Table typing_records {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  material_id bigint [ref: > typing_materials.id]
+  wpm int
+  accuracy decimal
+  clear_time decimal
+  xp_gained int [default: 0]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (user_id, created_at)
+  }
+}
+
+// ------------------------------------------------------------
+// Group: English Learning - IELTS
+// ------------------------------------------------------------
+
+Table ielts_topics {
+  id bigint [pk, increment]
+  slug varchar [unique]
+  name varchar
+  description varchar [null]
+  icon varchar [null]
+  sort_order int [default: 0]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+}
+
+Table ielts_slides {
+  id bigint [pk, increment]
+  part tinyint
+  topic_id bigint [ref: > ielts_topics.id]
+  target_score varchar
+  step_number int
+  slide_type varchar
+  title varchar
+  content text
+  sort_order int [default: 0]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (part, topic_id, target_score, step_number)
+  }
+}
+
+Table ielts_materials {
+  id bigint [pk, increment]
+  part tinyint
+  topic_id bigint [ref: > ielts_topics.id]
+  target_score varchar
+  order_no tinyint [null]
+  title varchar
+  prompt text
+  text text
+  xp int [default: 100]
+  deleted_at timestamp [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (part, topic_id, target_score)
+  }
+}
+
+Table ielts_records {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  material_id bigint [ref: > ielts_materials.id]
+  wpm int
+  accuracy decimal
+  clear_time decimal
+  xp_gained int [default: 0]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (user_id, created_at)
+  }
+}
+
+// ------------------------------------------------------------
+// Group: English Learning - TOEIC
+// ------------------------------------------------------------
+
+Table toeic_slides {
+  id bigint [pk, increment]
+  part tinyint
+  step_number int
+  slide_type varchar
+  title varchar
+  content text
+  sort_order int [default: 0]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (part, step_number)
+  }
+}
+
+Table toeic_passages {
+  id bigint [pk, increment]
+  part tinyint
+  passage_type varchar [note: "single / double / triple"]
+  title varchar
+  documents json
+  sort_order int [default: 0]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (part, sort_order)
+  }
+}
+
+Table toeic_questions {
+  id bigint [pk, increment]
+  part tinyint
+  passage_id bigint [null]
+  question_text text
+  image_url varchar [null]
+  explanation text [null]
+  difficulty varchar [null]
+  xp int [default: 50]
+  sort_order int [default: 0]
+  deleted_at timestamp [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (part, sort_order)
+  }
+}
+
+Table toeic_question_options {
+  id bigint [pk, increment]
+  question_id bigint [ref: > toeic_questions.id]
+  label char
+  option_text text
+  is_correct boolean [default: false]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+}
+
+Table toeic_results {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  part tinyint
+  total_questions int
+  correct_count int
+  xp_gained int [default: 0]
+  completed_at timestamp
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (user_id, part, completed_at)
+  }
+}
+
+Table toeic_answer_logs {
+  id bigint [pk, increment]
+  result_id bigint [ref: > toeic_results.id]
+  question_id bigint [ref: > toeic_questions.id]
+  selected_option_id bigint [null]
+  is_correct boolean [default: false]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+}
+
+// ------------------------------------------------------------
+// Group: English Learning - Vocabulary & Quiz
+// ------------------------------------------------------------
+
+Table vocabulary_words {
+  id bigint [pk, increment]
+  word varchar
+  part_of_speech varchar
+  meaning_ja text
+  meaning_en text [null]
+  example_sentence text [null]
+  example_sentence_ja text [null]
+  exam_type varchar [note: "TOEIC / IELTS"]
+  level varchar
+  sort_order int [default: 0]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (exam_type, level)
+  }
+}
+
+Table user_word_favorites {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  word_id bigint [ref: > vocabulary_words.id]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (user_id, word_id) [unique]
+  }
+}
+
+Table user_word_progress {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  word_id bigint [ref: > vocabulary_words.id]
+  status tinyint [default: 0, note: "0=未学習 1=学習中 2=覚えた"]
+  correct_count int [default: 0]
+  incorrect_count int [default: 0]
+  last_reviewed_at timestamp [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (user_id, word_id) [unique]
+  }
+}
+
+Table quiz_results {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  quiz_type varchar
+  exam_type varchar [null]
+  level varchar [null]
+  total_questions int
+  correct_count int
+  xp_gained int [default: 0]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (user_id, created_at)
+  }
+}
+
+// ------------------------------------------------------------
+// Group: English Learning - Common / Progress
+// ------------------------------------------------------------
+
+Table learning_contents {
+  id bigint [pk, increment]
+  content_type varchar [note: "overview / strategy"]
+  exam_type varchar
+  target_level varchar [null]
+  title varchar
+  body longtext
+  sort_order int [default: 0]
+  is_published boolean [default: true]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (content_type, exam_type, target_level)
+  }
+}
+
+Table study_logs {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  activity_type varchar [note: "typing / ielts / toeic / vocabulary / quiz"]
+  activity_id bigint [null, note: "polymorphic, no FK constraint - target table depends on activity_type"]
+  xp_gained int [default: 0]
+  duration_seconds int [default: 0]
+  studied_date date
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (user_id, studied_date)
+    (user_id, created_at)
+  }
+}
+
+Table user_section_progress {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  section_type varchar
+  section_key varchar
+  last_step int [default: 0]
+  is_completed boolean [default: false]
+  completed_at timestamp [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (user_id, section_type, section_key) [unique]
+  }
+}
+
+// ------------------------------------------------------------
+// Group: Information / Posts (留学情報)
+// ------------------------------------------------------------
+
+Table main_categories {
+  id bigint [pk, increment]
+  key varchar [unique, note: "e.g. carinderia, restaurant-cafe, travel, other"]
+  name varchar
+  hero_image varchar [null]
+  description text [null]
+  sort_order int [default: 0]
+  color varchar [null, note: "hex color, falls back to auto-assign when null"]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  Note: 'Originally created as "sections", renamed to "main_categories" on 2026-08-07'
+}
+
+Table categories {
+  id bigint [pk, increment]
+  section varchar [note: "soft-reference string, pairs with main_categories.key (NOT an FK)"]
+  name varchar
+  slug varchar [unique]
+  hero_image varchar [null]
+  description text [null]
+  sort_order int [default: 0]
+  is_hidden boolean [default: false]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+}
+
+Table posts {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  category_id bigint [ref: > categories.id]
+  title varchar
+  description text [null]
+  image varchar [null]
+  price decimal [null]
+  map_query varchar [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+}
+
+Table likes {
+  id bigint [pk, increment]
+  post_id bigint [ref: > posts.id]
+  user_id bigint [ref: > users.id]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (post_id, user_id) [unique]
+  }
+}
+
+Table comments {
+  id bigint [pk, increment]
+  post_id bigint [ref: > posts.id]
+  user_id bigint [ref: > users.id]
+  body text
+  created_at timestamp [null]
+  updated_at timestamp [null]
+}
+
+Table bookmarks {
+  id bigint [pk, increment]
+  post_id bigint [ref: > posts.id]
+  user_id bigint [ref: > users.id]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (post_id, user_id) [unique]
+  }
+}
+
+Table earth_locations {
+  id bigint [pk, increment]
+  post_id bigint [null]
+  place_name varchar [null]
+  address varchar [null]
+  latitude decimal
+  longitude decimal
+  created_at timestamp [null]
+  updated_at timestamp [null]
+}
+
+// ------------------------------------------------------------
+// Group: Shower
+// ------------------------------------------------------------
+
+Table shower_reports {
+  id bigint [pk, increment]
+  gender varchar [note: "enum: male, female"]
+  shower_number tinyint [note: "1-7"]
+  user_id bigint [ref: > users.id]
+  temperature decimal
+  pressure decimal
+  comment text [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (gender, shower_number, created_at)
+  }
+}
+
+Table shower_capacity_reports {
+  id bigint [pk, increment]
+  gender varchar [note: "enum: male, female"]
+  status varchar [note: "enum: full, vacant"]
+  user_id bigint [ref: > users.id]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (gender, created_at)
+  }
+}
+
+Table shower_malfunction_reports {
+  id bigint [pk, increment]
+  gender varchar [note: "enum: male, female"]
+  shower_number tinyint
+  status varchar [note: "enum: broken, fixed"]
+  user_id bigint [ref: > users.id]
+  comment text [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (gender, shower_number, created_at)
+  }
+}
+
+// ------------------------------------------------------------
+// Group: Misc (Suggestions / Notifications / Notices / Calendar)
+// ------------------------------------------------------------
+
+Table suggestions {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  category varchar [note: "enum: problem, request, other"]
+  comment text
+  status varchar [default: 'pending', note: "enum: pending, in_progress, resolved"]
+  admin_note text [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (status, created_at)
+  }
+}
+
+Table notifications {
+  id bigint [pk, increment]
+  gender varchar [note: "enum: male, female"]
+  type varchar [note: "enum: capacity_full, capacity_vacant, malfunction_broken, malfunction_fixed"]
+  shower_number tinyint [null]
+  message text
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (gender, created_at)
+  }
+
+  Note: 'Broadcast/announcement table, gender-targeted - no FK to users'
+}
+
+Table notices {
+  id bigint [pk, increment]
+  title varchar
+  category varchar
+  target varchar [default: '全員']
+  content text
+  created_at timestamp [null]
+  updated_at timestamp [null]
+}
+
+Table calendar_notes {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  note_date date
+  title varchar
+  memo text [null]
+  created_at timestamp [null]
+  updated_at timestamp [null]
+
+  indexes {
+    (user_id, note_date)
+  }
+}
+
+// ------------------------------------------------------------
+// Refs with non-default delete behavior
+// (cascadeOnDelete refs are already inline above via `ref: >`)
+// ------------------------------------------------------------
+
+Ref: toeic_questions.passage_id > toeic_passages.id [delete: set null]
+Ref: toeic_answer_logs.selected_option_id > toeic_question_options.id [delete: set null]
+Ref: earth_locations.post_id > posts.id [delete: set null]

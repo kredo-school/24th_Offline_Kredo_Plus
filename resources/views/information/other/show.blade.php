@@ -95,8 +95,8 @@
              class="w-full h-full object-cover" alt="{{ $post->title }}">
 
         @if ($post->category)
-          <span class="absolute top-3 left-3 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full"
-                style="background:{{ $post->category->color() }}">
+          <span class="absolute top-3 left-3 text-[11px] font-semibold px-2.5 py-1 rounded-full"
+                style="background:{{ $post->category->backgroundColor() }}; color:{{ $post->category->textColor() }}">
             {{ $post->category->name }}
           </span>
         @endif
@@ -119,7 +119,7 @@
           </div>
         </div>
 
-        <h1 class="font-display font-bold text-2xl mb-3">{{ $post->title }}</h1>
+        <h1 class="font-bold text-2xl mb-3">{{ $post->title }}</h1>
 
         <p class="text-sm text-ink/60 leading-relaxed whitespace-pre-line mb-6">
           {{ $post->description }}

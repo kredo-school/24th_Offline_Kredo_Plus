@@ -350,13 +350,78 @@
         </div>
 
         <!-- ④ 留学情報管理の中身(myu担当。メイン/サブカテゴリーの追加・編集) -->
+        <script>
+            // 背景色⇄文字色の相互サジェスト用(HSLで変換するのでどんな色を入れても破綻しない)
+            function hexToRgb(hex) {
+                hex = hex.replace('#', '');
+                return { r: parseInt(hex.substr(0, 2), 16), g: parseInt(hex.substr(2, 2), 16), b: parseInt(hex.substr(4, 2), 16) };
+            }
+            function rgbToHex(r, g, b) {
+                const c = (n) => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, '0');
+                return '#' + c(r) + c(g) + c(b);
+            }
+            function rgbToHsl(r, g, b) {
+                r /= 255; g /= 255; b /= 255;
+                const max = Math.max(r, g, b), min = Math.min(r, g, b);
+                let h, s, l = (max + min) / 2;
+                if (max === min) { h = s = 0; }
+                else {
+                    const d = max - min;
+                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                    switch (max) {
+                        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                        case g: h = (b - r) / d + 2; break;
+                        default: h = (r - g) / d + 4; break;
+                    }
+                    h /= 6;
+                }
+                return { h, s, l };
+            }
+            function hslToRgb(h, s, l) {
+                let r, g, b;
+                if (s === 0) { r = g = b = l; }
+                else {
+                    const hue2rgb = (p, q, t) => {
+                        if (t < 0) t += 1;
+                        if (t > 1) t -= 1;
+                        if (t < 1 / 6) return p + (q - p) * 6 * t;
+                        if (t < 1 / 2) return q;
+                        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+                        return p;
+                    };
+                    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                    const p = 2 * l - q;
+                    r = hue2rgb(p, q, h + 1 / 3);
+                    g = hue2rgb(p, q, h);
+                    b = hue2rgb(p, q, h - 1 / 3);
+                }
+                return { r: r * 255, g: g * 255, b: b * 255 };
+            }
+            // 文字色 → それに合う薄い背景色を提案
+            function suggestBgFromText(hex) {
+                const { r, g, b } = hexToRgb(hex);
+                const { h, s } = rgbToHsl(r, g, b);
+                const rgb = hslToRgb(h, Math.min(s, 0.65), 0.86);
+                return rgbToHex(rgb.r, rgb.g, rgb.b);
+            }
+            // 背景色 → それに合う濃い文字色を提案
+            function suggestTextFromBg(hex) {
+                const { r, g, b } = hexToRgb(hex);
+                const { h, s } = rgbToHsl(r, g, b);
+                const rgb = hslToRgb(h, Math.max(s, 0.55), 0.42);
+                return rgbToHex(rgb.r, rgb.g, rgb.b);
+            }
+        </script>
         <div x-show="currentTab === 'posts'" x-cloak x-data="{
             mode: '{{ $categoryFormMode }}',
             mainCategories: {{ Illuminate\Support\Js::from($adminMainCategories) }},
             categories: {{ Illuminate\Support\Js::from($adminCategories) }},
             editMain: { id: '', key: '', name: '', description: '', hero_image: '', sub_count: 0 },
             editMainColor: '',
+            editMainTextColor: '',
             editMainUseColor: false,
+            addMainColor: '#2f5bfd',
+            addMainTextColor: '#2f5bfd',
             addMainUseColor: false,
             forceDeleteMain: false,
             editCategory: { id: '', section: '', name: '', description: '', hero_image: '', post_count: 0 },
@@ -365,10 +430,11 @@
             loadMain(id) {
                 const m = this.mainCategories.find(x => x.id == id);
                 this.forceDeleteMain = false;
-                if (!m) { this.editMain = { id: '', key: '', name: '', description: '', hero_image: '', sub_count: 0 }; this.editMainColor = ''; this.editMainUseColor = false; return; }
+                if (!m) { this.editMain = { id: '', key: '', name: '', description: '', hero_image: '', sub_count: 0 }; this.editMainColor = ''; this.editMainTextColor = ''; this.editMainUseColor = false; return; }
                 this.editMain = { id: m.id, key: m.key, name: m.name, description: m.description || '', hero_image: m.hero_image || '', sub_count: m.sub_count || 0 };
                 this.editMainColor = m.color || '';
-                this.editMainUseColor = !!m.color;
+                this.editMainTextColor = m.text_color || '';
+                this.editMainUseColor = !!m.color || !!m.text_color;
             },
             loadCategory(id) {
                 const c = this.categories.find(x => x.id == id);
@@ -443,9 +509,26 @@
                             カラーを手動で指定する
                         </label>
                         <p x-show="!addMainUseColor" class="text-[11px] text-slate-400">指定しない場合は自動で色が割り当てられます。</p>
-                        <div x-show="addMainUseColor" x-cloak class="flex items-center gap-3">
-                            <input type="color" name="color" value="#2f5bfd" x-bind:disabled="!addMainUseColor"
-                                   class="w-12 h-10 rounded-lg border border-slate-200 cursor-pointer">
+                        <div x-show="addMainUseColor" x-cloak class="space-y-3">
+                            <div class="flex items-center gap-3">
+                                <input type="color" name="text_color" x-model="addMainTextColor" x-bind:disabled="!addMainUseColor"
+                                       @input="addMainColor = suggestBgFromText(addMainTextColor)"
+                                       class="w-12 h-10 rounded-lg border border-slate-200 cursor-pointer">
+                                <div>
+                                    <span class="block text-[11px] font-bold text-slate-500">文字色</span>
+                                    <span class="text-xs font-mono text-slate-500" x-text="addMainTextColor"></span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <input type="color" name="color" x-model="addMainColor" x-bind:disabled="!addMainUseColor"
+                                       @input="addMainTextColor = suggestTextFromBg(addMainColor)"
+                                       class="w-12 h-10 rounded-lg border border-slate-200 cursor-pointer">
+                                <div>
+                                    <span class="block text-[11px] font-bold text-slate-500">背景色</span>
+                                    <span class="text-xs font-mono text-slate-500" x-text="addMainColor"></span>
+                                </div>
+                            </div>
+                            <p class="text-[11px] text-slate-400">どちらか一方を選ぶと、もう一方に合う色を自動で提案します(そのあと自由に上書きできます)。</p>
                         </div>
                     </div>
                     <button type="submit" class="w-full py-3 px-6 rounded-xl text-xs font-bold transition bg-slate-900 hover:bg-slate-800 text-white shadow-md">
@@ -549,10 +632,26 @@
                             カラーを手動で指定する
                         </label>
                         <p x-show="!editMainUseColor" class="text-[11px] text-slate-400">指定しない場合は自動で色が割り当てられます。</p>
-                        <div x-show="editMainUseColor" x-cloak class="flex items-center gap-3">
-                            <input type="color" name="color" x-model="editMainColor"
-                                   class="w-12 h-10 rounded-lg border border-slate-200 cursor-pointer">
-                            <span class="text-xs font-mono text-slate-500" x-text="editMainColor"></span>
+                        <div x-show="editMainUseColor" x-cloak class="space-y-3">
+                            <div class="flex items-center gap-3">
+                                <input type="color" name="text_color" x-model="editMainTextColor"
+                                       @input="editMainColor = suggestBgFromText(editMainTextColor)"
+                                       class="w-12 h-10 rounded-lg border border-slate-200 cursor-pointer">
+                                <div>
+                                    <span class="block text-[11px] font-bold text-slate-500">文字色</span>
+                                    <span class="text-xs font-mono text-slate-500" x-text="editMainTextColor"></span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <input type="color" name="color" x-model="editMainColor"
+                                       @input="editMainTextColor = suggestTextFromBg(editMainColor)"
+                                       class="w-12 h-10 rounded-lg border border-slate-200 cursor-pointer">
+                                <div>
+                                    <span class="block text-[11px] font-bold text-slate-500">背景色</span>
+                                    <span class="text-xs font-mono text-slate-500" x-text="editMainColor"></span>
+                                </div>
+                            </div>
+                            <p class="text-[11px] text-slate-400">どちらか一方を選ぶと、もう一方に合う色を自動で提案します(そのあと自由に上書きできます)。</p>
                         </div>
                     </div>
                     <button type="submit" class="w-full py-3 px-6 rounded-xl text-xs font-bold transition bg-slate-900 hover:bg-slate-800 text-white shadow-md">
