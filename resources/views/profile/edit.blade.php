@@ -118,8 +118,8 @@
                             <div class="relative h-24 bg-slate-100">
                                 <img src="{{ $post->image_url }}" alt="{{ $post->title }}" class="w-full h-full object-cover">
                                 @if ($post->category)
-                                    <span class="absolute top-1.5 left-1.5 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"
-                                          style="background-color: {{ $post->category->color() }}">
+                                    <span class="absolute top-1.5 left-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                          style="background:{{ $post->category->backgroundColor() }}; color:{{ $post->category->textColor() }}">
                                         {{ $post->category->name }}
                                     </span>
                                 @endif
@@ -664,7 +664,7 @@
         <!-- 左: 写真(固定) -->
         <div class="relative w-full md:w-1/2 h-64 md:h-full shrink-0">
             <img id="modalImg" src="" class="w-full h-full object-cover" alt="">
-            <span id="modalTag" class="absolute top-3 left-3 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full" style="background:#2f5fdb"></span>
+            <span id="modalTag" class="absolute top-3 left-3 text-[11px] font-semibold px-2.5 py-1 rounded-full"></span>
             <span id="modalPrice" class="absolute bottom-3 right-3 bg-white/95 font-mono font-semibold text-sm px-2.5 py-1 rounded-lg"></span>
             <button onclick="closePostModal()" class="md:hidden absolute top-3 right-3 bg-slate-900/50 hover:bg-slate-900/70 text-white w-7 h-7 rounded-full flex items-center justify-center" aria-label="閉じる">✕</button>
         </div>
@@ -748,6 +748,8 @@
 <script>
     // ---- 「留学情報の投稿」タブに表示中の投稿データ(id => post) ----
     const profilePosts = @json($posts->keyBy('id'));
+    const categoryColors = @json($categoryColors);
+    function colorOf(tag) { return categoryColors[tag] || { bg: '#2f5fdb1a', text: '#2f5fdb' }; }
     const profileCurrentUserId = {{ auth()->id() ?? 'null' }};
     const profileInfoRouteBase = @json(url('information'));
     const profilePostsRouteBase = @json(url('information/posts'));
@@ -791,7 +793,10 @@
         const userName = it.user ? it.user.name : '不明なユーザー';
 
         document.getElementById('modalImg').src = it.image_url;
-        document.getElementById('modalTag').textContent = tag;
+        const modalTagEl = document.getElementById('modalTag');
+        modalTagEl.textContent = tag;
+        modalTagEl.style.background = colorOf(tag).bg;
+        modalTagEl.style.color = colorOf(tag).text;
         document.getElementById('modalPrice').textContent = postMoney(it.price);
         document.getElementById('modalTitle').textContent = it.title;
         document.getElementById('modalDesc').textContent = it.description ?? '';
