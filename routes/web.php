@@ -297,6 +297,8 @@ Route::get('/earth/location/create', [EarthLocationController::class, 'create'])
 Route::post('/earth/location', [EarthLocationController::class, 'store'])->name('earth.location.store');
 Route::get('/earth/location/{earthLocation}/edit', [EarthLocationController::class, 'edit'])->name('earth.location.edit');
 Route::put('/earth/location/{earthLocation}', [EarthLocationController::class, 'update'])->name('earth.location.update');
+Route::post('/{post}/like', [PostInteractionController::class, 'toggleLike'])->name('like');
+Route::post('/{post}/bookmark', [PostInteractionController::class, 'toggleBookmark'])->name('bookmark');
 
 // Admin (管理者画面)
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
