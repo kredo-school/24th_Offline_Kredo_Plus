@@ -41,6 +41,7 @@ use App\Http\Controllers\EarthLocationController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminMessageController;
 
 // 目安箱
 use App\Http\Controllers\SuggestionBoxController;
@@ -206,10 +207,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('other.secret');
 
     // Carinderia (restaurant-cafeと同じパターン)
-    // ※ 下の「5個目以降の汎用ページ」用ルート(/information/{key}, /information/{key}/{slug})より
-    //   必ず前に書くこと。/information/{post} のような数字1〜2セグメントのURLは
-    //   {key}/{key}/{slug} のパターンにもマッチしてしまうため、後ろに書くと
-    //   投稿詳細・編集ページが汎用ページ側に奪われて404になる。
     Route::prefix('information/carinderia')->name('carinderia.')->group(function () {
         Route::get('/{post}/edit', [CarinderiaController::class, 'edit'])->name('edit');
         Route::put('/{post}', [CarinderiaController::class, 'update'])->name('update');
@@ -229,14 +226,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // 5個目以降、アドミンが新しく追加したメインカテゴリー用の汎用ページ(ログイン必須)。
-    // 上の4つ(carinderia/restaurant-cafe/travel/other)より必ず後ろに書くこと。
-    // (先に書くとURLが食われて、上の4ページが404になってしまう)
     Route::get('/information/{key}', [MainCategoryPageController::class, 'index'])
         ->name('information.dynamic')
         ->where('key', '(?!post$|posts$|carinderia$|restaurant-cafe$|travel$|other$|\d+(?:/|$))[a-z0-9\-]+');
 
     // 5個目以降のメインカテゴリーの、サブカテゴリー単位の絞り込みページ(URL: /information/{key}/{slug})。
-    // travel.show(/information/travel/{slug})の仕組みと同じもの。
     Route::get('/information/{key}/{slug}', [MainCategoryPageController::class, 'show'])
         ->name('information.dynamic.show')
         ->where('key', '(?!post$|posts$|carinderia$|restaurant-cafe$|travel$|other$|\d+(?:/|$))[a-z0-9\-]+')
@@ -302,11 +296,12 @@ Route::post('/{post}/bookmark', [PostInteractionController::class, 'toggleBookma
 
 // Admin (管理者画面)
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
-    // Controller 経由でデータを渡す(留学情報管理タブ用のadminMainCategories/adminCategoriesも
-    // AdminDashboardController::index()側に統合済み)
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::post('/notices', [AdminDashboardController::class, 'storeNotice'])->name('notices.store');
     Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
+    
+    // 管理者メッセージ送信機能
+    Route::post('/messages', [AdminMessageController::class, 'store'])->name('messages.store');
 
     // シャワー故障報告の受け取り・修理報告
     Route::get('/shower/malfunctions', [AdminShowerMalfunctionController::class, 'index'])->name('shower.malfunctions.index');
