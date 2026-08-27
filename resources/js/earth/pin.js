@@ -17,7 +17,7 @@ export function createPin(store){
 
     pin.style.width="48px";
 
-    pin.style.height="48px";
+    pin.style.height="48px"; 
 
     pin.style.transform="translate(-50%,-100%)";
 

@@ -1,4 +1,48 @@
+/* =========================================================
+   Earth V2
+   Complete Style Sheet
+========================================================= */
+
+
+/* =========================================================
+   Reset
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "Noto Sans JP",
+        sans-serif;
+
+    background: #000;
+}
+
+body {
+    position: relative;
+}
+
+
+/* =========================================================
+   Leaflet
+========================================================= */
+
 /* Leafletのデフォルトの四角い枠を消す */
+
 .school-pin-icon {
     background: transparent !important;
     border: none !important;
@@ -11,47 +55,14 @@
 }
 
 
-/* ==========================================
-   Earth V2 Complete Style
-========================================== */
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-html,
-body{
-
-    width:100%;
-    height:100%;
-
-    overflow:hidden;
-
-    font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    "SF Pro Display",
-    sans-serif;
-
-    background:#000;
-
-}
-
-body{
-
-    position:relative;
-
-}
-
-/* ==========================================
+/* =========================================================
    Globe
-========================================== */
+========================================================= */
 
 #globeViz {
+
     position: fixed;
+
     top: 72px;
     left: 0;
     right: 0;
@@ -61,309 +72,682 @@ body{
 
     transition: opacity .6s;
 }
-/* ==========================================
+
+
+/* =========================================================
    Flat Map
-========================================== */
+========================================================= */
 
 #flat-map {
+
     position: fixed;
+
     top: 72px;
     left: 0;
     right: 0;
     bottom: 0;
+
     z-index: 1;
+
     display: none;
+
     transition: opacity .6s;
-}/* ==========================================
-   Globe Button
-========================================== */
+}
 
-#backToGlobe{
 
-    position:fixed;
+/* =========================================================
+   Back to Globe Button
+========================================================= */
 
-    top:25px;
+#backToGlobe {
 
-    left:25px;
+    position: fixed;
 
-    z-index:2000;
+    top: 25px;
+    left: 25px;
 
-    padding:14px 24px;
+    z-index: 2000;
 
-    border:none;
+    padding: 14px 24px;
 
-    border-radius:999px;
+    border: none;
+    border-radius: 999px;
 
-    cursor:pointer;
+    cursor: pointer;
 
-    font-size:16px;
+    font-size: 16px;
+    font-weight: 600;
 
-    font-weight:600;
-
-    background:white;
-
-    color:#222;
+    background: #FFFFFF;
+    color: #222222;
 
     box-shadow:
-    0 12px 30px rgba(0,0,0,.18);
+        0 12px 30px rgba(0, 0, 0, .18);
 
-    transition:.25s;
-
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
 }
 
-#backToGlobe:hover{
+#backToGlobe:hover {
 
-    transform:translateY(-2px);
+    transform: translateY(-2px);
 
+    box-shadow:
+        0 16px 35px rgba(0, 0, 0, .22);
 }
 
-/* ==========================================
-   Popup
-========================================== */
 
-.leaflet-popup-content{
+/* =========================================================
+   Leaflet Popup
+========================================================= */
 
-    margin:18px;
+.leaflet-popup-content {
 
-    font-family:inherit;
+    margin: 18px;
 
+    font-family: inherit;
 }
 
-.popup{
+.popup {
 
-    text-align:center;
-
+    text-align: center;
 }
 
-.popup h3{
+.popup h3 {
 
-    margin-bottom:10px;
+    margin-bottom: 10px;
 
-    color:#222;
-
+    color: #222222;
 }
 
-.popup p{
+.popup p {
 
-    color:#666;
+    color: #666666;
 
-    margin-bottom:15px;
-
+    margin-bottom: 15px;
 }
 
-.popup-btn{
+.popup-btn {
 
-    width:100%;
+    width: 100%;
 
-    padding:12px;
+    padding: 12px;
 
-    border:none;
+    border: none;
+    border-radius: 14px;
 
-    border-radius:14px;
+    cursor: pointer;
 
-    cursor:pointer;
+    color: #FFFFFF;
 
-    color:white;
-
-    font-weight:600;
+    font-weight: 600;
 
     background:
-    linear-gradient(
-        135deg,
-        #4A90FF,
-        #735BFF
-    );
+        linear-gradient(
+            135deg,
+            #4A90FF,
+            #735BFF
+        );
 
-    transition:.25s;
-
+    transition: transform .25s ease;
 }
 
-.popup-btn:hover{
+.popup-btn:hover {
 
-    transform:translateY(-2px);
-
+    transform: translateY(-2px);
 }
 
-/* ==========================================
-   Store Card
-========================================== */
 
-#storeCard{
+/* =========================================================
+   Flat Map Store Card
+========================================================= */
 
-    position:fixed;
+#storeCard {
 
-    right:35px;
+    position: fixed;
 
-    bottom:35px;
+    right: 35px;
 
-    width:380px;
+    bottom: 35px;
 
-    background:white;
+    left: auto;
 
-    border-radius:28px;
+    width: 380px;
 
-    overflow:hidden;
+    max-width: calc(100vw - 32px);
+
+    transform:
+        translateY(30px)
+        scale(.98);
+
+    opacity: 0;
+
+    z-index: 2000;
+
+    background: #FFFFFF;
+
+    border-radius: 24px;
+
+    overflow: hidden;
+
+    color: #241E1A;
+
+    font-family:
+        'Noto Sans JP',
+        sans-serif;
 
     box-shadow:
-    0 25px 60px rgba(0,0,0,.28);
+        0 1px 2px rgba(36, 30, 26, 0.06),
+        0 18px 45px rgba(36, 30, 26, 0.20);
 
-    transform:translateY(80px);
+    transition:
+        opacity .3s ease,
+        transform .35s cubic-bezier(.2, .8, .2, 1);
+}
 
-    opacity:0;
 
-    transition:.45s;
+/* =========================================================
+   Store Card - Show
+========================================================= */
 
-    z-index:1500;
+#storeCard.show {
+
+    opacity: 1;
+
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+
+/* =========================================================
+   Store Card - Image
+========================================================= */
+
+#storeCard .store-image {
+
+    display: block;
+
+    width: 100%;
+
+    height: 220px;
+
+    object-fit: cover;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   Store Card - Content
+========================================================= */
+
+#storeCard .store-content {
+
+    padding: 18px 20px 20px;
+}
+
+
+/* =========================================================
+   Store Card - Category / Price Row
+========================================================= */
+
+#storeCard .store-meta {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-bottom: 9px;
+}
+
+
+/* =========================================================
+   Category Badge
+========================================================= */
+
+#storeCard .category-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    width: fit-content;
+
+    color: #FFFFFF;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    background: #2F5FDB;
+
+    line-height: 1;
+}
+
+
+/* =========================================================
+   Price Badge
+========================================================= */
+
+#storeCard .price-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    background: rgba(255, 255, 255, .95);
+
+    color: #241E1A;
+
+    font-family:
+        'IBM Plex Mono',
+        monospace;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    padding: 5px 9px;
+
+    border-radius: 8px;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   Store Card - Title
+========================================================= */
+
+#storeCard h2,
+#storeCard h3 {
+
+    font-family:
+        'Poppins',
+        'Noto Sans JP',
+        sans-serif;
+
+    font-size: 20px;
+
+    font-weight: 600;
+
+    line-height: 1.35;
+
+    color: #241E1A;
+
+    margin: 0 0 6px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   Store Card - Description
+========================================================= */
+
+#storeCard .description {
+
+    font-size: 14px;
+
+    line-height: 1.6;
+
+    color: rgba(36, 30, 26, .55);
+
+    margin: 0 0 18px;
+
+    display: -webkit-box;
+
+    -webkit-line-clamp: 2;
+
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   Store Card - Bottom Row
+========================================================= */
+
+#storeCard .store-footer {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding-top: 12px;
+
+    border-top:
+        1px solid rgba(36, 30, 26, .08);
+}
+
+
+/* =========================================================
+   User Info
+========================================================= */
+
+#storeCard .user-info {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+/* Avatar */
+
+#storeCard .user-avatar {
+
+    width: 28px;
+    height: 28px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    flex-shrink: 0;
+}
+
+
+/* User Text */
+
+#storeCard .user-details {
+
+    min-width: 0;
+
+    line-height: 1.2;
+}
+
+
+#storeCard .user-name {
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    color: #241E1A;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+#storeCard .created-at {
+
+    margin-top: 2px;
+
+    font-size: 10px;
+
+    color: rgba(36, 30, 26, .40);
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   Like / Save Area
+========================================================= */
+
+#storeCard .card-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 2px;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   Heart Button
+========================================================= */
+
+#storeCard .heart-btn {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 4px;
+
+    padding: 6px 7px;
+
+    border: none;
+
+    border-radius: 999px;
+
+    background: transparent;
+
+    color: #241E1A;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        transform .2s ease;
+}
+
+
+#storeCard .heart-btn:hover {
+
+    background: rgba(224, 138, 91, .10);
+}
+
+
+#storeCard .heart-btn:active {
+
+    transform: scale(.9);
+}
+
+
+#storeCard .heart-btn i {
+
+    color: #CE7043;
+
+    font-size: 18px;
+
+    transition:
+        transform .2s ease;
+}
+
+
+#storeCard .heart-btn.liked i {
+
+    transform: scale(1.15);
+}
+
+
+/* Like Count */
+
+#storeCard .like-count {
+
+    font-family:
+        'IBM Plex Mono',
+        monospace;
+
+    font-size: 11px;
+
+    color: rgba(36, 30, 26, .45);
+}
+
+
+/* =========================================================
+   Bookmark Button
+========================================================= */
+
+#storeCard .save-btn {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    padding: 0;
+
+    border: none;
+
+    border-radius: 999px;
+
+    background: transparent;
+
+    color: rgba(36, 30, 26, .60);
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        color .2s ease,
+        transform .2s ease;
+}
+
+
+#storeCard .save-btn:hover {
+
+    background: #F1F0FF;
+
+    color: #4736F0;
+}
+
+
+#storeCard .save-btn:active {
+
+    transform: scale(.9);
+}
+
+
+#storeCard .save-btn.saved {
+
+    color: #4736F0;
+}
+
+
+/* =========================================================
+   Close Button
+========================================================= */
+
+#storeCard #closeCard {
+
+    position: absolute;
+
+    top: 12px;
+    right: 12px;
+
+    z-index: 20;
+
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    background: rgba(36, 30, 26, .50);
+
+    color: #FFFFFF;
+
+    font-size: 15px;
+
+    backdrop-filter: blur(4px);
+
+    transition:
+        background .2s ease,
+        transform .2s ease;
+}
+
+
+#storeCard #closeCard:hover {
+
+    background: rgba(36, 30, 26, .72);
+}
+
+
+#storeCard #closeCard:active {
+
+    transform: scale(.9);
+}
+
+
+/* =========================================================
+   Store Card - Mobile
+========================================================= */
+
+@media (max-width: 640px) {
+
+    #storeCard {
+
+        width: calc(100vw - 32px);
+
+        bottom: 92px;
+
+        border-radius: 20px;
+    }
+
+    #storeCard .store-image {
+
+        height: 190px;
+    }
+
+    #storeCard .store-content {
+
+        padding: 16px;
+    }
 
 }
 
-#storeCard.show{
 
-    transform:translateY(0);
-
-    opacity:1;
-
-}
-
-.store-image{
-
-    width:100%;
-
-    height:220px;
-
-    object-fit:cover;
-
-}
-
-.store-content{
-
-    padding:24px;
-
-}
-
-.store-content h2{
-
-    font-size:28px;
-
-    margin-bottom:15px;
-
-    color:#222;
-
-}
-
-.info-row{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    margin-bottom:15px;
-
-    color:#777;
-
-}
-
-.category{
-
-    margin-bottom:10px;
-
-    color:#555;
-
-}
-
-.location{
-
-    margin-bottom:20px;
-
-    color:#888;
-
-}
-
-.description{
-
-    color:#666;
-
-    line-height:1.8;
-
-    margin-bottom:25px;
-
-}
-
-#storyButton{
-
-    width:100%;
-
-    padding:16px;
-
-    border:none;
-
-    border-radius:16px;
-
-    cursor:pointer;
-
-    color:white;
-
-    font-size:17px;
-
-    font-weight:600;
-
-    background:
-    linear-gradient(
-        135deg,
-        #4A90FF,
-        #735BFF
-    );
-
-    transition:.25s;
-
-}
-
-#storyButton:hover{
-
-    transform:translateY(-2px);
-
-}
-
-#closeCard{
-
-    position:absolute;
-
-    top:15px;
-
-    right:15px;
-
-    width:40px;
-
-    height:40px;
-
-    border:none;
-
-    border-radius:50%;
-
-    cursor:pointer;
-
-    background:white;
-
-    font-size:18px;
-
-    box-shadow:
-    0 5px 15px rgba(0,0,0,.18);
-
-}
-
-/* ==========================================
+/* =========================================================
    Story Page
-========================================== */
+========================================================= */
 
-#storyPage{
+#storyPage {
 
     position: fixed;
 
     top: 50%;
-
     left: 50%;
 
-    transform: translate(-50%, -50%);
+    transform:
+        translate(-50%, -50%);
 
     width: 55%;
 
@@ -371,11 +755,12 @@ body{
 
     height: 60%;
 
-    background: #fff;
+    background: #FFFFFF;
 
     border-radius: 24px;
 
-    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, .25);
 
     z-index: 3000;
 
@@ -383,883 +768,895 @@ body{
 
     opacity: 0;
 
-    transition: .35s;
-
+    transition: opacity .35s ease;
 }
 
-#storyPage.show{
 
-    opacity:1;
+#storyPage.show {
 
+    opacity: 1;
 }
 
-.story-image{
 
-    width:100%;
+.story-image {
 
-    height:360px;
+    width: 100%;
 
-    object-fit:cover;
+    height: 360px;
 
+    object-fit: cover;
 }
 
-.story-content{
 
-    max-width:900px;
+.story-content {
 
-    margin:auto;
+    max-width: 900px;
 
-    padding:50px;
+    margin: auto;
 
+    padding: 50px;
 }
 
-.story-content h1{
 
-    font-size:42px;
+.story-content h1 {
 
-    margin-bottom:20px;
+    font-size: 42px;
 
-    color:#222;
+    margin-bottom: 20px;
 
+    color: #222222;
 }
 
-.story-content h3{
 
-    margin-top:35px;
+.story-content h3 {
 
-    margin-bottom:15px;
+    margin-top: 35px;
 
-    color:#333;
+    margin-bottom: 15px;
 
+    color: #333333;
 }
 
-.story-content p{
 
-    line-height:1.9;
+.story-content p {
 
-    color:#666;
+    line-height: 1.9;
 
+    color: #666666;
 }
 
-.story-location{
 
-    color:#888;
+.story-location {
 
-    margin-bottom:30px;
+    color: #888888;
 
+    margin-bottom: 30px;
 }
 
-#closeStory{
 
-    position:fixed;
+#closeStory {
 
-    top:25px;
+    position: fixed;
 
-    right:25px;
+    top: 25px;
+    right: 25px;
 
-    width:48px;
+    width: 48px;
+    height: 48px;
 
-    height:48px;
+    border: none;
 
-    border:none;
+    border-radius: 50%;
 
-    border-radius:50%;
+    cursor: pointer;
 
-    cursor:pointer;
+    font-size: 20px;
 
-    font-size:20px;
+    background: #FFFFFF;
 
-    background:white;
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, .20);
 
-    box-shadow:0 8px 20px rgba(0,0,0,.2);
-
-    z-index:3100;
-
+    z-index: 3100;
 }
 
-/* ==========================================
+
+/* =========================================================
    Search
-========================================== */
+========================================================= */
 
-#searchBox{
+#searchBox {
 
-    position:fixed;
+    position: fixed;
 
-    top:30px;
+    top: 30px;
+    left: 50%;
 
-    left:50%;
+    transform:
+        translateX(-50%);
 
-    transform:translateX(-50%);
+    display: flex;
 
-    display:flex;
+    gap: 10px;
 
-    gap:10px;
+    opacity: 0;
 
-    opacity:0;
+    pointer-events: none;
 
-    pointer-events:none;
+    transition: opacity .35s ease;
 
-    transition:.35s;
-
-    z-index:1800;
-
+    z-index: 1800;
 }
 
-#searchBox.show{
 
-    opacity:1;
+#searchBox.show {
 
-    pointer-events:auto;
+    opacity: 1;
 
+    pointer-events: auto;
 }
 
-#searchInput{
 
-    width:300px;
+#searchInput {
 
-    padding:14px 18px;
+    width: 300px;
 
-    border:none;
+    padding: 14px 18px;
 
-    border-radius:999px;
+    border: none;
 
-    outline:none;
+    border-radius: 999px;
 
-    background:white;
+    outline: none;
 
-    font-size:15px;
+    background: #FFFFFF;
 
+    font-size: 15px;
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, .12);
 }
 
-#searchButton{
 
-    width:52px;
+#searchButton {
 
-    border:none;
+    width: 52px;
+    height: 52px;
 
-    border-radius:50%;
+    border: none;
 
-    cursor:pointer;
+    border-radius: 50%;
 
-    font-size:18px;
+    cursor: pointer;
 
-    background:white;
+    font-size: 18px;
 
-    box-shadow:0 10px 25px rgba(0,0,0,.18);
+    background: #FFFFFF;
 
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, .18);
+
+    transition:
+        transform .2s ease;
 }
 
-/* ==========================================
-   Responsive
-========================================== */
 
-@media(max-width:900px){
+#searchButton:hover {
 
-    #storeCard{
-
-        width:92%;
-
-        right:4%;
-
-        left:4%;
-
-        bottom:20px;
-
-    }
-
-    .story-content{
-
-        padding:30px;
-
-    }
-
-    .story-image{
-
-        height:240px;
-
-    }
-
-    #searchInput{
-
-        width:220px;
-
-    }
-
+    transform: translateY(-2px);
 }
 
-/* ==========================================
+
+/* =========================================================
    Opening Screen
-========================================== */
+========================================================= */
 
-#overlay{
+#overlay {
 
-    position:fixed;
+    position: fixed;
 
-    inset:0;
+    inset: 0;
 
-    display:flex;
+    display: flex;
 
-    justify-content:center;
+    justify-content: center;
+    align-items: center;
 
-    align-items:center;
+    z-index: 2500;
 
-    z-index:2500;
+    background:
+        rgba(0, 0, 0, .45);
 
-    background:rgba(0,0,0,.45);
-
-    backdrop-filter:blur(12px);
-
+    backdrop-filter: blur(12px);
 }
 
-.glass-card{
 
-    width:520px;
+.glass-card {
 
-    padding:60px;
+    width: 520px;
 
-    text-align:center;
+    padding: 60px;
 
-    border-radius:30px;
+    text-align: center;
 
-    background:rgba(255,255,255,.12);
+    border-radius: 30px;
 
-    border:1px solid rgba(255,255,255,.2);
+    background:
+        rgba(255, 255, 255, .12);
 
-    backdrop-filter:blur(20px);
+    border:
+        1px solid rgba(255, 255, 255, .20);
 
-    color:white;
+    backdrop-filter: blur(20px);
 
-    box-shadow:0 25px 60px rgba(0,0,0,.35);
+    color: #FFFFFF;
 
+    box-shadow:
+        0 25px 60px rgba(0, 0, 0, .35);
 }
 
-.logo{
 
-    font-size:64px;
+.logo {
 
-    margin-bottom:20px;
+    font-size: 64px;
 
+    margin-bottom: 20px;
 }
 
-.glass-card h1{
 
-    font-size:56px;
+.glass-card h1 {
 
-    margin-bottom:20px;
+    font-size: 56px;
 
+    margin-bottom: 20px;
 }
 
-.glass-card p{
 
-    font-size:20px;
+.glass-card p {
 
-    color:#ddd;
+    font-size: 20px;
 
-    margin-bottom:35px;
+    color: #DDDDDD;
 
-    line-height:1.6;
+    margin-bottom: 35px;
 
+    line-height: 1.6;
 }
 
-#startButton{
 
-    width:100%;
+#startButton {
 
-    padding:18px;
+    width: 100%;
 
-    border:none;
+    padding: 18px;
 
-    border-radius:18px;
+    border: none;
 
-    cursor:pointer;
+    border-radius: 18px;
 
-    color:white;
+    cursor: pointer;
 
-    font-size:20px;
+    color: #FFFFFF;
 
-    font-weight:700;
+    font-size: 20px;
 
-    background:linear-gradient(135deg,#4A90FF,#735BFF);
+    font-weight: 700;
 
-    transition:.25s;
+    background:
+        linear-gradient(
+            135deg,
+            #4A90FF,
+            #735BFF
+        );
 
+    transition:
+        transform .25s ease;
 }
 
-#startButton:hover{
 
-    transform:translateY(-3px);
+#startButton:hover {
 
+    transform: translateY(-3px);
 }
 
-/* ==========================================
+
+/* =========================================================
    Travel Message
-========================================== */
+========================================================= */
 
-#travelMessage{
+#travelMessage {
 
-    position:fixed;
+    position: fixed;
 
-    top:40px;
+    top: 40px;
+    left: 50%;
 
-    left:50%;
+    transform:
+        translateX(-50%);
 
-    transform:translateX(-50%);
+    padding: 16px 30px;
 
-    padding:16px 30px;
+    border-radius: 999px;
 
-    border-radius:999px;
+    background:
+        rgba(0, 0, 0, .65);
 
-    background:rgba(0,0,0,.65);
+    color: #FFFFFF;
 
-    color:white;
+    font-size: 18px;
 
-    font-size:18px;
+    opacity: 0;
 
-    opacity:0;
+    transition:
+        opacity .3s ease;
 
-    transition:.3s;
-
-    z-index:2200;
-
+    z-index: 2200;
 }
 
-#travelMessage.show{
 
-    opacity:1;
+#travelMessage.show {
 
+    opacity: 1;
 }
 
-/* ==========================================
+
+/* =========================================================
    Flat Map Button
-========================================== */
+========================================================= */
 
-#mapToggle{
+#mapToggle {
 
-    position:fixed;
+    position: fixed;
 
-    right:35px;
+    right: 35px;
+    top: 35px;
 
-    top:35px;
+    padding: 15px 24px;
 
-    padding:15px 24px;
+    border: none;
 
-    border:none;
+    border-radius: 999px;
 
-    border-radius:999px;
+    cursor: pointer;
 
-    cursor:pointer;
+    background: #FFFFFF;
 
-    background:white;
+    color: #241E1A;
 
-    font-weight:700;
+    font-weight: 700;
 
-    font-size:16px;
+    font-size: 16px;
 
-    box-shadow:0 12px 30px rgba(0,0,0,.2);
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, .20);
 
-    opacity:0;
+    opacity: 0;
 
-    transition:.3s;
+    transition:
+        opacity .3s ease,
+        transform .25s ease;
 
-    z-index:2000;
-
+    z-index: 2000;
 }
 
-#mapToggle.show{
 
-    opacity:1;
+#mapToggle.show {
 
+    opacity: 1;
 }
 
-/* ==========================
-   Google風 落下ピンアニメーション
-========================== */
 
+#mapToggle:hover {
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   Google Style Pin
+========================================================= */
 
 /* Leafletの余計な背景を消す */
+
 .drop-pin {
+
     background: transparent;
+
     border: none;
 }
 
 
+/* =========================================================
+   Pin Wrapper
+========================================================= */
 
-/* ピン全体 */
 .pin-wrapper {
 
     position: relative;
 
     width: 40px;
-
     height: 60px;
 
-    transform-origin: bottom center;
+    transform-origin:
+        bottom center;
 
-    animation: pinDrop 0.8s cubic-bezier(.25,.8,.25,1);
-
+    animation:
+        pinDrop .8s cubic-bezier(.25, .8, .25, 1);
 }
 
 
+/* =========================================================
+   Pin Body
+========================================================= */
 
-/* ピン本体 */
 .pin {
 
     width: 34px;
-
     height: 34px;
 
-    background: #ea4335;
+    background: #EA4335;
 
-    border-radius: 50% 50% 50% 0;
+    border-radius:
+        50% 50% 50% 0;
 
-    transform: rotate(-45deg);
+    transform:
+        rotate(-45deg);
 
     position: absolute;
 
-    top:0;
-
-    left:3px;
-
+    top: 0;
+    left: 3px;
 }
 
+
+/* =========================================================
+   Pin Center
+========================================================= */
 
 .pin-center {
 
-    width:12px;
+    width: 12px;
+    height: 12px;
 
-    height:12px;
+    background: #FFFFFF;
 
-    background:white;
+    border-radius: 50%;
 
-    border-radius:50%;
+    position: absolute;
 
-    position:absolute;
-
-    top:11px;
-
-    left:11px;
-
+    top: 11px;
+    left: 11px;
 }
 
 
+/* =========================================================
+   Pin Shadow
+========================================================= */
 
-/* 落下時の影 */
 .pin-shadow {
 
-    position:absolute;
+    position: absolute;
 
-    bottom:0;
+    bottom: 0;
+    left: 12px;
 
-    left:12px;
+    width: 16px;
+    height: 6px;
 
-    width:16px;
+    background:
+        rgba(0, 0, 0, .25);
 
-    height:6px;
+    border-radius: 50%;
 
-    background:rgba(0,0,0,0.25);
-
-    border-radius:50%;
-
-    filter:blur(2px);
-
+    filter: blur(2px);
 }
 
 
+/* =========================================================
+   Pin Drop Animation
+========================================================= */
 
-/* 落下アニメーション */
 @keyframes pinDrop {
-
 
     0% {
 
         transform:
+            translateY(-300px)
+            rotate(-45deg)
+            scale(1.2);
 
-        translateY(-300px)
-
-        rotate(-45deg)
-
-        scale(1.2);
-
-        opacity:0;
-
+        opacity: 0;
     }
-
 
     70% {
 
         transform:
+            translateY(15px)
+            rotate(-45deg)
+            scale(1);
 
-        translateY(15px)
-
-        rotate(-45deg)
-
-        scale(1);
-
-        opacity:1;
-
+        opacity: 1;
     }
-
 
     85% {
 
         transform:
-
-        translateY(-8px)
-
-        rotate(-45deg);
-
+            translateY(-8px)
+            rotate(-45deg);
     }
-
 
     100% {
 
         transform:
-
-        translateY(0)
-
-        rotate(-45deg);
-
+            translateY(0)
+            rotate(-45deg);
     }
-
 }
 
-/* ==========================================
+
+/* =========================================================
    Selected Pin Animation
-========================================== */
+========================================================= */
 
 @keyframes pinFloat {
 
-    0%{
+    0% {
 
         transform:
-        translateY(0)
-        rotate(-45deg)
-        scale(1);
-
+            translateY(0)
+            rotate(-45deg)
+            scale(1);
     }
 
-    50%{
+    50% {
 
         transform:
-        translateY(-10px)
-        rotate(-45deg)
-        scale(1.08);
-
+            translateY(-10px)
+            rotate(-45deg)
+            scale(1.08);
     }
 
-    100%{
+    100% {
 
         transform:
-        translateY(0)
-        rotate(-45deg)
-        scale(1);
-
+            translateY(0)
+            rotate(-45deg)
+            scale(1);
     }
-
 }
 
-@keyframes shadowFloat{
 
-    0%{
+@keyframes shadowFloat {
 
-        transform:scale(1);
+    0% {
 
-        opacity:.25;
+        transform: scale(1);
 
+        opacity: .25;
     }
 
-    50%{
+    50% {
 
-        transform:scale(.78);
+        transform: scale(.78);
 
-        opacity:.12;
-
+        opacity: .12;
     }
 
-    100%{
+    100% {
 
-        transform:scale(1);
+        transform: scale(1);
 
-        opacity:.25;
-
+        opacity: .25;
     }
-
 }
 
-@keyframes pinGlow{
 
-    0%{
+@keyframes pinGlow {
 
-        filter:
-        drop-shadow(0 0 0 rgba(66,133,244,.0));
-
-    }
-
-    50%{
+    0% {
 
         filter:
-        drop-shadow(0 0 12px rgba(66,133,244,.45));
-
+            drop-shadow(
+                0 0 0
+                rgba(66, 133, 244, 0)
+            );
     }
 
-    100%{
+    50% {
 
         filter:
-        drop-shadow(0 0 0 rgba(66,133,244,.0));
-
+            drop-shadow(
+                0 0 12px
+                rgba(66, 133, 244, .45)
+            );
     }
 
+    100% {
+
+        filter:
+            drop-shadow(
+                0 0 0
+                rgba(66, 133, 244, 0)
+            );
+    }
 }
 
-/* 着地後 */
+
+/* =========================================================
+   Landed Pin
+========================================================= */
+
 .drop-pin.landed .pin-wrapper {
 
-    animation:pinDrop .8s cubic-bezier(.2,1,.3,1);
-
+    animation:
+        pinDrop .8s cubic-bezier(.2, 1, .3, 1);
 }
 
-#flat-map {
-    position: fixed;
 
-    top: 72px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    z-index: 1;
-
-    display: none;
-}
-/* ==============================
+/* =========================================================
    Active Pin
-============================== */
+========================================================= */
 
-.active-pin .pin{
+.active-pin .pin {
 
     animation:
-
         pinFloat 1.5s ease-in-out infinite,
-
         pinGlow 2s ease-in-out infinite;
-
 }
 
-.active-pin .pin-shadow{
+
+.active-pin .pin-shadow {
 
     animation:
-
         shadowFloat 1.5s ease-in-out infinite;
-
 }
 
-.hover-pin .pin{
+
+/* =========================================================
+   Hover Pin
+========================================================= */
+
+.hover-pin .pin {
 
     transform:
-
         translateY(-5px)
-
         rotate(-45deg)
-
         scale(1.08);
 
-    transition:.18s;
+    transition:
+        transform .18s ease;
 
     filter:
-
-        drop-shadow(0 0 8px rgba(66,133,244,.35));
-
+        drop-shadow(
+            0 0 8px
+            rgba(66, 133, 244, .35)
+        );
 }
 
-.hover-pin .pin-shadow{
 
-    transform:scale(.82);
+.hover-pin .pin-shadow {
 
-    transition:.18s;
+    transform: scale(.82);
 
+    transition:
+        transform .18s ease;
 }
 
-.drop .pin-shadow{
+
+.drop .pin-shadow {
 
     animation:
-
         shadowFloat 1.7s ease-in-out infinite;
-
 }
 
-/* ==========================================
+
+/* =========================================================
    Earth Pin
-========================================== */
+========================================================= */
 
-.earth-pin{
+.earth-pin {
 
-    width:48px;
+    width: 48px;
+    height: 48px;
 
-    height:48px;
+    transform:
+        translate(-50%, -100%);
 
-    transform:translate(-50%,-100%);
-
-    cursor:pointer;
+    cursor: pointer;
 
     transition:
         transform .25s ease,
         filter .25s ease;
 
-    will-change:transform;
-
+    will-change: transform;
 }
 
-.earth-pin.hover{
+
+.earth-pin.hover {
 
     transform:
-        translate(-50%,-100%)
+        translate(-50%, -100%)
         scale(1.2);
 
     filter:
-
-        drop-shadow(0 0 12px rgba(255,255,255,.8));
-
+        drop-shadow(
+            0 0 12px
+            rgba(255, 255, 255, .8)
+        );
 }
 
-/* ==========================================
+
+/* =========================================================
    Hover Card
-========================================== */
+========================================================= */
 
-.hover-card{
+.hover-card {
 
-    position:fixed;
+    position: fixed;
 
-    transform: translate(-50%, -100%);
+    transform:
+        translate(-50%, -100%);
 
     margin-top: -12px;
 
-    background:white;
+    background: #FFFFFF;
 
-    padding:12px 16px;
+    padding: 12px 16px;
 
-    border-radius:14px;
+    border-radius: 14px;
 
-    box-shadow:0 8px 25px rgba(0,0,0,.18);
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, .18);
 
-    pointer-events:none;
+    pointer-events: none;
 
-    z-index:9999;
+    z-index: 9999;
 
-    min-width:180px;
+    min-width: 180px;
 
-    animation:fadeUp .18s ease;
-
-}
-
-.hover-card::after{
-
-    content:"";
-
-    position:absolute;
-
-    left:50%;
-
-    bottom:-10px;
-
-    transform:translateX(-50%);
-
-    width:0;
-
-    height:0;
-
-    border-left:10px solid transparent;
-
-    border-right:10px solid transparent;
-
-    border-top:10px solid white;
-
+    animation:
+        fadeUp .18s ease;
 }
 
 
-.hover-title{
+.hover-card::after {
 
-    font-weight:700;
+    content: "";
 
-    font-size:15px;
+    position: absolute;
 
+    left: 50%;
+    bottom: -10px;
+
+    transform:
+        translateX(-50%);
+
+    width: 0;
+    height: 0;
+
+    border-left:
+        10px solid transparent;
+
+    border-right:
+        10px solid transparent;
+
+    border-top:
+        10px solid #FFFFFF;
 }
 
-.hover-info{
 
-    margin-top:4px;
+.hover-title {
 
-    color:#666;
+    font-weight: 700;
 
-    font-size:13px;
-
+    font-size: 15px;
 }
 
-.hover-category{
 
-    margin-top:4px;
+.hover-info {
 
-    color:#4d8cff;
+    margin-top: 4px;
 
-    font-size:12px;
+    color: #666666;
 
+    font-size: 13px;
 }
 
-@keyframes fadeUp{
 
-    from{
+.hover-category {
 
-        opacity:0;
+    margin-top: 4px;
 
-        transform:translate(-50%, -100%) translateY(8px);
+    color: #4D8CFF;
 
+    font-size: 12px;
+}
+
+
+@keyframes fadeUp {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translate(-50%, -100%)
+            translateY(8px);
     }
 
-    to{
+    to {
 
-        opacity:1;
+        opacity: 1;
 
-        transform:translate(-50%, -100%)translateY(0);
-
+        transform:
+            translate(-50%, -100%)
+            translateY(0);
     }
-
 }
 
-/* ==========================================
+
+/* =========================================================
    Our School / IT Park Pin
-========================================== */
+========================================================= */
 
 .our-school-pin {
+
     background: transparent !important;
+
     border: none !important;
+
     cursor: pointer;
 }
 
+
 .school-pin-wrapper {
+
     position: relative;
+
     width: 60px;
     height: 70px;
+
     display: flex;
+
     justify-content: center;
+
     align-items: flex-start;
 }
 
-/* ピコピコする円 */
+
+/* =========================================================
+   School Pulse
+========================================================= */
+
 .school-pulse {
+
     position: absolute;
+
     top: 8px;
     left: 50%;
+
     width: 28px;
     height: 28px;
 
-    transform: translateX(-50%);
+    transform:
+        translateX(-50%);
 
-    background: rgba(47, 91, 253, 0.2);
+    background:
+        rgba(47, 91, 253, .20);
+
     border-radius: 50%;
 
-    animation: schoolPulse 1.6s infinite;
+    animation:
+        schoolPulse 1.6s infinite;
 }
 
-/* 白い丸 */
+
+/* =========================================================
+   School Circle
+========================================================= */
+
 .school-circle {
+
     position: absolute;
 
     top: 0;
@@ -1268,16 +1665,18 @@ body{
     width: 22px;
     height: 22px;
 
-    transform: translateX(-50%);
+    transform:
+        translateX(-50%);
 
-    background: #ffffff;
+    background: #FFFFFF;
 
     border-radius: 50%;
 
     box-shadow:
-        0 2px 6px rgba(0, 0, 0, 0.18);
+        0 2px 6px rgba(0, 0, 0, .18);
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -1286,58 +1685,202 @@ body{
     overflow: hidden;
 }
 
-/* 学校ロゴ */
+
+/* =========================================================
+   School Logo
+========================================================= */
+
 .school-circle img {
+
     width: 16px;
     height: 16px;
 
     object-fit: contain;
+
     display: block;
 }
 
-/* Our School */
+
+/* =========================================================
+   School Label
+========================================================= */
+
 .school-label {
+
     position: absolute;
 
     top: 32px;
     left: 50%;
 
-    transform: translateX(-50%);
+    transform:
+        translateX(-50%);
 
-    background: #ffffff;
-    color: #2f5bfd;
+    background: #FFFFFF;
+
+    color: #2F5BFD;
 
     padding: 3px 8px;
 
     border-radius: 16px;
 
     font-size: 10px;
+
     font-weight: bold;
 
     white-space: nowrap;
 
     box-shadow:
-        0 2px 6px rgba(0, 0, 0, 0.14);
+        0 2px 6px rgba(0, 0, 0, .14);
 
     z-index: 3;
 }
 
-/* ピコピコ */
+
+/* =========================================================
+   School Pulse Animation
+========================================================= */
+
 @keyframes schoolPulse {
 
     0% {
-        transform: translateX(-50%) scale(0.75);
-        opacity: 0.7;
+
+        transform:
+            translateX(-50%)
+            scale(.75);
+
+        opacity: .7;
     }
 
     70% {
-        transform: translateX(-50%) scale(1.6);
+
+        transform:
+            translateX(-50%)
+            scale(1.6);
+
         opacity: 0;
     }
 
     100% {
-        transform: translateX(-50%) scale(1.6);
+
+        transform:
+            translateX(-50%)
+            scale(1.6);
+
         opacity: 0;
     }
+}
 
+
+/* =========================================================
+   Responsive
+========================================================= */
+
+@media (max-width: 900px) {
+
+    #storeCard {
+
+        width: calc(100vw - 32px);
+
+        bottom: 92px;
+    }
+
+    #searchInput {
+
+        width: 220px;
+    }
+
+    .story-content {
+
+        padding: 30px;
+    }
+
+    .story-image {
+
+        height: 240px;
+    }
+}
+
+
+@media (max-width: 640px) {
+
+    #backToGlobe {
+
+        top: 15px;
+        left: 15px;
+
+        padding: 11px 17px;
+
+        font-size: 14px;
+    }
+
+    #mapToggle {
+
+        top: 15px;
+        right: 15px;
+
+        padding: 11px 17px;
+
+        font-size: 14px;
+    }
+
+    #searchBox {
+
+        top: 15px;
+    }
+
+    #searchInput {
+
+        width: 180px;
+
+        padding: 12px 15px;
+    }
+
+    #searchButton {
+
+        width: 46px;
+        height: 46px;
+    }
+
+    .glass-card {
+
+        width: calc(100vw - 32px);
+
+        padding: 35px 25px;
+
+        border-radius: 24px;
+    }
+
+    .glass-card h1 {
+
+        font-size: 40px;
+    }
+
+    .glass-card p {
+
+        font-size: 16px;
+    }
+
+    .story-content h1 {
+
+        font-size: 32px;
+    }
+
+    #storeCard {
+
+        width: calc(100vw - 32px);
+
+        bottom: 92px;
+
+        border-radius: 20px;
+    }
+
+    #storeCard .store-image {
+
+        height: 190px;
+    }
+
+    #storeCard .store-content {
+
+        padding: 16px;
+    }
 }

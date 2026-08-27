@@ -87,31 +87,16 @@ const schoolIcon = L.divIcon({
 });
 
 
-
 // ==============================
 // Pin Color
 // ==============================
 
-function getPinColor(section) {
+function getPinColor(location) {
 
-    switch (section) {
+    return location.post?.category?.pin_color || "#2f5bfd";
 
-        case "carinderia":
-            return "#2f5bfd";
-
-        case "restaurant-cafe":
-            return "#e05237";
-
-        case "travel":
-            return "#f5b52e";
-
-        case "other":
-            return "#5eab35";
-
-        default:
-            return "#64748b";
-    }
 }
+
 // ==============================
 // Initialize
 // ==============================
@@ -208,7 +193,7 @@ export function showFlatMap() {
             destination.lat,
             destination.lng
         ],
-        17,
+        16,
         {
             duration: 1.2
         }
@@ -237,66 +222,49 @@ export function hideFlatMap() {
 
 function addPins() {
 
-    // 古いピンを削除
-    markers.forEach(marker => map.removeLayer(marker));
+locations.forEach((location, index) => {
 
-    markers.length = 0;
+    setTimeout(() => {
 
-    activeMarker = null;
+        // =========================
+        // Category
+        // =========================
 
-    locations.forEach((location, index) => {
+        const color =
+            getPinColor(location);
 
-        setTimeout(() => {
+        // =========================
+        // Pin Icon
+        // =========================
 
-            // =========================
-            // Category
-            // =========================
+        const locationPinIcon = L.divIcon({
 
-            const section =
-                location.post?.category?.section;
+            className: "drop-pin",
 
-            console.log(
-                "📍場所:",
-                location.place_name,
-                "カテゴリー:",
-                section,
-                "category:",
-                location.post?.category
-            );
+            html: `
+                <div class="pin-wrapper">
 
-            const color =
-                getPinColor(section);
-            // =========================
-            // Pin Icon
-            // =========================
+                    <div
+                        class="pin"
+                        style="background:${color};"
+                    >
 
-            const locationPinIcon = L.divIcon({
-
-                className: "drop-pin",
-
-                html: `
-                    <div class="pin-wrapper">
-
-                        <div
-                            class="pin"
-                            style="background:${color};"
-                        >
-
-                            <div class="pin-center"></div>
-
-                        </div>
-
-                        <div class="pin-shadow"></div>
+                        <div class="pin-center"></div>
 
                     </div>
-                `,
 
-                iconSize: [40, 50],
+                    <div class="pin-shadow"></div>
 
-                iconAnchor: [20, 50]
+                </div>
+            `,
 
-            });
+            iconSize: [40, 50],
 
+            iconAnchor: [20, 50]
+
+        });
+
+        // (以下は変更なし)
             // =========================
             // Marker
             // =========================
@@ -396,18 +364,21 @@ marker.on("click", () => {
     // 大きい情報カードを表示
     const post = location.post;
 
-    showStoreCard({
-        image: post?.image ? `/storage/${post.image}` : "",
-        name: post?.title ?? location.place_name,
-        rating: post?.rating ?? "-",
-        price: post?.price ?? "",
-        category: post?.category?.name ?? "Other",
-        city: location.place_name,
-        country: "",
-        description: post?.description ?? ""
-    });
-
-});
+showStoreCard({
+    postId: post?.id,
+    image: post?.image_url ?? "post?.image_url ?? ",
+    name: post?.title ?? location.place_name,
+    price: post?.price ?? "",
+    category: post?.category?.name ?? "Other",
+    pinColor: post?.category?.pin_color ?? "#2f5bfd",
+    description: post?.description ?? "",
+    userName: post?.user?.name ?? "Unknown",
+    userAvatar: post?.user?.avatar_url ?? "",
+    createdAt: post?.created_at_human ?? "",
+    likesCount: post?.likes_count ?? 0,
+    likedByMe: post?.liked_by_me ?? false,
+    bookmarkedByMe: post?.bookmarked_by_me ?? false,
+});});
         }, index * 120);
 
     });

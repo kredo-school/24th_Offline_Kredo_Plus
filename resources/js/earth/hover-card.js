@@ -17,17 +17,6 @@ export function showHoverCard(location, x, y) {
 
     hoverCard.innerHTML = `
 
-        ${
-            post?.image
-                ? `
-                    <img
-                        src="/storage/${post.image}"
-                        class="hover-image"
-                        alt="${post.title ?? location.place_name}"
-                    >
-                `
-                : ""
-        }
 
         <div class="hover-content">
 
