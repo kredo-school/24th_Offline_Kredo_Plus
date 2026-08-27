@@ -52,6 +52,7 @@ class AdminDashboardController extends Controller
         $studyActiveUsersDiff = $todayStudyActiveUsersCount - $yesterdayStudyActiveUsersCount;
 
         $todayShowerUpdates = ShowerReport::whereDate('created_at', $today)->count();
+        $dailyShowerCount = $todayShowerUpdates; // ビュー(dashboard.blade.php)で要求される変数をセット
         $yesterdayShowerUpdates = ShowerReport::whereDate('created_at', $yesterday)->count();
         $showerUpdatesDiff = $todayShowerUpdates - $yesterdayShowerUpdates;
 
@@ -64,6 +65,7 @@ class AdminDashboardController extends Controller
             'studyActiveUsersDiff'           => $studyActiveUsersDiff,
             'todayShowerUpdates'    => $todayShowerUpdates,
             'showerUpdatesDiff'     => $showerUpdatesDiff,
+            'dailyShowerCount'      => $dailyShowerCount,
         ];
 
         // 3. 期間分析（週次・月次・年次）
@@ -133,7 +135,6 @@ class AdminDashboardController extends Controller
         });
 
         // 5. 留学情報管理タブ用(myu担当): メイン/サブカテゴリー一覧(隠しカテゴリーは管理画面には出さない)
-        // 削除ボタンの「中身が残っているか」の警告表示のため、sub_count / post_count を各行に付与しておく。
         $adminMainCategories = MainCategory::orderBy('sort_order')->orderBy('id')->get();
         $subCounts = Category::where('is_hidden', false)
             ->selectRaw('section, count(*) as cnt')->groupBy('section')->pluck('cnt', 'section');
