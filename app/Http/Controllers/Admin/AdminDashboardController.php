@@ -134,6 +134,9 @@ class AdminDashboardController extends Controller
             ];
         });
 
+        // 故障中シャワーの取得
+        $brokenShowers = ShowerMalfunctionReport::currentlyBroken();
+
         // 5. 留学情報管理タブ用(myu担当): メイン/サブカテゴリー一覧(隠しカテゴリーは管理画面には出さない)
         $adminMainCategories = MainCategory::orderBy('sort_order')->orderBy('id')->get();
         $subCounts = Category::where('is_hidden', false)
@@ -149,7 +152,13 @@ class AdminDashboardController extends Controller
         });
 
         return view('admin.dashboard', array_merge(
-            compact('users', 'notices', 'adminMainCategories', 'adminCategories'),
+            compact(
+                'users',
+                'notices',
+                'adminMainCategories',
+                'adminCategories',
+                'brokenShowers'
+            ),
             $stats,
             $analytics
         ));
