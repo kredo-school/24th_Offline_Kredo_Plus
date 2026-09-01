@@ -37,12 +37,29 @@ $wordsJson  = $words->map(fn($w) => [
         <span class="mx-1">/</span>
         <a href="{{ route('english.vocabulary.index') }}" class="hover:text-orange-600 transition-colors no-underline">英単語</a>
         <span class="mx-1">/</span>
+        @if($favoritesOnly)
+            <a href="{{ route('english.vocabulary.favorites') }}" class="hover:text-orange-600 transition-colors no-underline">お気に入り</a>
+            <span class="mx-1">/</span>
+        @endif
         <span class="text-blue-950/90 font-semibold">{{ $levelLabel }}</span>
     </x-english.breadcrumb>
+
+    @if($favoritesOnly && $words->isEmpty())
+        <div class="text-center py-20 bg-surface-container-lowest rounded-[0.75rem] shadow-sm max-w-xl mx-auto">
+            <span class="material-symbols-outlined text-5xl text-blue-950/90/40 mb-4 block">favorite_border</span>
+            <p class="text-body-lg text-blue-950/90 mb-6">{{ $levelLabel }} のお気に入り単語がありません</p>
+            <a href="{{ route('english.vocabulary.favorites') }}"
+               class="inline-flex items-center gap-2 px-6 py-3 bg-[#b95827] text-white rounded-[0.75rem] font-label-md text-label-md hover:opacity-90 transition-all no-underline">
+                <span class="material-symbols-outlined text-sm">arrow_back</span>
+                お気に入り一覧へ
+            </a>
+        </div>
+    @else
 
     <div x-data="flashcardApp({
             words:             {{ json_encode($wordsJson) }},
             level:             '{{ $level }}',
+            favoritesOnly:     {{ $favoritesOnly ? 'true' : 'false' }},
             favoriteIds:       {{ json_encode($favoriteIds ?? []) }},
             toggleFavoriteUrl: '{{ route('english.vocabulary.favorite') }}',
             progressUrl:       '{{ route('english.vocabulary.progress') }}'
@@ -51,7 +68,15 @@ $wordsJson  = $words->map(fn($w) => [
         {{-- ヘッダー --}}
         <div class="mb-6">
             <div class="flex items-center justify-between mb-2">
-                <h1 class="text-headline-md font-bold text-blue-950/90">{{ $levelLabel }} フラッシュカード</h1>
+                <h1 class="text-headline-md font-bold text-blue-950/90 flex items-center gap-2">
+                    {{ $levelLabel }} フラッシュカード
+                    @if($favoritesOnly)
+                        <span class="text-caption font-bold bg-red-100 text-red-500 px-2 py-0.5 rounded-[0.75rem] inline-flex items-center gap-1">
+                            <span class="material-symbols-outlined !text-sm" style="font-variation-settings:'FILL' 1">favorite</span>
+                            お気に入りのみ
+                        </span>
+                    @endif
+                </h1>
                 <div class="flex items-center gap-4">
                     <span class="text-label-md text-blue-950/90" x-text="`${currentIndex + 1} / ${words.length}`"></span>
                     <span class="flex items-center gap-1 text-label-md text-red-500">
@@ -84,9 +109,9 @@ $wordsJson  = $words->map(fn($w) => [
                     <span class="material-symbols-outlined text-sm">refresh</span>
                     もう一度
                 </button>
-                <a href="{{ route('english.vocabulary.index') }}"
+                <a href="{{ $favoritesOnly ? route('english.vocabulary.favorites') : route('english.vocabulary.index') }}"
                    class="flex-1 py-3 bg-[#b95827] text-white rounded-[0.75rem] font-label-md text-label-md hover:opacity-90 transition-all no-underline text-center flex items-center justify-center">
-                    レベル選択へ
+                    {{ $favoritesOnly ? 'お気に入り一覧へ' : 'レベル選択へ' }}
                 </a>
             </div>
         </div>
@@ -134,6 +159,7 @@ $wordsJson  = $words->map(fn($w) => [
         </div>
 
     </div>
+    @endif
 
 </div>
 @endsection

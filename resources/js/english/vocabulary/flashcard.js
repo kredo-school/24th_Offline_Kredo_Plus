@@ -15,6 +15,7 @@ export function flashcardApp(config) {
     return {
         words:            config.words ?? [],
         level:            config.level,
+        favoritesOnly:    config.favoritesOnly ?? false,
         favoriteIds:      [...(config.favoriteIds ?? [])],
         toggleFavoriteUrl: config.toggleFavoriteUrl,
         progressUrl:       config.progressUrl,
@@ -75,6 +76,7 @@ export function flashcardApp(config) {
                 await post(this.progressUrl, {
                     level:            this.level,
                     is_completed:     true,
+                    favorites_only:   this.favoritesOnly,
                     learned_word_ids: this.learned,
                     duration_seconds: durationSeconds,
                 });
