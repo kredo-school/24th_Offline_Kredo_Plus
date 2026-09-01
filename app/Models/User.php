@@ -18,6 +18,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Services\Shower\ShowerScale;
 use App\Models\Shower\ShowerReport;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -28,14 +29,13 @@ class User extends Authenticatable
     public const USER_ROLE_ID = 2;
 
     /**
-     * JSON/配列化した際に、avatar_url（アクセサ）も一緒に含める。
-     * 投稿一覧などで user を丸ごとJSに渡す箇所で、素の avatar カラムではなく
-     * 表示用URLをそのまま使えるようにするため。
+     * JSON/配列化した際に、フロントエンドで必要なアクセサも含める。
      *
      * @var list<string>
      */
     protected $appends = [
         'avatar_url',
+        'role',
     ];
 
     /**
@@ -49,6 +49,10 @@ class User extends Authenticatable
         'avatar',
         'password',
         'role_id',
+        'dorm',                 // ★所属寮（必要に応じて追加）
+        'course',               // ★コース（必要に応じて追加）
+        'is_active',            // ★ステータス（必要に応じて追加）
+        'last_active_at',        // ★最終アクセス（必要に応じて追加）
         'total_xp',
         'study_streak',
         'last_study_date',
@@ -85,6 +89,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role_id' => 'integer',
+            'is_active' => 'boolean',
+            'last_active_at' => 'datetime',
             'last_study_date' => 'date',
             'total_xp' => 'integer',
             'study_streak' => 'integer',
@@ -100,7 +106,7 @@ class User extends Authenticatable
 
     // ===== 英語学習リレーション =====
 
-    public function toeicResults()
+    public function toeicResults(): HasMany
     {
         return $this->hasMany(ToeicResult::class);
     }
@@ -110,43 +116,75 @@ class User extends Authenticatable
         return $this->hasManyThrough(ToeicAnswerLog::class, ToeicResult::class, 'user_id', 'result_id');
     }
 
-    public function ieltsRecords()
+    public function ieltsRecords(): HasMany
     {
         return $this->hasMany(IeltsRecord::class);
     }
 
-    public function typingRecords()
+    public function typingRecords(): HasMany
     {
         return $this->hasMany(TypingRecord::class);
     }
 
-    public function quizResults()
+    public function quizResults(): HasMany
     {
         return $this->hasMany(QuizResult::class);
     }
 
-    public function studyLogs()
+    public function studyLogs(): HasMany
     {
         return $this->hasMany(StudyLog::class);
     }
 
-    public function sectionProgress()
+    public function sectionProgress(): HasMany
     {
         return $this->hasMany(UserSectionProgress::class);
     }
 
-    public function wordFavorites()
+    public function wordFavorites(): HasMany
     {
         return $this->hasMany(UserWordFavorite::class);
     }
 
-    public function wordProgress()
+    public function wordProgress(): HasMany
     {
         return $this->hasMany(UserWordProgress::class);
     }
 
-    // シャワーリレーション
-    // 性別登録
+    // ===== その他各種リレーション =====
+
+    public function showerReports(): HasMany
+    {
+        return $this->hasMany(ShowerReport::class);
+    }
+
+    public function suggestions(): HasMany
+    {
+        return $this->hasMany(Suggestion::class);
+    }
+
+    public function calendarNotes(): HasMany
+    {
+        return $this->hasMany(CalendarNote::class);
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    public function likes(): HasMany
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    public function bookmarks(): HasMany
+    {
+        return $this->hasMany(Bookmark::class);
+    }
+
+    // ===== ヘルパー・アクセサ =====
+
     public function hasGender(): bool
     {
         return !is_null($this->gender);
@@ -157,16 +195,21 @@ class User extends Authenticatable
         return $this->role_id === self::ADMIN_ROLE_ID;
     }
 
-    // プロフィール写真の公開URL
-    // Storage::url() は APP_URL のホストで絶対URLを組み立てるため、
-    // APP_URL と実際のアクセス先ホストが異なる開発環境では画像が読み込めなくなる。
-    // そのため常にルート相対パスを返し、今アクセスしているホストから解決させる。
+    /**
+     * フロントエンド判定用の role 文字列アクセサ ('admin' または 'student')
+     */
+    public function getRoleAttribute(): string
+    {
+        return $this->isAdmin() ? 'admin' : 'student';
+    }
+
+    /**
+     * プロフィール写真の公開URLアクセサ
+     */
     public function getAvatarUrlAttribute(): ?string
     {
         return $this->avatar ? '/storage/' . $this->avatar : null;
     }
-
-    // シャワーの好み登録
 
     public function getPreferredTemperatureLabelAttribute(): string
     {
@@ -176,41 +219,5 @@ class User extends Authenticatable
     public function getPreferredPressureLabelAttribute(): string
     {
         return ShowerScale::closestLabel($this->preferred_pressure, ShowerScale::PREFERENCE_PRESSURE_LEVELS);
-    }
-
-    // シャワー状態の管理
-    public function showerReports()
-    {
-        return $this->hasMany(ShowerReport::class);
-    }
-
-    // 目安箱
-    public function suggestions()
-    {
-        return $this->hasMany(Suggestion::class);
-    }
-
-    // マイカレンダー（課題・イベントのメモ）
-    public function calendarNotes()
-    {
-        return $this->hasMany(CalendarNote::class);
-    }
-
-    // 留学情報: 自分が投稿した投稿
-    public function posts()
-    {
-        return $this->hasMany(Post::class);
-    }
-
-    // 留学情報: 自分がいいねした投稿（Likeレコード）
-    public function likes()
-    {
-        return $this->hasMany(Like::class);
-    }
-
-    // 留学情報: 自分が保存した投稿（Bookmarkレコード）
-    public function bookmarks()
-    {
-        return $this->hasMany(Bookmark::class);
     }
 }
