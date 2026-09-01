@@ -183,7 +183,7 @@
           : route('information.dynamic', $mc->key);
         $isCurrentMain = $mc->key === 'other';
       @endphp
-      <a href="{{ $href }}" @if($isCurrentMain) data-active="true" @endif class="flex items-center justify-center rounded-full py-3 px-3 font-bold text-lg shadow-sm hover:opacity-90 transition-opacity {{ $mc->key === 'carinderia' ? 'chicken-cursor-hover' : '' }}" style="background:{{ $mc->backgroundColor() }}; color:{{ $mc->textColor() }}">
+      <a href="{{ $href }}" @if($isCurrentMain) data-active="true" @endif class="flex items-center justify-center rounded-full py-3 px-3 font-bold text-lg shadow-md hover:opacity-90 transition-opacity {{ $mc->key === 'carinderia' ? 'chicken-cursor-hover' : '' }}" style="background:{{ $mc->backgroundColor() }}; color:{{ $mc->textColor() }}">
         {{ $mc->name }}
       </a>
     @endforeach
