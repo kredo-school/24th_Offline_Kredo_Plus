@@ -71,7 +71,7 @@
         </h2>
         <a href="{{ route('english.vocabulary.favorites') }}"
            class="flex items-center gap-4 bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-5 no-underline group">
-            <div class="p-3 bg-red-100 rounded-[0.75rem] flex-shrink-0">
+            <div class="w-12 h-12 bg-red-100 rounded-[0.75rem] flex items-center justify-center flex-shrink-0">
                 <span class="material-symbols-outlined text-red-500 text-2xl">favorite</span>
             </div>
             <div class="flex-1">
