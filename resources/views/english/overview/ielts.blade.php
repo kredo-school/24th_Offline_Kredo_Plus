@@ -15,6 +15,20 @@
 
     <div class="mb-8">
         <h1 class="text-headline-lg font-bold text-blue-950/90 mb-2">IELTS 概要</h1>
+        <ul class="mt-3 space-y-2 text-body-md text-blue-950/90">
+            <li class="flex items-start gap-2">
+                <span class="text-orange-600">•</span>
+                <span>スコアは0-9のバンドスコアで、0.5刻みで評価されます。</span>
+            </li>
+            <li class="flex items-start gap-2">
+                <span class="text-orange-600">•</span>
+                <span>4技能（Listening / Reading / Writing / Speaking）それぞれにバンドスコアが付きます。</span>
+            </li>
+            <li class="flex items-start gap-2">
+                <span class="text-orange-600">•</span>
+                <span>4技能の平均が「オーバーオールバンドスコア」として算出されます。</span>
+            </li>
+        </ul>
     </div>
 
     <div x-data="{ activeTab: 'listening' }" class="max-w-4xl">
@@ -44,8 +58,8 @@
                         <p class="text-caption text-blue-950/90">試験時間</p>
                     </div>
                     <div class="p-4 bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 rounded-[0.5rem] text-center">
-                        <p class="text-headline-lg font-black text-orange-600">0-9</p>
-                        <p class="text-caption text-blue-950/90">バンドスコア</p>
+                        <p class="text-headline-lg font-black text-orange-600">4パート</p>
+                        <p class="text-caption text-blue-950/90">全体の構成（Part 1〜4）</p>
                     </div>
                 </div>
                 <div>
