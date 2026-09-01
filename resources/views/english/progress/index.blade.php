@@ -29,33 +29,24 @@ $sectionLabels = [
 
     <div class="space-y-6">
 
-        {{-- 上段: XPバー + ストリーク --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-6">
-                <h2 class="text-label-md font-bold text-blue-950/90 mb-4">レベル & XP</h2>
-                <x-english.xp-bar
-                    :level="$levelInfo['level']"
-                    :currentXp="$levelInfo['xp_in_level']"
-                    :nextXp="500" />
-            </div>
-            {{-- 連続日数表示（コメントアウト。トータル学習日数表示に変更したため） --}}
-            {{--
-            <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-6 flex items-center gap-4">
-                <div class="text-5xl">🔥</div>
-                <div>
-                    <p class="text-display font-black text-orange-600">{{ $user->study_streak }}</p>
-                    <p class="text-body-md text-blue-950/90">日連続学習</p>
-                </div>
-            </div>
-            --}}
-            <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-6 flex items-center justify-center gap-4">
-                <span class="material-symbols-outlined !text-6xl text-orange-600 shrink-0" aria-hidden="true">calendar_month</span>
-                <div>
-                    <p class="text-display font-black text-orange-600">{{ $totalStudyDays }}</p>
-                    <p class="text-body-md text-blue-950/90">総学習日数</p>
-                </div>
+        {{-- 上段: XPバー --}}
+        <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-6">
+            <h2 class="text-label-md font-bold text-blue-950/90 mb-4">レベル & XP</h2>
+            <x-english.xp-bar
+                :level="$levelInfo['level']"
+                :currentXp="$levelInfo['xp_in_level']"
+                :nextXp="500" />
+        </div>
+        {{-- 連続日数表示（コメントアウト。トータル学習日数表示に変更したため） --}}
+        {{--
+        <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-6 flex items-center gap-4">
+            <div class="text-5xl">🔥</div>
+            <div>
+                <p class="text-display font-black text-orange-600">{{ $user->study_streak }}</p>
+                <p class="text-body-md text-blue-950/90">日連続学習</p>
             </div>
         </div>
+        --}}
 
         {{-- 学習サマリー --}}
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -72,8 +63,8 @@ $sectionLabels = [
                 <p class="text-caption text-blue-950/90">Total XP</p>
             </div>
             <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-5 text-center">
-                <p class="text-headline-lg font-black text-orange-600">{{ $levelInfo['level'] }}</p>
-                <p class="text-caption text-blue-950/90">現在レベル</p>
+                <p class="text-headline-lg font-black text-orange-600">{{ $totalStudyDays }}</p>
+                <p class="text-caption text-blue-950/90">総学習日数</p>
             </div>
         </div>
 
