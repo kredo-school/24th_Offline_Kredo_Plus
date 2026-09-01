@@ -140,13 +140,13 @@
                          x-transition:leave="transition ease-in duration-500"
                          x-transition:leave-start="opacity-100"
                          x-transition:leave-end="opacity-0"
-                         class="absolute inset-0 w-full h-full object-cover"
+                         class="absolute inset-0 w-full h-full object-cover brightness-125 contrast-105 saturate-105"
                          alt="Cebu">
                 </template>
 
                 {{-- 写真の上に文字を乗せても読みやすいよう、下〜左側だけを暗くするグラデーション（ネイビーを効かせて上品に） --}}
-                <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-t from-slate-950/55 via-slate-950/15 to-transparent pointer-events-none"></div>
-                <div aria-hidden="true" class="absolute inset-y-0 left-0 w-full sm:w-3/5 bg-gradient-to-r from-slate-950/35 via-slate-950/5 to-transparent pointer-events-none"></div>
+                <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-slate-950/5 to-transparent pointer-events-none"></div>
+                <div aria-hidden="true" class="absolute inset-y-0 left-0 w-full sm:w-3/5 bg-gradient-to-r from-slate-950/25 via-slate-950/5 to-transparent pointer-events-none"></div>
 
                 {{-- 手書き風の挨拶 + タイトル + リード文（下部はイラスト用に余白を多めに確保） --}}
                 <div class="absolute inset-x-0 bottom-0 pl-14 sm:pl-16 pr-8 sm:pr-12 pt-8 sm:pt-12 pb-8 sm:pb-12 sm:max-w-md">
