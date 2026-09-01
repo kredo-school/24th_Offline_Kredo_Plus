@@ -18,6 +18,7 @@ export default defineConfig({
                 'resources/js/english/app.js',
                 'resources/css/earth/style.css',
                 'resources/js/earth/main.js',
+                'resources/js/admin.js',
             ],
             refresh: true,
         }),
