@@ -360,8 +360,18 @@ class ToeicController extends Controller
             ->where('is_correct', false)
             ->map(fn($log) => [
                 'question'        => $log->question?->question_text ?? '',
+                'image_url'       => $log->question?->image_url,
+                'your_option_id'  => $log->selectedOption?->id,
                 'your_answer'     => $log->selectedOption?->option_text ?? '',
                 'correct_answer'  => $log->question?->options->firstWhere('is_correct', true)?->option_text ?? '',
+                'options'         => $log->question
+                    ? $log->question->options->map(fn($o) => [
+                        'id'          => $o->id,
+                        'label'       => $o->label,
+                        'option_text' => $o->option_text,
+                        'is_correct'  => (bool) $o->is_correct,
+                    ])->values()->all()
+                    : [],
                 'explanation'     => $log->question?->explanation ?? '',
             ])->values()->all();
 

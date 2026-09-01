@@ -45,7 +45,9 @@ $clearTimeFormatted = sprintf('%d:%02d', intdiv($clearTimeSec, 60), $clearTimeSe
             <div class="mb-4 text-caption text-blue-950/90">
                 ベスト記録: <span class="font-bold text-blue-950/90">{{ $bestWpm }} WPM</span>
                 @if($record->wpm >= $bestWpm)
-                <span class="ml-2 text-orange-600 font-bold">🏆 新記録！</span>
+                <span class="ml-2 text-orange-600 font-bold inline-flex items-center gap-1 align-middle">
+                    <span class="material-symbols-outlined !text-base">emoji_events</span>新記録！
+                </span>
                 @endif
             </div>
             @endif
