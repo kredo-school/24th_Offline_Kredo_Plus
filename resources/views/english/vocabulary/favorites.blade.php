@@ -26,7 +26,7 @@ $wordsJson = $favorites->map(fn($f) => [
     </x-english.breadcrumb>
 
     <div class="mb-8 flex items-center gap-3">
-        <div class="p-3 bg-red-100 rounded-[0.75rem]">
+        <div class="w-12 h-12 bg-red-100 rounded-[0.75rem] flex items-center justify-center flex-shrink-0">
             <span class="material-symbols-outlined text-red-500 text-2xl">favorite</span>
         </div>
         <div>
