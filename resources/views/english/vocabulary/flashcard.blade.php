@@ -69,7 +69,7 @@ $wordsJson  = $words->map(fn($w) => [
         {{-- 完了メッセージ --}}
         <div x-show="isDone" class="text-center max-w-md mx-auto">
             <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8 mb-6">
-                <div class="text-5xl mb-4">🎉</div>
+                <div class="mb-4"><span class="material-symbols-outlined !text-5xl text-orange-600">celebration</span></div>
                 <h2 class="text-headline-lg font-bold text-blue-950/90 mb-2">完了！</h2>
                 <p class="text-body-md text-blue-950/90 mb-2">
                     全 <span x-text="words.length"></span> 単語を学習しました

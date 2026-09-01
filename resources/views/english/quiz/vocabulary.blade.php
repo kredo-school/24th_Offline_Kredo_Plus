@@ -45,8 +45,8 @@
                         class="p-4 rounded-[0.75rem] border-2 text-left font-label-md transition-all"
                     >
                         <span x-text="option"></span>
-                        <span x-show="isAnswered && option === current.correct" class="ml-2">✅</span>
-                        <span x-show="isAnswered && selectedOption === idx && option !== current.correct" class="ml-2">❌</span>
+                        <span x-show="isAnswered && option === current.correct" class="material-symbols-outlined !text-base align-middle text-green-600 ml-2">check_circle</span>
+                        <span x-show="isAnswered && selectedOption === idx && option !== current.correct" class="material-symbols-outlined !text-base align-middle text-error ml-2">cancel</span>
                     </button>
                 </template>
             </div>
@@ -74,7 +74,7 @@
 
         <div x-show="isComplete" class="text-center max-w-md mx-auto">
             <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8 mb-6">
-                <div class="text-5xl mb-4">🎉</div>
+                <div class="mb-4"><span class="material-symbols-outlined !text-5xl text-orange-600">celebration</span></div>
                 <h2 class="text-headline-lg font-bold text-blue-950/90 mb-2">クイズ完了！</h2>
                 <p class="text-body-md text-blue-950/90 mb-2">スコア</p>
                 <p class="text-display font-black text-orange-600" x-text="`${score} / ${questions.length}`"></p>

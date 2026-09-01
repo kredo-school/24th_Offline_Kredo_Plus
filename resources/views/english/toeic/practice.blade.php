@@ -83,16 +83,17 @@
                                     >
                                         <span class="font-bold uppercase mr-2" x-text="option.label + '.'"></span>
                                         <span x-text="option.option_text"></span>
-                                        <span x-show="groupSubmitted && groupResults[q.id] && option.id === groupResults[q.id].correct_option_id" class="ml-2">✅</span>
-                                        <span x-show="groupSubmitted && groupAnswers[q.id] === option.id && groupResults[q.id] && option.id !== groupResults[q.id].correct_option_id" class="ml-2">❌</span>
+                                        <span x-show="groupSubmitted && groupResults[q.id] && option.id === groupResults[q.id].correct_option_id" class="material-symbols-outlined !text-base align-middle text-green-600 ml-2">check_circle</span>
+                                        <span x-show="groupSubmitted && groupAnswers[q.id] === option.id && groupResults[q.id] && option.id !== groupResults[q.id].correct_option_id" class="material-symbols-outlined !text-base align-middle text-error ml-2">cancel</span>
                                     </button>
                                 </template>
                             </div>
                             <template x-if="groupSubmitted && groupResults[q.id]">
                                 <div class="mt-4 p-4 rounded-[0.5rem] border"
                                      :class="groupResults[q.id].is_correct ? 'bg-green-50 border-green-200' : 'bg-error-container/30 border-error/20'">
-                                    <p class="font-bold mb-1" :class="groupResults[q.id].is_correct ? 'text-green-700' : 'text-error'">
-                                        <span x-text="groupResults[q.id].is_correct ? '✅ 正解！' : '❌ 不正解'"></span>
+                                    <p class="font-bold mb-1 flex items-center gap-1" :class="groupResults[q.id].is_correct ? 'text-green-700' : 'text-error'">
+                                        <span class="material-symbols-outlined !text-lg" x-text="groupResults[q.id].is_correct ? 'check_circle' : 'cancel'"></span>
+                                        <span x-text="groupResults[q.id].is_correct ? '正解！' : '不正解'"></span>
                                     </p>
                                     <p class="text-body-md text-blue-950/90" x-text="groupResults[q.id].explanation"></p>
                                 </div>
@@ -136,7 +137,7 @@
             {{-- 全問完了（complete() が form submit するため、ここは loading 表示のみ） --}}
             <div x-show="isComplete" class="text-center max-w-md mx-auto">
                 <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8 mb-6">
-                    <div class="text-5xl mb-4">🎉</div>
+                    <div class="mb-4"><span class="material-symbols-outlined !text-5xl text-orange-600">celebration</span></div>
                     <h2 class="text-headline-lg font-bold text-blue-950/90 mb-2">完了！</h2>
                     <p class="text-body-md text-blue-950/90 mb-4">スコア</p>
                     <p class="text-display font-black text-orange-600" x-text="`${score} / ${questions.length}`"></p>
@@ -231,8 +232,8 @@
                             >
                                 <span class="font-bold uppercase mr-2" x-text="option.label + '.'"></span>
                                 <span x-text="option.option_text"></span>
-                                <span x-show="isAnswered && option.id === correctOptionId" class="ml-2">✅</span>
-                                <span x-show="isAnswered && selectedId === option.id && option.id !== correctOptionId" class="ml-2">❌</span>
+                                <span x-show="isAnswered && option.id === correctOptionId" class="material-symbols-outlined !text-base align-middle text-green-600 ml-2">check_circle</span>
+                                <span x-show="isAnswered && selectedId === option.id && option.id !== correctOptionId" class="material-symbols-outlined !text-base align-middle text-error ml-2">cancel</span>
                             </button>
                         </template>
                     </div>
@@ -250,8 +251,8 @@
                                 class="p-6 rounded-[0.75rem] border-2 text-center font-label-md transition-all"
                             >
                                 <span class="block text-headline-md font-bold uppercase" x-text="option.label"></span>
-                                <span x-show="isAnswered && option.id === correctOptionId" class="block mt-1">✅</span>
-                                <span x-show="isAnswered && selectedId === option.id && option.id !== correctOptionId" class="block mt-1">❌</span>
+                                <span x-show="isAnswered && option.id === correctOptionId" class="material-symbols-outlined !text-lg block mt-1 mx-auto text-green-600">check_circle</span>
+                                <span x-show="isAnswered && selectedId === option.id && option.id !== correctOptionId" class="material-symbols-outlined !text-lg block mt-1 mx-auto text-error">cancel</span>
                             </button>
                         </template>
                     </div>
@@ -268,8 +269,8 @@
                             class="p-6 rounded-[0.75rem] border-2 text-center font-label-md transition-all"
                         >
                             <span class="block text-headline-md font-bold uppercase" x-text="option.label"></span>
-                            <span x-show="isAnswered && option.id === correctOptionId" class="block mt-1">✅</span>
-                            <span x-show="isAnswered && selectedId === option.id && option.id !== correctOptionId" class="block mt-1">❌</span>
+                            <span x-show="isAnswered && option.id === correctOptionId" class="material-symbols-outlined !text-lg block mt-1 mx-auto text-green-600">check_circle</span>
+                            <span x-show="isAnswered && selectedId === option.id && option.id !== correctOptionId" class="material-symbols-outlined !text-lg block mt-1 mx-auto text-error">cancel</span>
                         </button>
                     </template>
                 </div>
@@ -292,8 +293,9 @@
                     <div x-show="isAnswered" class="space-y-4">
                         <div :class="isCorrect ? 'bg-green-50 border-green-200' : 'bg-error-container/30 border-error/20'"
                              class="border rounded-[0.5rem] p-4">
-                            <p class="font-bold mb-1" :class="isCorrect ? 'text-green-700' : 'text-error'">
-                                <span x-text="isCorrect ? '✅ 正解！' : '❌ 不正解'"></span>
+                            <p class="font-bold mb-1 flex items-center gap-1" :class="isCorrect ? 'text-green-700' : 'text-error'">
+                                <span class="material-symbols-outlined !text-lg" x-text="isCorrect ? 'check_circle' : 'cancel'"></span>
+                                <span x-text="isCorrect ? '正解！' : '不正解'"></span>
                             </p>
                             <p class="text-body-md text-blue-950/90" x-text="explanation"></p>
 
@@ -304,8 +306,8 @@
                                         <p class="text-body-md" :class="option.id === correctOptionId ? 'text-green-700 font-semibold' : 'text-blue-950/90'">
                                             <span class="font-bold uppercase mr-1" x-text="option.label + '.'"></span>
                                             <span x-text="option.option_text"></span>
-                                            <span x-show="option.id === correctOptionId">✅</span>
-                                            <span x-show="selectedId === option.id && option.id !== correctOptionId">❌</span>
+                                            <span x-show="option.id === correctOptionId" class="material-symbols-outlined !text-sm align-middle text-green-600">check_circle</span>
+                                            <span x-show="selectedId === option.id && option.id !== correctOptionId" class="material-symbols-outlined !text-sm align-middle text-error">cancel</span>
                                         </p>
                                     </template>
                                 </div>
@@ -319,8 +321,8 @@
                                     <p class="text-body-md" :class="option.id === correctOptionId ? 'text-green-700 font-semibold' : 'text-blue-950/90'">
                                         <span class="font-bold uppercase mr-1" x-text="option.label + '.'"></span>
                                         <span x-text="option.option_text"></span>
-                                        <span x-show="option.id === correctOptionId">✅</span>
-                                        <span x-show="selectedId === option.id && option.id !== correctOptionId">❌</span>
+                                        <span x-show="option.id === correctOptionId" class="material-symbols-outlined !text-sm align-middle text-green-600">check_circle</span>
+                                        <span x-show="selectedId === option.id && option.id !== correctOptionId" class="material-symbols-outlined !text-sm align-middle text-error">cancel</span>
                                     </p>
                                 </template>
                             </div>
@@ -346,7 +348,7 @@
             {{-- 全問完了（complete() が form submit するため、ここは loading 表示のみ） --}}
             <div x-show="isComplete" class="text-center max-w-md mx-auto">
                 <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8 mb-6">
-                    <div class="text-5xl mb-4">🎉</div>
+                    <div class="mb-4"><span class="material-symbols-outlined !text-5xl text-orange-600">celebration</span></div>
                     <h2 class="text-headline-lg font-bold text-blue-950/90 mb-2">完了！</h2>
                     <p class="text-body-md text-blue-950/90 mb-4">スコア</p>
                     <p class="text-display font-black text-orange-600" x-text="`${score} / ${questions.length}`"></p>

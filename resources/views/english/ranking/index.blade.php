@@ -52,9 +52,9 @@
                     @endphp
                     <tr class="{{ $rank <= 3 ? 'bg-gradient-to-br from-orange-100 to-amber-50 font-semibold' : '' }} {{ $isMe ? 'bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-inset ring-orange-300' : '' }} hover:bg-surface-container-low/50 transition-colors">
                         <td class="py-4 px-4 text-center font-bold">
-                            @if($rank === 1) <span class="text-xl">🥇</span>
-                            @elseif($rank === 2) <span class="text-xl">🥈</span>
-                            @elseif($rank === 3) <span class="text-xl">🥉</span>
+                            @if($rank === 1) <span class="material-symbols-outlined !text-xl text-amber-500 align-middle" style="font-variation-settings:'FILL' 1">workspace_premium</span>
+                            @elseif($rank === 2) <span class="material-symbols-outlined !text-xl text-slate-400 align-middle" style="font-variation-settings:'FILL' 1">workspace_premium</span>
+                            @elseif($rank === 3) <span class="material-symbols-outlined !text-xl text-orange-700 align-middle" style="font-variation-settings:'FILL' 1">workspace_premium</span>
                             @else <span class="text-blue-950/90 text-sm">{{ $rank }}</span>
                             @endif
                         </td>

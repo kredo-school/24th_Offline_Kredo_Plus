@@ -58,7 +58,10 @@ window.__TYPING_CONFIG__ = {
 {{-- リザルトモーダル --}}
 <div id="result-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
   <div class="bg-surface w-full max-w-md rounded-[0.5rem] p-6 shadow-xl text-center">
-    <h2 class="text-headline-md text-blue-950/90 mb-4 font-bold">Practice Completed! 🎉</h2>
+    <h2 class="text-headline-md text-blue-950/90 mb-4 font-bold flex items-center justify-center gap-2">
+      <span class="material-symbols-outlined !text-2xl text-orange-600">celebration</span>
+      Practice Completed!
+    </h2>
     <div class="text-left space-y-4 text-blue-950/90">
 
       {{-- Stats --}}

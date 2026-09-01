@@ -27,7 +27,7 @@ $topicMeta = config('english.ielts_topic_meta');
         @php $meta = $topicMeta[$topic->slug] ?? []; @endphp
         <a href="/english/ielts/speaking/{{ $part }}/{{ $topic->slug }}/score"
            class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm hover:shadow-md transition-all p-6 flex flex-col gap-4 no-underline group">
-            <div class="text-5xl">{{ $meta['emoji'] ?? '📚' }}</div>
+            <div><span class="material-symbols-outlined !text-5xl text-orange-600">{{ $meta['icon'] ?? 'menu_book' }}</span></div>
             <div>
                 <h3 class="text-headline-md font-bold text-blue-950/90 mb-2">{{ $topic->name }}</h3>
                 <p class="text-body-md text-blue-950/90">{{ $topic->description ?? ($meta['desc'] ?? '') }}</p>

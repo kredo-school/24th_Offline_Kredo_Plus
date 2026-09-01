@@ -224,7 +224,7 @@
                             <span class="material-symbols-outlined text-violet-500 !text-lg">flag</span>
                         </div>
                         @if ($user->graduation_date)
-                            <p class="text-xs text-slate-500 mb-1">📅 {{ $user->graduation_date->format('Y年n月j日') }}</p>
+                            <p class="text-xs text-slate-500 mb-1">{{ $user->graduation_date->format('Y年n月j日') }}</p>
                             @php $daysLeft = now()->startOfDay()->diffInDays($user->graduation_date, false); @endphp
                             @if ($daysLeft > 0)
                                 <p class="text-xl font-extrabold text-violet-600">残り {{ $daysLeft }} 日</p>

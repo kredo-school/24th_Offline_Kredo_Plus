@@ -17,8 +17,10 @@
 
         {{-- スコアサマリーカード --}}
         <div class="bg-surface-container-lowest rounded-[0.75rem] shadow-sm p-8 text-center">
-            <div class="text-5xl mb-4">
-                @if($result->accuracy >= 80) 🎉 @elseif($result->accuracy >= 60) 👍 @else 💪 @endif
+            <div class="mb-4">
+                <span class="material-symbols-outlined !text-5xl text-orange-600">
+                    @if($result->accuracy >= 80) workspace_premium @elseif($result->accuracy >= 60) thumb_up @else trending_up @endif
+                </span>
             </div>
             <h1 class="text-headline-lg font-bold text-blue-950/90 mb-6">Part {{ $part }} 完了！</h1>
 
@@ -65,10 +67,44 @@
             <div x-show="open" x-transition class="px-6 pb-6 space-y-4 border-t border-slate-200">
                 @foreach($wrongAnswers as $wq)
                 <div class="p-4 bg-error-container/20 rounded-[0.5rem] border border-error/20 mt-4">
-                    <p class="text-body-md text-blue-950/90 font-semibold mb-2">{{ $wq['question'] }}</p>
-                    <p class="text-caption text-error mb-1">あなたの回答: {{ $wq['your_answer'] }}</p>
-                    <p class="text-caption text-green-700 mb-2">正解: {{ $wq['correct_answer'] }}</p>
-                    <p class="text-caption text-blue-950/90">{{ $wq['explanation'] }}</p>
+                    @if(!empty($wq['image_url']))
+                        <img src="{{ $wq['image_url'] }}" alt="問題の写真"
+                             class="w-full rounded-[0.5rem] border border-slate-200 mb-3">
+                    @elseif(!empty($wq['question']))
+                        <p class="text-body-md text-blue-950/90 font-semibold mb-2">{{ $wq['question'] }}</p>
+                    @endif
+
+                    @if(!empty($wq['options']))
+                    <div class="mb-3 space-y-1">
+                        @foreach($wq['options'] as $opt)
+                        @php
+                            $isCorrect = $opt['is_correct'];
+                            $isYours   = $opt['id'] === ($wq['your_option_id'] ?? null);
+                        @endphp
+                        <div @class([
+                            'text-caption flex items-start gap-2 rounded-[0.375rem] px-2 py-1',
+                            'bg-green-100 text-green-800' => $isCorrect,
+                            'bg-error/10 text-error' => $isYours && !$isCorrect,
+                            'text-blue-950/90' => !$isCorrect && !$isYours,
+                        ])>
+                            <span class="font-bold shrink-0">{{ $opt['label'] }}.</span>
+                            <span class="flex-1">{{ $opt['option_text'] }}</span>
+                            @if($isCorrect)
+                                <span class="shrink-0 font-semibold">正解</span>
+                            @elseif($isYours)
+                                <span class="shrink-0 font-semibold">あなたの回答</span>
+                            @endif
+                        </div>
+                        @endforeach
+                    </div>
+                    @else
+                        <p class="text-caption text-error mb-1">あなたの回答: {{ $wq['your_answer'] }}</p>
+                        <p class="text-caption text-green-700 mb-2">正解: {{ $wq['correct_answer'] }}</p>
+                    @endif
+
+                    @if(!empty($wq['explanation']))
+                        <p class="text-caption text-blue-950/90">{{ $wq['explanation'] }}</p>
+                    @endif
                 </div>
                 @endforeach
             </div>
