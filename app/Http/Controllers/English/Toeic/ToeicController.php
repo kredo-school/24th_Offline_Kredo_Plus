@@ -351,6 +351,7 @@ class ToeicController extends Controller
 
         $result = Auth::user()->toeicResults()->with([
             'answerLogs.question.options',
+            'answerLogs.question.passage',
             'answerLogs.selectedOption',
         ])->findOrFail($resultId);
 
@@ -372,6 +373,10 @@ class ToeicController extends Controller
                         'is_correct'  => (bool) $o->is_correct,
                     ])->values()->all()
                     : [],
+                'passage'         => $log->question?->passage ? [
+                    'title'     => $log->question->passage->title,
+                    'documents' => $log->question->passage->documents ?? [],
+                ] : null,
                 'explanation'     => $log->question?->explanation ?? '',
             ])->values()->all();
 

@@ -102,6 +102,24 @@
                     </template>
                 </div>
 
+                {{-- 回答後：会話/トーク全体のスクリプト（オーディオの内容）を表示 --}}
+                <template x-if="groupSubmitted && currentConversationGroup.questions[0]?.passage?.documents?.length">
+                    <div class="max-w-3xl mx-auto mb-6">
+                        <div class="bg-slate-50 rounded-[0.75rem] shadow-sm p-6 border border-slate-200">
+                            <p class="text-label-md font-bold text-orange-600 mb-3 flex items-center gap-1">
+                                <span class="material-symbols-outlined !text-lg">description</span>
+                                {{ $part == 3 ? '会話スクリプト' : 'トークスクリプト' }}
+                            </p>
+                            <template x-for="(doc, docIndex) in currentConversationGroup.questions[0].passage.documents" :key="docIndex">
+                                <div class="mb-3 last:mb-0">
+                                    <p class="font-semibold text-blue-950/90 mb-1" x-show="doc.heading" x-text="doc.heading"></p>
+                                    <p class="whitespace-pre-line text-body-md text-blue-950/90 leading-relaxed" x-text="doc.body"></p>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
                 {{-- 提出 / 次の会話へ --}}
                 <div class="max-w-3xl mx-auto">
                     <div x-show="!groupSubmitted">
