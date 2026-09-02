@@ -82,7 +82,7 @@ $wordsJson = $favorites->map(fn($f) => [
                             {{-- アクションボタン --}}
                             <div class="flex items-center gap-2 flex-shrink-0">
                                 {{-- フラッシュカードへ --}}
-                                <a :href="`/english/vocabulary/${word.levelSlug}/flashcard`"
+                                <a :href="`/english/vocabulary/${word.levelSlug}/flashcard?favorites=1`"
                                    class="inline-flex items-center gap-1 px-4 py-2 bg-[#b95827] text-white rounded-[0.75rem] text-label-md font-label-md hover:opacity-90 transition-all no-underline text-sm">
                                     <span class="material-symbols-outlined text-sm">style</span>
                                     フラッシュカード

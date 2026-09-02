@@ -108,16 +108,24 @@ class VocabularyController extends Controller
      * フラッシュカード (S13)
      * GET /english/vocabulary/{level}/flashcard
      */
-    public function flashcard(string $level)
+    public function flashcard(Request $request, string $level)
     {
         $meta       = $this->parseLevelParam($level);
         $levelLabel = $meta['exam_type'] . ' ' . $meta['level'];
         $user       = Auth::user();
 
-        $words = VocabularyWord::byLevel($meta['exam_type'], $meta['level'])
-            ->inRandomOrder()
-            ->take(10)
-            ->get();
+        // お気に入り画面から遷移した場合は、そのレベルのお気に入り単語だけで構成する
+        $favoritesOnly = $request->boolean('favorites');
+
+        $wordsQuery = VocabularyWord::byLevel($meta['exam_type'], $meta['level'])
+            ->inRandomOrder();
+
+        if ($favoritesOnly) {
+            $favoriteWordIds = $user->wordFavorites()->pluck('word_id');
+            $words = $wordsQuery->whereIn('id', $favoriteWordIds)->get();
+        } else {
+            $words = $wordsQuery->take(10)->get();
+        }
 
         $favoriteIds = $user->wordFavorites()
             ->whereIn('word_id', $words->pluck('id'))
@@ -130,7 +138,7 @@ class VocabularyController extends Controller
             ->pluck('word_id')
             ->toArray();
 
-        return view('english.vocabulary.flashcard', compact('level', 'levelLabel', 'words', 'favoriteIds', 'learnedIds'));
+        return view('english.vocabulary.flashcard', compact('level', 'levelLabel', 'words', 'favoriteIds', 'learnedIds', 'favoritesOnly'));
     }
 
     /**
@@ -351,20 +359,25 @@ class VocabularyController extends Controller
         $request->validate([
             'level'              => ['required', 'string', 'in:' . implode(',', config('english.vocabulary_level_slugs'))],
             'is_completed'       => ['required', 'boolean'],
+            'favorites_only'     => ['nullable', 'boolean'],
             'learned_word_ids'   => ['nullable', 'array'],
             'learned_word_ids.*' => ['integer', 'exists:vocabulary_words,id'],
             'duration_seconds'   => ['nullable', 'integer', 'min:0'],
         ]);
 
-        $level       = $request->string('level');
-        $isCompleted = $request->boolean('is_completed');
-        $timeSec     = $request->integer('duration_seconds', 0);
-        $user        = Auth::user();
+        $level         = $request->string('level');
+        $isCompleted   = $request->boolean('is_completed');
+        $favoritesOnly = $request->boolean('favorites_only');
+        $timeSec       = $request->integer('duration_seconds', 0);
+        $user          = Auth::user();
 
-        $user->sectionProgress()->updateOrCreate(
-            ['section_type' => UserSectionProgress::TYPE_VOCABULARY, 'section_key' => $level],
-            ['is_completed' => $isCompleted, 'completed_at' => $isCompleted ? now() : null]
-        );
+        // お気に入りのみのフラッシュカードは、そのレベル全体の完了扱いにはしない
+        if (! $favoritesOnly) {
+            $user->sectionProgress()->updateOrCreate(
+                ['section_type' => UserSectionProgress::TYPE_VOCABULARY, 'section_key' => $level],
+                ['is_completed' => $isCompleted, 'completed_at' => $isCompleted ? now() : null]
+            );
+        }
 
         // 「覚えた」マークをつけた単語を学習済みとして記録
         $learnedIds = $request->input('learned_word_ids', []);

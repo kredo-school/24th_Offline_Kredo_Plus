@@ -105,6 +105,28 @@
                     @if(!empty($wq['explanation']))
                         <p class="text-caption text-blue-950/90">{{ $wq['explanation'] }}</p>
                     @endif
+
+                    @if(!empty($wq['passage']['documents']))
+                    <details class="mt-3 group">
+                        <summary class="cursor-pointer text-caption font-semibold text-orange-600 flex items-center gap-1 list-none [&::-webkit-details-marker]:hidden">
+                            <span class="material-symbols-outlined !text-base transition-transform group-open:rotate-180">expand_more</span>
+                            スクリプト（オーディオの内容）を表示
+                        </summary>
+                        <div class="mt-2 rounded-[0.375rem] border border-slate-200 bg-surface-container-lowest p-3 space-y-2">
+                            @if(!empty($wq['passage']['title']))
+                                <p class="text-caption font-bold text-blue-950/90">{{ $wq['passage']['title'] }}</p>
+                            @endif
+                            @foreach($wq['passage']['documents'] as $doc)
+                                <div>
+                                    @if(!empty($doc['heading']))
+                                        <p class="text-caption font-semibold text-blue-950/90">{{ $doc['heading'] }}</p>
+                                    @endif
+                                    <p class="text-caption text-blue-950/90 whitespace-pre-line leading-relaxed">{{ $doc['body'] ?? '' }}</p>
+                                </div>
+                            @endforeach
+                        </div>
+                    </details>
+                    @endif
                 </div>
                 @endforeach
             </div>
