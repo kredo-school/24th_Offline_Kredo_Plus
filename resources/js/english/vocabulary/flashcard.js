@@ -24,6 +24,12 @@ export function flashcardApp(config) {
         isFlipped:    false,
         learned:      [],
         isDone:       false,
+        // 完了時にサーバから返る獲得XP・ユーザーレベル（完了画面で表示）
+        gainedXp:     0,
+        userLevel:    null,
+        totalXp:      null,
+        xpInLevel:    null,
+        barPercent:   0,
         // フラッシュカードを開いた時刻（＝このコンポーネント生成時）から計測し、
         // 10問完了時にcomplete()で経過秒数をduration_secondsとして送信する。
         startTime:    Date.now(),
@@ -73,15 +79,22 @@ export function flashcardApp(config) {
                 ? Math.round((Date.now() - this.startTime) / 1000)
                 : 0;
             try {
-                await post(this.progressUrl, {
+                const data = await post(this.progressUrl, {
                     level:            this.level,
                     is_completed:     true,
                     favorites_only:   this.favoritesOnly,
                     learned_word_ids: this.learned,
+                    seen_word_ids:    this.words.map(w => w.id),
                     duration_seconds: durationSeconds,
                 });
+                this.gainedXp    = data.gained_xp ?? 30;
+                this.userLevel   = data.level ?? null;
+                this.totalXp     = data.total_xp ?? null;
+                this.xpInLevel   = data.xp_in_level ?? null;
+                this.barPercent  = data.bar_percent ?? 0;
             } catch {
                 // Non-critical: progress update failure doesn't block UI
+                this.gainedXp = 30;
             }
             this.isDone = true;
         },
@@ -91,6 +104,11 @@ export function flashcardApp(config) {
             this.isFlipped    = false;
             this.learned      = [];
             this.isDone       = false;
+            this.gainedXp     = 0;
+            this.userLevel    = null;
+            this.totalXp      = null;
+            this.xpInLevel    = null;
+            this.barPercent   = 0;
             this.startTime    = Date.now();
         },
     };

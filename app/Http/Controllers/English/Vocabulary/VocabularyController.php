@@ -117,14 +117,43 @@ class VocabularyController extends Controller
         // お気に入り画面から遷移した場合は、そのレベルのお気に入り単語だけで構成する
         $favoritesOnly = $request->boolean('favorites');
 
-        $wordsQuery = VocabularyWord::byLevel($meta['exam_type'], $meta['level'])
-            ->inRandomOrder();
-
         if ($favoritesOnly) {
             $favoriteWordIds = $user->wordFavorites()->pluck('word_id');
-            $words = $wordsQuery->whereIn('id', $favoriteWordIds)->get();
+            $words = VocabularyWord::byLevel($meta['exam_type'], $meta['level'])
+                ->whereIn('id', $favoriteWordIds)
+                ->inRandomOrder()
+                ->get();
         } else {
-            $words = $wordsQuery->take(10)->get();
+            // 「覚えた」済みの単語は除外し、未学習の単語を優先して出題する。
+            $learnedWordIds = $user->wordProgress()
+                ->where('status', UserWordProgress::STATUS_LEARNED)
+                ->pluck('word_id');
+
+            // 「覚えた」を押していなくても、直近の演習で表示済みの単語は後回しにする
+            // （＝全て「次へ」で進めた場合でも、次回は未表示の単語が優先される）。
+            $words = VocabularyWord::byLevel($meta['exam_type'], $meta['level'])
+                ->whereNotIn('vocabulary_words.id', $learnedWordIds)
+                ->leftJoin('user_word_progress as uwp', function ($join) use ($user) {
+                    $join->on('uwp.word_id', '=', 'vocabulary_words.id')
+                         ->where('uwp.user_id', '=', $user->id);
+                })
+                ->orderByRaw('uwp.last_reviewed_at IS NULL DESC')
+                ->orderBy('uwp.last_reviewed_at')
+                ->inRandomOrder()
+                ->select('vocabulary_words.*')
+                ->take(10)
+                ->get();
+
+            // 未学習が10問に満たない場合（＝ほぼ全て学習済み）は、登録済みの単語からランダムで補完する。
+            if ($words->count() < 10) {
+                $fillers = VocabularyWord::byLevel($meta['exam_type'], $meta['level'])
+                    ->whereNotIn('id', $words->pluck('id'))
+                    ->inRandomOrder()
+                    ->take(10 - $words->count())
+                    ->get();
+
+                $words = $words->concat($fillers)->values();
+            }
         }
 
         $favoriteIds = $user->wordFavorites()
@@ -362,6 +391,8 @@ class VocabularyController extends Controller
             'favorites_only'     => ['nullable', 'boolean'],
             'learned_word_ids'   => ['nullable', 'array'],
             'learned_word_ids.*' => ['integer', 'exists:vocabulary_words,id'],
+            'seen_word_ids'      => ['nullable', 'array'],
+            'seen_word_ids.*'    => ['integer', 'exists:vocabulary_words,id'],
             'duration_seconds'   => ['nullable', 'integer', 'min:0'],
         ]);
 
@@ -379,22 +410,43 @@ class VocabularyController extends Controller
             );
         }
 
+        // 今回のセットで表示した単語を「表示済み」として記録（status は変えない）。
+        // これにより「覚えた」を押していなくても、次回は未表示の単語が優先される。
+        $learnedIds = array_map('intval', $request->input('learned_word_ids', []));
+        $seenIds    = array_map('intval', $request->input('seen_word_ids', []));
+        foreach (array_diff(array_unique($seenIds), $learnedIds) as $wordId) {
+            $user->wordProgress()->updateOrCreate(
+                ['word_id' => $wordId],
+                ['last_reviewed_at' => now()]
+            );
+        }
+
         // 「覚えた」マークをつけた単語を学習済みとして記録
-        $learnedIds = $request->input('learned_word_ids', []);
         foreach (array_unique($learnedIds) as $wordId) {
             $user->wordProgress()->updateOrCreate(
-                ['word_id' => (int) $wordId],
+                ['word_id' => $wordId],
                 ['status' => UserWordProgress::STATUS_LEARNED, 'last_reviewed_at' => now()]
             );
         }
+
+        $payload = ['success' => true];
 
         if ($isCompleted) {
             $xp = config('english.xp.flashcard_set_complete', 30);
             $this->xpService->addXp($user, $xp);
             $this->studyLogService->log($user, 'vocabulary', null, $xp, $timeSec);
+
+            $levelInfo = $this->xpService->getLevelInfo($user->fresh());
+            $payload += [
+                'gained_xp'   => $xp,
+                'total_xp'    => $levelInfo['current_xp'],
+                'level'       => $levelInfo['level'],
+                'xp_in_level' => $levelInfo['xp_in_level'],
+                'bar_percent' => $levelInfo['bar_percent'],
+            ];
         }
 
-        return response()->json(['success' => true]);
+        return response()->json($payload);
     }
 
     // ──────────────────────────────────────────────────────────────
