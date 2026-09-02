@@ -1,4 +1,5 @@
 <?php
+
 // Dashboard and English
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\English\Toeic\ToeicController;
 use App\Http\Controllers\English\Typing\TypingController;
 use App\Http\Controllers\English\Vocabulary\VocabularyController;
 use Illuminate\Support\Facades\Route;
+
 // Shower
 use App\Http\Controllers\ShowerController;
 use App\Http\Controllers\GenderController;
@@ -24,6 +26,7 @@ use App\Http\Controllers\Shower\ShowerMalfunctionReportController;
 use App\Http\Controllers\Shower\ShowerScatterDataController;
 use App\Http\Controllers\Shower\ShowerTrendDataController;
 use App\Http\Controllers\Shower\ShowerCommentController;
+
 // Information
 use App\Http\Controllers\Information\InformationController;
 use App\Http\Controllers\Information\CarinderiaController;
@@ -32,12 +35,15 @@ use App\Http\Controllers\Information\OtherController;
 use App\Http\Controllers\Information\RestaurantCafeController;
 use App\Http\Controllers\Information\PostInteractionController;
 use App\Http\Controllers\Information\MainCategoryPageController;
+
 // Notification 通知
 use App\Http\Controllers\NotificationController;
-//Earth
+
+// Earth
 use App\Http\Controllers\EarthController;
 use App\Http\Controllers\EarthLocationController;
-//Admin
+
+// Admin
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminDashboardController;
@@ -47,11 +53,13 @@ use App\Http\Controllers\Admin\AdminMessageController;
 use App\Http\Controllers\SuggestionBoxController;
 use App\Http\Controllers\SuggestionController;
 use App\Http\Controllers\Admin\AdminSuggestionController;
+
 // シャワー管理
 use App\Http\Controllers\Admin\AdminShowerMalfunctionController;
 use App\Models\Shower\ShowerMalfunctionReport;
 use App\Models\Shower\ShowerCapacityReport;
 use App\Models\Shower\ShowerReport;
+
 // English
 use App\Models\English\StudyLog;
 use App\Models\Post;
@@ -114,14 +122,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // ── タイピング（単独） ─────────────────────────────────────────────
         Route::prefix('typing')->name('typing.')->group(function () {
-            Route::get('/',                        [TypingController::class, 'index'])->name('index');
+            Route::get('/',                             [TypingController::class, 'index'])->name('index');
             Route::get('/category/{category}/practice', [TypingController::class, 'randomPractice'])->name('category.practice');
-            Route::get('/{id}/slides',             [TypingController::class, 'slides'])->name('slides')->whereNumber('id');
-            Route::get('/{id}/slides/{step}',      [TypingController::class, 'slides'])->name('slides.step')->whereNumber('id')->whereNumber('step');
-            Route::post('/{id}/slides/complete',   [TypingController::class, 'completeSlides'])->name('slides.complete')->whereNumber('id');
-            Route::get('/{id}/practice',           [TypingController::class, 'practice'])->name('practice')->whereNumber('id');
-            Route::post('/{id}/result',            [TypingController::class, 'storeResult'])->name('result.store')->whereNumber('id');
-            Route::get('/{id}/result',             [TypingController::class, 'result'])->name('result')->whereNumber('id');
+            Route::get('/{id}/slides',                  [TypingController::class, 'slides'])->name('slides')->whereNumber('id');
+            Route::get('/{id}/slides/{step}',           [TypingController::class, 'slides'])->name('slides.step')->whereNumber('id')->whereNumber('step');
+            Route::post('/{id}/slides/complete',        [TypingController::class, 'completeSlides'])->name('slides.complete')->whereNumber('id');
+            Route::get('/{id}/practice',                [TypingController::class, 'practice'])->name('practice')->whereNumber('id');
+            Route::post('/{id}/result',                 [TypingController::class, 'storeResult'])->name('result.store')->whereNumber('id');
+            Route::get('/{id}/result',                  [TypingController::class, 'result'])->name('result')->whereNumber('id');
         });
 
         // ── クイズ ────────────────────────────────────────────────────────
@@ -143,10 +151,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/',               [LearningContentController::class, 'strategyIndex'])->name('index');
             Route::get('/{exam}/{level}', [LearningContentController::class, 'strategyShow'])->name('show')->whereIn('exam', config('english.exam_types'));
         });
+
         // ── 学習管理・ランキング ──────────────────────────────────────────
-        Route::get('/progress',             [EnglishProgressController::class, 'index'])->name('progress');
-        Route::post('/progress/exam-date',  [EnglishProgressController::class, 'updateExamDate'])->name('progress.exam-date');
-        Route::get('/ranking',  [EnglishRankingController::class, 'index'])->name('ranking');
+        Route::get('/progress',            [EnglishProgressController::class, 'index'])->name('progress');
+        Route::post('/progress/exam-date', [EnglishProgressController::class, 'updateExamDate'])->name('progress.exam-date');
+        Route::get('/ranking',             [EnglishRankingController::class, 'index'])->name('ranking');
     });
 
     // Shower
@@ -174,39 +183,37 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/shower/priority', [ShowerPriorityController::class, 'update'])->name('shower.priority.update');
 
     // シャワー状態管理
-    // 投稿情報をゲット
     Route::post('/shower/report', [ShowerReportController::class, 'store'])->name('shower.report.store');
-    // 満室報告
     Route::post('/shower/capacity', [ShowerCapacityReportController::class, 'store'])->name('shower.capacity.store');
-    // 故障報告
     Route::post('/shower/malfunction', [ShowerMalfunctionReportController::class, 'store'])->name('shower.malfunction.store');
 
     // 統計表示
-    // 散布図（二次元チャート）
     Route::get('/shower/scatter-data', ShowerScatterDataController::class)->name('shower.scatter-data');
-    // パフォーマンストレンド（折れ線グラフ）
     Route::get('/shower/trend-data', ShowerTrendDataController::class)->name('shower.trend-data');
-    // コメント
     Route::get('/shower/comments', ShowerCommentController::class)->name('shower.comments');
 
     // ============================================================
     // Information
-    // 投稿の編集・更新・削除・詳細のロジックはInformationControllerに集約(セクションごとの重複を削減)。
     // ============================================================
 
+    // 新規投稿・下書き保存
+    Route::get('/information/post', [InformationController::class, 'create'])->name('information.create');
+    Route::post('/information', [InformationController::class, 'store'])->name('information.store');
+    Route::post('/information/draft', [InformationController::class, 'saveDraft'])->name('information.draft.save');
+
+    // 各カテゴリー一覧ページ
     Route::get('/information/carinderia', [CarinderiaController::class, 'index'])->name('carinderia.index');
     Route::get('/information/restaurant-cafe', [RestaurantCafeController::class, 'index'])->name('restaurant-cafe.index');
     Route::get('/information/travel', [TravelController::class, 'index'])->name('travel.index');
     Route::get('/information/travel/{slug}', [TravelController::class, 'show'])->name('travel.show');
     Route::get('/information/other', [OtherController::class, 'index'])->name('other.index');
 
-    // お楽しみ機能: Otherページの隠しリンク専用ページ(egg / St Nino)。
-    // 通常の一覧・投稿フォームには出てこない隠しカテゴリーの投稿だけを表示する。
+    // Otherページの隠しリンク専用ページ
     Route::get('/information/other/secret/{slug}', [OtherController::class, 'secret'])
         ->whereIn('slug', ['egg', 'st-nino'])
         ->name('other.secret');
 
-    // Carinderia (restaurant-cafeと同じパターン)
+    // Carinderia 投稿操作
     Route::prefix('information/carinderia')->name('carinderia.')->group(function () {
         Route::get('/{post}/edit', [CarinderiaController::class, 'edit'])->name('edit');
         Route::put('/{post}', [CarinderiaController::class, 'update'])->name('update');
@@ -214,6 +221,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{post}', [CarinderiaController::class, 'show'])->name('show');
     });
 
+    // Travel 投稿詳細
+    Route::prefix('information/travel')->name('travel.')->group(function () {
+        Route::get('/post/{post}', [TravelController::class, 'showPost'])->name('post.show');
+    });
+
+    // 投稿の操作 (共通)
     Route::prefix('information')->name('information.')->group(function () {
         Route::get('/{post}/edit', [InformationController::class, 'edit'])->name('edit')->whereNumber('post');
         Route::put('/{post}', [InformationController::class, 'update'])->name('update')->whereNumber('post');
@@ -221,16 +234,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{post}', [InformationController::class, 'show'])->name('show')->whereNumber('post');
     });
 
-    Route::prefix('information/travel')->name('travel.')->group(function () {
-        Route::get('/post/{post}', [TravelController::class, 'showPost'])->name('post.show');
-    });
-
-    // 5個目以降、アドミンが新しく追加したメインカテゴリー用の汎用ページ(ログイン必須)。
+    // 動的カテゴリーページ
     Route::get('/information/{key}', [MainCategoryPageController::class, 'index'])
         ->name('information.dynamic')
         ->where('key', '(?!post$|posts$|carinderia$|restaurant-cafe$|travel$|other$|\d+(?:/|$))[a-z0-9\-]+');
 
-    // 5個目以降のメインカテゴリーの、サブカテゴリー単位の絞り込みページ(URL: /information/{key}/{slug})。
     Route::get('/information/{key}/{slug}', [MainCategoryPageController::class, 'show'])
         ->name('information.dynamic.show')
         ->where('key', '(?!post$|posts$|carinderia$|restaurant-cafe$|travel$|other$|\d+(?:/|$))[a-z0-9\-]+')
@@ -244,17 +252,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/comments/{comment}', [PostInteractionController::class, 'destroyComment'])->name('comments.destroy');
     });
 
-    //入力した後も情報を保持する
-    Route::post('/information/draft',[InformationController::class, 'saveDraft'])->name('information.draft.save');
-
-    // suggestion box  目安箱
+    // 目安箱
     Route::get('/suggestion-box', [SuggestionBoxController::class, 'suggestion'])->name('suggestion');
-    // 送信・管理
     Route::get('/suggestion', [SuggestionController::class, 'create'])->name('suggestion');
     Route::post('/suggestion', [SuggestionController::class, 'store'])->name('suggestion.store');
+
+    // Notification 通知
+    Route::get('/notifications', [NotificationController::class, 'data'])->name('notifications.data');
+    Route::post('/notifications/mark-seen', [NotificationController::class, 'markSeen'])->name('notifications.mark-seen');
+
+    // Earth
+    Route::get('/earth', [EarthController::class, 'index'])->name('earth');
+    Route::get('/earth/location/create', [EarthLocationController::class, 'create'])->name('earth.location.create');
+    Route::post('/earth/location', [EarthLocationController::class, 'store'])->name('earth.location.store');
+    Route::get('/earth/location/{earthLocation}/edit', [EarthLocationController::class, 'edit'])->name('earth.location.edit');
+    Route::put('/earth/location/{earthLocation}', [EarthLocationController::class, 'update'])->name('earth.location.update');
+
 });  // auth, verified group
 
-//Profile
+// Profile
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -264,42 +280,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/graduation-date', [ProfileController::class, 'updateGraduationDate'])->name('profile.graduation-date');
     Route::post('/profile/calendar/notes', [ProfileController::class, 'storeCalendarNote'])->name('profile.calendar.notes.store');
     Route::delete('/profile/calendar/notes/{calendarNote}', [ProfileController::class, 'destroyCalendarNote'])->name('profile.calendar.notes.destroy');
-});
 
-// information
-Route::prefix('information')->group(function () {
-    Route::middleware(['auth', 'verified'])->group(function () {
-        Route::get('/post', [InformationController::class, 'create'])->name('information.create');
-        Route::post('/', [InformationController::class, 'store'])->name('information.store');
-    });
-    Route::get('/carinderia', [CarinderiaController::class, 'index'])->name('carinderia.index');
-    Route::get('/restaurant-cafe', [RestaurantCafeController::class, 'index'])->name('restaurant-cafe.index');
-    Route::get('/travel', [TravelController::class, 'index'])->name('travel.index');
-    Route::get('/travel/{slug}', [TravelController::class, 'show'])->name('travel.show');
-    Route::get('/other', [OtherController::class, 'index'])->name('other.index');
+    // 他ユーザー閲覧用の動的ルート（固定URLより下に配置）
+    Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
 });
 
 require __DIR__ . '/auth.php';
-
-// Notification 通知
-Route::get('/notifications', [NotificationController::class, 'data'])->name('notifications.data');
-Route::post('/notifications/mark-seen', [NotificationController::class, 'markSeen'])->name('notifications.mark-seen');
-
-// Earth
-Route::get('/earth', [EarthController::class, 'index'])->name('earth');
-Route::get('/earth/location/create', [EarthLocationController::class, 'create'])->name('earth.location.create');
-Route::post('/earth/location', [EarthLocationController::class, 'store'])->name('earth.location.store');
-Route::get('/earth/location/{earthLocation}/edit', [EarthLocationController::class, 'edit'])->name('earth.location.edit');
-Route::put('/earth/location/{earthLocation}', [EarthLocationController::class, 'update'])->name('earth.location.update');
-Route::post('/{post}/like', [PostInteractionController::class, 'toggleLike'])->name('like');
-Route::post('/{post}/bookmark', [PostInteractionController::class, 'toggleBookmark'])->name('bookmark');
 
 // Admin (管理者画面)
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::post('/notices', [AdminDashboardController::class, 'storeNotice'])->name('notices.store');
     Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
-    
+
     // 管理者メッセージ送信機能
     Route::post('/messages', [AdminMessageController::class, 'store'])->name('messages.store');
 
@@ -307,7 +300,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/shower/malfunctions', [AdminShowerMalfunctionController::class, 'index'])->name('shower.malfunctions.index');
     Route::post('/shower/malfunctions/{gender}/{showerNumber}/fix', [AdminShowerMalfunctionController::class, 'fix'])->name('shower.malfunctions.fix');
 
-    // 留学情報管理(myu担当): メイン/サブカテゴリーの新規追加・編集
+    // 留学情報管理: メイン/サブカテゴリーの新規追加・編集
     Route::post('/main-categories', [AdminCategoryController::class, 'storeMainCategory'])->name('main-categories.store');
     Route::patch('/main-categories/{mainCategory}', [AdminCategoryController::class, 'updateMainCategory'])->name('main-categories.update');
     Route::delete('/main-categories/{mainCategory}', [AdminCategoryController::class, 'destroyMainCategory'])->name('main-categories.destroy');

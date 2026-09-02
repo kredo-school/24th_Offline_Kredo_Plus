@@ -18,6 +18,48 @@ use Illuminate\View\View;
 class ProfileController extends Controller
 {
     /**
+     * Display the specified user's profile.
+     */
+    public function show(Request $request, User $user): View|RedirectResponse
+    {
+        // 自分のIDが渡された場合は自身の編集画面へリダイレクト
+        if ($user->id === $request->user()?->id) {
+            return redirect()->route('profile.edit');
+        }
+
+        $calendar = $this->buildCalendar($user, $request->query('month'));
+
+        // 他人のプロフィール閲覧時は、本人の投稿（mine）のみに限定する
+        $postTab = 'mine';
+
+        $currentUserId = $request->user()?->id;
+
+        $posts = $this->buildPostQuery($user, $postTab)
+            ->with([
+                'user:id,name,avatar',
+                'category',
+                'earthLocation',
+                'comments' => fn ($q) => $q->with('user:id,name')->oldest(),
+                'likes' => fn ($q) => $q->where('user_id', $currentUserId),
+                'bookmarks' => fn ($q) => $q->where('user_id', $currentUserId),
+            ])
+            ->withCount('likes')
+            ->latest()
+            ->limit(12)
+            ->get();
+
+        $categoryColors = Category::all()
+            ->mapWithKeys(fn ($c) => [$c->name => ['bg' => $c->backgroundColor(), 'text' => $c->textColor()]]);
+
+        return view('profile.partials.show', [
+            'user' => $user,
+            'calendar' => $calendar,
+            'posts' => $posts,
+            'categoryColors' => $categoryColors,
+        ]);
+    }
+    
+    /**
      * Display the user's profile form.
      */
     public function edit(Request $request): View
