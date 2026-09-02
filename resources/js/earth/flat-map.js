@@ -111,21 +111,14 @@ export function initializeFlatMap() {
 
     });
 
-    L.tileLayer(
-
-        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
-
-        {
-
-            subdomains: "abcd",
-
-            maxZoom: 20
-
-        }
-
-    ).addTo(map);
-
-    map.setView(
+        L.tileLayer(
+            "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                attribution: '&copy; OpenStreetMap contributors',
+                maxZoom: 19
+            }
+        ).addTo(map);
+            map.setView(
 
         [
 
