@@ -562,8 +562,8 @@
                             <template x-for="(user, index) in paginatedUsers" :key="user.id || index">
                                 <tr class="transition hover:bg-slate-50/80">
                                     <td class="py-3.5 px-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-800 text-xs font-bold text-white">
+                                        <a :href="`/profile/${user.id}`" class="flex items-center gap-3 group hover:opacity-80 transition">
+                                            <div class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-800 text-xs font-bold text-white group-hover:ring-2 group-hover:ring-indigo-500">
                                                 <template x-if="user.profile_photo_url || user.avatar_url">
                                                     <img :src="user.profile_photo_url || user.avatar_url" :alt="user.name" class="h-full w-full object-cover">
                                                 </template>
@@ -572,10 +572,10 @@
                                                 </template>
                                             </div>
                                             <div class="truncate">
-                                                <p class="font-bold leading-tight text-slate-800" x-text="user.name || '名前未設定'"></p>
+                                                <p class="font-bold leading-tight text-slate-800 group-hover:text-indigo-600 transition" x-text="user.name || '名前未設定'"></p>
                                                 <p class="mt-0.5 text-xs text-slate-400" x-text="user.email || ''"></p>
                                             </div>
-                                        </div>
+                                        </a>
                                     </td>
                                     <td class="py-3.5 px-4 text-xs text-slate-500 whitespace-nowrap" x-text="user.last_active || user.last_login_at || '-'"></td>
                                     <td class="py-3.5 px-4 text-xs font-semibold text-slate-700 whitespace-nowrap" x-text="user.role === 'admin' || user.role_id === 1 ? '管理者' : '学生'"></td>
