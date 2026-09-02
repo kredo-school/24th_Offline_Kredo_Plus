@@ -48,10 +48,12 @@ class AdminDashboardController extends Controller
                     'status'        => ($user->is_active ?? true) ? 'active' : 'inactive',
 
                     // 詳細モーダル用プロパティ
-                    'gender'          => $user->gender ?? '未設定',
-                    'graduation_date' => $user->graduation_date ? $user->graduation_date->format('Y/m/d') : '未設定',
-                    'toeic_exam_date' => $user->toeic_exam_date ? $user->toeic_exam_date->format('Y/m/d') : '未登録',
-                    'ielts_exam_date' => $user->ielts_exam_date ? $user->ielts_exam_date->format('Y/m/d') : '未登録',
+                    'gender'                      => $user->gender ?? '未設定',
+                    'graduation_date'             => $user->graduation_date ? $user->graduation_date->format('Y/m/d') : '未設定',
+                    'preferred_temperature_label' => $user->preferred_temperature_label ?? '未設定',
+                    'preferred_pressure_label'    => $user->preferred_pressure_label ?? '未設定',
+                    'toeic_exam_date'             => $user->toeic_exam_date ? $user->toeic_exam_date->format('Y/m/d') : '未登録',
+                    'ielts_exam_date'             => $user->ielts_exam_date ? $user->ielts_exam_date->format('Y/m/d') : '未登録',
 
                     // 英語学習アクティビティ
                     'total_xp'         => $user->total_xp ?? 0,
