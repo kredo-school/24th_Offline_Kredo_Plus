@@ -20,20 +20,51 @@ class AdminDashboardController extends Controller
 {
     public function index(): View
     {
-        // 1. ユーザー一覧データの整形
-        $users = User::get()->map(function ($user) {
-            return [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'avatar_url' => $user->avatar_url,
-                'dorm' => $user->gender === 'female' ? '女子寮 (Female)' : ($user->gender === 'male' ? '男子寮 (Male)' : '未設定'),
-                'registered_at' => $user->created_at ? $user->created_at->format('Y/m/d') : '-',
-                'last_active' => $user->updated_at ? $user->updated_at->diffForHumans() : '未アクティブ',
-                'active_hours' => ($user->total_study_time ?? 0) . '時間',
-                'status' => 'active',
-            ];
-        });
+        // 1. ユーザー一覧データの整形（リレーションを一括ロードしてモーダル用データを拡充）
+        $users = User::withCount(['showerReports', 'posts', 'suggestions'])
+            ->with([
+                'showerReports:id,user_id,created_at',
+                'posts:id,user_id,created_at',
+                'suggestions:id,user_id,created_at',
+            ])
+            ->latest()
+            ->get()
+            ->map(function ($user) {
+                return [
+                    // 基本情報
+                    'id'            => $user->id,
+                    'name'          => $user->name,
+                    'email'         => $user->email,
+                    'avatar_url'    => $user->avatar_url,
+                    'role'          => $user->role, // アクセサ (admin / student)
+                    'role_id'       => $user->role_id,
+                    'is_active'     => $user->is_active ?? true,
+                    'dorm'          => $user->dorm ?? ($user->gender === 'female' ? '女子寮 (Female)' : ($user->gender === 'male' ? '男子寮 (Male)' : '未設定')),
+                    'course'        => $user->course ?? '',
+                    'registered_at' => $user->created_at ? $user->created_at->format('Y/m/d') : '-',
+                    'created_at'    => $user->created_at ? $user->created_at->format('Y/m/d') : '-',
+                    'last_active'   => $user->updated_at ? $user->updated_at->diffForHumans() : '未アクティブ',
+                    'active_hours'  => ($user->total_study_time ?? 0) . '時間',
+                    'status'        => ($user->is_active ?? true) ? 'active' : 'inactive',
+
+                    // 詳細モーダル用プロパティ
+                    'gender'          => $user->gender ?? '未設定',
+                    'graduation_date' => $user->graduation_date ? $user->graduation_date->format('Y/m/d') : '未設定',
+                    'toeic_exam_date' => $user->toeic_exam_date ? $user->toeic_exam_date->format('Y/m/d') : '未登録',
+                    'ielts_exam_date' => $user->ielts_exam_date ? $user->ielts_exam_date->format('Y/m/d') : '未登録',
+
+                    // 英語学習アクティビティ
+                    'total_xp'         => $user->total_xp ?? 0,
+                    'study_streak'     => $user->study_streak ?? 0,
+                    'total_study_time' => $user->total_study_time ?? 0,
+                    'last_study_date'  => $user->last_study_date ? $user->last_study_date->format('Y/m/d') : '未学習',
+
+                    // その他実績（リレーションコレクション）
+                    'shower_reports' => $user->showerReports,
+                    'posts'          => $user->posts,
+                    'suggestions'    => $user->suggestions,
+                ];
+            });
 
         // 2. 日次スタッツ（本日 vs 前日）
         $today = today();
@@ -52,27 +83,27 @@ class AdminDashboardController extends Controller
         $studyActiveUsersDiff = $todayStudyActiveUsersCount - $yesterdayStudyActiveUsersCount;
 
         $todayShowerUpdates = ShowerReport::whereDate('created_at', $today)->count();
-        $dailyShowerCount = $todayShowerUpdates; // ビュー(dashboard.blade.php)で要求される変数をセット
+        $dailyShowerCount = $todayShowerUpdates;
         $yesterdayShowerUpdates = ShowerReport::whereDate('created_at', $yesterday)->count();
         $showerUpdatesDiff = $todayShowerUpdates - $yesterdayShowerUpdates;
 
         $stats = [
-            'todayActiveUsersCount' => $todayActiveUsersCount,
-            'activeUsersDiff'       => $activeUsersDiff,
-            'todayInfoUpdates'      => $todayInfoUpdates,
-            'infoUpdatesDiff'       => $infoUpdatesDiff,
+            'todayActiveUsersCount'      => $todayActiveUsersCount,
+            'activeUsersDiff'            => $activeUsersDiff,
+            'todayInfoUpdates'           => $todayInfoUpdates,
+            'infoUpdatesDiff'            => $infoUpdatesDiff,
             'todayStudyActiveUsersCount' => $todayStudyActiveUsersCount,
-            'studyActiveUsersDiff'           => $studyActiveUsersDiff,
-            'todayShowerUpdates'    => $todayShowerUpdates,
-            'showerUpdatesDiff'     => $showerUpdatesDiff,
-            'dailyShowerCount'      => $dailyShowerCount,
+            'studyActiveUsersDiff'       => $studyActiveUsersDiff,
+            'todayShowerUpdates'         => $todayShowerUpdates,
+            'showerUpdatesDiff'          => $showerUpdatesDiff,
+            'dailyShowerCount'           => $dailyShowerCount,
         ];
 
         // 3. 期間分析（週次・月次・年次）
         $now = now();
         $totalUsersCount = User::count();
 
-        // 週間サマリー（過去7日間 vs 前週7日間）
+        // 週間サマリー
         $weeklyActiveCount = User::where('updated_at', '>=', $now->copy()->subDays(7))->count();
         $prevWeeklyActiveCount = User::whereBetween('updated_at', [$now->copy()->subDays(14), $now->copy()->subDays(7)])->count();
         $wauRate = $totalUsersCount > 0 ? round(($weeklyActiveCount / $totalUsersCount) * 100, 1) : 0;
@@ -89,7 +120,7 @@ class AdminDashboardController extends Controller
         $weeklyShowerCount = ShowerReport::where('created_at', '>=', $now->copy()->subDays(7))->count();
         $weeklyAvgShowerReviews = $weeklyActiveCount > 0 ? round($weeklyShowerCount / $weeklyActiveCount, 1) : 0;
 
-        // 月間サマリー（過去30日間 vs 前月30日間）
+        // 月間サマリー
         $monthlyActiveCount = User::where('updated_at', '>=', $now->copy()->subDays(30))->count();
         $mauRate = $totalUsersCount > 0 ? round(($monthlyActiveCount / $totalUsersCount) * 100, 1) : 0;
 
@@ -103,12 +134,12 @@ class AdminDashboardController extends Controller
         $monthlyShowerCount = ShowerReport::where('created_at', '>=', $now->copy()->subDays(30))->count();
         $monthlyAvgShowerReviews = $monthlyActiveCount > 0 ? round($monthlyShowerCount / $monthlyActiveCount, 1) : 0;
 
-        // 年次サマリー（過去365日間）
+        // 年次サマリー
         $yearlyActiveCount = User::where('updated_at', '>=', $now->copy()->subDays(365))->count();
         $retentionRate = $totalUsersCount > 0 ? round(($yearlyActiveCount / $totalUsersCount) * 100, 1) : 0;
 
         $yearlyEnglishUsers = StudyLog::where('studied_date', '>=', $now->copy()->subDays(365))->distinct('user_id')->count('user_id');
-        $yearlyEnglishRate = $yearlyActiveCount > 0 ? round(($yearlyEnglishUsers / $yearlyActiveCount) * 100, 1) : 0;
+        $yearlyEnglishRate = $yearlyActiveCount > 0 ? round(($yearlyActiveCount / $yearlyActiveCount) * 100, 1) : 0;
 
         $yearlyPostsCount = Post::where('created_at', '>=', $now->copy()->subDays(365))->count();
 
@@ -122,22 +153,22 @@ class AdminDashboardController extends Controller
             'yearlyActiveCount', 'retentionRate', 'yearlyEnglishUsers', 'yearlyEnglishRate', 'yearlyPostsCount', 'yearlyShowerCount', 'yearlyAvgShowerReviews'
         );
 
-        // 4. お知らせ一覧の取得（作成日時順）
+        // 4. お知らせ一覧の取得
         $notices = Notice::latest()->get()->map(function ($notice) {
             return [
-                'id' => $notice->id,
-                'title' => $notice->title,
+                'id'       => $notice->id,
+                'title'    => $notice->title,
                 'category' => $notice->category,
-                'target' => $notice->target,
-                'sent_at' => $notice->created_at ? $notice->created_at->format('Y/m/d H:i') : '-',
-                'content' => $notice->content,
+                'target'   => $notice->target,
+                'sent_at'  => $notice->created_at ? $notice->created_at->format('Y/m/d H:i') : '-',
+                'content'  => $notice->content,
             ];
         });
 
         // 故障中シャワーの取得
         $brokenShowers = ShowerMalfunctionReport::currentlyBroken();
 
-        // 5. 留学情報管理タブ用(myu担当): メイン/サブカテゴリー一覧(隠しカテゴリーは管理画面には出さない)
+        // 5. 留学情報管理タブ用
         $adminMainCategories = MainCategory::orderBy('sort_order')->orderBy('id')->get();
         $subCounts = Category::where('is_hidden', false)
             ->selectRaw('section, count(*) as cnt')->groupBy('section')->pluck('cnt', 'section');
