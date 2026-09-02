@@ -26,12 +26,23 @@ class VocabularyWord extends Model
      * exam_type + level でフィルタ（最も使用頻度が高いクエリ）
      *
      * 使用例: VocabularyWord::byLevel('TOEIC', '700')->get()
+     *
+     * ⚠️ 並び順はあえて固定しない。呼び出し側で inRandomOrder() 等を指定する
+     *    （スコープ内で orderBy('sort_order') すると後続の inRandomOrder() が
+     *     第2ソートキー扱いになり、実質ランダムにならないため）。
      */
     public function scopeByLevel($query, string $examType, string $level)
     {
         return $query
             ->where('exam_type', $examType)
-            ->where('level', $level)
-            ->orderBy('sort_order');
+            ->where('level', $level);
+    }
+
+    /**
+     * 出題順（教材としての推奨順）で並べる。
+     */
+    public function scopeInStudyOrder($query)
+    {
+        return $query->orderBy('sort_order');
     }
 }

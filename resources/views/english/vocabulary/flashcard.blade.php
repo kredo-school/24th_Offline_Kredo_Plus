@@ -102,6 +102,24 @@ $wordsJson  = $words->map(fn($w) => [
                 <p class="text-body-md text-blue-950/90">
                     お気に入り: <span x-text="favoriteIds.length"></span>語
                 </p>
+
+                <div class="mt-5 pt-5 border-t border-slate-200/60">
+                    <p class="text-headline-md font-black text-orange-600 mb-4" x-text="`+${gainedXp} XP 獲得！`"></p>
+
+                    <div class="text-left" x-show="userLevel !== null">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-label-md font-bold text-orange-600" x-text="`Level ${userLevel}`"></span>
+                            <span class="text-caption text-blue-950/90"
+                                  x-text="`${(xpInLevel ?? 0).toLocaleString()} / 500 XP`"></span>
+                        </div>
+                        <div class="w-full bg-orange-100/70 rounded-[0.75rem] h-3 overflow-hidden">
+                            <div class="bg-[#b95827] h-full rounded-[0.75rem] transition-all duration-700"
+                                 :style="`width: ${barPercent}%`"></div>
+                        </div>
+                        <p class="text-caption text-blue-950/90 mt-1 text-right"
+                           x-text="`${barPercent}% to Level ${userLevel + 1}`"></p>
+                    </div>
+                </div>
             </div>
             <div class="flex gap-3">
                 <button @click="restart()"
