@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @vite(['resources/css/app.css', 'resources/js/admin.js'])
+
 @section('content')
 @php
     // カテゴリフォームのエラー状態およびモード判定
@@ -93,50 +94,86 @@
 @endphp
 
 <!-- メインコンテナ -->
-<div x-data="{ currentTab: '{{ session('accountCreated') || $errors->default->any() ? 'accounts' : ($categoryFormHasError || session('categoryAdminNotice') ? 'posts' : 'dashboard') }}' }" 
-     class="flex min-h-screen bg-slate-100">
+<div x-data="{
+        currentTab: '{{ session('accountCreated') || $errors->default->any() ? 'users' : ($categoryFormHasError || session('categoryAdminNotice') ? 'posts' : 'dashboard') }}',
+        suggestions: [],
+        editingNote: {},
+        async loadSuggestions() {
+            try {
+                const response = await fetch('{{ route('admin.suggestions.data') }}');
+                const data = await response.json();
+                this.suggestions = data.items || [];
+                this.suggestions.forEach(item => { this.editingNote[item.id] = item.admin_note ?? ''; });
+            } catch (e) {
+                console.error('Failed to load suggestions', e);
+            }
+        },
+        async updateStatus(item, newStatus) {
+            try {
+                const response = await fetch(`/admin/suggestions/${item.id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ status: newStatus, admin_note: this.editingNote[item.id] }),
+                });
+
+                if (response.ok) {
+                    item.status = newStatus;
+                    const statuses = {{ Js::from(\App\Models\Suggestion::STATUSES) }};
+                    item.status_label = statuses[newStatus] || newStatus;
+                }
+            } catch (e) {
+                console.error('Failed to update status', e);
+            }
+        }
+    }" 
+    x-init="loadSuggestions()"
+    class="flex min-h-screen bg-slate-100">
 
     <!-- 1. サイドバー -->
     <aside class="w-60 bg-slate-800 text-white p-6 shrink-0 hidden md:block">
         <h1 class="text-xl font-bold mb-6">MENU</h1>
         <nav class="space-y-2">
             <button @click="currentTab = 'dashboard'" 
-                    :class="currentTab === 'dashboard' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                    :class="currentTab === 'dashboard' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-700 hover:text-white'"
                     class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-left">
                 <span class="material-symbols-outlined">dashboard</span>
                 <span>ダッシュボード</span>
             </button>
 
             <button @click="currentTab = 'users'" 
-                    :class="currentTab === 'users' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                    :class="currentTab === 'users' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-700 hover:text-white'"
                     class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-left">
                 <span class="material-symbols-outlined">user_attributes</span>
                 <span>ユーザー管理</span>
             </button>
 
             <button @click="currentTab = 'posts'"
-                    :class="currentTab === 'posts' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                    :class="currentTab === 'posts' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-700 hover:text-white'"
                     class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-left">
                 <span class="material-symbols-outlined">description</span>
                 <span>留学情報管理</span>
             </button>
 
             <button @click="currentTab = 'notice'" 
-                    :class="currentTab === 'notice' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                    :class="currentTab === 'notice' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-700 hover:text-white'"
                     class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-left">
                 <span class="material-symbols-outlined">notifications</span>
                 <span>お知らせ送信</span>
             </button>
 
             <button @click="currentTab = 'analytics'" 
-                    :class="currentTab === 'analytics' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                    :class="currentTab === 'analytics' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-700 hover:text-white'"
                     class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-left">
                 <span class="material-symbols-outlined">analytics</span>
                 <span>アクティブ分析</span>
             </button>
 
             <button @click="currentTab = 'suggestions'" 
-                    :class="currentTab === 'suggestions' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                    :class="currentTab === 'suggestions' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-700 hover:text-white'"
                     class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-left">
                 <span class="material-symbols-outlined !text-2xl leading-none">local_post_office</span>
                 <span>目安箱</span>
@@ -206,21 +243,21 @@
             </div>
 
             <!-- 下部グリッドエリア -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 space-y-6">
                     <!-- 故障シャワーの管理 -->
-                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between h-full">
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between">
                         <div>
                             <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
                                 <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
                                     <span class="material-symbols-outlined text-blue-600 text-base">shower</span>
                                     故障中のシャワー
-                                    <span class="text-xs font-normal text-slate-400">({{ $brokenShowers->count() }}件)</span>
+                                    <span class="text-xs font-normal text-slate-400">({{ isset($brokenShowers) ? $brokenShowers->count() : 0 }}件)</span>
                                 </h3>
                             </div>
 
                             <div class="space-y-2 max-h-[220px] overflow-y-auto pr-1">
-                                @forelse ($brokenShowers as $report)
+                                @forelse ($brokenShowers ?? [] as $report)
                                     <div class="flex items-center justify-between p-3 rounded-xl bg-sky-50 border border-sky-200/60 text-xs">
                                         <div>
                                             <span class="font-bold text-slate-800">
@@ -257,7 +294,7 @@
                     <!-- 上段：お知らせ ＆ 最新のご意見 -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- 最新のお知らせ -->
-                        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between h-full">
+                        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between">
                             <div>
                                 <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
                                     <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
@@ -300,7 +337,7 @@
                         </div>
 
                         <!-- 最新のご意見 -->
-                        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between h-full">
+                        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between">
                             <div>
                                 <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
                                     <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
@@ -310,33 +347,23 @@
                                 </div>
 
                                 <div class="space-y-3">
-                                    @forelse(($pendingFeedbacks ?? ($feedbacks ?? collect()))->where('status', 'pending')->take(2) as $item)
-                                        @php
-                                            $createdAt = is_array($item) ? ($item['created_at'] ?? null) : ($item->created_at ?? null);
-                                            $category  = is_array($item) ? ($item['category'] ?? 'ご意見') : ($item->category ?? 'ご意見');
-                                            $title     = is_array($item) ? ($item['title'] ?? '') : ($item->title ?? $item->subject ?? '');
-                                            $body      = is_array($item) ? ($item['content'] ?? '') : ($item->content ?? $item->body ?? '');
-                                        @endphp
-                                        
+                                    <template x-for="item in suggestions.filter(i => i.status === 'pending').slice(0, 2)" :key="item.id">
                                         <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition">
                                             <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1">
-                                                <span class="font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md text-[10px]">
-                                                    未対応・{{ $category }}
-                                                </span>
-                                                <span>
-                                                    @if(!empty($createdAt))
-                                                        {{ \Carbon\Carbon::parse($createdAt)->format('Y.m.d') }}
-                                                    @endif
-                                                </span>
+                                                <span class="font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md text-[10px]" x-text="'未対応・' + item.category_label"></span>
+                                                <span x-text="item.created_at"></span>
                                             </div>
-                                            @if(!empty($title))
-                                                <h4 class="text-xs font-bold text-slate-800 line-clamp-1">{{ $title }}</h4>
-                                            @endif
-                                            <p class="text-[11px] text-slate-500 line-clamp-2 mt-0.5">{{ $body }}</p>
+                                            <p class="text-[11px] text-slate-700 font-bold line-clamp-2 leading-relaxed" x-text="item.comment"></p>
+                                            <div class="mt-1 flex items-center gap-1.5 text-[10px] text-slate-400">
+                                                <span class="material-symbols-outlined text-[12px]">person</span>
+                                                <span x-text="item.user_name"></span>
+                                            </div>
                                         </div>
-                                    @empty
+                                    </template>
+
+                                    <template x-if="suggestions.filter(i => i.status === 'pending').length === 0">
                                         <div class="text-center py-6 text-xs text-slate-400">未対応の意見はありません。</div>
-                                    @endforelse
+                                    </template>
                                 </div>
                             </div>
 
@@ -352,7 +379,7 @@
                     </div>
 
                     <!-- 下段：アクティブユーザー上位3名 -->
-                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between h-full">
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between">
                         <div>
                             <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
                                 <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
@@ -413,7 +440,7 @@
                 </div>
 
                 <!-- 右カラム：管理者伝言板 -->
-                <div class="lg:col-span-1 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between h-full min-h-[360px]">
+                <div class="lg:col-span-1 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
                             <div>
@@ -1065,154 +1092,150 @@
         </div>
 
         <!-- ④ お知らせ送信セクション -->
-<div x-show="currentTab === 'notice'" x-cloak x-data="noticeAdmin({{ \Illuminate\Support\Js::from($notices ?? []) }})">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div>
-            <h2 class="text-2xl font-bold text-slate-800">お知らせ管理</h2>
-            <p class="text-sm text-slate-500 mt-1">留学生のアプリ内通知へ一斉配信した履歴の確認や新規送信を行います。</p>
-        </div>
-        <button @click="isModalOpen = true; sentSuccess = false; errorMessage = '';" 
-                type="button"
-                class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition shadow-sm flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2">
-            <span>＋</span> お知らせを新規作成
-        </button>
-    </div>
-
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-        <h3 class="font-bold text-slate-800 text-base flex items-center gap-2 border-b border-slate-100 pb-4">
-            <span class="material-symbols-outlined" aria-hidden="true">data_table</span> 最近の配信履歴
-        </h3>
-
-        <div class="space-y-3">
-            <template x-if="!sentHistory || sentHistory.length === 0">
-                <p class="text-xs text-slate-400 text-center py-6">配信履歴がまだありません。</p>
-            </template>
-            
-            <template x-for="item in sentHistory" :key="item.id">
-                <div class="p-4 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-200/80 transition space-y-2">
-                    {{-- ヘッダー部分（クリック・キーボード操作で展開切替） --}}
-                    <div @click="item.expanded = !item.expanded" 
-                         @keydown.enter.prevent="item.expanded = !item.expanded"
-                         @keydown.space.prevent="item.expanded = !item.expanded"
-                         role="button"
-                         tabindex="0"
-                         :aria-expanded="!!item.expanded"
-                         class="flex items-center justify-between gap-2 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-slate-400 rounded-lg p-1 -m-1">
-                        <div class="flex items-center gap-2.5 min-w-0 flex-1">
-                            {{-- 動的バッジカラー --}}
-                            <span class="px-2.5 py-1 text-xs font-bold rounded-lg border flex-shrink-0"
-                                  :class="getBadgeClass ? getBadgeClass(item.category) : 'bg-slate-100 text-slate-600 border-slate-200'"
-                                  x-text="item.category"></span>
-                            <h4 class="font-bold text-slate-800 text-sm truncate" x-text="item.title"></h4>
-                        </div>
-
-                        <div class="flex items-center gap-2 flex-shrink-0">
-                            <span class="text-xs text-slate-400" x-text="item.sent_at"></span>
-                            {{-- アイコンボタンはポインターイベント無効化して親要素のクリックに統合 --}}
-                            <div class="p-1 text-slate-400 transition-transform duration-200" 
-                                 :class="item.expanded ? 'rotate-90' : ''">
-                                <span class="material-symbols-outlined !text-base leading-none block" aria-hidden="true">chevron_right</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- 本文：開閉表示 --}}
-                    <div x-show="item.expanded" 
-                         x-cloak
-                         x-transition:enter="transition ease-out duration-150"
-                         x-transition:enter-start="opacity-0 -translate-y-1"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         class="pt-2 border-t border-slate-200/60 mt-2">
-                        <p class="text-xs text-slate-600 whitespace-pre-line leading-relaxed" x-text="item.content"></p>
-                    </div>
+        <div x-show="currentTab === 'notice'" x-cloak x-data="noticeAdmin({{ \Illuminate\Support\Js::from($notices ?? []) }})">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">お知らせ管理</h2>
+                    <p class="text-sm text-slate-500 mt-1">留学生のアプリ内通知へ一斉配信した履歴の確認や新規送信を行います。</p>
                 </div>
-            </template>
-        </div>
-    </div>
-
-    <!-- モーダル: お知らせ新規作成 -->
-    <div x-show="isModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div @click.outside="if(!isSending) isModalOpen = false" 
-             @keydown.escape.window="if(!isSending && isModalOpen) isModalOpen = false"
-             class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 space-y-5">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
-                    <span aria-hidden="true">✏️</span> お知らせの新規作成
-                </h3>
-                <button @click="isModalOpen = false" 
-                        type="button" 
-                        :disabled="isSending"
-                        class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition focus:outline-none focus:ring-2 focus:ring-slate-400 disabled:opacity-50">✕</button>
+                <button @click="isModalOpen = true; sentSuccess = false; errorMessage = '';" 
+                        type="button"
+                        class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition shadow-sm flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2">
+                    <span>＋</span> お知らせを新規作成
+                </button>
             </div>
 
-            <template x-if="sentSuccess">
-                <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-3 text-emerald-800 text-xs font-bold animate-pulse">
-                    <span class="text-lg" aria-hidden="true">🎉</span>
-                    <span>お知らせの配信が完了しました！</span>
-                </div>
-            </template>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                <h3 class="font-bold text-slate-800 text-base flex items-center gap-2 border-b border-slate-100 pb-4">
+                    <span class="material-symbols-outlined" aria-hidden="true">data_table</span> 最近の配信履歴
+                </h3>
 
-            <template x-if="errorMessage">
-                <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-3 text-rose-700 text-xs font-bold">
-                    <span class="text-lg" aria-hidden="true">⚠️</span>
-                    <div class="space-y-1">
-                        <p class="font-bold">お知らせの送信に失敗しました。</p>
-                        <p class="font-normal font-mono text-[11px] opacity-90" x-text="errorMessage"></p>
+                <div class="space-y-3">
+                    <template x-if="!sentHistory || sentHistory.length === 0">
+                        <p class="text-xs text-slate-400 text-center py-6">配信履歴がまだありません。</p>
+                    </template>
+                    
+                    <template x-for="item in sentHistory" :key="item.id">
+                        <div class="p-4 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-200/80 transition space-y-2">
+                            <div @click="item.expanded = !item.expanded" 
+                                 @keydown.enter.prevent="item.expanded = !item.expanded"
+                                 @keydown.space.prevent="item.expanded = !item.expanded"
+                                 role="button"
+                                 tabindex="0"
+                                 :aria-expanded="!!item.expanded"
+                                 class="flex items-center justify-between gap-2 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-slate-400 rounded-lg p-1 -m-1">
+                                <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                                    <span class="px-2.5 py-1 text-xs font-bold rounded-lg border flex-shrink-0"
+                                          :class="getBadgeClass ? getBadgeClass(item.category) : 'bg-slate-100 text-slate-600 border-slate-200'"
+                                          x-text="item.category"></span>
+                                    <h4 class="font-bold text-slate-800 text-sm truncate" x-text="item.title"></h4>
+                                </div>
+
+                                <div class="flex items-center gap-2 flex-shrink-0">
+                                    <span class="text-xs text-slate-400" x-text="item.sent_at"></span>
+                                    <div class="p-1 text-slate-400 transition-transform duration-200" 
+                                         :class="item.expanded ? 'rotate-90' : ''">
+                                        <span class="material-symbols-outlined !text-base leading-none block" aria-hidden="true">chevron_right</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div x-show="item.expanded" 
+                                 x-cloak
+                                 x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 -translate-y-1"
+                                 x-transition:enter-end="opacity-100 translate-y-0"
+                                 class="pt-2 border-t border-slate-200/60 mt-2">
+                                <p class="text-xs text-slate-600 whitespace-pre-line leading-relaxed" x-text="item.content"></p>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <div x-show="isModalOpen" 
+                 x-cloak 
+                 class="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 py-8 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
+                
+                <div @click.outside="if(!isSending) isModalOpen = false" 
+                     @keydown.escape.window="if(!isSending && isModalOpen) isModalOpen = false"
+                     class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-xl max-h-[85vh] overflow-y-auto p-6 space-y-5 my-auto">
+                    
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                            <span aria-hidden="true">✏️</span> お知らせの新規作成
+                        </h3>
+                        <button @click="isModalOpen = false" 
+                                type="button" 
+                                :disabled="isSending"
+                                class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition focus:outline-none focus:ring-2 focus:ring-slate-400 disabled:opacity-50">✕</button>
                     </div>
-                </div>
-            </template>
 
-            <form @submit.prevent="sendNotice()" class="space-y-4">
-                <div>
-                    <label for="notice-title" class="block text-xs font-bold text-slate-700 mb-1.5">お知らせタイトル <span class="text-rose-500">*</span></label>
-                    <input id="notice-title" 
-                           type="text" 
-                           x-model="title" 
-                           placeholder="タイトル" 
-                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition">
-                </div>
+                    <template x-if="sentSuccess">
+                        <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-3 text-emerald-800 text-xs font-bold animate-pulse">
+                            <span class="text-lg" aria-hidden="true">🎉</span>
+                            <span>お知らせの配信が完了しました！</span>
+                        </div>
+                    </template>
 
-                <div>
-                    <label for="notice-category" class="block text-xs font-bold text-slate-700 mb-1.5">配信カテゴリ</label>
-                    <select id="notice-category" 
-                            x-model="category" 
-                            class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition">
-                        <option value="重要">重要</option>
-                        <option value="その他">その他</option>
-                        <option value="英語学習">英語学習</option>
-                        <option value="留学情報">留学情報</option>
-                        <option value="シャワー機能">シャワー機能</option>
-                    </select>
-                </div>
+                    <template x-if="errorMessage">
+                        <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-3 text-rose-700 text-xs font-bold">
+                            <span class="text-lg" aria-hidden="true">⚠️</span>
+                            <div class="space-y-1">
+                                <p class="font-bold">お知らせの送信に失敗しました。</p>
+                                <p class="font-normal font-mono text-[11px] opacity-90" x-text="errorMessage"></p>
+                            </div>
+                        </div>
+                    </template>
 
-                <div>
-                    <label for="notice-content" class="block text-xs font-bold text-slate-700 mb-1.5">お知らせ本文 <span class="text-rose-500">*</span></label>
-                    <textarea id="notice-content" 
-                              x-model="content" 
-                              rows="6" 
-                              placeholder="配信内容を入力..." 
-                              class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium resize-none focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition"></textarea>
-                </div>
+                    <form @submit.prevent="sendNotice()" class="space-y-4">
+                        <div>
+                            <label for="notice-title" class="block text-xs font-bold text-slate-700 mb-1.5">お知らせタイトル <span class="text-rose-500">*</span></label>
+                            <input id="notice-title" 
+                                   type="text" 
+                                   x-model="title" 
+                                   placeholder="タイトル" 
+                                   class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition">
+                        </div>
 
-                <div class="pt-2 flex items-center justify-end gap-3">
-                    <button @click="isModalOpen = false" 
-                            type="button" 
-                            :disabled="isSending"
-                            class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition focus:outline-none focus:ring-2 focus:ring-slate-400 disabled:opacity-50">キャンセル</button>
-                    <button type="submit" 
-                            :disabled="!title.trim() || !content.trim() || isSending" 
-                            :class="title.trim() && content.trim() && !isSending ? 'bg-slate-900 hover:bg-slate-800 text-white shadow-md' : 'bg-slate-200 text-slate-400 cursor-not-allowed'" 
-                            class="px-6 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2">
-                        <template x-if="isSending">
-                            <span class="inline-block animate-spin" aria-hidden="true">🌀</span>
-                        </template>
-                        <span x-text="isSending ? '配信中...' : 'お知らせを一斉配信する 📢'"></span>
-                    </button>
+                        <div>
+                            <label for="notice-category" class="block text-xs font-bold text-slate-700 mb-1.5">配信カテゴリ</label>
+                            <select id="notice-category" 
+                                    x-model="category" 
+                                    class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition">
+                                <option value="その他">その他</option>
+                                <option value="英語学習">英語学習</option>
+                                <option value="留学情報">留学情報</option>
+                                <option value="シャワー機能">シャワー機能</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="notice-content" class="block text-xs font-bold text-slate-700 mb-1.5">お知らせ本文 <span class="text-rose-500">*</span></label>
+                            <textarea id="notice-content" 
+                                      x-model="content" 
+                                      rows="6" 
+                                      placeholder="配信内容を入力..." 
+                                      class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium resize-none focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition"></textarea>
+                        </div>
+
+                        <div class="pt-2 flex items-center justify-end gap-3">
+                            <button @click="isModalOpen = false" 
+                                    type="button" 
+                                    class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition focus:outline-none focus:ring-2 focus:ring-slate-400">
+                                キャンセル
+                            </button>
+                            
+                            <button type="submit" 
+                                    class="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-xl transition shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
+                                <span class="material-symbols-outlined text-base">send</span>
+                                <span>お知らせを一斉配信する</span>
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
-    </div>
-</div>
 
         <!-- ⑤ アクティブ分析セクション -->
         <div x-show="currentTab === 'analytics'" x-cloak x-data="{ showChartModal: false, selectedFeature: '' }" class="space-y-8">
@@ -1296,7 +1319,7 @@
                                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                                     <div>
                                         <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                                            <span class="material-symbols-outlined text-red-500 text-xl" style="color: #ef4444;">bar_chart</span>
+                                            <span class="material-symbols-outlined text-red-500 text-xl">bar_chart</span>
                                             機能別の利用率とアクティブ貢献度
                                         </h3>
                                         <p class="text-xs text-slate-500 mt-0.5">どの機能がユーザーの定着を牽引しているかを示す分析 (<span x-text="currentData.periodLabel" class="font-bold text-slate-700"></span>)</p>
@@ -1417,45 +1440,15 @@
         </div>
 
         <!-- ⑦ 目安箱の中身 -->
-        <div
-            x-show="currentTab === 'suggestions'"
-            x-cloak
-            x-data="{
-                statusFilter: 'all',
-                items: [],
-                editingNote: {},
-
-                get filteredItems() {
-                    if (this.statusFilter === 'all') return this.items;
-                    return this.items.filter(item => item.status === this.statusFilter);
-                },
-
-                async load() {
-                    const response = await fetch('{{ route('admin.suggestions.data') }}');
-                    const data = await response.json();
-                    this.items = data.items;
-                    data.items.forEach(item => { this.editingNote[item.id] = item.admin_note ?? ''; });
-                },
-
-                async updateStatus(item, newStatus) {
-                    const response = await fetch(`/admin/suggestions/${item.id}`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-                            'Accept': 'application/json',
-                        },
-                        body: JSON.stringify({ status: newStatus, admin_note: this.editingNote[item.id] }),
-                    });
-
-                    if (response.ok) {
-                        item.status = newStatus;
-                        item.status_label = {{ Js::from(\App\Models\Suggestion::STATUSES) }}[newStatus];
-                    }
-                },
-            }"
-            x-init="load()"
-        >
+        <div x-show="currentTab === 'suggestions'"
+             x-cloak
+             x-data="{
+                 statusFilter: 'all',
+                 get filteredItems() {
+                     if (this.statusFilter === 'all') return suggestions;
+                     return suggestions.filter(item => item.status === this.statusFilter);
+                 }
+             }">
             <div class="flex items-center justify-between mb-8">
                 <div>
                     <h2 class="text-2xl font-bold text-slate-800">目安箱</h2>
@@ -1464,12 +1457,12 @@
 
                 <div class="flex items-center gap-1 bg-slate-200/80 p-1 rounded-xl text-xs font-bold">
                     <button @click="statusFilter = 'all'"
-                        :class="statusFilter === 'all' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'"
-                        class="px-3 py-1.5 rounded-lg transition">すべて</button>
+                            :class="statusFilter === 'all' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'"
+                            class="px-3 py-1.5 rounded-lg transition">すべて</button>
                     @foreach (\App\Models\Suggestion::STATUSES as $value => $label)
                         <button @click="statusFilter = '{{ $value }}'"
-                            :class="statusFilter === '{{ $value }}' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'"
-                            class="px-3 py-1.5 rounded-lg transition">{{ $label }}</button>
+                                :class="statusFilter === '{{ $value }}' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'"
+                                class="px-3 py-1.5 rounded-lg transition">{{ $label }}</button>
                     @endforeach
                 </div>
             </div>
@@ -1483,39 +1476,33 @@
                                 <span class="text-xs text-slate-400" x-text="item.user_name"></span>
                                 <span class="text-xs text-slate-400" x-text="item.created_at"></span>
                             </div>
-                            <span
-                                class="px-2 py-0.5 text-[11px] font-bold rounded"
-                                :class="{
-                                    'bg-red-100 text-red-700': item.status === 'pending',
-                                    'bg-amber-100 text-amber-700': item.status === 'in_progress',
-                                    'bg-emerald-100 text-emerald-700': item.status === 'resolved',
-                                }"
-                                x-text="item.status_label"
-                            ></span>
+                            <span class="px-2 py-0.5 text-[11px] font-bold rounded"
+                                  :class="{
+                                      'bg-red-100 text-red-700': item.status === 'pending',
+                                      'bg-amber-100 text-amber-700': item.status === 'in_progress',
+                                      'bg-emerald-100 text-emerald-700': item.status === 'resolved',
+                                  }"
+                                  x-text="item.status_label"></span>
                         </div>
 
                         <p class="text-sm text-slate-700 whitespace-pre-line mb-4" x-text="item.comment"></p>
 
                         <div class="flex flex-col gap-2">
                             <div class="flex gap-2 items-center">
-                                <select
-                                    x-model="item.status"
-                                    @change="updateStatus(item, item.status)"
-                                    class="text-xs border border-slate-200 rounded-lg px-2 py-1.5"
-                                >
+                                <select x-model="item.status"
+                                        @change="updateStatus(item, item.status)"
+                                        class="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-slate-50">
                                     @foreach (\App\Models\Suggestion::STATUSES as $value => $label)
                                         <option value="{{ $value }}">{{ $label }}</option>
                                     @endforeach
                                 </select>
                             </div>
 
-                            <textarea
-                                x-model="editingNote[item.id]"
-                                @blur="updateStatus(item, item.status)"
-                                rows="2"
-                                placeholder="対応メモ(内部用)"
-                                class="text-xs border border-slate-200 rounded-lg px-2 py-1.5 resize-none"
-                            ></textarea>
+                            <textarea x-model="editingNote[item.id]"
+                                      @blur="updateStatus(item, item.status)"
+                                      rows="2"
+                                      placeholder="対応メモ(内部用)"
+                                      class="text-xs border border-slate-200 rounded-lg px-2.5 py-2 resize-none bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-400"></textarea>
                         </div>
                     </div>
                 </template>
@@ -1637,49 +1624,69 @@
                 const start = (this.currentPage - 1) * this.perPage;
                 return this.filteredUsers.slice(start, start + this.perPage);
             },
-            nextPage() { if (this.currentPage < this.totalPages) this.currentPage++; },
-            prevPage() { if (this.currentPage > 1) this.currentPage--; }
+            nextPage() { 
+                if (this.currentPage < this.totalPages) this.currentPage++;
+            },
+            prevPage() { 
+                if (this.currentPage > 1) this.currentPage--;
+            }
         };
     }
 
-    function postsManagementData(initialMode, mainCats, cats) {
+    function postsManagementData(initialMode, mainCategoriesData, categoriesData) {
         return {
-            mode: initialMode,
-            mainCategories: mainCats || [],
-            categories: cats || [],
-            editMain: { id: '', key: '', name: '', description: '', hero_image: '', sub_count: 0 },
-            editMainColor: '',
-            editMainTextColor: '',
-            editMainUseColor: false,
-            addMainColor: '#2f5bfd',
-            addMainTextColor: '#2f5bfd',
+            mode: initialMode || 'addMain',
+            mainCategories: mainCategoriesData || [],
+            categories: categoriesData || [],
             addMainUseColor: false,
+            addMainTextColor: '#475569',
+            addMainColor: '#f1f5f9',
+            editMainUseColor: false,
+            editMainTextColor: '#475569',
+            editMainColor: '#f1f5f9',
             forceDeleteMain: false,
-            editCategory: { id: '', section: '', name: '', description: '', hero_image: '', post_count: 0 },
-            editSubSection: '',
             forceDeleteSub: false,
+            editSubSection: '',
+            editMain: { id: '', key: '', name: '', description: '', hero_image: '', sub_count: 0 },
+            editCategory: { id: '', section: '', name: '', description: '', hero_image: '', post_count: 0 },
 
             loadMain(id) {
-                const m = this.mainCategories.find(x => x.id == id);
-                this.forceDeleteMain = false;
-                if (!m) { 
-                    this.editMain = { id: '', key: '', name: '', description: '', hero_image: '', sub_count: 0 }; 
-                    this.editMainColor = ''; 
-                    this.editMainTextColor = ''; 
-                    this.editMainUseColor = false; 
-                    return; 
+                const item = this.mainCategories.find(c => String(c.id) === String(id));
+                if (item) {
+                    this.editMain = {
+                        id: item.id || '',
+                        key: item.key || '',
+                        name: item.name || '',
+                        description: item.description || '',
+                        hero_image: item.hero_image || '',
+                        sub_count: item.sub_categories_count || (item.sub_categories ? item.sub_categories.length : 0)
+                    };
+                    if (item.color) {
+                        this.editMainColor = item.color;
+                        this.editMainUseColor = true;
+                    }
+                    if (item.text_color) {
+                        this.editMainTextColor = item.text_color;
+                    }
+                } else {
+                    this.editMain = { id: '', key: '', name: '', description: '', hero_image: '', sub_count: 0 };
                 }
-                this.editMain = { id: m.id, key: m.key, name: m.name, description: m.description || '', hero_image: m.hero_image || '', sub_count: m.sub_count || 0 };
-                this.editMainColor = m.color || '';
-                this.editMainTextColor = m.text_color || '';
-                this.editMainUseColor = !!m.color || !!m.text_color;
             },
+
             loadCategory(id) {
-                const c = this.categories.find(x => x.id == id);
-                this.forceDeleteSub = false;
-                this.editCategory = c 
-                    ? { id: c.id, section: c.section, name: c.name, description: c.description || '', hero_image: c.hero_image || '', post_count: c.post_count || 0 } 
-                    : { id: '', section: '', name: '', description: '', hero_image: '', post_count: 0 };
+                const item = this.categories.find(c => String(c.id) === String(id));
+                if (item) {
+                    this.editCategory = {
+                        id: item.id || '',
+                        section: item.section || '',
+                        name: item.name || '',
+                        description: item.description || '',
+                        hero_image: item.hero_image || '',
+                        post_count: item.posts_count || (item.posts ? item.posts.length : 0)
+                    };
+                } else {
+                    this.editCategory = { id: '', section: '', name: '', description: '', hero_image: '', post_count: 0 };
+                }
             }
         };
     }
@@ -1687,55 +1694,71 @@
     function noticeAdmin(initialNotices) {
         return {
             isModalOpen: false,
-            title: '',
-            category: '重要',
-            content: '',
             isSending: false,
             sentSuccess: false,
             errorMessage: '',
-            sentHistory: initialNotices || [],
+            title: '',
+            category: 'その他',
+            content: '',
+            sentHistory: (initialNotices || []).map(n => ({
+                id: n.id,
+                title: n.title || n.subject || '',
+                category: n.category || 'その他',
+                content: n.content || n.body || '',
+                sent_at: n.created_at ? new Date(n.created_at).toLocaleDateString() : (n.sent_at || ''),
+                expanded: false
+            })),
+
+            getBadgeClass(cat) {
+                switch (cat) {
+                    case '英語学習': return 'bg-amber-50 text-amber-700 border-amber-200';
+                    case '留学情報': return 'bg-lime-50 text-lime-700 border-lime-200';
+                    case 'シャワー機能': return 'bg-sky-50 text-sky-700 border-sky-200';
+                    default: return 'bg-slate-100 text-slate-600 border-slate-200';
+                }
+            },
 
             async sendNotice() {
-                if (!this.title.trim() || !this.content.trim()) return;
+                if (!this.title || !this.content) return;
                 this.isSending = true;
                 this.errorMessage = '';
 
                 try {
-                    const response = await fetch('{{ route("admin.notices.store") }}', {
+                    const response = await fetch('{{ route('admin.notices.store') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json'
+                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                            'Accept': 'application/json',
                         },
                         body: JSON.stringify({
                             title: this.title,
                             category: this.category,
                             content: this.content
-                        })
+                        }),
                     });
 
-                    if (!response.ok) {
-                        const resData = await response.json().catch(() => null);
-                        const msg = resData?.message || `サーバーエラー (Status: ${response.status})`;
-                        throw new Error(msg);
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.sentHistory.unshift({
+                            id: data.id || Date.now(),
+                            title: this.title,
+                            category: this.category,
+                            content: this.content,
+                            sent_at: new Date().toLocaleDateString(),
+                            expanded: false
+                        });
+                        this.title = '';
+                        this.content = '';
+                        this.sentSuccess = true;
+                        setTimeout(() => { this.isModalOpen = false; }, 1500);
+                    } else {
+                        const errorData = await response.json();
+                        this.errorMessage = errorData.message || '送信中にエラーが発生しました。';
                     }
-
-                    const data = await response.json();
-                    this.sentHistory.unshift(data.notice);
-                    this.isSending = false;
-                    this.sentSuccess = true;
-                    this.title = '';
-                    this.content = '';
-
-                    setTimeout(() => {
-                        this.sentSuccess = false;
-                        this.isModalOpen = false;
-                    }, 1200);
-
-                } catch (error) {
-                    console.error('送信エラー:', error);
-                    this.errorMessage = error.message;
+                } catch (e) {
+                    this.errorMessage = '通信エラーが発生しました。';
+                } finally {
                     this.isSending = false;
                 }
             }
