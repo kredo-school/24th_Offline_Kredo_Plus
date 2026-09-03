@@ -16,7 +16,7 @@
     >
         <div
             @click.outside="open = false"
-            class="relative overflow-hidden bg-white rounded-[24px] p-6 w-96"
+            class="relative overflow-hidden bg-white rounded-[24px] p-6 w-full max-w-sm mx-4"
         >
 
             <div class="absolute top-0 inset-x-0 h-1.5 rounded-t-[24px] bg-gradient-to-r from-rose-200 to-rose-600"></div>
@@ -34,7 +34,7 @@
                         温度
                     </p>
 
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <div class="grid grid-cols-4 gap-2">
 
                         {{-- 冷たい --}}
                         <label class="cursor-pointer">
@@ -112,7 +112,7 @@
                         水圧
                     </p>
 
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <div class="grid grid-cols-3 gap-2">
 
                         {{-- 弱い --}}
                         <label class="cursor-pointer">

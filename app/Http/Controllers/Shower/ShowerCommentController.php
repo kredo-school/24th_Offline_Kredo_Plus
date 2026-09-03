@@ -16,11 +16,11 @@ class ShowerCommentController extends Controller
             'shower_number' => ['nullable', 'string'],
             'temperature_label' => ['nullable', Rule::in(array_keys(ShowerScale::CONDITION_TEMPERATURE_LEVELS))],
             'pressure_label' => ['nullable', Rule::in(array_keys(ShowerScale::CONDITION_PRESSURE_LEVELS))],
-            'limit' => ['nullable', 'integer', 'min:1', 'max:1000'],
+            'page' => ['nullable', 'integer', 'min:1'],
         ]);
 
         $gender = $request->user()->gender;
-        $limit = $validated['limit'] ?? 5;
+        $perPage = 5; // 1ページあたりの表示件数
 
         $query = ShowerReport::query()
             ->with('user')
@@ -41,9 +41,11 @@ class ShowerCommentController extends Controller
             $query->whereBetween('pressure', [$min, $max]);
         }
 
-        $total = (clone $query)->count();
+        // paginate を利用して取得
+        $paginator = $query->paginate($perPage);
 
-        $items = $query->limit($limit)->get()->map(fn ($report) => [
+        // ページネーション内のデータを加工
+        $paginator->getCollection()->transform(fn ($report) => [
             'id' => $report->id,
             'shower_number' => $report->shower_number,
             'created_at' => $report->created_at->setTimezone('Asia/Manila')->format('Y/m/d H:i'),
@@ -54,9 +56,6 @@ class ShowerCommentController extends Controller
             'user_avatar_url' => $report->user->avatar_url ?? null,
         ]);
 
-        return response()->json([
-            'items' => $items,
-            'total' => $total,
-        ]);
+        return response()->json($paginator);
     }
 }

@@ -6,23 +6,26 @@
         temperatureLabel: null,
         pressureLabel: null,
         items: [],
+        page: 1,
+        lastPage: 1,
         total: 0,
-        showingAll: false,
 
-        async load(all = false) {
-            this.showingAll = all;
-            const limit = all ? 1000 : 5;
+        async load(targetPage = 1) {
+            this.page = targetPage;
             const params = new URLSearchParams({
                 shower_number: this.showerNumber,
-                limit,
+                page: this.page,
             });
             if (this.temperatureLabel) params.set('temperature_label', this.temperatureLabel);
             if (this.pressureLabel) params.set('pressure_label', this.pressureLabel);
 
             const response = await fetch(`{{ route('shower.comments') }}?${params}`);
             const data = await response.json();
-            this.items = data.items;
-            this.total = data.total;
+            
+            // Laravelのページネーション構造(data.data, data.last_page 等)に合わせる
+            this.items = data.data ?? data.items; 
+            this.lastPage = data.last_page ?? 1;
+            this.total = data.total ?? 0;
         },
 
         temperatureColor(label) {
@@ -43,20 +46,17 @@
             }[label] ?? '#94a3b8';
         },
     }"
-    x-init="load()"
+    x-init="load(1)"
 >
-    
-
     {{-- PC表示 --}}
     <div class="hidden sm:flex gap-2 m-6 justify-between">
-
         {{-- シャワー番号 --}}
         <div class="flex flex-col justify-center gap-1.5">
             <p class="text-slate-500 text-sm font-semibold ms-2">シャワー番号</p>
             <div class="flex gap-1 items-center">
                 <button
                     type="button"
-                    @click="showerNumber = 'all'; load(showingAll)"
+                    @click="showerNumber = 'all'; load(1)"
                     :class="showerNumber === 'all' ? 'bg-sky-400 text-white shadow-sm' : 'bg-sky-200/60 text-sky-700 hover:bg-sky-200'"
                     class="rounded-full text-xs font-bold px-3.5 py-1.5 transition-colors"
                 >すべて</button>
@@ -64,7 +64,7 @@
                 @for ($i = 1; $i <= 7; $i++)
                     <button
                         type="button"
-                        @click="showerNumber = '{{ $i }}'; load(showingAll)"
+                        @click="showerNumber = '{{ $i }}'; load(1)"
                         :class="showerNumber === '{{ $i }}' ? 'bg-sky-400 text-white shadow-sm' : 'bg-sky-200/60 text-sky-700 hover:bg-sky-200'"
                         class="rounded-full w-8 h-8 text-xs font-bold transition-colors"
                     >{{ $i }}</button>
@@ -79,7 +79,7 @@
                 <template x-for="option in ['冷たい', 'ぬるい', '温かい', '熱い']" :key="'temp-' + option">
                     <button
                         type="button"
-                        @click="temperatureLabel = (temperatureLabel === option ? null : option); load(showingAll)"
+                        @click="temperatureLabel = (temperatureLabel === option ? null : option); load(1)"
                         :class="temperatureLabel === option ? 'bg-rose-400 text-white shadow-sm' : 'bg-rose-200/60 text-rose-700 hover:bg-rose-200'"
                         class="rounded-full text-xs font-bold px-3.5 py-1.5 transition-colors"
                         x-text="option"
@@ -95,7 +95,7 @@
                 <template x-for="option in ['無し', '弱い', '普通', '強い']" :key="'pressure-' + option">
                     <button
                         type="button"
-                        @click="pressureLabel = (pressureLabel === option ? null : option); load(showingAll)"
+                        @click="pressureLabel = (pressureLabel === option ? null : option); load(1)"
                         :class="pressureLabel === option ? 'bg-sky-500 text-white shadow-sm' : 'bg-sky-200/60 text-sky-700 hover:bg-sky-200'"
                         class="rounded-full text-xs font-bold px-3.5 py-1.5 transition-colors"
                         x-text="option"
@@ -103,10 +103,7 @@
                 </template>
             </div>
         </div>
-
     </div>
-
-
 
     <div class="space-y-stack-sm">
         <template x-for="item in items" :key="item.id">
@@ -114,7 +111,7 @@
                 class="bg-white rounded-xl p-4 mb-4 overflow-hidden shadow-lg"
                 x-data="{ expanded: false }"
             >
-                {{-- PC表示: 横並び1行(アイコン・ユーザー名/日付・コメント・ラベル) --}}
+                {{-- PC表示 --}}
                 <div class="hidden sm:flex items-center gap-8">
                     <template x-if="item.user_avatar_url">
                         <img :src="item.user_avatar_url" :alt="item.user_name"
@@ -159,7 +156,7 @@
                     </div>
                 </div>
 
-                {{-- スマホ表示: 1行目(アイコン・番号・日時・ラベル)+2行目(コメント) --}}
+                {{-- スマホ表示 --}}
                 <div class="sm:hidden">
                     <div class="flex items-center gap-4">
                         <template x-if="item.user_avatar_url">
@@ -212,13 +209,55 @@
         </template>
     </div>
 
-    <div class="flex justify-center mt-2" x-show="total > 5">
+    {{-- ページネーションコントロール --}}
+    <div class="flex justify-center items-center gap-1 mt-4 text-sm font-bold" x-show="lastPage > 1">
+        {{-- 最初へ --}}
         <button
             type="button"
-            @click="load(!showingAll)"
-            class="text-headline-sm font-semibold py-2 px-3 rounded-full hover:bg-blue-500/10 text-blue-700 transition-colors"
+            @click="load(1)"
+            :disabled="page <= 1"
+            class="w-9 h-9 flex items-center justify-center rounded-full text-blue-700 hover:bg-blue-500/10 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+            title="最初へ"
         >
-            <span x-text="showingAll ? '閉じる' : 'すべてを見る'"></span>
+            <span class="material-symbols-outlined !text-xl">keyboard_double_arrow_left</span>
+        </button>
+
+        {{-- 1ページ前へ --}}
+        <button
+            type="button"
+            @click="load(page - 1)"
+            :disabled="page <= 1"
+            class="w-9 h-9 flex items-center justify-center rounded-full text-blue-700 hover:bg-blue-500/10 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+            title="前へ"
+        >
+            <span class="material-symbols-outlined !text-xl">keyboard_arrow_left</span>
+        </button>
+
+        {{-- 現在のページ / 最後のページ --}}
+        <span class="text-slate-600 px-3 font-black text-base">
+            <span x-text="page"></span> / <span x-text="lastPage"></span>
+        </span>
+
+        {{-- 1ページ次へ --}}
+        <button
+            type="button"
+            @click="load(page + 1)"
+            :disabled="page >= lastPage"
+            class="w-9 h-9 flex items-center justify-center rounded-full text-blue-700 hover:bg-blue-500/10 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+            title="次へ"
+        >
+            <span class="material-symbols-outlined !text-xl">keyboard_arrow_right</span>
+        </button>
+
+        {{-- 最後へ --}}
+        <button
+            type="button"
+            @click="load(lastPage)"
+            :disabled="page >= lastPage"
+            class="w-9 h-9 flex items-center justify-center rounded-full text-blue-700 hover:bg-blue-500/10 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+            title="最後へ"
+        >
+            <span class="material-symbols-outlined !text-xl">keyboard_double_arrow_right</span>
         </button>
     </div>
 </section>
