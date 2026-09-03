@@ -70,6 +70,17 @@ class Post extends Model
     public function getImageUrlAttribute(): string
     {
         if ($this->image) {
+            // 外部URLならそのまま
+            if (str_starts_with($this->image, 'http://') || str_starts_with($this->image, 'https://')) {
+                return $this->image;
+            }
+
+            // Git管理下のpublic/images/以下に置かれた画像(PostImageSeederで一括登録したもの)はそのままasset()
+            if (str_starts_with($this->image, 'images/')) {
+                return asset($this->image);
+            }
+
+            // それ以外は従来通り、ユーザーがアップロードしてstorage/app/publicに保存された画像
             return asset('storage/' . $this->image);
         }
 

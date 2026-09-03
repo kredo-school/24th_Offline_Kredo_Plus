@@ -9,6 +9,7 @@ use Database\Seeders\English\IeltsSlideSeeder;
 use Database\Seeders\English\IeltsTopicSeeder;
 use Database\Seeders\English\LearningContentSeeder;
 use Database\Seeders\MainCategorySeeder;
+use Database\Seeders\PostImageSeeder;
 use Database\Seeders\English\ToeicQuestionSeeder;
 use Database\Seeders\English\ToeicSlideSeeder;
 use Database\Seeders\English\TypingCategorySeeder;
@@ -44,6 +45,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             MainCategorySeeder::class, // main_categories(Carinderia/Restaurant&Cafe/Travel/Other)
             CategorySeeder::class,     // categories(サブカテゴリー)
+            PostImageSeeder::class,    // public/images/posts/{slug}/ の画像を投稿として一括登録
         ]);
 
         // ===== 英語学習機能 =====
