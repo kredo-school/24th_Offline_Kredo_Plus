@@ -148,24 +148,6 @@
                 <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-slate-950/5 to-transparent pointer-events-none"></div>
                 <div aria-hidden="true" class="absolute inset-y-0 left-0 w-full sm:w-3/5 bg-gradient-to-r from-slate-950/25 via-slate-950/5 to-transparent pointer-events-none"></div>
 
-                {{-- 手書き風の挨拶 + タイトル + リード文（下部はイラスト用に余白を多めに確保） --}}
-                {{-- <div class="absolute inset-x-0 bottom-0 pl-14 sm:pl-16 pr-8 sm:pr-12 pt-8 sm:pt-12 pb-8 sm:pb-12 sm:max-w-md">
-                    <div class="flex items-center gap-3">
-                        <span class="w-1 h-11 sm:h-12 rounded-full bg-gradient-to-b from-amber-300 to-orange-500 shadow-[0_0_12px_rgba(251,191,36,0.6)]"></span>
-                        <div>
-                            <p class="text-amber-300 text-2xl sm:text-3xl leading-none [text-shadow:0_2px_10px_rgba(0,0,0,0.45)]"
-                               style="font-family:'Caveat',cursive;">
-                                Welcome back!
-                            </p>
-                            <h1 class="font-display font-extrabold text-3xl sm:text-4xl leading-tight text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.45)]">
-                                {{ Auth::user()->name }}!
-                            </h1>
-                        </div>
-                    </div>
-                    <p class="mt-4 text-white/90 leading-relaxed [text-shadow:0_1px_6px_rgba(0,0,0,0.4)]">今日も素敵な一日を始めましょう！</p>
-                    <p class="text-white/70 text-sm [text-shadow:0_1px_6px_rgba(0,0,0,0.4)]">セブでの学びと生活を、もっと充実させよう。</p>
-                </div> --}}
-
                 <div class="absolute inset-x-0 top-32 -translate-y-1/2 bottom-auto
                             px-6 sm:px-0
                             sm:top-auto sm:bottom-0 sm:translate-y-0
@@ -277,12 +259,6 @@
                     </div>
 
                     <div class="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-100 to-sky-50 ring-1 ring-sky-200 flex items-center justify-center mb-5">
-                        {{-- <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2f5fdb" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"> --}}
-                            {{-- <path d="M5 11h14"/>
-                            <path d="M6.5 11a5.5 5.5 0 0111 0"/>
-                            <path d="M4 8.5L2.5 7"/>
-                            <path d="M8 15l-.6 1.6M12 15.5v2M16 15l.6 1.6"/> --}}
-                        {{-- </svg> --}}
                         <span class="material-symbols-outlined text-blue-600">shower</span>
                     </div>
                     <p class="relative max-w-[60%] text-xs font-bold text-brand-blue tracking-widest">Shower Information</p>
@@ -434,10 +410,6 @@
                     </div>
 
                     <div class="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 flex items-center justify-center mb-5">
-                        {{-- <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 6a2 2 0 012-2h5.5v15H6a2 2 0 00-2 2V6z"/>
-                            <path d="M20 6a2 2 0 00-2-2h-5.5v15H18a2 2 0 012 2V6z"/>
-                        </svg> --}}
                         <span class="material-symbols-outlined text-orange-600">menu_book</span>
                     </div>
                     <p class="relative text-xs font-bold text-orange-600 tracking-widest">English Learning</p>
@@ -474,11 +446,6 @@
                     </div>
 
                     <div class="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-100 to-green-50 ring-1 ring-emerald-200 flex items-center justify-center mb-5">
-                        {{-- <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 22v-9"/>
-                            <path d="M12 13c-3-1-7-1-9-5 4-1 8 0 9 3"/>
-                            <path d="M12 13c3-1 7-1 9-5-4-1-8 0-9 3"/>
-                        </svg> --}}
                         <span class="material-symbols-outlined text-brand-green">psychiatry</span>
                     </div>
                     <p class="relative text-xs font-bold text-brand-green tracking-widest">Study Abroad Info</p>
@@ -486,15 +453,17 @@
                     <p class="relative mt-2.5 text-sm text-slate-500 leading-relaxed">セブ島の生活情報やおすすめスポットなど、留学生活に役立つ情報をチェックできます。</p>
 
                     {{--
-                        メインカテゴリーのアイコン一覧。既存4つは元のアイコン・色・URLをそのまま使い、
-                        アドミンがmain_categoriesに追加した5つ目以降は共通の汎用アイコンで自動表示される。
+                        メインカテゴリーのアイコン一覧。アイコンは Material Symbols (Outlined) に統一。
+                        既存4つは key ごとに専用アイコン・色・URL、アドミンがmain_categoriesに追加した
+                        5つ目以降は共通の汎用アイコン(category)・自動採番の色で自動表示される。
                     --}}
                     @php
+                        // Google Fonts の Material Symbols (Outlined) に統一。key ごとのアイコン名。
                         $fixedIcons = [
-                            'carinderia' => '<path d="M7 2v20M7 2a3 3 0 000 6M17 2v8a3 3 0 01-3 3h0a3 3 0 01-3-3V2M14 13v9"/>',
-                            'restaurant-cafe' => '<path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"/>',
-                            'travel' => '<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
-                            'other' => '<circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>',
+                            'carinderia'      => 'restaurant',
+                            'restaurant-cafe' => 'local_cafe',
+                            'travel'          => 'flight',
+                            'other'           => 'more_horiz',
                         ];
                         $fixedRoutes = [
                             'carinderia' => 'carinderia.index',
@@ -502,7 +471,8 @@
                             'travel' => 'travel.index',
                             'other' => 'other.index',
                         ];
-                        $genericIcon = '<path d="M12 2 3 7l9 5 9-5-9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/>';
+                        // main_categories に admin が追加した5つ目以降はこの汎用アイコン。
+                        $genericIcon = 'category';
                     @endphp
                     {{-- カテゴリーが増えてもカードの高さが伸びないよう、4つ分の幅で1行固定+はみ出た分は横スライド --}}
                     <div class="relative mt-5 flex gap-2 overflow-x-auto snap-x snap-mandatory pb-1" style="scrollbar-width:none;">
@@ -514,7 +484,7 @@
                             @endphp
                             <a href="{{ $href }}" class="group flex flex-col items-center gap-1.5 shrink-0 w-[68px] snap-start">
                                 <span class="w-11 h-11 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105" style="background:{{ $color }}1a">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{ $color }}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">{!! $icon !!}</svg>
+                                    <span class="material-symbols-outlined !text-[22px] leading-none" style="color:{{ $color }}">{{ $icon }}</span>
                                 </span>
                                 <span class="text-[11px] text-slate-500 font-semibold text-center leading-tight">{{ $mc->name }}</span>
                             </a>
