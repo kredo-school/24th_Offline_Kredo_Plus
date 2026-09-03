@@ -353,7 +353,7 @@
         </div>
 
         <!-- 基本情報タブ -->
-        <div id="tab-info">
+        <div id="tab-info" class="min-h-[20rem]">
             <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                 @csrf
                 @method('patch')
@@ -414,18 +414,20 @@
         </div>
 
         <!-- シャワーの好みタブ -->
-        <div id="tab-preference" class="hidden space-y-4">
+        <div id="tab-preference" class="hidden space-y-4 min-h-[20rem]">
             <form action="{{ route('shower.preference.update') }}" method="POST" class="space-y-4">
                 @csrf
+                {{-- 選択中の色は /shower/male のモーダルと統一（温度=各色、水圧=青系グラデーション）。
+                     Tailwind の動的 arbitrary class は JIT で拾えないため、CSS変数 + 下部の <style> で着色する。 --}}
                 <div>
                     <p class="mb-2 text-xs font-bold text-slate-600">温度</p>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         @foreach (['冷たい' => '#60a5fa', 'ぬるい' => '#34d399', '温かい' => '#fbbf24', '熱い' => '#ef4444'] as $label => $color)
                             <label class="cursor-pointer">
-                                <input type="radio" name="temperature" value="{{ $label }}" class="peer hidden"
+                                <input type="radio" name="temperature" value="{{ $label }}" class="peer hidden pref-input"
                                     {{ auth()->user()->preferred_temperature_label === $label ? 'checked' : '' }}>
-                                <span class="flex items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500 transition-all hover:bg-slate-100 peer-checked:text-white"
-                                      style="--peer-color: {{ $color }};">
+                                <span class="pref-chip flex items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500 transition-all hover:bg-slate-100"
+                                      style="--pref-color: {{ $color }};">
                                     {{ $label }}
                                 </span>
                             </label>
@@ -436,11 +438,12 @@
                 <div>
                     <p class="mb-2 text-xs font-bold text-slate-600">水圧</p>
                     <div class="grid grid-cols-3 gap-2">
-                        @foreach (['弱い' => '#93c5fd', '普通' => '#3b82f6', '強い' => '#1d4ed8'] as $label => $color)
+                        @foreach (['弱い' => '#93c5fd', '普通' => '#3b82f6', '強い' => '#1e3a8a'] as $label => $color)
                             <label class="cursor-pointer">
-                                <input type="radio" name="pressure" value="{{ $label }}" class="peer hidden"
+                                <input type="radio" name="pressure" value="{{ $label }}" class="peer hidden pref-input"
                                     {{ auth()->user()->preferred_pressure_label === $label ? 'checked' : '' }}>
-                                <span class="flex items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500 transition-all hover:bg-slate-100 peer-checked:bg-brand-blue peer-checked:text-white">
+                                <span class="pref-chip flex items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500 transition-all hover:bg-slate-100"
+                                      style="--pref-color: {{ $color }};">
                                     {{ $label }}
                                 </span>
                             </label>
@@ -462,7 +465,7 @@
         </div>
 
         <!-- パスワード変更タブ -->
-        <div id="tab-password" class="hidden space-y-4">
+        <div id="tab-password" class="hidden space-y-4 min-h-[20rem]">
             <form action="{{ route('password.update') }}" method="POST" class="space-y-3">
                 @csrf
                 @method('put')
@@ -500,6 +503,15 @@
 
     </div>
 </div>
+
+<style>
+    /* シャワーの好み: 選択中のチップを /shower/male のモーダルと同じ配色で着色する */
+    #edit-profile-modal .pref-input:checked + .pref-chip {
+        background-color: var(--pref-color);
+        border-color: var(--pref-color);
+        color: #fff;
+    }
+</style>
 
 <script>
     function openProfileModal() {
