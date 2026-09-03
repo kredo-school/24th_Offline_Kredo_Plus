@@ -1,101 +1,9 @@
 @extends('layouts.app')
-@vite(['resources/css/app.css', 'resources/js/admin.js'])
 
 @section('content')
-@php
-    // カテゴリフォームのエラー状態およびモード判定
-    $categoryFormHasError = $errors->addMain->any() || $errors->addSub->any() || $errors->editMain->any() || $errors->editSub->any();
-    $categoryFormMode = $errors->addSub->any() ? 'addSub' : ($errors->editMain->any() ? 'editMain' : ($errors->editSub->any() ? 'editSub' : 'addMain'));
-
-    // アクティブ分析・サマリー用のデフォルト値定義
-    $totalUsers = $totalUsersCount ?? ($users ?? collect())->count() ?: 1;
-
-    // 各期間の計算値（安全なゼロ除算チェック付き）
-    $dActive     = $dailyActiveCount ?? 0;
-    $dEngRate    = $dailyEnglishRate ?? 0;
-    $dInfoRate   = $dActive > 0 ? round((($dailyPostsCount ?? 0) / $dActive) * 100, 1) : 0;
-    $dShowerRate = round((($dailyShowerCount ?? 0) / max($totalUsers, 1)) * 100, 1);
-
-    $wActive     = $weeklyActiveCount ?? 0;
-    $wEngRate    = $weeklyEnglishRate ?? 0;
-    $wInfoRate   = $wActive > 0 ? round((($weeklyPostsCount ?? 0) / $wActive) * 100, 1) : 0;
-    $wShowerRate = round((($weeklyShowerCount ?? 0) / max($totalUsers, 1)) * 100, 1);
-
-    $mActive     = $monthlyActiveCount ?? 0;
-    $mEngRate    = $monthlyEnglishRate ?? 0;
-    $mInfoRate   = $mActive > 0 ? round((($monthlyPostsCount ?? 0) / $mActive) * 100, 1) : 0;
-    $mShowerRate = round((($monthlyShowerCount ?? 0) / max($totalUsers, 1)) * 100, 1);
-
-    $yActive     = $yearlyActiveCount ?? 0;
-    $yEngRate    = $yearlyEnglishRate ?? 0;
-    $yInfoRate   = $yActive > 0 ? round((($yearlyPostsCount ?? 0) / $yActive) * 100, 1) : 0;
-    $yShowerRate = round((($yearlyShowerCount ?? 0) / max($totalUsers, 1)) * 100, 1);
-
-    $dailyCards = [
-        ['title' => 'アクティブユーザー', 'val' => number_format($dActive), 'unit' => '名', 'border' => 'border-rose-200/60', 'dot' => 'bg-rose-500', 'sub' => 'アクティブ率: '.($dauRate ?? 0).'%'],
-        ['title' => '英語学習 利用者数', 'val' => number_format($dailyEnglishUsers ?? 0), 'unit' => '名', 'border' => 'border-amber-200/60', 'dot' => 'bg-amber-400', 'sub' => '利用率: '.$dEngRate.'%'],
-        ['title' => '留学情報 投稿数', 'val' => number_format($dailyPostsCount ?? 0), 'unit' => '件', 'border' => 'border-lime-200/60', 'dot' => 'bg-lime-500', 'sub' => '投稿率: '.$dInfoRate.'%'],
-        ['title' => 'シャワーレビュー数', 'val' => number_format($dailyShowerCount ?? 0), 'unit' => '件', 'border' => 'border-sky-200/60', 'dot' => 'bg-sky-500', 'sub' => '投稿率: '.$dShowerRate.'%'],
-    ];
-
-    $periods = [
-        'daily' => [
-            ['title' => 'アクティブユーザー', 'val' => number_format($dActive), 'unit' => '名', 'border' => 'border-rose-200/60', 'dot' => 'bg-rose-500', 'sub' => 'アクティブ率: '.($dauRate ?? 0).'%', 'feat' => 'DAU (今日)', 'btnColor' => 'text-rose-500 hover:text-rose-600 hover:bg-rose-50'],
-            ['title' => '英語学習 利用者数', 'val' => number_format($dailyEnglishUsers ?? 0), 'unit' => '名', 'border' => 'border-amber-200/60', 'dot' => 'bg-amber-400', 'sub' => '利用率: '.$dEngRate.'%', 'feat' => '英語学習機能 (今日)', 'btnColor' => 'text-amber-600 hover:text-amber-700 hover:bg-amber-50'],
-            ['title' => '留学情報 投稿数', 'val' => number_format($dailyPostsCount ?? 0), 'unit' => '件', 'border' => 'border-lime-200/60', 'dot' => 'bg-lime-500', 'sub' => '投稿率: '.$dInfoRate.'%', 'feat' => '留学情報投稿 (今日)', 'btnColor' => 'text-lime-600 hover:text-lime-700 hover:bg-lime-50'],
-            ['title' => 'シャワーレビュー数', 'val' => number_format($dailyShowerCount ?? 0), 'unit' => '件', 'border' => 'border-sky-200/60', 'dot' => 'bg-sky-500', 'sub' => '投稿率: '.$dShowerRate.'%', 'feat' => 'シャワーレビュー (今日)', 'btnColor' => 'text-sky-500 hover:text-sky-600 hover:bg-sky-50'],
-        ],
-        'weekly' => [
-            ['title' => 'アクティブユーザー', 'val' => number_format($wActive), 'unit' => '名', 'border' => 'border-rose-200/60', 'dot' => 'bg-rose-500', 'sub' => 'アクティブ率: '.($wauRate ?? 0).'%', 'feat' => 'WAU (週間)', 'btnColor' => 'text-rose-500 hover:text-rose-600 hover:bg-rose-50'],
-            ['title' => '英語学習 利用者数', 'val' => number_format($weeklyEnglishUsers ?? 0), 'unit' => '名', 'border' => 'border-amber-200/60', 'dot' => 'bg-amber-400', 'sub' => '利用率: '.$wEngRate.'%', 'feat' => '英語学習機能 (週間)', 'btnColor' => 'text-amber-600 hover:text-amber-700 hover:bg-amber-50'],
-            ['title' => '留学情報 投稿数', 'val' => number_format($weeklyPostsCount ?? 0), 'unit' => '件', 'border' => 'border-lime-200/60', 'dot' => 'bg-lime-500', 'sub' => '投稿率: '.$wInfoRate.'%', 'feat' => '留学情報投稿 (週間)', 'btnColor' => 'text-lime-600 hover:text-lime-700 hover:bg-lime-50'],
-            ['title' => 'シャワーレビュー数', 'val' => number_format($weeklyShowerCount ?? 0), 'unit' => '件', 'border' => 'border-sky-200/60', 'dot' => 'bg-sky-500', 'sub' => '投稿率: '.$wShowerRate.'%', 'feat' => 'シャワーレビュー (週間)', 'btnColor' => 'text-sky-500 hover:text-sky-600 hover:bg-sky-50'],
-        ],
-        'monthly' => [
-            ['title' => 'アクティブユーザー', 'val' => number_format($mActive), 'unit' => '名', 'border' => 'border-rose-200/60', 'dot' => 'bg-rose-500', 'sub' => 'アクティブ率: '.($mauRate ?? 0).'%', 'feat' => 'MAU (月間)', 'btnColor' => 'text-rose-500 hover:text-rose-600 hover:bg-rose-50'],
-            ['title' => '英語学習 利用者数', 'val' => number_format($monthlyEnglishUsers ?? 0), 'unit' => '名', 'border' => 'border-amber-200/60', 'dot' => 'bg-amber-400', 'sub' => '利用率: '.$mEngRate.'%', 'feat' => '英語学習機能 (月間)', 'btnColor' => 'text-amber-600 hover:text-amber-700 hover:bg-amber-50'],
-            ['title' => '留学情報 投稿数', 'val' => number_format($monthlyPostsCount ?? 0), 'unit' => '件', 'border' => 'border-lime-200/60', 'dot' => 'bg-lime-500', 'sub' => '投稿率: '.$mInfoRate.'%', 'feat' => '留学情報投稿 (月間)', 'btnColor' => 'text-lime-600 hover:text-lime-700 hover:bg-lime-50'],
-            ['title' => 'シャワーレビュー数', 'val' => number_format($monthlyShowerCount ?? 0), 'unit' => '件', 'border' => 'border-sky-200/60', 'dot' => 'bg-sky-500', 'sub' => '投稿率: '.$mShowerRate.'%', 'feat' => 'シャワーレビュー (月間)', 'btnColor' => 'text-sky-500 hover:text-sky-600 hover:bg-sky-50'],
-        ],
-        'yearly' => [
-            ['title' => 'アクティブユーザー', 'val' => number_format($yActive), 'unit' => '名', 'border' => 'border-rose-200/60', 'dot' => 'bg-rose-500', 'sub' => 'アクティブ率: '.($yauRate ?? $retentionRate ?? 0).'%', 'feat' => 'YAU (年次)', 'btnColor' => 'text-rose-500 hover:text-rose-600 hover:bg-rose-50'],
-            ['title' => '英語学習 利用者数', 'val' => number_format($yearlyEnglishUsers ?? 0), 'unit' => '名', 'border' => 'border-amber-200/60', 'dot' => 'bg-amber-400', 'sub' => '利用率: '.$yEngRate.'%', 'feat' => '英語学習機能 (年次)', 'btnColor' => 'text-amber-600 hover:text-amber-700 hover:bg-amber-50'],
-            ['title' => '留学情報 投稿数', 'val' => number_format($yearlyPostsCount ?? 0), 'unit' => '件', 'border' => 'border-lime-200/60', 'dot' => 'bg-lime-500', 'sub' => '投稿率: '.$yInfoRate.'%', 'feat' => '留学情報投稿 (年次)', 'btnColor' => 'text-lime-600 hover:text-lime-700 hover:bg-lime-50'],
-            ['title' => 'シャワーレビュー数', 'val' => number_format($yearlyShowerCount ?? 0), 'unit' => '件', 'border' => 'border-sky-200/60', 'dot' => 'bg-sky-500', 'sub' => '投稿率: '.$yShowerRate.'%', 'feat' => 'シャワーレビュー (年次)', 'btnColor' => 'text-sky-500 hover:text-sky-600 hover:bg-sky-50'],
-        ],
-    ];
-
-    $featureAnalyticsData = [
-        'daily' => [
-            'periodLabel' => '今日 (リアルタイム)',
-            'english' => ['users' => $dailyEnglishUsers ?? 0, 'rate' => $dEngRate],
-            'info'    => ['count' => $dailyPostsCount ?? 0, 'rate' => $dInfoRate],
-            'shower'  => ['count' => $dailyShowerCount ?? 0, 'rate' => $dShowerRate],
-        ],
-        'weekly' => [
-            'periodLabel' => '週間 (直近7日間)',
-            'english' => ['users' => $weeklyEnglishUsers ?? 0, 'rate' => $wEngRate],
-            'info'    => ['count' => $weeklyPostsCount ?? 0, 'rate' => $wInfoRate],
-            'shower'  => ['count' => $weeklyShowerCount ?? 0, 'rate' => $wShowerRate],
-        ],
-        'monthly' => [
-            'periodLabel' => '月間 (直近30日間)',
-            'english' => ['users' => $monthlyEnglishUsers ?? 0, 'rate' => $mEngRate],
-            'info'    => ['count' => $monthlyPostsCount ?? 0, 'rate' => $mInfoRate],
-            'shower'  => ['count' => $monthlyShowerCount ?? 0, 'rate' => $mShowerRate],
-        ],
-        'yearly' => [
-            'periodLabel' => '年次 (直近12ヶ月)',
-            'english' => ['users' => $yearlyEnglishUsers ?? 0, 'rate' => $yEngRate],
-            'info'    => ['count' => $yearlyPostsCount ?? 0, 'rate' => $yInfoRate],
-            'shower'  => ['count' => $yearlyShowerCount ?? 0, 'rate' => $yShowerRate],
-        ],
-    ];
-@endphp
-
 <!-- メインコンテナ -->
 <div x-data="{
-        currentTab: '{{ session('accountCreated') || $errors->default->any() ? 'users' : ($categoryFormHasError || session('categoryAdminNotice') ? 'posts' : 'dashboard') }}',
+        currentTab: '{{ session('accountCreated') || $errors->default->any() ? 'users' : (($categoryFormHasError ?? false) || session('categoryAdminNotice') ? 'posts' : 'dashboard') }}',
         suggestions: [],
         editingNote: {},
         async loadSuggestions() {
@@ -131,358 +39,503 @@
         }
     }" 
     x-init="loadSuggestions()"
-    class="flex min-h-screen bg-slate-100">
+    class="flex flex-col md:flex-row min-h-screen bg-slate-100">
 
-    <!-- 1. サイドバー -->
-    <aside class="w-60 bg-slate-800 text-white p-6 shrink-0 hidden md:block">
-        <h1 class="text-xl font-bold mb-6">MENU</h1>
-        <nav class="space-y-2">
+    <!-- 1. ナビゲーション（PC: 左サイドバー / スマホ: 上部配置＆縦2列） -->
+    <aside class="w-full md:w-60 bg-slate-800 text-white p-4 sm:p-6 shrink-0">
+        <h1 class="text-lg md:text-xl font-bold mb-4 md:mb-6 text-center md:text-left">MENU</h1>
+        <nav class="grid grid-cols-2 md:block gap-2 md:space-y-2">
             <button @click="currentTab = 'dashboard'" 
                     :class="currentTab === 'dashboard' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-700 hover:text-white'"
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-left">
-                <span class="material-symbols-outlined">dashboard</span>
+                    class="w-full flex items-center justify-center md:justify-start gap-2 md:gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl font-medium transition text-xs md:text-base text-left">
+                <span class="material-symbols-outlined text-xl md:text-2xl">dashboard</span>
                 <span>ダッシュボード</span>
             </button>
 
             <button @click="currentTab = 'users'" 
                     :class="currentTab === 'users' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-700 hover:text-white'"
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-left">
-                <span class="material-symbols-outlined">user_attributes</span>
+                    class="w-full flex items-center justify-center md:justify-start gap-2 md:gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl font-medium transition text-xs md:text-base text-left">
+                <span class="material-symbols-outlined text-xl md:text-2xl">user_attributes</span>
                 <span>ユーザー管理</span>
             </button>
 
             <button @click="currentTab = 'posts'"
                     :class="currentTab === 'posts' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-700 hover:text-white'"
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-left">
-                <span class="material-symbols-outlined">description</span>
+                    class="w-full flex items-center justify-center md:justify-start gap-2 md:gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl font-medium transition text-xs md:text-base text-left">
+                <span class="material-symbols-outlined text-xl md:text-2xl">description</span>
                 <span>留学情報管理</span>
             </button>
 
             <button @click="currentTab = 'notice'" 
                     :class="currentTab === 'notice' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-700 hover:text-white'"
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-left">
-                <span class="material-symbols-outlined">notifications</span>
+                    class="w-full flex items-center justify-center md:justify-start gap-2 md:gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl font-medium transition text-xs md:text-base text-left">
+                <span class="material-symbols-outlined text-xl md:text-2xl">notifications</span>
                 <span>お知らせ送信</span>
             </button>
 
             <button @click="currentTab = 'analytics'" 
                     :class="currentTab === 'analytics' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-700 hover:text-white'"
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-left">
-                <span class="material-symbols-outlined">analytics</span>
+                    class="w-full flex items-center justify-center md:justify-start gap-2 md:gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl font-medium transition text-xs md:text-base text-left">
+                <span class="material-symbols-outlined text-xl md:text-2xl">analytics</span>
                 <span>アクティブ分析</span>
             </button>
 
             <button @click="currentTab = 'suggestions'" 
                     :class="currentTab === 'suggestions' ? 'bg-brand-blue text-white shadow' : 'text-slate-400 hover:bg-slate-700 hover:text-white'"
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-left">
-                <span class="material-symbols-outlined !text-2xl leading-none">local_post_office</span>
+                    class="w-full flex items-center justify-center md:justify-start gap-2 md:gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl font-medium transition text-xs md:text-base text-left">
+                <span class="material-symbols-outlined text-xl md:text-2xl leading-none">local_post_office</span>
                 <span>目安箱</span>
             </button>
         </nav>
     </aside>
 
     <!-- 2. メインコンテンツエリア -->
-    <main class="flex-1 p-8">
+    <main class="flex-1 p-4 sm:p-8 min-w-0">
 
         <!-- ① ダッシュボード -->
-        <div x-show="currentTab === 'dashboard'" x-cloak class="space-y-8">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <h2 class="text-2xl font-bold text-slate-800 tracking-tight">ダッシュボード</h2>
-                    <p class="text-sm text-slate-500 mt-1">本日の各セクション稼働状況とシステム概要です。</p>
-                </div>
-                <div class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-emerald-200/80 shadow-sm self-start sm:self-auto">
-                    <span class="relative flex h-2 w-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                    </span>
-                    システム正常稼働中
-                </div>
-            </div>
+<div x-show="currentTab === 'dashboard'" x-cloak class="space-y-8">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h2 class="text-2xl font-bold text-slate-800 tracking-tight">ダッシュボード</h2>
+            <p class="text-sm text-slate-500 mt-1">本日の各セクション稼働状況とシステム概要です。</p>
+        </div>
+        <div class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-emerald-200/80 shadow-sm self-start sm:self-auto">
+            <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            システム正常稼働中
+        </div>
+    </div>
 
-            <!-- 本日のパフォーマンス・サマリー -->
-            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
-                    <div>
-                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                            <span class="material-symbols-outlined text-indigo-500">space_dashboard</span>
-                            本日のパフォーマンス・サマリー
-                        </h3>
-                        <p class="text-xs text-slate-400 mt-0.5">本日の主要アクティビティ指標です。</p>
-                    </div>
+    <!-- 本日のパフォーマンス・サマリー -->
+<div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+        <div>
+            <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                <span class="material-symbols-outlined text-indigo-500">space_dashboard</span>
+                本日のパフォーマンス・サマリー
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">本日の主要アクティビティ指標です。</p>
+        </div>
+        
+        <button type="button" 
+                @click="currentTab = 'analytics'" 
+                class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200/80 rounded-xl transition self-start sm:self-auto">
+            <span>アクティブ分析を見る</span>
+            <span class="material-symbols-outlined text-base">arrow_forward</span>
+        </button>
+    </div>
+
+    @php
+        // 1. $periods が文字列（JSON）の場合は配列にデコード
+        $parsedPeriods = is_array($periods ?? null) 
+            ? $periods 
+            : (is_string($periods ?? null) ? json_decode($periods, true) : []);
+
+        // 2. $cards が文字列（JSON）の場合は配列にデコード
+        $parsedCards = is_array($cards ?? null) 
+            ? $cards 
+            : (is_string($cards ?? null) ? json_decode($cards, true) : []);
+
+        // 3. 多角的に「本日のカードデータ」を探す
+        $todayCards = [];
+
+        if (!empty($dailyCards) && is_array($dailyCards)) {
+            $todayCards = $dailyCards;
+        } elseif (!empty($parsedPeriods)) {
+            // $parsedPeriods の中に「本日の配列」または「直接カードの配列」が入っているパターンに対応
+            if (isset($parsedPeriods['today']) && is_array($parsedPeriods['today'])) {
+                $todayCards = $parsedPeriods['today'];
+            } elseif (isset($parsedPeriods['daily']) && is_array($parsedPeriods['daily'])) {
+                $todayCards = $parsedPeriods['daily'];
+            } elseif (isset($parsedPeriods['day']) && is_array($parsedPeriods['day'])) {
+                $todayCards = $parsedPeriods['day'];
+            } else {
+                // キー指定がない場合は最初の要素を取り出す
+                $firstItem = reset($parsedPeriods);
+                if (is_array($firstItem)) {
+                    // 連想配列のネストか、直接カード配列かを判定
+                    $todayCards = isset($firstItem['title']) ? $parsedPeriods : $firstItem;
+                }
+            }
+        } elseif (!empty($parsedCards) && is_array($parsedCards)) {
+            $todayCards = $parsedCards;
+        }
+    @endphp
+
+    <!-- 本日のカード一覧 (4つ) -->
+    @if(!empty($todayCards) && count($todayCards) > 0)
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            @foreach($todayCards as $card)
+                @php
+                    $title = $card['title'] ?? '';
                     
-                    <button type="button" 
-                            @click="currentTab = 'analytics'" 
-                            class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200/80 rounded-xl transition self-start sm:self-auto">
-                        <span>アクティブ分析を見る</span>
-                        <span class="material-symbols-outlined text-base">arrow_forward</span>
+                    // タイトルに応じたテーマカラー・ドット色・ボタン色の厳密設定
+                    if (str_contains($title, 'アクティブ')) {
+                        $dotClass = 'bg-red-500';
+                        $border = $card['border'] ?? 'border-red-200';
+                        $btnColor = $card['btnColor'] ?? 'text-red-600 bg-red-50 hover:bg-red-100';
+                    } elseif (str_contains($title, '英語') || str_contains($title, '学習')) {
+                        $dotClass = 'bg-yellow-400';
+                        $border = $card['border'] ?? 'border-yellow-200';
+                        $btnColor = $card['btnColor'] ?? 'text-yellow-700 bg-yellow-50 hover:bg-yellow-100';
+                    } elseif (str_contains($title, '投稿') || str_contains($title, '情報')) {
+                        $dotClass = 'bg-lime-500';
+                        $border = $card['border'] ?? 'border-lime-200';
+                        $btnColor = $card['btnColor'] ?? 'text-lime-700 bg-lime-50 hover:bg-lime-100';
+                    } elseif (str_contains($title, 'シャワー')) {
+                        $dotClass = 'bg-sky-500';
+                        $border = $card['border'] ?? 'border-sky-200';
+                        $btnColor = $card['btnColor'] ?? 'text-sky-600 bg-sky-50 hover:bg-sky-100';
+                    } else {
+                        $dotClass = $card['dot'] ?? 'bg-slate-400';
+                        $border = $card['border'] ?? 'border-slate-200';
+                        $btnColor = $card['btnColor'] ?? 'text-slate-600 bg-slate-50 hover:bg-slate-100';
+                    }
+                @endphp
+
+                <div class="bg-white p-5 rounded-2xl border {{ $border }} shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                    <div class="flex items-start justify-between">
+                        <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full {{ $dotClass }}"></span>
+                            {{ $title ?: '指標' }}
+                        </span>
+                        <button type="button" 
+                                @click="showChartModal = true; selectedFeature = '{{ $card['feat'] ?? '' }}'" 
+                                class="p-1.5 {{ $btnColor }} rounded-lg transition">
+                            <span class="material-symbols-outlined text-base">show_chart</span>
+                        </button>
+                    </div>
+                    <div class="my-3 flex items-baseline gap-1">
+                        <span class="text-3xl font-black text-slate-800 tracking-tight">{{ $card['val'] ?? '0' }}</span>
+                        <span class="text-sm font-bold text-slate-400">{{ $card['unit'] ?? '' }}</span>
+                    </div>
+                    <div class="text-[11px] text-slate-400 border-t border-slate-100 pt-2.5">
+                        {{ $card['sub'] ?? '-' }}
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @else
+        <!-- 万が一コントローラーからデータが一切届いていない場合のデフォルト固定4カード -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- 1. アクティブユーザー -->
+            <div class="bg-white p-5 rounded-2xl border border-red-200 shadow-sm flex flex-col justify-between">
+                <div class="flex items-start justify-between">
+                    <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                        アクティブユーザー
+                    </span>
+                    <button type="button" @click="showChartModal = true; selectedFeature = 'active_users'" class="p-1.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">
+                        <span class="material-symbols-outlined text-base">show_chart</span>
                     </button>
                 </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    @foreach($dailyCards as $card)
-                        <div class="bg-slate-50/70 p-4 rounded-xl border {{ $card['border'] }} flex flex-col justify-between">
-                            <div class="flex items-start justify-between">
-                                <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
-                                    @if(!empty($card['dot']))
-                                        <span class="w-2 h-2 rounded-full {{ $card['dot'] }}"></span>
-                                    @endif
-                                    {{ $card['title'] }}
-                                </span>
-                            </div>
-                            <div class="my-2.5 flex items-baseline gap-1">
-                                <span class="text-2xl font-black text-slate-800 tracking-tight">{{ $card['val'] }}</span>
-                                <span class="text-xs font-bold text-slate-400">{{ $card['unit'] }}</span>
-                            </div>
-                            <div class="text-[11px] text-slate-400 border-t border-slate-200/60 pt-2">
-                                {{ $card['sub'] }}
-                            </div>
-                        </div>
-                    @endforeach
+                <div class="my-3 flex items-baseline gap-1">
+                    <span class="text-3xl font-black text-slate-800 tracking-tight">0</span>
+                    <span class="text-sm font-bold text-slate-400">人</span>
                 </div>
+                <div class="text-[11px] text-slate-400 border-t border-slate-100 pt-2.5">本日アクティブなユーザー</div>
             </div>
 
-            <!-- 下部グリッドエリア -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 space-y-6">
-                    <!-- 故障シャワーの管理 -->
-                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-                                <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-blue-600 text-base">shower</span>
-                                    故障中のシャワー
-                                    <span class="text-xs font-normal text-slate-400">({{ isset($brokenShowers) ? $brokenShowers->count() : 0 }}件)</span>
-                                </h3>
-                            </div>
+            <!-- 2. 英語学習 -->
+            <div class="bg-white p-5 rounded-2xl border border-yellow-200 shadow-sm flex flex-col justify-between">
+                <div class="flex items-start justify-between">
+                    <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-yellow-400"></span>
+                        英語学習実施
+                    </span>
+                    <button type="button" @click="showChartModal = true; selectedFeature = 'english_study'" class="p-1.5 text-yellow-700 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition">
+                        <span class="material-symbols-outlined text-base">show_chart</span>
+                    </button>
+                </div>
+                <div class="my-3 flex items-baseline gap-1">
+                    <span class="text-3xl font-black text-slate-800 tracking-tight">0</span>
+                    <span class="text-sm font-bold text-slate-400">回</span>
+                </div>
+                <div class="text-[11px] text-slate-400 border-t border-slate-100 pt-2.5">本日の英語学習回数</div>
+            </div>
 
-                            <div class="space-y-2 max-h-[220px] overflow-y-auto pr-1">
-                                @forelse ($brokenShowers ?? [] as $report)
-                                    <div class="flex items-center justify-between p-3 rounded-xl bg-sky-50 border border-sky-200/60 text-xs">
-                                        <div>
-                                            <span class="font-bold text-slate-800">
-                                                {{ $report->gender === 'male' ? '男子寮' : '女子寮' }} {{ $report->shower_number }}番
-                                            </span>
-                                            <span class="text-slate-400 ml-2">{{ $report->created_at->diffForHumans() }}</span>
-                                            @if ($report->comment)
-                                                <p class="text-slate-500 mt-1">{{ $report->comment }}</p>
-                                            @endif
-                                        </div>
+            <!-- 3. 情報投稿 -->
+            <div class="bg-white p-5 rounded-2xl border border-lime-200 shadow-sm flex flex-col justify-between">
+                <div class="flex items-start justify-between">
+                    <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-lime-500"></span>
+                        情報投稿
+                    </span>
+                    <button type="button" @click="showChartModal = true; selectedFeature = 'posts'" class="p-1.5 text-lime-700 bg-lime-50 hover:bg-lime-100 rounded-lg transition">
+                        <span class="material-symbols-outlined text-base">show_chart</span>
+                    </button>
+                </div>
+                <div class="my-3 flex items-baseline gap-1">
+                    <span class="text-3xl font-black text-slate-800 tracking-tight">0</span>
+                    <span class="text-sm font-bold text-slate-400">件</span>
+                </div>
+                <div class="text-[11px] text-slate-400 border-t border-slate-100 pt-2.5">本日の投稿数</div>
+            </div>
 
-                                        <form action="{{ route('admin.shower.malfunctions.fix', [$report->gender, $report->shower_number]) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="px-3 py-1.5 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 transition">
-                                                修理完了
-                                            </button>
-                                        </form>
-                                    </div>
-                                @empty
-                                    <div class="text-center py-6 text-xs text-slate-400">現在、故障中のシャワーはありません。</div>
-                                @endforelse
-                            </div>
-                        </div>
+            <!-- 4. シャワー利用 -->
+            <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-sm flex flex-col justify-between">
+                <div class="flex items-start justify-between">
+                    <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                        シャワー利用
+                    </span>
+                    <button type="button" @click="showChartModal = true; selectedFeature = 'shower_usage'" class="p-1.5 text-sky-600 bg-sky-50 hover:bg-sky-100 rounded-lg transition">
+                        <span class="material-symbols-outlined text-base">show_chart</span>
+                    </button>
+                </div>
+                <div class="my-3 flex items-baseline gap-1">
+                    <span class="text-3xl font-black text-slate-800 tracking-tight">0</span>
+                    <span class="text-sm font-bold text-slate-400">回</span>
+                </div>
+                <div class="text-[11px] text-slate-400 border-t border-slate-100 pt-2.5">本日の利用回数</div>
+            </div>
+        </div>
+    @endif
+</div>
 
-                        <div class="mt-4 pt-3 border-t border-slate-100">
-                            <a href="{{ route('admin.shower.malfunctions.index') }}"
-                               class="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200/80 rounded-xl transition">
-                                <span>故障履歴を見る</span>
-                                <span class="material-symbols-outlined text-base">chevron_right</span>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <!-- 上段：お知らせ ＆ 最新のご意見 -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- 最新のお知らせ -->
-                        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-                                    <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                                        <span class="material-symbols-outlined text-amber-500 text-base">campaign</span>
-                                        最新のお知らせ
-                                    </h3>
-                                </div>
-
-                                <div class="space-y-2">
-                                    @forelse(($notices ?? ($announcements ?? collect()))->take(2) as $notice)
-                                        <div class="p-2.5 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition">
-                                            <div class="flex items-center justify-between text-[11px] text-slate-400 mb-0.5">
-                                                <span class="font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md text-[10px]">お知らせ</span>
-                                                <span>
-                                                    @if(!empty($notice->created_at))
-                                                        {{ \Carbon\Carbon::parse($notice->created_at)->format('Y.m.d') }}
-                                                    @elseif(!empty($notice['sent_at']))
-                                                        {{ $notice['sent_at'] }}
-                                                    @endif
-                                                </span>
-                                            </div>
-                                            <h4 class="text-xs font-bold text-slate-800 line-clamp-1">
-                                                {{ is_array($notice) ? ($notice['title'] ?? '') : ($notice->title ?? $notice->subject ?? '') }}
-                                            </h4>
-                                        </div>
-                                    @empty
-                                        <div class="text-center py-6 text-xs text-slate-400">新しいお知らせはありません。</div>
-                                    @endforelse
-                                </div>
-                            </div>
-
-                            <div class="mt-4 pt-3 border-t border-slate-100">
-                                <button type="button" 
-                                        @click="currentTab = 'notice'" 
-                                        class="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200/80 rounded-xl transition">
-                                    <span>お知らせを見る</span>
-                                    <span class="material-symbols-outlined text-base">chevron_right</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- 最新のご意見 -->
-                        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-                                    <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                                        <span class="material-symbols-outlined text-rose-500 text-base">mark_as_unread</span>
-                                        最新のご意見
-                                    </h3>
-                                </div>
-
-                                <div class="space-y-3">
-                                    <template x-for="item in suggestions.filter(i => i.status === 'pending').slice(0, 2)" :key="item.id">
-                                        <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition">
-                                            <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1">
-                                                <span class="font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md text-[10px]" x-text="'未対応・' + item.category_label"></span>
-                                                <span x-text="item.created_at"></span>
-                                            </div>
-                                            <p class="text-[11px] text-slate-700 font-bold line-clamp-2 leading-relaxed" x-text="item.comment"></p>
-                                            <div class="mt-1 flex items-center gap-1.5 text-[10px] text-slate-400">
-                                                <span class="material-symbols-outlined text-[12px]">person</span>
-                                                <span x-text="item.user_name"></span>
-                                            </div>
-                                        </div>
-                                    </template>
-
-                                    <template x-if="suggestions.filter(i => i.status === 'pending').length === 0">
-                                        <div class="text-center py-6 text-xs text-slate-400">未対応の意見はありません。</div>
-                                    </template>
-                                </div>
-                            </div>
-
-                            <div class="mt-4 pt-3 border-t border-slate-100">
-                                <button type="button" 
-                                        @click="currentTab = 'suggestions'" 
-                                        class="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200/80 rounded-xl transition">
-                                    <span>目安箱を見る</span>
-                                    <span class="material-symbols-outlined text-base">chevron_right</span>
-                                </button>
-                            </div>
-                        </div>
+    <!-- 下部グリッドエリア -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-6">
+            <!-- 故障シャワーの管理 -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+                        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-blue-600 text-base">shower</span>
+                            故障中のシャワー
+                            <span class="text-xs font-normal text-slate-400">({{ isset($brokenShowers) ? $brokenShowers->count() : 0 }}件)</span>
+                        </h3>
                     </div>
 
-                    <!-- 下段：アクティブユーザー上位3名 -->
-                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-                                <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-emerald-500 text-base">military_tech</span>
-                                    アクティブユーザー上位3名
-                                </h3>
-                                <button type="button" 
-                                        @click="currentTab = 'users'" 
-                                        class="inline-flex items-center gap-1 text-xs font-bold text-slate-600 hover:text-slate-900 transition">
-                                    <span>ユーザーを見る</span>
-                                    <span class="material-symbols-outlined text-base">chevron_right</span>
-                                </button>
+                    <div class="space-y-2 max-h-[220px] overflow-y-auto pr-1">
+                        @forelse ($brokenShowers ?? [] as $report)
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-sky-50 border border-sky-200/60 text-xs">
+                                <div>
+                                    <span class="font-bold text-slate-800">
+                                        {{ $report->gender === 'male' ? '男子寮' : '女子寮' }} {{ $report->shower_number }}番
+                                    </span>
+                                    <span class="text-slate-400 ml-2">{{ $report->created_at->diffForHumans() }}</span>
+                                    @if ($report->comment)
+                                        <p class="text-slate-500 mt-1">{{ $report->comment }}</p>
+                                    @endif
+                                </div>
+
+                                <form action="{{ route('admin.shower.malfunctions.fix', [$report->gender, $report->shower_number]) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="px-3 py-1.5 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 transition">
+                                        修理完了
+                                    </button>
+                                </form>
                             </div>
-
-                            @php
-                                $topList = $topActiveUsers ?? ($users ?? collect())->sortByDesc('total_xp')->take(3);
-                            @endphp
-
-                            <div class="space-y-2.5">
-                                @forelse($topList as $index => $topUser)
-                                    @php
-                                        $userName   = is_array($topUser) ? ($topUser['name'] ?? 'ユーザー') : ($topUser->name ?? 'ユーザー');
-                                        $userDorm   = is_array($topUser) ? ($topUser['dorm'] ?? '寮未設定') : ($topUser->dorm ?? '寮未設定');
-                                        $lastActive = is_array($topUser) 
-                                            ? ($topUser['last_active_at'] ?? $topUser['updated_at'] ?? null) 
-                                            : ($topUser->last_active_at ?? $topUser->updated_at ?? null);
-
-                                        $rankBg = match($loop->index) {
-                                            0 => 'bg-amber-500',
-                                            1 => 'bg-slate-400',
-                                            2 => 'bg-amber-700',
-                                            default => 'bg-slate-300',
-                                        };
-                                    @endphp
-                                    <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50/70 border border-slate-100">
-                                        <div class="flex items-center gap-2.5 min-w-0 pr-2">
-                                            <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-bold text-xs text-white shadow-sm {{ $rankBg }}">
-                                                {{ $loop->iteration }}
-                                            </div>
-                                            <div class="min-w-0">
-                                                <p class="text-xs font-bold text-slate-800 truncate">{{ $userName }}</p>
-                                                <p class="text-[10px] text-slate-400 truncate">{{ $userDorm }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="text-right shrink-0">
-                                            <span class="block text-[9px] text-slate-400">最終アクティブ</span>
-                                            <span class="text-[10px] font-semibold text-slate-600">
-                                                {{ !empty($lastActive) ? \Carbon\Carbon::parse($lastActive)->diffForHumans() : '--' }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <div class="text-center py-6 text-xs text-slate-400">データがありません。</div>
-                                @endforelse
-                            </div>
-                        </div>
+                        @empty
+                            <div class="text-center py-6 text-xs text-slate-400">現在、故障中のシャワーはありません。</div>
+                        @endforelse
                     </div>
                 </div>
 
-                <!-- 右カラム：管理者伝言板 -->
-                <div class="lg:col-span-1 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between">
+                <div class="mt-4 pt-3 border-t border-slate-100">
+                    <a href="{{ route('admin.shower.malfunctions.index') }}"
+                       class="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200/80 rounded-xl transition">
+                        <span>故障履歴を見る</span>
+                        <span class="material-symbols-outlined text-base">chevron_right</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- 上段：お知らせ ＆ 最新のご意見 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 最新のお知らせ -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-                            <div>
-                                <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-                                    <span class="material-symbols-outlined text-indigo-500 text-base">forum</span>
-                                    管理者伝言板
-                                </h3>
-                                <p class="text-[11px] text-slate-400 mt-0.5">チーム内での共有・申し送り事項です。</p>
-                            </div>
+                            <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-amber-500 text-base">campaign</span>
+                                最新のお知らせ
+                            </h3>
                         </div>
 
-                        <div class="space-y-2 max-h-[260px] overflow-y-auto pr-1">
-                            @forelse($adminMessages ?? [] as $msg)
-                                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 space-y-1">
-                                    <div class="flex items-center justify-between text-[11px]">
-                                        <span class="font-bold text-slate-700 flex items-center gap-1">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                                            {{ $msg->user->name ?? $msg->author_name ?? '管理者' }}
-                                        </span>
-                                        <span class="text-slate-400 text-[10px]">
-                                            {{ $msg->created_at instanceof \Carbon\Carbon ? $msg->created_at->diffForHumans() : '' }}
+                        <div class="space-y-2">
+                            @forelse(($notices ?? ($announcements ?? collect()))->take(2) as $notice)
+                                <div class="p-2.5 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition">
+                                    <div class="flex items-center justify-between text-[11px] text-slate-400 mb-0.5">
+                                        <span class="font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md text-[10px]">お知らせ</span>
+                                        <span>
+                                            @if(!empty($notice->created_at))
+                                                {{ \Carbon\Carbon::parse($notice->created_at)->format('Y.m.d') }}
+                                            @elseif(!empty($notice['sent_at']))
+                                                {{ $notice['sent_at'] }}
+                                            @endif
                                         </span>
                                     </div>
-                                    <p class="text-[11px] text-slate-600 leading-relaxed whitespace-pre-wrap break-words">{{ $msg->message ?? $msg->content ?? '' }}</p>
+                                    <h4 class="text-xs font-bold text-slate-800 line-clamp-1">
+                                        {{ is_array($notice) ? ($notice['title'] ?? '') : ($notice->title ?? $notice->subject ?? '') }}
+                                    </h4>
                                 </div>
                             @empty
-                                <div class="text-center py-6 text-[11px] text-slate-400">現在、伝言はありません。</div>
+                                <div class="text-center py-6 text-xs text-slate-400">新しいお知らせはありません。</div>
                             @endforelse
                         </div>
                     </div>
 
-                    <form action="{{ route('admin.messages.store') }}" method="POST" class="mt-3 pt-3 border-t border-slate-100 flex gap-1.5">
-                        @csrf
-                        <input type="text" name="message" placeholder="伝言を入力..." required
-                               class="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-medium text-slate-700 focus:bg-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                        <button type="submit" class="shrink-0 rounded-lg bg-slate-900 px-3 py-1.5 text-[11px] font-bold text-white transition hover:bg-slate-800">
-                            投稿
+                    <div class="mt-4 pt-3 border-t border-slate-100">
+                        <button type="button" 
+                                @click="currentTab = 'notice'" 
+                                class="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200/80 rounded-xl transition">
+                            <span>お知らせを見る</span>
+                            <span class="material-symbols-outlined text-base">chevron_right</span>
                         </button>
-                    </form>
+                    </div>
+                </div>
+
+                <!-- 最新のご意見 -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+                            <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-rose-500 text-base">mark_as_unread</span>
+                                最新のご意見
+                            </h3>
+                        </div>
+
+                        <div class="space-y-3">
+                            <template x-for="item in suggestions.filter(i => i.status === 'pending').slice(0, 2)" :key="item.id">
+                                <div class="p-3 rounded-xl bg-slate-50/70 border border-slate-100 hover:bg-slate-50 transition">
+                                    <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1">
+                                        <span class="font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md text-[10px]" x-text="'未対応・' + item.category_label"></span>
+                                        <span x-text="item.created_at"></span>
+                                    </div>
+                                    <p class="text-[11px] text-slate-700 font-bold line-clamp-2 leading-relaxed" x-text="item.comment"></p>
+                                    <div class="mt-1 flex items-center gap-1.5 text-[10px] text-slate-400">
+                                        <span class="material-symbols-outlined text-[12px]">person</span>
+                                        <span x-text="item.user_name"></span>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <template x-if="suggestions.filter(i => i.status === 'pending').length === 0">
+                                <div class="text-center py-6 text-xs text-slate-400">未対応の意見はありません。</div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-100">
+                        <button type="button" 
+                                @click="currentTab = 'suggestions'" 
+                                class="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200/80 rounded-xl transition">
+                            <span>目安箱を見る</span>
+                            <span class="material-symbols-outlined text-base">chevron_right</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 下段：アクティブユーザー上位3名 -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+                        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-emerald-500 text-base">military_tech</span>
+                            アクティブユーザー上位3名
+                        </h3>
+                        <button type="button" 
+                                @click="currentTab = 'users'" 
+                                class="inline-flex items-center gap-1 text-xs font-bold text-slate-600 hover:text-slate-900 transition">
+                            <span>ユーザーを見る</span>
+                            <span class="material-symbols-outlined text-base">chevron_right</span>
+                        </button>
+                    </div>
+
+                    @php
+                        $topList = $topActiveUsers ?? ($users ?? collect())->sortByDesc('total_xp')->take(3);
+                    @endphp
+
+                    <div class="space-y-2.5">
+                        @forelse($topList as $index => $topUser)
+                            @php
+                                $userName   = is_array($topUser) ? ($topUser['name'] ?? 'ユーザー') : ($topUser->name ?? 'ユーザー');
+                                $userDorm   = is_array($topUser) ? ($topUser['dorm'] ?? '寮未設定') : ($topUser->dorm ?? '寮未設定');
+                                $lastActive = is_array($topUser) 
+                                    ? ($topUser['last_active_at'] ?? $topUser['updated_at'] ?? null) 
+                                    : ($topUser->last_active_at ?? $topUser->updated_at ?? null);
+
+                                $rankBg = match($loop->index) {
+                                    0 => 'bg-amber-500',
+                                    1 => 'bg-slate-400',
+                                    2 => 'bg-amber-700',
+                                    default => 'bg-slate-300',
+                                };
+                            @endphp
+                            <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50/70 border border-slate-100">
+                                <div class="flex items-center gap-2.5 min-w-0 pr-2">
+                                    <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-bold text-xs text-white shadow-sm {{ $rankBg }}">
+                                        {{ $loop->iteration }}
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-xs font-bold text-slate-800 truncate">{{ $userName }}</p>
+                                        <p class="text-[10px] text-slate-400 truncate">{{ $userDorm }}</p>
+                                    </div>
+                                </div>
+                                <div class="text-right shrink-0">
+                                    <span class="block text-[9px] text-slate-400">最終アクティブ</span>
+                                    <span class="text-[10px] font-semibold text-slate-600">
+                                        {{ !empty($lastActive) ? \Carbon\Carbon::parse($lastActive)->diffForHumans() : '--' }}
+                                    </span>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center py-6 text-xs text-slate-400">データがありません。</div>
+                        @endforelse
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- 右カラム：管理者伝言板 -->
+        <div class="lg:col-span-1 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-indigo-500 text-base">forum</span>
+                            管理者伝言板
+                        </h3>
+                        <p class="text-[11px] text-slate-400 mt-0.5">チーム内での共有・申し送り事項です。</p>
+                    </div>
+                </div>
+
+                <div class="space-y-2 max-h-[260px] overflow-y-auto pr-1">
+                    @forelse($adminMessages ?? [] as $msg)
+                        <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 space-y-1">
+                            <div class="flex items-center justify-between text-[11px]">
+                                <span class="font-bold text-slate-700 flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                                    {{ $msg->user->name ?? $msg->author_name ?? '管理者' }}
+                                </span>
+                                <span class="text-slate-400 text-[10px]">
+                                    {{ $msg->created_at instanceof \Carbon\Carbon ? $msg->created_at->diffForHumans() : '' }}
+                                </span>
+                            </div>
+                            <p class="text-[11px] text-slate-600 leading-relaxed whitespace-pre-wrap break-words">{{ $msg->message ?? $msg->content ?? '' }}</p>
+                        </div>
+                    @empty
+                        <div class="text-center py-6 text-[11px] text-slate-400">現在、伝言はありません。</div>
+                    @endforelse
+                </div>
+            </div>
+
+            <form action="{{ route('admin.messages.store') }}" method="POST" class="mt-3 pt-3 border-t border-slate-100 flex gap-1.5">
+                @csrf
+                <input type="text" name="message" placeholder="伝言を入力..." required
+                       class="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-medium text-slate-700 focus:bg-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                <button type="submit" class="shrink-0 rounded-lg bg-slate-900 px-3 py-1.5 text-[11px] font-bold text-white transition hover:bg-slate-800">
+                    投稿
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
 
         <!-- ② ユーザー管理セクション -->
         <div x-show="currentTab === 'users'" x-cloak 
@@ -809,287 +862,287 @@
             </div>
         </div>
 
-        <!-- ③ 留学情報管理セクション -->
-        <div x-show="currentTab === 'posts'" x-cloak 
-             x-data="postsManagementData('{{ $categoryFormMode }}', {{ \Illuminate\Support\Js::from($adminMainCategories ?? []) }}, {{ \Illuminate\Support\Js::from($adminCategories ?? []) }})">
-            
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold text-slate-800">留学情報管理</h2>
-                <p class="text-sm text-slate-500 mt-1">メインカテゴリー・サブカテゴリーの追加や編集を行います。</p>
-            </div>
+<!-- ③ 留学情報管理セクション -->
+<div x-show="currentTab === 'posts'" x-cloak 
+     x-data="postsManagementData('{{ $categoryFormMode ?? 'addMain' }}', {{ \Illuminate\Support\Js::from($adminMainCategories ?? []) }}, {{ \Illuminate\Support\Js::from($adminCategories ?? []) }})">
+    
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold text-slate-800">留学情報管理</h2>
+        <p class="text-sm text-slate-500 mt-1">メインカテゴリー・サブカテゴリーの追加や編集を行います。</p>
+    </div>
 
-            @if (session('categoryAdminNotice'))
-                @php $noticeIsError = session('categoryAdminNotice')['type'] === 'error'; @endphp
-                <div class="max-w-2xl mb-6 p-4 rounded-xl text-xs font-bold {{ $noticeIsError ? 'bg-rose-50 border border-rose-200 text-rose-700' : 'bg-emerald-50 border border-emerald-200 text-emerald-800' }}">
-                    {{ $noticeIsError ? '⚠️' : '✅' }} {{ session('categoryAdminNotice')['message'] }}
-                </div>
-            @endif
-
-            <div class="flex flex-wrap gap-2 mb-6">
-                <button type="button" @click="mode = 'addMain'" :class="mode === 'addMain' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2.5 rounded-xl text-xs font-bold transition">➕ 新規メインカテゴリー</button>
-                <button type="button" @click="mode = 'addSub'" :class="mode === 'addSub' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2.5 rounded-xl text-xs font-bold transition">➕ 新規サブカテゴリー</button>
-                <button type="button" @click="mode = 'editMain'" :class="mode === 'editMain' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2.5 rounded-xl text-xs font-bold transition">✏️ メインカテゴリー編集</button>
-                <button type="button" @click="mode = 'editSub'" :class="mode === 'editSub' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2.5 rounded-xl text-xs font-bold transition">✏️ サブカテゴリー編集</button>
-            </div>
-
-            <!-- 1. 新規メインカテゴリー -->
-            <div x-show="mode === 'addMain'" x-cloak class="max-w-xl bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-                @if ($errors->addMain->any())
-                    <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-bold space-y-1">
-                        @foreach ($errors->addMain->all() as $error)
-                            <p>{{ $error }}</p>
-                        @endforeach
-                    </div>
-                @endif
-                <form method="POST" action="{{ route('admin.main-categories.store') }}" enctype="multipart/form-data" class="space-y-4">
-                    @csrf
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">識別キー(key) <span class="text-rose-500">*</span></label>
-                        <input type="text" name="key" value="{{ old('key') }}" required placeholder="例: souvenir-shop"
-                               class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">名前 <span class="text-rose-500">*</span></label>
-                        <input type="text" name="name" value="{{ old('name') }}" required
-                               class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">ヒーロー画像</label>
-                        <input type="file" name="hero_image" accept="image/*" class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-100 file:text-slate-700">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">説明文</label>
-                        <textarea name="description" rows="3" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20">{{ old('description') }}</textarea>
-                    </div>
-                    <div>
-                        <label class="flex items-center gap-2 text-xs font-bold text-slate-700 mb-2">
-                            <input type="checkbox" x-model="addMainUseColor" class="rounded border-slate-300">
-                            カラーを手動で指定する
-                        </label>
-                        <p x-show="!addMainUseColor" class="text-[11px] text-slate-400">指定しない場合は自動で色が割り当てられます。</p>
-                        <div x-show="addMainUseColor" x-cloak class="space-y-3">
-                            <div class="flex items-center gap-3">
-                                <input type="color" name="text_color" x-model="addMainTextColor" :disabled="!addMainUseColor"
-                                       @input="addMainColor = suggestBgFromText(addMainTextColor)"
-                                       class="w-12 h-10 rounded-lg border border-slate-200 cursor-pointer">
-                                <div>
-                                    <span class="block text-[11px] font-bold text-slate-500">文字色</span>
-                                    <span class="text-xs font-mono text-slate-500" x-text="addMainTextColor"></span>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <input type="color" name="color" x-model="addMainColor" :disabled="!addMainUseColor"
-                                       @input="addMainTextColor = suggestTextFromBg(addMainColor)"
-                                       class="w-12 h-10 rounded-lg border border-slate-200 cursor-pointer">
-                                <div>
-                                    <span class="block text-[11px] font-bold text-slate-500">背景色</span>
-                                    <span class="text-xs font-mono text-slate-500" x-text="addMainColor"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <button type="submit" class="w-full py-3 px-6 rounded-xl text-xs font-bold transition bg-slate-900 hover:bg-slate-800 text-white shadow-md">
-                        メインカテゴリーを追加する
-                    </button>
-                </form>
-            </div>
-
-            <!-- 2. 新規サブカテゴリー -->
-            <div x-show="mode === 'addSub'" x-cloak class="max-w-xl bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-                @if ($errors->addSub->any())
-                    <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-bold space-y-1">
-                        @foreach ($errors->addSub->all() as $error)
-                            <p>{{ $error }}</p>
-                        @endforeach
-                    </div>
-                @endif
-                <form method="POST" action="{{ route('admin.categories.store') }}" enctype="multipart/form-data" class="space-y-4">
-                    @csrf
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">所属メインカテゴリー <span class="text-rose-500">*</span></label>
-                        <select name="section" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
-                            <option value="">選択してください</option>
-                            @foreach ($adminMainCategories ?? [] as $mc)
-                                <option value="{{ $mc->key }}" {{ old('section') === $mc->key ? 'selected' : '' }}>{{ $mc->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">名前 <span class="text-rose-500">*</span></label>
-                        <input type="text" name="name" value="{{ old('name') }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">ヒーロー画像</label>
-                        <input type="file" name="hero_image" accept="image/*" class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-100">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">説明文</label>
-                        <textarea name="description" rows="3" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">{{ old('description') }}</textarea>
-                    </div>
-                    <button type="submit" class="w-full py-3 px-6 rounded-xl text-xs font-bold transition bg-slate-900 hover:bg-slate-800 text-white shadow-md">
-                        サブカテゴリーを追加する
-                    </button>
-                </form>
-            </div>
-
-            <!-- 3. メインカテゴリー編集 -->
-            <div x-show="mode === 'editMain'" x-cloak class="max-w-xl bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-                @if ($errors->editMain->any())
-                    <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-bold space-y-1">
-                        @foreach ($errors->editMain->all() as $error)
-                            <p>{{ $error }}</p>
-                        @endforeach
-                    </div>
-                @endif
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">編集するメインカテゴリーを選択</label>
-                    <select @change="loadMain($event.target.value)" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
-                        <option value="">選択してください</option>
-                        <template x-for="mc in mainCategories" :key="mc.id">
-                            <option :value="mc.id" x-text="mc.name"></option>
-                        </template>
-                    </select>
-                </div>
-
-                <form method="POST" x-show="editMain.id" x-cloak :action="editMain.id ? '{{ url('admin/main-categories') }}/' + editMain.id : ''" enctype="multipart/form-data" class="space-y-4 pt-2 border-t border-slate-100">
-                    @csrf
-                    @method('PATCH')
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">識別キー(key)</label>
-                        <input type="text" :value="editMain.key" disabled class="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium text-slate-400">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">名前 <span class="text-rose-500">*</span></label>
-                        <input type="text" name="name" x-model="editMain.name" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">現在のヒーロー画像</label>
-                        <img :src="editMain.hero_image" x-show="editMain.hero_image" class="w-full h-32 object-cover rounded-xl border border-slate-200 mb-2">
-                        <input type="file" name="hero_image" accept="image/*" class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">説明文</label>
-                        <textarea name="description" x-model="editMain.description" rows="3" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium"></textarea>
-                    </div>
-                    <div>
-                        <label class="flex items-center gap-2 text-xs font-bold text-slate-700 mb-2">
-                            <input type="checkbox" x-model="editMainUseColor" class="rounded border-slate-300">
-                            カラーを手動で指定する
-                        </label>
-                        <div x-show="editMainUseColor" x-cloak class="space-y-3">
-                            <div class="flex items-center gap-3">
-                                <input type="color" name="text_color" x-model="editMainTextColor"
-                                       @input="editMainColor = suggestBgFromText(editMainTextColor)"
-                                       class="w-12 h-10 rounded-lg border border-slate-200 cursor-pointer">
-                                <div>
-                                    <span class="block text-[11px] font-bold text-slate-500">文字色</span>
-                                    <span class="text-xs font-mono text-slate-500" x-text="editMainTextColor"></span>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <input type="color" name="color" x-model="editMainColor"
-                                       @input="editMainTextColor = suggestTextFromBg(editMainColor)"
-                                       class="w-12 h-10 rounded-lg border border-slate-200 cursor-pointer">
-                                <div>
-                                    <span class="block text-[11px] font-bold text-slate-500">背景色</span>
-                                    <span class="text-xs font-mono text-slate-500" x-text="editMainColor"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <button type="submit" class="w-full py-3 px-6 rounded-xl text-xs font-bold transition bg-slate-900 hover:bg-slate-800 text-white shadow-md">
-                        メインカテゴリーを更新する
-                    </button>
-                </form>
-
-                <form method="POST" x-show="editMain.id" x-cloak :action="editMain.id ? '{{ url('admin/main-categories') }}/' + editMain.id : ''" class="space-y-2 pt-1" onsubmit="return confirm('削除しますか？');">
-                    @csrf
-                    @method('DELETE')
-                    <input type="hidden" name="force" :value="forceDeleteMain ? '1' : '0'">
-                    <p x-show="editMain.sub_count > 0" x-cloak class="text-[11px] text-rose-500 font-bold">
-                        ⚠️ サブカテゴリーが <span x-text="editMain.sub_count"></span> 件あります。
-                    </p>
-                    <label x-show="editMain.sub_count > 0" x-cloak class="flex items-center gap-2 text-[11px] font-bold text-rose-600">
-                        <input type="checkbox" x-model="forceDeleteMain" class="rounded border-rose-300">
-                        中身ごと完全に削除する
-                    </label>
-                    <button type="submit" :disabled="editMain.sub_count > 0 && !forceDeleteMain" 
-                            :class="(editMain.sub_count > 0 && !forceDeleteMain) ? 'opacity-40 cursor-not-allowed' : 'hover:bg-rose-50'" 
-                            class="w-full py-2.5 px-6 rounded-xl text-xs font-bold transition bg-white border border-rose-200 text-rose-600">
-                        🗑️ このメインカテゴリーを削除する
-                    </button>
-                </form>
-            </div>
-
-            <!-- 4. サブカテゴリー編集 -->
-            <div x-show="mode === 'editSub'" x-cloak class="max-w-xl bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-                @if ($errors->editSub->any())
-                    <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-bold space-y-1">
-                        @foreach ($errors->editSub->all() as $error)
-                            <p>{{ $error }}</p>
-                        @endforeach
-                    </div>
-                @endif
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">① 対象のメインカテゴリーを選択</label>
-                    <select x-model="editSubSection" @change="editCategory = { id: '', section: '', name: '', description: '', hero_image: '', post_count: 0 }; forceDeleteSub = false;" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
-                        <option value="">選択してください</option>
-                        <template x-for="mc in mainCategories" :key="mc.id">
-                            <option :value="mc.key" x-text="mc.name"></option>
-                        </template>
-                    </select>
-                </div>
-                <div x-show="editSubSection" x-cloak>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">② 編集するサブカテゴリーを選択</label>
-                    <select @change="loadCategory($event.target.value)" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
-                        <option value="">選択してください</option>
-                        <template x-for="c in categories.filter(c => c.section === editSubSection)" :key="c.id">
-                            <option :value="c.id" x-text="c.name"></option>
-                        </template>
-                    </select>
-                </div>
-
-                <form method="POST" x-show="editCategory.id" x-cloak :action="editCategory.id ? '{{ url('admin/categories') }}/' + editCategory.id : ''" enctype="multipart/form-data" class="space-y-4 pt-2 border-t border-slate-100">
-                    @csrf
-                    @method('PATCH')
-                    <input type="hidden" name="section" x-model="editCategory.section">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">名前 <span class="text-rose-500">*</span></label>
-                        <input type="text" name="name" x-model="editCategory.name" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">現在のヒーロー画像</label>
-                        <img :src="editCategory.hero_image" x-show="editCategory.hero_image" class="w-full h-32 object-cover rounded-xl border border-slate-200 mb-2">
-                        <input type="file" name="hero_image" accept="image/*" class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">説明文</label>
-                        <textarea name="description" x-model="editCategory.description" rows="3" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium"></textarea>
-                    </div>
-                    <button type="submit" class="w-full py-3 px-6 rounded-xl text-xs font-bold transition bg-slate-900 hover:bg-slate-800 text-white shadow-md">
-                        サブカテゴリーを更新する
-                    </button>
-                </form>
-
-                <form method="POST" x-show="editCategory.id" x-cloak :action="editCategory.id ? '{{ url('admin/categories') }}/' + editCategory.id : ''" class="space-y-2 pt-1" onsubmit="return confirm('削除しますか？');">
-                    @csrf
-                    @method('DELETE')
-                    <input type="hidden" name="force" :value="forceDeleteSub ? '1' : '0'">
-                    <p x-show="editCategory.post_count > 0" x-cloak class="text-[11px] text-rose-500 font-bold">
-                        ⚠️ 投稿が <span x-text="editCategory.post_count"></span> 件あります。
-                    </p>
-                    <label x-show="editCategory.post_count > 0" x-cloak class="flex items-center gap-2 text-[11px] font-bold text-rose-600">
-                        <input type="checkbox" x-model="forceDeleteSub" class="rounded border-rose-300">
-                        投稿ごと削除する
-                    </label>
-                    <button type="submit" :disabled="editCategory.post_count > 0 && !forceDeleteSub" 
-                            :class="(editCategory.post_count > 0 && !forceDeleteSub) ? 'opacity-40 cursor-not-allowed' : 'hover:bg-rose-50'" 
-                            class="w-full py-2.5 px-6 rounded-xl text-xs font-bold transition bg-white border border-rose-200 text-rose-600">
-                        🗑️ このサブカテゴリーを削除する
-                    </button>
-                </form>
-            </div>
+    @if (session('categoryAdminNotice'))
+        @php $noticeIsError = session('categoryAdminNotice')['type'] === 'error'; @endphp
+        <div class="max-w-2xl mb-6 p-4 rounded-xl text-xs font-bold {{ $noticeIsError ? 'bg-rose-50 border border-rose-200 text-rose-700' : 'bg-emerald-50 border border-emerald-200 text-emerald-800' }}">
+            {{ $noticeIsError ? '⚠️' : '✅' }} {{ session('categoryAdminNotice')['message'] }}
         </div>
+    @endif
+
+    <div class="flex flex-wrap gap-2 mb-6">
+        <button type="button" @click="mode = 'addMain'" :class="mode === 'addMain' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2.5 rounded-xl text-xs font-bold transition">➕ 新規メインカテゴリー</button>
+        <button type="button" @click="mode = 'addSub'" :class="mode === 'addSub' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2.5 rounded-xl text-xs font-bold transition">➕ 新規サブカテゴリー</button>
+        <button type="button" @click="mode = 'editMain'" :class="mode === 'editMain' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2.5 rounded-xl text-xs font-bold transition">✏️ メインカテゴリー編集</button>
+        <button type="button" @click="mode = 'editSub'" :class="mode === 'editSub' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2.5 rounded-xl text-xs font-bold transition">✏️ サブカテゴリー編集</button>
+    </div>
+
+    <!-- 1. 新規メインカテゴリー -->
+    <div x-show="mode === 'addMain'" x-cloak class="max-w-xl bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+        @if ($errors->addMain->any())
+            <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-bold space-y-1">
+                @foreach ($errors->addMain->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
+        <form method="POST" action="{{ route('admin.main-categories.store') }}" enctype="multipart/form-data" class="space-y-4">
+            @csrf
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">識別キー(key) <span class="text-rose-500">*</span></label>
+                <input type="text" name="key" value="{{ old('key') }}" required placeholder="例: souvenir-shop"
+                       class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">名前 <span class="text-rose-500">*</span></label>
+                <input type="text" name="name" value="{{ old('name') }}" required
+                       class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">ヒーロー画像</label>
+                <input type="file" name="hero_image" accept="image/*" class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-100 file:text-slate-700">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">説明文</label>
+                <textarea name="description" rows="3" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue/20">{{ old('description') }}</textarea>
+            </div>
+            <div>
+                <label class="flex items-center gap-2 text-xs font-bold text-slate-700 mb-2">
+                    <input type="checkbox" x-model="addMainUseColor" class="rounded border-slate-300">
+                    カラーを手動で指定する
+                </label>
+                <p x-show="!addMainUseColor" class="text-[11px] text-slate-400">指定しない場合は自動で色が割り当てられます。</p>
+                <div x-show="addMainUseColor" x-cloak class="space-y-3">
+                    <div class="flex items-center gap-3">
+                        <input type="color" name="text_color" x-model="addMainTextColor" :disabled="!addMainUseColor"
+                               @input="addMainColor = suggestBgFromText(addMainTextColor)"
+                               class="w-12 h-10 rounded-lg border border-slate-200 cursor-pointer">
+                        <div>
+                            <span class="block text-[11px] font-bold text-slate-500">文字色</span>
+                            <span class="text-xs font-mono text-slate-500" x-text="addMainTextColor"></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <input type="color" name="color" x-model="addMainColor" :disabled="!addMainUseColor"
+                               @input="addMainTextColor = suggestTextFromBg(addMainColor)"
+                               class="w-12 h-10 rounded-lg border border-slate-200 cursor-pointer">
+                        <div>
+                            <span class="block text-[11px] font-bold text-slate-500">背景色</span>
+                            <span class="text-xs font-mono text-slate-500" x-text="addMainColor"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="w-full py-3 px-6 rounded-xl text-xs font-bold transition bg-slate-900 hover:bg-slate-800 text-white shadow-md">
+                メインカテゴリーを追加する
+            </button>
+        </form>
+    </div>
+
+    <!-- 2. 新規サブカテゴリー -->
+    <div x-show="mode === 'addSub'" x-cloak class="max-w-xl bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+        @if ($errors->addSub->any())
+            <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-bold space-y-1">
+                @foreach ($errors->addSub->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
+        <form method="POST" action="{{ route('admin.categories.store') }}" enctype="multipart/form-data" class="space-y-4">
+            @csrf
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">所属メインカテゴリー <span class="text-rose-500">*</span></label>
+                <select name="section" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+                    <option value="">選択してください</option>
+                    @foreach ($adminMainCategories ?? [] as $mc)
+                        <option value="{{ $mc->key }}" {{ old('section') === $mc->key ? 'selected' : '' }}>{{ $mc->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">名前 <span class="text-rose-500">*</span></label>
+                <input type="text" name="name" value="{{ old('name') }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">ヒーロー画像</label>
+                <input type="file" name="hero_image" accept="image/*" class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-100">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">説明文</label>
+                <textarea name="description" rows="3" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">{{ old('description') }}</textarea>
+            </div>
+            <button type="submit" class="w-full py-3 px-6 rounded-xl text-xs font-bold transition bg-slate-900 hover:bg-slate-800 text-white shadow-md">
+                サブカテゴリーを追加する
+            </button>
+        </form>
+    </div>
+
+    <!-- 3. メインカテゴリー編集 -->
+    <div x-show="mode === 'editMain'" x-cloak class="max-w-xl bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+        @if ($errors->editMain->any())
+            <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-bold space-y-1">
+                @foreach ($errors->editMain->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
+        <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">編集するメインカテゴリーを選択</label>
+            <select @change="loadMain($event.target.value)" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+                <option value="">選択してください</option>
+                <template x-for="mc in mainCategories" :key="mc.id">
+                    <option :value="mc.id" x-text="mc.name"></option>
+                </template>
+            </select>
+        </div>
+
+        <form method="POST" x-show="editMain.id" x-cloak :action="editMain.id ? '{{ url('admin/main-categories') }}/' + editMain.id : ''" enctype="multipart/form-data" class="space-y-4 pt-2 border-t border-slate-100">
+            @csrf
+            @method('PATCH')
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">識別キー(key)</label>
+                <input type="text" :value="editMain.key" disabled class="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium text-slate-400">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">名前 <span class="text-rose-500">*</span></label>
+                <input type="text" name="name" x-model="editMain.name" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">現在のヒーロー画像</label>
+                <img :src="editMain.hero_image" x-show="editMain.hero_image" class="w-full h-32 object-cover rounded-xl border border-slate-200 mb-2">
+                <input type="file" name="hero_image" accept="image/*" class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">説明文</label>
+                <textarea name="description" x-model="editMain.description" rows="3" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium"></textarea>
+            </div>
+            <div>
+                <label class="flex items-center gap-2 text-xs font-bold text-slate-700 mb-2">
+                    <input type="checkbox" x-model="editMainUseColor" class="rounded border-slate-300">
+                    カラーを手動で指定する
+                </label>
+                <div x-show="editMainUseColor" x-cloak class="space-y-3">
+                    <div class="flex items-center gap-3">
+                        <input type="color" name="text_color" x-model="editMainTextColor"
+                               @input="editMainColor = suggestBgFromText(editMainTextColor)"
+                               class="w-12 h-10 rounded-lg border border-slate-200 cursor-pointer">
+                        <div>
+                            <span class="block text-[11px] font-bold text-slate-500">文字色</span>
+                            <span class="text-xs font-mono text-slate-500" x-text="editMainTextColor"></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <input type="color" name="color" x-model="editMainColor"
+                               @input="editMainTextColor = suggestTextFromBg(editMainColor)"
+                               class="w-12 h-10 rounded-lg border border-slate-200 cursor-pointer">
+                        <div>
+                            <span class="block text-[11px] font-bold text-slate-500">背景色</span>
+                            <span class="text-xs font-mono text-slate-500" x-text="editMainColor"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="w-full py-3 px-6 rounded-xl text-xs font-bold transition bg-slate-900 hover:bg-slate-800 text-white shadow-md">
+                メインカテゴリーを更新する
+            </button>
+        </form>
+
+        <form method="POST" x-show="editMain.id" x-cloak :action="editMain.id ? '{{ url('admin/main-categories') }}/' + editMain.id : ''" class="space-y-2 pt-1" onsubmit="return confirm('削除しますか？');">
+            @csrf
+            @method('DELETE')
+            <input type="hidden" name="force" :value="forceDeleteMain ? '1' : '0'">
+            <p x-show="editMain.sub_count > 0" x-cloak class="text-[11px] text-rose-500 font-bold">
+                ⚠️ サブカテゴリーが <span x-text="editMain.sub_count"></span> 件あります。
+            </p>
+            <label x-show="editMain.sub_count > 0" x-cloak class="flex items-center gap-2 text-[11px] font-bold text-rose-600">
+                <input type="checkbox" x-model="forceDeleteMain" class="rounded border-rose-300">
+                中身ごと完全に削除する
+            </label>
+            <button type="submit" :disabled="editMain.sub_count > 0 && !forceDeleteMain" 
+                    :class="(editMain.sub_count > 0 && !forceDeleteMain) ? 'opacity-40 cursor-not-allowed' : 'hover:bg-rose-50'" 
+                    class="w-full py-2.5 px-6 rounded-xl text-xs font-bold transition bg-white border border-rose-200 text-rose-600">
+                🗑️ このメインカテゴリーを削除する
+            </button>
+        </form>
+    </div>
+
+    <!-- 4. サブカテゴリー編集 -->
+    <div x-show="mode === 'editSub'" x-cloak class="max-w-xl bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+        @if ($errors->editSub->any())
+            <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-bold space-y-1">
+                @foreach ($errors->editSub->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
+        <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">① 対象のメインカテゴリーを選択</label>
+            <select x-model="editSubSection" @change="editCategory = { id: '', section: '', name: '', description: '', hero_image: '', post_count: 0 }; forceDeleteSub = false;" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+                <option value="">選択してください</option>
+                <template x-for="mc in mainCategories" :key="mc.id">
+                    <option :value="mc.key" x-text="mc.name"></option>
+                </template>
+            </select>
+        </div>
+        <div x-show="editSubSection" x-cloak>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">② 編集するサブカテゴリーを選択</label>
+            <select @change="loadCategory($event.target.value)" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+                <option value="">選択してください</option>
+                <template x-for="c in categories.filter(c => c.section === editSubSection)" :key="c.id">
+                    <option :value="c.id" x-text="c.name"></option>
+                </template>
+            </select>
+        </div>
+
+        <form method="POST" x-show="editCategory.id" x-cloak :action="editCategory.id ? '{{ url('admin/categories') }}/' + editCategory.id : ''" enctype="multipart/form-data" class="space-y-4 pt-2 border-t border-slate-100">
+            @csrf
+            @method('PATCH')
+            <input type="hidden" name="section" x-model="editCategory.section">
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">名前 <span class="text-rose-500">*</span></label>
+                <input type="text" name="name" x-model="editCategory.name" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">現在のヒーロー画像</label>
+                <img :src="editCategory.hero_image" x-show="editCategory.hero_image" class="w-full h-32 object-cover rounded-xl border border-slate-200 mb-2">
+                <input type="file" name="hero_image" accept="image/*" class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">説明文</label>
+                <textarea name="description" x-model="editCategory.description" rows="3" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium"></textarea>
+            </div>
+            <button type="submit" class="w-full py-3 px-6 rounded-xl text-xs font-bold transition bg-slate-900 hover:bg-slate-800 text-white shadow-md">
+                サブカテゴリーを更新する
+            </button>
+        </form>
+
+        <form method="POST" x-show="editCategory.id" x-cloak :action="editCategory.id ? '{{ url('admin/categories') }}/' + editCategory.id : ''" class="space-y-2 pt-1" onsubmit="return confirm('削除しますか？');">
+            @csrf
+            @method('DELETE')
+            <input type="hidden" name="force" :value="forceDeleteSub ? '1' : '0'">
+            <p x-show="editCategory.post_count > 0" x-cloak class="text-[11px] text-rose-500 font-bold">
+                ⚠️ 投稿が <span x-text="editCategory.post_count"></span> 件あります。
+            </p>
+            <label x-show="editCategory.post_count > 0" x-cloak class="flex items-center gap-2 text-[11px] font-bold text-rose-600">
+                <input type="checkbox" x-model="forceDeleteSub" class="rounded border-rose-300">
+                投稿ごと削除する
+            </label>
+            <button type="submit" :disabled="editCategory.post_count > 0 && !forceDeleteSub" 
+                    :class="(editCategory.post_count > 0 && !forceDeleteSub) ? 'opacity-40 cursor-not-allowed' : 'hover:bg-rose-50'" 
+                    class="w-full py-2.5 px-6 rounded-xl text-xs font-bold transition bg-white border border-rose-200 text-rose-600">
+                🗑️ このサブカテゴリーを削除する
+            </button>
+        </form>
+    </div>
+</div>
 
         <!-- ④ お知らせ送信セクション -->
         <div x-show="currentTab === 'notice'" x-cloak x-data="noticeAdmin({{ \Illuminate\Support\Js::from($notices ?? []) }})">
@@ -1238,207 +1291,252 @@
         </div>
 
         <!-- ⑤ アクティブ分析セクション -->
-        <div x-show="currentTab === 'analytics'" x-cloak x-data="{ showChartModal: false, selectedFeature: '' }" class="space-y-8">
-            <div x-data="{ 
-                    summaryPeriod: 'daily',
-                    analyticsData: {{ json_encode($featureAnalyticsData) }},
-                    get currentData() { return this.analyticsData[this.summaryPeriod] || this.analyticsData['daily']; }
-                }"
-                x-init="$watch('summaryPeriod', value => window.updateRadarChart && window.updateRadarChart(value))"
-                class="space-y-8">
+<div x-show="currentTab === 'analytics'" x-cloak x-data="{ showChartModal: false, selectedFeature: '' }" class="space-y-8">
+    <div x-data="{ 
+            summaryPeriod: 'daily',
+            analyticsData: {{ \Illuminate\Support\Js::from($featureAnalyticsData['analyticsData'] ?? $featureAnalyticsData ?? []) }},
+            get currentData() { 
+                return this.analyticsData[this.summaryPeriod] || this.analyticsData['daily'] || {}; 
+            }
+        }"
+        x-init="
+            $nextTick(() => { window.updateRadarChart && window.updateRadarChart(summaryPeriod); });
+            $watch('summaryPeriod', value => window.updateRadarChart && window.updateRadarChart(value));
+        "
+        class="space-y-8">
 
-                <!-- ヘッダーエリア -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800">アクティブ分析</h2>
-                        <p class="text-sm text-slate-500 mt-1">ユーザーの利用率、データ推移からサービス改善のヒントを得ることができます。</p>
-                    </div>
+        <!-- ヘッダーエリア -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-800">アクティブ分析</h2>
+                <p class="text-sm text-slate-500 mt-1">ユーザーの利用率、データ推移からサービス改善のヒントを得ることができます。</p>
+            </div>
 
-                    <!-- 期間切り替えボタン -->
-                    <div class="inline-flex p-1 bg-slate-100 rounded-xl overflow-x-auto shrink-0 self-start sm:self-auto">
-                        <template x-for="(label, key) in { daily: '今日', weekly: '週間', monthly: '月間', yearly: '年次' }" :key="key">
-                            <button @click="summaryPeriod = key" 
-                                    :class="summaryPeriod === key ? 'bg-white text-slate-800 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700'"
-                                    class="px-3.5 py-1.5 text-xs rounded-lg transition-all whitespace-nowrap"
-                                    x-text="label">
-                            </button>
-                        </template>
-                    </div>
-                </div>
-
-                <!-- パフォーマンス・サマリー -->
-                <div class="space-y-4">
-                    <div class="border-b border-slate-200 pb-3">
-                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                            <span class="material-symbols-outlined text-sky-500">space_dashboard</span>
-                            パフォーマンス・サマリー
-                        </h3>
-                    </div>
-
-                    @foreach($periods as $pKey => $cards)
-                        <div x-show="summaryPeriod === '{{ $pKey }}'" x-cloak class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            @foreach($cards as $card)
-                                <div class="bg-white p-5 rounded-2xl border {{ $card['border'] }} shadow-sm hover:shadow-md transition flex flex-col justify-between">
-                                    <div class="flex items-start justify-between">
-                                        <span class="text-xs font-bold text-slate-400 flex items-center gap-1">
-                                            @if(!empty($card['dot']))
-                                                <span class="w-2 h-2 rounded-full {{ $card['dot'] }}"></span>
-                                            @endif
-                                            {{ $card['title'] }}
-                                        </span>
-                                        <button @click="showChartModal = true; selectedFeature = '{{ $card['feat'] }}'" class="p-1.5 {{ $card['btnColor'] }} rounded-lg transition">
-                                            <span class="material-symbols-outlined text-base">show_chart</span>
-                                        </button>
-                                    </div>
-                                    <div class="my-3 flex items-baseline gap-1">
-                                        <span class="text-3xl font-black text-slate-800 tracking-tight">{{ $card['val'] }}</span>
-                                        <span class="text-sm font-bold text-slate-400">{{ $card['unit'] }}</span>
-                                    </div>
-                                    <div class="text-[11px] text-slate-400 border-t border-slate-100 pt-2.5">
-                                        {{ $card['sub'] }}
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endforeach
-                </div>
-
-                <!-- 機能別分析 -->
-                <div>
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3 mb-6">
-                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                            <span class="material-symbols-outlined text-sky-500">graph_1</span>
-                            機能別分析
-                        </h3>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-                        <!-- 左側：機能別の利用率とアクティブ貢献度 -->
-                        <section class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                                    <div>
-                                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                                            <span class="material-symbols-outlined text-red-500 text-xl">bar_chart</span>
-                                            機能別の利用率とアクティブ貢献度
-                                        </h3>
-                                        <p class="text-xs text-slate-500 mt-0.5">どの機能がユーザーの定着を牽引しているかを示す分析 (<span x-text="currentData.periodLabel" class="font-bold text-slate-700"></span>)</p>
-                                    </div>
-                                </div>
-
-                                <div class="divide-y divide-slate-100">
-                                    <!-- 英語学習機能 -->
-                                    <div class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                        <div class="flex items-center gap-3 w-48">
-                                            <div class="p-2.5 rounded-xl border flex items-center justify-center bg-yellow-50 border-yellow-200">
-                                                <span class="material-symbols-outlined !text-2xl leading-none text-yellow-600">menu_book</span>
-                                            </div>
-                                            <div>
-                                                <div class="text-sm font-bold text-slate-800">英語学習機能</div>
-                                                <div class="text-[11px] text-slate-400">利用者: <span x-text="(currentData.english.users || 0).toLocaleString()"></span>名</div>
-                                            </div>
-                                        </div>
-                                        <div class="flex-1 max-w-md space-y-1">
-                                            <div class="flex justify-between text-xs font-bold">
-                                                <span class="text-slate-500">利用率</span>
-                                                <span class="font-extrabold text-yellow-600"><span x-text="currentData.english.rate"></span>%</span>
-                                            </div>
-                                            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                                                <div class="h-2 rounded-full bg-yellow-400 transition-all duration-500" :style="`width: ${Math.min(currentData.english.rate, 100)}%;`"></div>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center gap-3 text-right justify-between sm:justify-end">
-                                            <div>
-                                                <div class="text-[10px] font-bold text-slate-400 uppercase">貢献度</div>
-                                                <span class="inline-block px-2 py-0.5 font-bold text-xs rounded-md border bg-yellow-50 text-yellow-800 border-yellow-200">高 (メイン機能)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- 留学情報 -->
-                                    <div class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                        <div class="flex items-center gap-3 w-48">
-                                            <div class="p-2.5 rounded-xl border flex items-center justify-center bg-lime-50 border-lime-200">
-                                                <span class="material-symbols-outlined !text-2xl leading-none text-lime-600">article</span>
-                                            </div>
-                                            <div>
-                                                <div class="text-sm font-bold text-slate-800">留学情報</div>
-                                                <div class="text-[11px] text-slate-400">投稿数: <span x-text="(currentData.info.count || 0).toLocaleString()"></span>件</div>
-                                            </div>
-                                        </div>
-                                        <div class="flex-1 max-w-md space-y-1">
-                                            <div class="flex justify-between text-xs font-bold">
-                                                <span class="text-slate-500">投稿アクティブ率</span>
-                                                <span class="font-extrabold text-lime-600"><span x-text="currentData.info.rate"></span>%</span>
-                                            </div>
-                                            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                                                <div class="h-2 rounded-full bg-lime-500 transition-all duration-500" :style="`width: ${Math.min(currentData.info.rate, 100)}%;`"></div>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center gap-3 text-right justify-between sm:justify-end">
-                                            <div>
-                                                <div class="text-[10px] font-bold text-slate-400 uppercase">貢献度</div>
-                                                <span class="inline-block px-2 py-0.5 font-bold text-xs rounded-md border bg-lime-50 text-lime-800 border-lime-200">中 (ナレッジ蓄積)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- シャワー機能 -->
-                                    <div class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                        <div class="flex items-center gap-3 w-48">
-                                            <div class="p-2.5 rounded-xl border flex items-center justify-center bg-sky-50 border-sky-200">
-                                                <span class="material-symbols-outlined !text-2xl leading-none text-sky-600">shower</span>
-                                            </div>
-                                            <div>
-                                                <div class="text-sm font-bold text-slate-800">シャワー機能</div>
-                                                <div class="text-[11px] text-slate-400">レビュー数: <span x-text="(currentData.shower.count || 0).toLocaleString()"></span>件</div>
-                                            </div>
-                                        </div>
-                                        <div class="flex-1 max-w-md space-y-1">
-                                            <div class="flex justify-between text-xs font-bold">
-                                                <span class="text-slate-500">利用率</span>
-                                                <span class="font-extrabold text-sky-600"><span x-text="currentData.shower.rate"></span>%</span>
-                                            </div>
-                                            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                                                <div class="h-2 rounded-full bg-sky-500 transition-all duration-500" :style="`width: ${Math.min(currentData.shower.rate, 100)}%;`"></div>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center gap-3 text-right justify-between sm:justify-end">
-                                            <div>
-                                                <div class="text-[10px] font-bold text-slate-400 uppercase">貢献度</div>
-                                                <span class="inline-block px-2 py-0.5 font-bold text-xs rounded-md border bg-sky-50 text-sky-800 border-sky-200">高 (生活インフラ)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- 右側：機能バランス レーダーチャート -->
-                        <section class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                            <div>
-                                <div class="border-b border-slate-100 pb-3">
-                                    <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                                        <span class="material-symbols-outlined text-sky-500 text-xl">radar</span>
-                                        機能利用バランス
-                                    </h3>
-                                    <p class="text-xs text-slate-500 mt-0.5">主要3機能の活用比率 (<span x-text="currentData.periodLabel"></span>)</p>
-                                </div>
-
-                                <div class="relative w-full aspect-square max-w-[260px] mx-auto my-4 flex items-center justify-center">
-                                    <canvas id="featureRadarChart"></canvas>
-                                </div>
-                            </div>
-
-                            <div class="text-[11px] text-slate-400 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                                💡 各機能の利用割合を均衡に保つことで、ユーザー定着率が向上します。
-                            </div>
-                        </section>
-                    </div>
-                </div>
+            <!-- 期間切り替えボタン -->
+            <div class="inline-flex p-1 bg-slate-100 rounded-xl overflow-x-auto shrink-0 self-start sm:self-auto">
+                <template x-for="(label, key) in { daily: '今日', weekly: '週間', monthly: '月間', yearly: '年次' }" :key="key">
+                    <button @click="summaryPeriod = key" 
+                            :class="summaryPeriod === key ? 'bg-white text-slate-800 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700'"
+                            class="px-3.5 py-1.5 text-xs rounded-lg transition-all whitespace-nowrap"
+                            x-text="label">
+                    </button>
+                </template>
             </div>
         </div>
 
+        <!-- パフォーマンス・サマリー -->
+<div class="space-y-4">
+    <div class="border-b border-slate-200 pb-3">
+        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+            <span class="material-symbols-outlined text-red-500">space_dashboard</span>
+            パフォーマンス・サマリー
+        </h3>
+    </div>
+
+    @php
+        $parsedPeriods = is_array($periods ?? null) 
+            ? $periods 
+            : (is_string($periods ?? null) ? json_decode($periods, true) : []);
+    @endphp
+
+    @if(is_array($parsedPeriods) && count($parsedPeriods) > 0)
+        @foreach($parsedPeriods as $pKey => $cards)
+            <div x-show="summaryPeriod === '{{ $pKey }}'" x-cloak class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                @if(is_array($cards))
+                    @foreach($cards as $card)
+                        @php
+                            $title = $card['title'] ?? '';
+                            
+                            // タイトルに応じたテーマカラー・ドット色の厳密設定
+                            if (str_contains($title, 'アクティブ')) {
+                                $dotClass = 'bg-red-500';
+                                $border = $card['border'] ?? 'border-red-200';
+                                $btnColor = $card['btnColor'] ?? 'text-red-600 bg-red-50 hover:bg-red-100';
+                            } elseif (str_contains($title, '英語') || str_contains($title, '学習')) {
+                                $dotClass = 'bg-yellow-400';
+                                $border = $card['border'] ?? 'border-yellow-200';
+                                $btnColor = $card['btnColor'] ?? 'text-yellow-700 bg-yellow-50 hover:bg-yellow-100';
+                            } elseif (str_contains($title, '投稿') || str_contains($title, '情報')) {
+                                $dotClass = 'bg-lime-500';
+                                $border = $card['border'] ?? 'border-lime-200';
+                                $btnColor = $card['btnColor'] ?? 'text-lime-700 bg-lime-50 hover:bg-lime-100';
+                            } elseif (str_contains($title, 'シャワー')) {
+                                $dotClass = 'bg-sky-500';
+                                $border = $card['border'] ?? 'border-sky-200';
+                                $btnColor = $card['btnColor'] ?? 'text-sky-600 bg-sky-50 hover:bg-sky-100';
+                            } else {
+                                $dotClass = $card['dot'] ?? 'bg-slate-400';
+                                $border = $card['border'] ?? 'border-slate-200';
+                                $btnColor = $card['btnColor'] ?? 'text-slate-600 bg-slate-50 hover:bg-slate-100';
+                            }
+                        @endphp
+
+                        <div class="bg-white p-5 rounded-2xl border {{ $border }} shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                            <div class="flex items-start justify-between">
+                                <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
+                                    <!-- ドット表示 -->
+                                    <span class="w-2 h-2 rounded-full {{ $dotClass }}"></span>
+                                    {{ $title ?: '指標' }}
+                                </span>
+                                <button @click="showChartModal = true; selectedFeature = '{{ $card['feat'] ?? '' }}'" class="p-1.5 {{ $btnColor }} rounded-lg transition">
+                                    <span class="material-symbols-outlined text-base">show_chart</span>
+                                </button>
+                            </div>
+                            <div class="my-3 flex items-baseline gap-1">
+                                <span class="text-3xl font-black text-slate-800 tracking-tight">{{ $card['val'] ?? '0' }}</span>
+                                <span class="text-sm font-bold text-slate-400">{{ $card['unit'] ?? '' }}</span>
+                            </div>
+                            <div class="text-[11px] text-slate-400 border-t border-slate-100 pt-2.5">
+                                {{ $card['sub'] ?? '-' }}
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+            </div>
+        @endforeach
+    @else
+        <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl text-center text-xs text-slate-400">
+            サマリーデータが取得できませんでした。コントローラーの $periods の形式を確認してください。
+        </div>
+    @endif
+</div>
+
+        <!-- 機能別分析 -->
+        <div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3 mb-6">
+                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-slate-600">graph_1</span>
+                    機能別分析
+                </h3>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+                <!-- 左側：機能別の利用率とアクティブ貢献度 -->
+                <section class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <div>
+                                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                                    <!-- アクティブユーザー分析テーマカラー：赤 -->
+                                    <span class="material-symbols-outlined text-red-500 text-xl">bar_chart</span>
+                                    機能別の利用率とアクティブ貢献度
+                                </h3>
+                                <p class="text-xs text-slate-500 mt-0.5">どの機能がユーザーの定着を牽引しているかを示す分析 (<span x-text="currentData?.periodLabel || '今日'" class="font-bold text-slate-700"></span>)</p>
+                            </div>
+                        </div>
+
+                        <div class="divide-y divide-slate-100">
+                            <!-- 英語学習機能（テーマカラー：黄色） -->
+                            <div class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="flex items-center gap-3 w-48">
+                                    <div class="p-2.5 rounded-xl border flex items-center justify-center bg-yellow-50 border-yellow-200">
+                                        <span class="material-symbols-outlined !text-2xl leading-none text-yellow-600">menu_book</span>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-bold text-slate-800">英語学習機能</div>
+                                        <div class="text-[11px] text-slate-400">利用者: <span x-text="(currentData?.english?.users || 0).toLocaleString()"></span>名</div>
+                                    </div>
+                                </div>
+                                <div class="flex-1 max-w-md space-y-1">
+                                    <div class="flex justify-between text-xs font-bold">
+                                        <span class="text-slate-500">利用率</span>
+                                        <span class="font-extrabold text-yellow-600"><span x-text="currentData?.english?.rate || 0"></span>%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                        <div class="h-2 rounded-full bg-yellow-400 transition-all duration-500" :style="`width: ${Math.min(currentData?.english?.rate || 0, 100)}%;`"></div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3 text-right justify-between sm:justify-end">
+                                    <div>
+                                        <div class="text-[10px] font-bold text-slate-400 uppercase">貢献度</div>
+                                        <span class="inline-block px-2 py-0.5 font-bold text-xs rounded-md border bg-yellow-50 text-yellow-800 border-yellow-200">高 (メイン機能)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 留学情報投稿（テーマカラー：黄緑 / lime） -->
+                            <div class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="flex items-center gap-3 w-48">
+                                    <div class="p-2.5 rounded-xl border flex items-center justify-center bg-lime-50 border-lime-200">
+                                        <span class="material-symbols-outlined !text-2xl leading-none text-lime-600">article</span>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-bold text-slate-800">留学情報</div>
+                                        <div class="text-[11px] text-slate-400">投稿数: <span x-text="(currentData?.info?.count || 0).toLocaleString()"></span>件</div>
+                                    </div>
+                                </div>
+                                <div class="flex-1 max-w-md space-y-1">
+                                    <div class="flex justify-between text-xs font-bold">
+                                        <span class="text-slate-500">投稿アクティブ率</span>
+                                        <span class="font-extrabold text-lime-600"><span x-text="currentData?.info?.rate || 0"></span>%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                        <div class="h-2 rounded-full bg-lime-500 transition-all duration-500" :style="`width: ${Math.min(currentData?.info?.rate || 0, 100)}%;`"></div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3 text-right justify-between sm:justify-end">
+                                    <div>
+                                        <div class="text-[10px] font-bold text-slate-400 uppercase">貢献度</div>
+                                        <span class="inline-block px-2 py-0.5 font-bold text-xs rounded-md border bg-lime-50 text-lime-800 border-lime-200">中 (ナレッジ蓄積)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- シャワー機能（テーマカラー：青 / sky） -->
+                            <div class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="flex items-center gap-3 w-48">
+                                    <div class="p-2.5 rounded-xl border flex items-center justify-center bg-sky-50 border-sky-200">
+                                        <span class="material-symbols-outlined !text-2xl leading-none text-sky-600">shower</span>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-bold text-slate-800">シャワー機能</div>
+                                        <div class="text-[11px] text-slate-400">レビュー数: <span x-text="(currentData?.shower?.count || 0).toLocaleString()"></span>件</div>
+                                    </div>
+                                </div>
+                                <div class="flex-1 max-w-md space-y-1">
+                                    <div class="flex justify-between text-xs font-bold">
+                                        <span class="text-slate-500">利用率</span>
+                                        <span class="font-extrabold text-sky-600"><span x-text="currentData?.shower?.rate || 0"></span>%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                        <div class="h-2 rounded-full bg-sky-500 transition-all duration-500" :style="`width: ${Math.min(currentData?.shower?.rate || 0, 100)}%;`"></div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3 text-right justify-between sm:justify-end">
+                                    <div>
+                                        <div class="text-[10px] font-bold text-slate-400 uppercase">貢献度</div>
+                                        <span class="inline-block px-2 py-0.5 font-bold text-xs rounded-md border bg-sky-50 text-sky-800 border-sky-200">高 (生活インフラ)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 右側：機能バランス レーダーチャート -->
+                <section class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="border-b border-slate-100 pb-3">
+                            <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-slate-600 text-xl">radar</span>
+                                機能利用バランス
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-0.5">主要3機能の活用比率 (<span x-text="currentData?.periodLabel || '今日'"></span>)</p>
+                        </div>
+
+                        <div class="relative w-full aspect-square max-w-[260px] mx-auto my-4 flex items-center justify-center">
+                            <canvas id="featureRadarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="text-[11px] text-slate-400 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        💡 各機能の利用割合を均衡に保つことで、ユーザー定着率が向上します。
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
         <!-- ⑦ 目安箱の中身 -->
         <div x-show="currentTab === 'suggestions'"
              x-cloak
