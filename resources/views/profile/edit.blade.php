@@ -70,7 +70,7 @@
         </div>
 
         <!-- 2. 留学情報の投稿一覧（投稿した投稿／お気に入り／保存） -->
-        <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-100 space-y-5">
+        <div id="post-list" class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-100 space-y-5 scroll-mt-24">
             <div class="flex items-center gap-2 text-brand-blue font-extrabold text-base sm:text-lg">
                 <span class="material-symbols-outlined">grid_view</span>
                 留学情報の投稿
@@ -83,7 +83,7 @@
                     'liked' => 'お気に入り',
                     'saved' => '保存',
                 ] as $tabKey => $tabLabel)
-                    <a href="{{ route('profile.edit', array_filter(['post_tab' => $tabKey, 'month' => $calendar['month']->format('Y-m')])) }}"
+                    <a href="{{ route('profile.edit', array_filter(['post_tab' => $tabKey, 'month' => $calendar['month']->format('Y-m')])) }}#post-list"
                        class="flex-1 text-center py-1.5 text-xs font-bold rounded-lg transition-all {{ $postTab === $tabKey ? 'bg-white shadow-sm text-brand-blue' : 'text-slate-500 hover:text-slate-700' }}">
                         {{ $tabLabel }}
                         <span class="text-slate-400">({{ $postCounts[$tabKey] }})</span>
@@ -143,6 +143,29 @@
                         </a>
                     @endforeach
                 </div>
+
+                @if ($posts->hasPages())
+                    <div class="pt-2 flex items-center justify-between gap-3 text-xs text-slate-400 font-medium">
+                        <span>
+                            {{ $posts->firstItem() }}–{{ $posts->lastItem() }} / 全 {{ $posts->total() }} 件
+                        </span>
+                        <div class="flex items-center gap-1.5">
+                            @if ($posts->onFirstPage())
+                                <span class="px-3 py-1.5 rounded-lg bg-slate-50 text-slate-300 cursor-not-allowed">前へ</span>
+                            @else
+                                <a href="{{ $posts->previousPageUrl() }}#post-list"
+                                   class="px-3 py-1.5 rounded-lg bg-slate-50 text-slate-600 font-bold hover:bg-slate-100 transition-all">前へ</a>
+                            @endif
+                            <span class="px-2 text-slate-500 font-bold">{{ $posts->currentPage() }} / {{ $posts->lastPage() }}</span>
+                            @if ($posts->hasMorePages())
+                                <a href="{{ $posts->nextPageUrl() }}#post-list"
+                                   class="px-3 py-1.5 rounded-lg bg-slate-50 text-slate-600 font-bold hover:bg-slate-100 transition-all">次へ</a>
+                            @else
+                                <span class="px-3 py-1.5 rounded-lg bg-slate-50 text-slate-300 cursor-not-allowed">次へ</span>
+                            @endif
+                        </div>
+                    </div>
+                @endif
             @endif
         </div>
 
