@@ -20,7 +20,8 @@ class AdminDashboardController extends Controller
 {
     public function index(): View
     {
-        // 1. ユーザー一覧データの整形（リレーションを一括ロードしてモーダル用データを拡充）
+        // 1. ユーザー一覧データの整形
+        // ※モーダルで一覧表示するだけの目的のため、全件取得ではなく必要なカラムに絞ってロードしています
         $users = User::withCount(['showerReports', 'posts', 'suggestions'])
             ->with([
                 'showerReports:id,user_id,created_at',
@@ -36,7 +37,7 @@ class AdminDashboardController extends Controller
                     'name'          => $user->name,
                     'email'         => $user->email,
                     'avatar_url'    => $user->avatar_url,
-                    'role'          => $user->role, // アクセサ (admin / student)
+                    'role'          => $user->role,
                     'role_id'       => $user->role_id,
                     'is_active'     => $user->is_active ?? true,
                     'dorm'          => $user->dorm ?? ($user->gender === 'female' ? '女子寮 (Female)' : ($user->gender === 'male' ? '男子寮 (Male)' : '未設定')),
@@ -141,7 +142,7 @@ class AdminDashboardController extends Controller
         $retentionRate = $totalUsersCount > 0 ? round(($yearlyActiveCount / $totalUsersCount) * 100, 1) : 0;
 
         $yearlyEnglishUsers = StudyLog::where('studied_date', '>=', $now->copy()->subDays(365))->distinct('user_id')->count('user_id');
-        $yearlyEnglishRate = $yearlyActiveCount > 0 ? round(($yearlyActiveCount / $yearlyActiveCount) * 100, 1) : 0;
+        $yearlyEnglishRate = $yearlyActiveCount > 0 ? round(($yearlyEnglishUsers / $yearlyActiveCount) * 100, 1) : 0;
 
         $yearlyPostsCount = Post::where('created_at', '>=', $now->copy()->subDays(365))->count();
 
@@ -184,6 +185,76 @@ class AdminDashboardController extends Controller
             $c->post_count = (int) ($postCounts[$c->id] ?? 0);
         });
 
+        // 6. パフォーマンス・サマリーカード用データ ($periods) の動的生成
+        $dailyEnglishRate = $todayActiveUsersCount > 0 ? round(($todayStudyActiveUsersCount / $todayActiveUsersCount) * 100, 1) : 0;
+        $dailyShowerRate  = $todayActiveUsersCount > 0 ? round(($todayShowerUpdates / $todayActiveUsersCount) * 100, 1) : 0;
+
+        $periods = [
+            'daily' => [
+                ['title' => 'アクティブユーザー', 'val' => (string)$todayActiveUsersCount, 'unit' => '人', 'sub' => '前日比 ' . ($activeUsersDiff >= 0 ? "+{$activeUsersDiff}" : $activeUsersDiff), 'dot' => 'bg-emerald-500', 'feat' => 'users'],
+                ['title' => '英語学習利用率', 'val' => (string)$dailyEnglishRate, 'unit' => '%', 'sub' => "アクティブ {$todayStudyActiveUsersCount}人", 'dot' => 'bg-yellow-500', 'feat' => 'english'],
+                ['title' => '情報投稿数', 'val' => (string)$todayInfoUpdates, 'unit' => '件', 'sub' => '前日比 ' . ($infoUpdatesDiff >= 0 ? "+{$infoUpdatesDiff}" : $infoUpdatesDiff), 'dot' => 'bg-lime-500', 'feat' => 'info'],
+                ['title' => 'シャワー利用率', 'val' => (string)$dailyShowerRate, 'unit' => '%', 'sub' => "投稿 {$todayShowerUpdates}件", 'dot' => 'bg-sky-500', 'feat' => 'shower'],
+            ],
+            'weekly' => [
+                ['title' => 'WAU (週間アクティブ)', 'val' => (string)$weeklyActiveCount, 'unit' => '人', 'sub' => "アクティブ率 {$wauRate}%", 'dot' => 'bg-emerald-500', 'feat' => 'users'],
+                ['title' => '英語学習利用率', 'val' => (string)$weeklyEnglishRate, 'unit' => '%', 'sub' => "利用人数 {$weeklyEnglishUsers}人", 'dot' => 'bg-yellow-500', 'feat' => 'english'],
+                ['title' => '新規情報投稿数', 'val' => (string)$weeklyPostsCount, 'unit' => '件', 'sub' => '前週比 ' . ($weeklyPostsDiff >= 0 ? "+{$weeklyPostsDiff}" : $weeklyPostsDiff), 'dot' => 'bg-lime-500', 'feat' => 'info'],
+                ['title' => '平均レビュー数/人', 'val' => (string)$weeklyAvgShowerReviews, 'unit' => '件', 'sub' => "総投稿数 {$weeklyShowerCount}件", 'dot' => 'bg-sky-500', 'feat' => 'shower'],
+            ],
+            'monthly' => [
+                ['title' => 'MAU (月間アクティブ)', 'val' => (string)$monthlyActiveCount, 'unit' => '人', 'sub' => "アクティブ率 {$mauRate}%", 'dot' => 'bg-emerald-500', 'feat' => 'users'],
+                ['title' => '英語学習利用率', 'val' => (string)$monthlyEnglishRate, 'unit' => '%', 'sub' => "利用人数 {$monthlyEnglishUsers}人", 'dot' => 'bg-yellow-500', 'feat' => 'english'],
+                ['title' => '新規情報投稿数', 'val' => (string)$monthlyPostsCount, 'unit' => '件', 'sub' => '前月比 ' . ($monthlyPostsDiff >= 0 ? "+{$monthlyPostsDiff}" : $monthlyPostsDiff), 'dot' => 'bg-lime-500', 'feat' => 'info'],
+                ['title' => '平均レビュー数/人', 'val' => (string)$monthlyAvgShowerReviews, 'unit' => '件', 'sub' => "総投稿数 {$monthlyShowerCount}件", 'dot' => 'bg-sky-500', 'feat' => 'shower'],
+            ],
+            'yearly' => [
+                ['title' => '年間アクティブ', 'val' => (string)$yearlyActiveCount, 'unit' => '人', 'sub' => "定着率 {$retentionRate}%", 'dot' => 'bg-emerald-500', 'feat' => 'users'],
+                ['title' => '英語学習利用率', 'val' => (string)$yearlyEnglishRate, 'unit' => '%', 'sub' => "利用人数 {$yearlyEnglishUsers}人", 'dot' => 'bg-yellow-500', 'feat' => 'english'],
+                ['title' => '総情報投稿数', 'val' => (string)$yearlyPostsCount, 'unit' => '件', 'sub' => '年次累計データ', 'dot' => 'bg-lime-500', 'feat' => 'info'],
+                ['title' => '平均レビュー数/人', 'val' => (string)$yearlyAvgShowerReviews, 'unit' => '件', 'sub' => "総投稿数 {$yearlyShowerCount}件", 'dot' => 'bg-sky-500', 'feat' => 'shower'],
+            ],
+        ];
+
+        // 7. 機能別分析用データの生成 ($featureAnalyticsData)
+        $featureAnalyticsData = [
+            'analyticsData' => [
+                'daily' => [
+                    'periodLabel' => '今日',
+                    'english' => ['users' => $todayStudyActiveUsersCount, 'rate' => $dailyEnglishRate],
+                    'info'    => ['count' => $todayInfoUpdates, 'rate' => $todayActiveUsersCount > 0 ? round(($todayInfoUpdates / $todayActiveUsersCount) * 100, 1) : 0],
+                    'shower'  => ['count' => $todayShowerUpdates, 'rate' => $dailyShowerRate],
+                ],
+                'weekly' => [
+                    'periodLabel' => '今週',
+                    'english' => ['users' => $weeklyEnglishUsers, 'rate' => $weeklyEnglishRate],
+                    'info'    => ['count' => $weeklyPostsCount, 'rate' => $weeklyActiveCount > 0 ? round(($weeklyPostsCount / $weeklyActiveCount) * 100, 1) : 0],
+                    'shower'  => ['count' => $weeklyShowerCount, 'rate' => $weeklyActiveCount > 0 ? round(($weeklyShowerCount / $weeklyActiveCount) * 100, 1) : 0],
+                ],
+                'monthly' => [
+                    'periodLabel' => '今月',
+                    'english' => ['users' => $monthlyEnglishUsers, 'rate' => $monthlyEnglishRate],
+                    'info'    => ['count' => $monthlyPostsCount, 'rate' => $monthlyActiveCount > 0 ? round(($monthlyPostsCount / $monthlyActiveCount) * 100, 1) : 0],
+                    'shower'  => ['count' => $monthlyShowerCount, 'rate' => $monthlyActiveCount > 0 ? round(($monthlyShowerCount / $monthlyActiveCount) * 100, 1) : 0],
+                ],
+                'yearly' => [
+                    'periodLabel' => '今年',
+                    'english' => ['users' => $yearlyEnglishUsers, 'rate' => $yearlyEnglishRate],
+                    'info'    => ['count' => $yearlyPostsCount, 'rate' => $yearlyActiveCount > 0 ? round(($yearlyPostsCount / $yearlyActiveCount) * 100, 1) : 0],
+                    'shower'  => ['count' => $yearlyShowerCount, 'rate' => $yearlyActiveCount > 0 ? round(($yearlyShowerCount / $yearlyActiveCount) * 100, 1) : 0],
+                ],
+            ],
+        ];
+
+        // 8. ビューで未定義エラーになりやすい変数のデフォルト値補填
+        $defaults = [
+            'categoryFormMode'     => 'addMain',
+            'dailyCards'           => [],
+            'featureAnalyticsData' => $featureAnalyticsData,
+            'periods'              => $periods,
+            'categoryFormHasError' => session('categoryFormHasError', false),
+        ];
+
         return view('admin.dashboard', array_merge(
             compact(
                 'users',
@@ -193,7 +264,8 @@ class AdminDashboardController extends Controller
                 'brokenShowers'
             ),
             $stats,
-            $analytics
+            $analytics,
+            $defaults
         ));
     }
 
