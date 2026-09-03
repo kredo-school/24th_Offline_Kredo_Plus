@@ -548,7 +548,7 @@
 </div>
 
         <!-- ② ユーザー管理セクション -->
-        <div x-show="currentTab === 'users'" x-cloak 
+        <div x-show="currentTab === 'users'" x-cloak
              x-data="userManagementData({{ \Illuminate\Support\Js::from($users ?? []) }})"
              x-init="if ({{ session('accountCreated') || $errors->any() ? 'true' : 'false' }}) { isCreateModalOpen = true; }"
              @open-user-modal.window="openDetail($event.detail)">
