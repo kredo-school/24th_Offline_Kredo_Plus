@@ -177,6 +177,7 @@
                     </label>
 
                     <input type="number" name="price" min="0" step="1" class="rc-field-input"
+                        value="{{ !empty($earthLocation) ? $draft['price'] ?? '' : '' }}"
                         placeholder="例：450">
                 </div>
 
