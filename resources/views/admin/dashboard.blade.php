@@ -492,48 +492,58 @@
             </div>
         </div>
 
-        <!-- 右カラム：管理者伝言板 -->
-        <div class="lg:col-span-1 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between">
+       <!-- 右カラム：管理者伝言板 -->
+<div class="lg:col-span-1 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between">
+    <div>
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
             <div>
-                <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-                    <div>
-                        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-                            <span class="material-symbols-outlined text-indigo-500 text-base">forum</span>
-                            管理者伝言板
-                        </h3>
-                        <p class="text-[11px] text-slate-400 mt-0.5">チーム内での共有・申し送り事項です。</p>
-                    </div>
-                </div>
-
-                <div class="space-y-2 max-h-[260px] overflow-y-auto pr-1">
-                    @forelse($adminMessages ?? [] as $msg)
-                        <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 space-y-1">
-                            <div class="flex items-center justify-between text-[11px]">
-                                <span class="font-bold text-slate-700 flex items-center gap-1">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                                    {{ $msg->user->name ?? $msg->author_name ?? '管理者' }}
-                                </span>
-                                <span class="text-slate-400 text-[10px]">
-                                    {{ $msg->created_at instanceof \Carbon\Carbon ? $msg->created_at->diffForHumans() : '' }}
-                                </span>
-                            </div>
-                            <p class="text-[11px] text-slate-600 leading-relaxed whitespace-pre-wrap break-words">{{ $msg->message ?? $msg->content ?? '' }}</p>
-                        </div>
-                    @empty
-                        <div class="text-center py-6 text-[11px] text-slate-400">現在、伝言はありません。</div>
-                    @endforelse
-                </div>
+                <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-indigo-500 text-base">forum</span>
+                    管理者伝言板
+                </h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">チーム内での共有・申し送り事項です。</p>
             </div>
-
-            <form action="{{ route('admin.messages.store') }}" method="POST" class="mt-3 pt-3 border-t border-slate-100 flex gap-1.5">
-                @csrf
-                <input type="text" name="message" placeholder="伝言を入力..." required
-                       class="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-medium text-slate-700 focus:bg-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                <button type="submit" class="shrink-0 rounded-lg bg-slate-900 px-3 py-1.5 text-[11px] font-bold text-white transition hover:bg-slate-800">
-                    投稿
-                </button>
-            </form>
         </div>
+
+        {{-- 投稿成功時のフラッシュメッセージ表示 --}}
+        @if (session('success'))
+            <div class="mb-3 p-2 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] rounded-lg">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <div class="space-y-2 max-h-[260px] overflow-y-auto pr-1">
+            @forelse($adminMessages ?? [] as $msg)
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 space-y-1">
+                    <div class="flex items-center justify-between text-[11px]">
+                        <span class="font-bold text-slate-700 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                            {{ $msg->user->name ?? $msg->author_name ?? '管理者' }}
+                        </span>
+                        <span class="text-slate-400 text-[10px]">
+                            {{ $msg->created_at instanceof \Carbon\Carbon ? $msg->created_at->diffForHumans() : '' }}
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-slate-600 leading-relaxed whitespace-pre-wrap break-words">{{ $msg->message ?? $msg->content ?? '' }}</p>
+                </div>
+            @empty
+                <div class="text-center py-6 text-[11px] text-slate-400">現在、伝言はありません。</div>
+            @endforelse
+        </div>
+    </div>
+
+    <form action="{{ route('admin.messages.store') }}" method="POST" class="mt-3 pt-3 border-t border-slate-100 flex gap-1.5">
+        @csrf
+        {{-- コントローラー側で参照できるリダイレクト先指定 --}}
+        <input type="hidden" name="redirect_to" value="admin.dashboard">
+
+        <input type="text" name="message" placeholder="伝言を入力..." required
+               class="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-medium text-slate-700 focus:bg-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+        <button type="submit" class="shrink-0 rounded-lg bg-slate-900 px-3 py-1.5 text-[11px] font-bold text-white transition hover:bg-slate-800">
+            投稿
+        </button>
+    </form>
+</div>
     </div>
 </div>
 
