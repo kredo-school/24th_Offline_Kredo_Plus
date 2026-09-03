@@ -95,8 +95,8 @@ class ProfileController extends Controller
             ])
             ->withCount('likes')
             ->latest()
-            ->limit(12)
-            ->get();
+            ->paginate(12)
+            ->withQueryString();
 
         // バッジ・タグの色(背景+文字)をカテゴリー名ごとに引けるようにしておく(JSのモーダル側で使用)
         $categoryColors = Category::all()

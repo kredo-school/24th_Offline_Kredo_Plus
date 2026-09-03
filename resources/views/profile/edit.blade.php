@@ -70,7 +70,7 @@
         </div>
 
         <!-- 2. 留学情報の投稿一覧（投稿した投稿／お気に入り／保存） -->
-        <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-100 space-y-5">
+        <div id="post-list" class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-100 space-y-5 scroll-mt-24">
             <div class="flex items-center gap-2 text-brand-blue font-extrabold text-base sm:text-lg">
                 <span class="material-symbols-outlined">grid_view</span>
                 留学情報の投稿
@@ -83,7 +83,7 @@
                     'liked' => 'お気に入り',
                     'saved' => '保存',
                 ] as $tabKey => $tabLabel)
-                    <a href="{{ route('profile.edit', array_filter(['post_tab' => $tabKey, 'month' => $calendar['month']->format('Y-m')])) }}"
+                    <a href="{{ route('profile.edit', array_filter(['post_tab' => $tabKey, 'month' => $calendar['month']->format('Y-m')])) }}#post-list"
                        class="flex-1 text-center py-1.5 text-xs font-bold rounded-lg transition-all {{ $postTab === $tabKey ? 'bg-white shadow-sm text-brand-blue' : 'text-slate-500 hover:text-slate-700' }}">
                         {{ $tabLabel }}
                         <span class="text-slate-400">({{ $postCounts[$tabKey] }})</span>
@@ -143,6 +143,29 @@
                         </a>
                     @endforeach
                 </div>
+
+                @if ($posts->hasPages())
+                    <div class="pt-2 flex items-center justify-between gap-3 text-xs text-slate-400 font-medium">
+                        <span>
+                            {{ $posts->firstItem() }}–{{ $posts->lastItem() }} / 全 {{ $posts->total() }} 件
+                        </span>
+                        <div class="flex items-center gap-1.5">
+                            @if ($posts->onFirstPage())
+                                <span class="px-3 py-1.5 rounded-lg bg-slate-50 text-slate-300 cursor-not-allowed">前へ</span>
+                            @else
+                                <a href="{{ $posts->previousPageUrl() }}#post-list"
+                                   class="px-3 py-1.5 rounded-lg bg-slate-50 text-slate-600 font-bold hover:bg-slate-100 transition-all">前へ</a>
+                            @endif
+                            <span class="px-2 text-slate-500 font-bold">{{ $posts->currentPage() }} / {{ $posts->lastPage() }}</span>
+                            @if ($posts->hasMorePages())
+                                <a href="{{ $posts->nextPageUrl() }}#post-list"
+                                   class="px-3 py-1.5 rounded-lg bg-slate-50 text-slate-600 font-bold hover:bg-slate-100 transition-all">次へ</a>
+                            @else
+                                <span class="px-3 py-1.5 rounded-lg bg-slate-50 text-slate-300 cursor-not-allowed">次へ</span>
+                            @endif
+                        </div>
+                    </div>
+                @endif
             @endif
         </div>
 
@@ -353,7 +376,7 @@
         </div>
 
         <!-- 基本情報タブ -->
-        <div id="tab-info">
+        <div id="tab-info" class="min-h-[20rem]">
             <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                 @csrf
                 @method('patch')
@@ -414,18 +437,20 @@
         </div>
 
         <!-- シャワーの好みタブ -->
-        <div id="tab-preference" class="hidden space-y-4">
+        <div id="tab-preference" class="hidden space-y-4 min-h-[20rem]">
             <form action="{{ route('shower.preference.update') }}" method="POST" class="space-y-4">
                 @csrf
+                {{-- 選択中の色は /shower/male のモーダルと統一（温度=各色、水圧=青系グラデーション）。
+                     Tailwind の動的 arbitrary class は JIT で拾えないため、CSS変数 + 下部の <style> で着色する。 --}}
                 <div>
                     <p class="mb-2 text-xs font-bold text-slate-600">温度</p>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         @foreach (['冷たい' => '#60a5fa', 'ぬるい' => '#34d399', '温かい' => '#fbbf24', '熱い' => '#ef4444'] as $label => $color)
                             <label class="cursor-pointer">
-                                <input type="radio" name="temperature" value="{{ $label }}" class="peer hidden"
+                                <input type="radio" name="temperature" value="{{ $label }}" class="peer hidden pref-input"
                                     {{ auth()->user()->preferred_temperature_label === $label ? 'checked' : '' }}>
-                                <span class="flex items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500 transition-all hover:bg-slate-100 peer-checked:text-white"
-                                      style="--peer-color: {{ $color }};">
+                                <span class="pref-chip flex items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500 transition-all hover:bg-slate-100"
+                                      style="--pref-color: {{ $color }};">
                                     {{ $label }}
                                 </span>
                             </label>
@@ -436,11 +461,12 @@
                 <div>
                     <p class="mb-2 text-xs font-bold text-slate-600">水圧</p>
                     <div class="grid grid-cols-3 gap-2">
-                        @foreach (['弱い' => '#93c5fd', '普通' => '#3b82f6', '強い' => '#1d4ed8'] as $label => $color)
+                        @foreach (['弱い' => '#93c5fd', '普通' => '#3b82f6', '強い' => '#1e3a8a'] as $label => $color)
                             <label class="cursor-pointer">
-                                <input type="radio" name="pressure" value="{{ $label }}" class="peer hidden"
+                                <input type="radio" name="pressure" value="{{ $label }}" class="peer hidden pref-input"
                                     {{ auth()->user()->preferred_pressure_label === $label ? 'checked' : '' }}>
-                                <span class="flex items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500 transition-all hover:bg-slate-100 peer-checked:bg-brand-blue peer-checked:text-white">
+                                <span class="pref-chip flex items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500 transition-all hover:bg-slate-100"
+                                      style="--pref-color: {{ $color }};">
                                     {{ $label }}
                                 </span>
                             </label>
@@ -462,7 +488,7 @@
         </div>
 
         <!-- パスワード変更タブ -->
-        <div id="tab-password" class="hidden space-y-4">
+        <div id="tab-password" class="hidden space-y-4 min-h-[20rem]">
             <form action="{{ route('password.update') }}" method="POST" class="space-y-3">
                 @csrf
                 @method('put')
@@ -500,6 +526,15 @@
 
     </div>
 </div>
+
+<style>
+    /* シャワーの好み: 選択中のチップを /shower/male のモーダルと同じ配色で着色する */
+    #edit-profile-modal .pref-input:checked + .pref-chip {
+        background-color: var(--pref-color);
+        border-color: var(--pref-color);
+        color: #fff;
+    }
+</style>
 
 <script>
     function openProfileModal() {
