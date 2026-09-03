@@ -1302,15 +1302,100 @@
 
         <!-- ⑤ アクティブ分析セクション -->
 <div x-show="currentTab === 'analytics'" x-cloak x-data="{ showChartModal: false, selectedFeature: '' }" class="space-y-8">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <div x-data="{ 
             summaryPeriod: 'daily',
             analyticsData: {{ \Illuminate\Support\Js::from($featureAnalyticsData['analyticsData'] ?? $featureAnalyticsData ?? []) }},
+            radarChart: null,
             get currentData() { 
                 return this.analyticsData[this.summaryPeriod] || this.analyticsData['daily'] || {}; 
+            },
+            // データに応じた動的スケール最大値の計算
+            getMaxScale(data) {
+                const rates = [
+                    data?.english?.rate || 0,
+                    data?.info?.rate || 0,
+                    data?.shower?.rate || 0
+                ];
+                const maxVal = Math.max(...rates);
+                // 100以下なら100、100超なら最大値+10（25刻み等にフィットしやすく切り上げ）
+                return maxVal > 100 ? Math.ceil(maxVal / 10) * 10 + 10 : 100;
             }
         }"
         x-init="
-            $nextTick(() => { window.updateRadarChart && window.updateRadarChart(summaryPeriod); });
+            $nextTick(() => {
+                const ctx = $refs.radarCanvas;
+                if (ctx) {
+                    const currentMax = getMaxScale(currentData);
+
+                    radarChart = new Chart(ctx, {
+                        type: 'radar',
+                        data: {
+                            labels: ['英語学習', '留学情報', 'シャワー'],
+                            datasets: [{
+                                label: '利用率 (%)',
+                                data: [
+                                    currentData?.english?.rate || 0,
+                                    currentData?.info?.rate || 0,
+                                    currentData?.shower?.rate || 0
+                                ],
+                                backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                                borderColor: '#0284c7',
+                                borderWidth: 2,
+                                pointBackgroundColor: '#0284c7',
+                                pointHoverRadius: 6,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                r: {
+                                    min: 0,
+                                    suggestedMax: currentMax, // 動的な最大値設定
+                                    ticks: { 
+                                        display: false 
+                                    },
+                                    grid: { color: '#e2e8f0' },
+                                    angleLines: { color: '#cbd5e1' },
+                                    pointLabels: {
+                                        font: { size: 11, weight: 'bold' },
+                                        color: '#334155'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: (context) => ` 利用率: ${context.raw}%`
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+
+            window.updateRadarChart = (period) => {
+                if (radarChart && analyticsData[period]) {
+                    const data = analyticsData[period];
+                    const newMax = getMaxScale(data);
+
+                    // データの更新
+                    radarChart.data.datasets[0].data = [
+                        data?.english?.rate || 0,
+                        data?.info?.rate || 0,
+                        data?.shower?.rate || 0
+                    ];
+
+                    // スケール最大値の動的更新
+                    radarChart.options.scales.r.suggestedMax = newMax;
+                    
+                    radarChart.update();
+                }
+            };
+
             $watch('summaryPeriod', value => window.updateRadarChart && window.updateRadarChart(value));
         "
         class="space-y-8">
@@ -1335,81 +1420,81 @@
         </div>
 
         <!-- パフォーマンス・サマリー -->
-<div class="space-y-4">
-    <div class="border-b border-slate-200 pb-3">
-        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-            <span class="material-symbols-outlined text-red-500">space_dashboard</span>
-            パフォーマンス・サマリー
-        </h3>
-    </div>
-
-    @php
-        $parsedPeriods = is_array($periods ?? null) 
-            ? $periods 
-            : (is_string($periods ?? null) ? json_decode($periods, true) : []);
-    @endphp
-
-    @if(is_array($parsedPeriods) && count($parsedPeriods) > 0)
-        @foreach($parsedPeriods as $pKey => $cards)
-            <div x-show="summaryPeriod === '{{ $pKey }}'" x-cloak class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                @if(is_array($cards))
-                    @foreach($cards as $card)
-                        @php
-                            $title = $card['title'] ?? '';
-                            
-                            // タイトルに応じたテーマカラー・ドット色の厳密設定
-                            if (str_contains($title, 'アクティブ')) {
-                                $dotClass = 'bg-red-500';
-                                $border = $card['border'] ?? 'border-red-200';
-                                $btnColor = $card['btnColor'] ?? 'text-red-600 bg-red-50 hover:bg-red-100';
-                            } elseif (str_contains($title, '英語') || str_contains($title, '学習')) {
-                                $dotClass = 'bg-yellow-400';
-                                $border = $card['border'] ?? 'border-yellow-200';
-                                $btnColor = $card['btnColor'] ?? 'text-yellow-700 bg-yellow-50 hover:bg-yellow-100';
-                            } elseif (str_contains($title, '投稿') || str_contains($title, '情報')) {
-                                $dotClass = 'bg-lime-500';
-                                $border = $card['border'] ?? 'border-lime-200';
-                                $btnColor = $card['btnColor'] ?? 'text-lime-700 bg-lime-50 hover:bg-lime-100';
-                            } elseif (str_contains($title, 'シャワー')) {
-                                $dotClass = 'bg-sky-500';
-                                $border = $card['border'] ?? 'border-sky-200';
-                                $btnColor = $card['btnColor'] ?? 'text-sky-600 bg-sky-50 hover:bg-sky-100';
-                            } else {
-                                $dotClass = $card['dot'] ?? 'bg-slate-400';
-                                $border = $card['border'] ?? 'border-slate-200';
-                                $btnColor = $card['btnColor'] ?? 'text-slate-600 bg-slate-50 hover:bg-slate-100';
-                            }
-                        @endphp
-
-                        <div class="bg-white p-5 rounded-2xl border {{ $border }} shadow-sm hover:shadow-md transition flex flex-col justify-between">
-                            <div class="flex items-start justify-between">
-                                <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
-                                    <!-- ドット表示 -->
-                                    <span class="w-2 h-2 rounded-full {{ $dotClass }}"></span>
-                                    {{ $title ?: '指標' }}
-                                </span>
-                                <button @click="showChartModal = true; selectedFeature = '{{ $card['feat'] ?? '' }}'" class="p-1.5 {{ $btnColor }} rounded-lg transition">
-                                    <span class="material-symbols-outlined text-base">show_chart</span>
-                                </button>
-                            </div>
-                            <div class="my-3 flex items-baseline gap-1">
-                                <span class="text-3xl font-black text-slate-800 tracking-tight">{{ $card['val'] ?? '0' }}</span>
-                                <span class="text-sm font-bold text-slate-400">{{ $card['unit'] ?? '' }}</span>
-                            </div>
-                            <div class="text-[11px] text-slate-400 border-t border-slate-100 pt-2.5">
-                                {{ $card['sub'] ?? '-' }}
-                            </div>
-                        </div>
-                    @endforeach
-                @endif
+        <div class="space-y-4">
+            <div class="border-b border-slate-200 pb-3">
+                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-red-500">space_dashboard</span>
+                    パフォーマンス・サマリー
+                </h3>
             </div>
-        @endforeach
-    @else
-        <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl text-center text-xs text-slate-400">
-            サマリーデータが取得できませんでした。コントローラーの $periods の形式を確認してください。
+
+            @php
+                $parsedPeriods = is_array($periods ?? null) 
+                    ? $periods 
+                    : (is_string($periods ?? null) ? json_decode($periods, true) : []);
+            @endphp
+
+            @if(is_array($parsedPeriods) && count($parsedPeriods) > 0)
+                @foreach($parsedPeriods as $pKey => $cards)
+                    <div x-show="summaryPeriod === '{{ $pKey }}'" x-cloak class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        @if(is_array($cards))
+                            @foreach($cards as $card)
+                                @php
+                                    $title = $card['title'] ?? '';
+                                    
+                                    // タイトルに応じたテーマカラー・ドット色の厳密設定
+                                    if (str_contains($title, 'アクティブ')) {
+                                        $dotClass = 'bg-red-500';
+                                        $border = $card['border'] ?? 'border-red-200';
+                                        $btnColor = $card['btnColor'] ?? 'text-red-600 bg-red-50 hover:bg-red-100';
+                                    } elseif (str_contains($title, '英語') || str_contains($title, '学習')) {
+                                        $dotClass = 'bg-yellow-400';
+                                        $border = $card['border'] ?? 'border-yellow-200';
+                                        $btnColor = $card['btnColor'] ?? 'text-yellow-700 bg-yellow-50 hover:bg-yellow-100';
+                                    } elseif (str_contains($title, '投稿') || str_contains($title, '情報')) {
+                                        $dotClass = 'bg-lime-500';
+                                        $border = $card['border'] ?? 'border-lime-200';
+                                        $btnColor = $card['btnColor'] ?? 'text-lime-700 bg-lime-50 hover:bg-lime-100';
+                                    } elseif (str_contains($title, 'シャワー')) {
+                                        $dotClass = 'bg-sky-500';
+                                        $border = $card['border'] ?? 'border-sky-200';
+                                        $btnColor = $card['btnColor'] ?? 'text-sky-600 bg-sky-50 hover:bg-sky-100';
+                                    } else {
+                                        $dotClass = $card['dot'] ?? 'bg-slate-400';
+                                        $border = $card['border'] ?? 'border-slate-200';
+                                        $btnColor = $card['btnColor'] ?? 'text-slate-600 bg-slate-50 hover:bg-slate-100';
+                                    }
+                                @endphp
+
+                                <div class="bg-white p-5 rounded-2xl border {{ $border }} shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                                    <div class="flex items-start justify-between">
+                                        <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
+                                            <!-- ドット表示 -->
+                                            <span class="w-2 h-2 rounded-full {{ $dotClass }}"></span>
+                                            {{ $title ?: '指標' }}
+                                        </span>
+                                        <button @click="showChartModal = true; selectedFeature = '{{ $card['feat'] ?? '' }}'" class="p-1.5 {{ $btnColor }} rounded-lg transition">
+                                            <span class="material-symbols-outlined text-base">show_chart</span>
+                                        </button>
+                                    </div>
+                                    <div class="my-3 flex items-baseline gap-1">
+                                        <span class="text-3xl font-black text-slate-800 tracking-tight">{{ $card['val'] ?? '0' }}</span>
+                                        <span class="text-sm font-bold text-slate-400">{{ $card['unit'] ?? '' }}</span>
+                                    </div>
+                                    <div class="text-[11px] text-slate-400 border-t border-slate-100 pt-2.5">
+                                        {{ $card['sub'] ?? '-' }}
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+                @endforeach
+            @else
+                <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl text-center text-xs text-slate-400">
+                    サマリーデータが取得できませんでした。コントローラーの $periods の形式を確認してください。
+                </div>
+            @endif
         </div>
-    @endif
-</div>
 
         <!-- 機能別分析 -->
         <div>
@@ -1427,7 +1512,6 @@
                         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                             <div>
                                 <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                                    <!-- アクティブユーザー分析テーマカラー：赤 -->
                                     <span class="material-symbols-outlined text-red-500 text-xl">bar_chart</span>
                                     機能別の利用率とアクティブ貢献度
                                 </h3>
@@ -1436,7 +1520,7 @@
                         </div>
 
                         <div class="divide-y divide-slate-100">
-                            <!-- 英語学習機能（テーマカラー：黄色） -->
+                            <!-- 英語学習機能 -->
                             <div class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                 <div class="flex items-center gap-3 w-48">
                                     <div class="p-2.5 rounded-xl border flex items-center justify-center bg-yellow-50 border-yellow-200">
@@ -1464,7 +1548,7 @@
                                 </div>
                             </div>
 
-                            <!-- 留学情報投稿（テーマカラー：黄緑 / lime） -->
+                            <!-- 留学情報投稿 -->
                             <div class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                 <div class="flex items-center gap-3 w-48">
                                     <div class="p-2.5 rounded-xl border flex items-center justify-center bg-lime-50 border-lime-200">
@@ -1492,7 +1576,7 @@
                                 </div>
                             </div>
 
-                            <!-- シャワー機能（テーマカラー：青 / sky） -->
+                            <!-- シャワー機能 -->
                             <div class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                 <div class="flex items-center gap-3 w-48">
                                     <div class="p-2.5 rounded-xl border flex items-center justify-center bg-sky-50 border-sky-200">
@@ -1535,7 +1619,7 @@
                         </div>
 
                         <div class="relative w-full aspect-square max-w-[260px] mx-auto my-4 flex items-center justify-center">
-                            <canvas id="featureRadarChart"></canvas>
+                            <canvas x-ref="radarCanvas" id="featureRadarChart"></canvas>
                         </div>
                     </div>
 
