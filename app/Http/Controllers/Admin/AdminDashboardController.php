@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdminMessage;
 use App\Models\Category;
 use App\Models\English\StudyLog;
 use App\Models\MainCategory;
@@ -13,6 +14,7 @@ use App\Models\Shower\ShowerMalfunctionReport;
 use App\Models\Shower\ShowerReport;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -21,7 +23,6 @@ class AdminDashboardController extends Controller
     public function index(): View
     {
         // 1. ユーザー一覧データの整形
-        // ※モーダルで一覧表示するだけの目的のため、全件取得ではなく必要なカラムに絞ってロードしています
         $users = User::withCount(['showerReports', 'posts', 'suggestions'])
             ->with([
                 'showerReports:id,user_id,created_at',
@@ -32,7 +33,6 @@ class AdminDashboardController extends Controller
             ->get()
             ->map(function ($user) {
                 return [
-                    // 基本情報
                     'id'            => $user->id,
                     'name'          => $user->name,
                     'email'         => $user->email,
@@ -48,7 +48,6 @@ class AdminDashboardController extends Controller
                     'active_hours'  => ($user->total_study_time ?? 0) . '時間',
                     'status'        => ($user->is_active ?? true) ? 'active' : 'inactive',
 
-                    // 詳細モーダル用プロパティ
                     'gender'                      => $user->gender ?? '未設定',
                     'graduation_date'             => $user->graduation_date ? $user->graduation_date->format('Y/m/d') : '未設定',
                     'preferred_temperature_label' => $user->preferred_temperature_label ?? '未設定',
@@ -56,13 +55,11 @@ class AdminDashboardController extends Controller
                     'toeic_exam_date'             => $user->toeic_exam_date ? $user->toeic_exam_date->format('Y/m/d') : '未登録',
                     'ielts_exam_date'             => $user->ielts_exam_date ? $user->ielts_exam_date->format('Y/m/d') : '未登録',
 
-                    // 英語学習アクティビティ
                     'total_xp'         => $user->total_xp ?? 0,
                     'study_streak'     => $user->study_streak ?? 0,
                     'total_study_time' => $user->total_study_time ?? 0,
                     'last_study_date'  => $user->last_study_date ? $user->last_study_date->format('Y/m/d') : '未学習',
 
-                    // その他実績（リレーションコレクション）
                     'shower_reports' => $user->showerReports,
                     'posts'          => $user->posts,
                     'suggestions'    => $user->suggestions,
@@ -171,6 +168,9 @@ class AdminDashboardController extends Controller
         // 故障中シャワーの取得
         $brokenShowers = ShowerMalfunctionReport::currentlyBroken();
 
+        // 管理者伝言板の取得（最新10件）
+        $adminMessages = AdminMessage::with('user')->latest()->take(10)->get();
+
         // 5. 留学情報管理タブ用
         $adminMainCategories = MainCategory::orderBy('sort_order')->orderBy('id')->get();
         $subCounts = Category::where('is_hidden', false)
@@ -249,7 +249,7 @@ class AdminDashboardController extends Controller
         // 8. ビューで未定義エラーになりやすい変数のデフォルト値補填
         $defaults = [
             'categoryFormMode'     => 'addMain',
-            'dailyCards'           => [],
+            'dailyCards'           => $periods['daily'],
             'featureAnalyticsData' => $featureAnalyticsData,
             'periods'              => $periods,
             'categoryFormHasError' => session('categoryFormHasError', false),
@@ -259,6 +259,7 @@ class AdminDashboardController extends Controller
             compact(
                 'users',
                 'notices',
+                'adminMessages',
                 'adminMainCategories',
                 'adminCategories',
                 'brokenShowers'
@@ -267,6 +268,26 @@ class AdminDashboardController extends Controller
             $analytics,
             $defaults
         ));
+    }
+
+    /**
+     * 管理者伝言板の保存処理
+     */
+    public function storeAdminMessage(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'message' => 'required|string|max:1000',
+            'user_id' => 'nullable|exists:users,id',
+        ]);
+
+        // DB保存処理
+        AdminMessage::create([
+            'user_id' => $validated['user_id'] ?? auth()->id(),
+            'message' => $validated['message'],
+        ]);
+
+        // 明示的にダッシュボード画面（GET）にリダイレクト
+        return redirect()->route('admin.dashboard')->with('success', '伝言を投稿しました。');
     }
 
     /**

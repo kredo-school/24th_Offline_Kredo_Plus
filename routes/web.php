@@ -47,7 +47,6 @@ use App\Http\Controllers\EarthLocationController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\Admin\AdminMessageController;
 
 // 目安箱
 use App\Http\Controllers\SuggestionBoxController;
@@ -293,8 +292,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::post('/notices', [AdminDashboardController::class, 'storeNotice'])->name('notices.store');
     Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
 
-    // 管理者メッセージ送信機能
-    Route::post('/messages', [AdminMessageController::class, 'store'])->name('messages.store');
+    // 管理者メッセージ機能
+    Route::get('/messages', function () {
+        return redirect()->route('admin.dashboard');
+    });
+    Route::post('/messages', [AdminDashboardController::class, 'storeAdminMessage'])->name('messages.store');
 
     // シャワー故障報告の受け取り・修理報告
     Route::get('/shower/malfunctions', [AdminShowerMalfunctionController::class, 'index'])->name('shower.malfunctions.index');
