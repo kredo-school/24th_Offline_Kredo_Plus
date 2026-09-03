@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Shower\ShowerMalfunctionReport;
 use App\Models\Shower\ShowerReport;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -12,80 +11,34 @@ class ShowerDataSeeder extends Seeder
 {
     public function run(): void
     {
+        $maleUsers = User::query()
+            ->where('gender', 'male')
+            ->where('gender_locked', true)
+            ->get();
+
+        $femaleUsers = User::query()
+            ->where('gender', 'female')
+            ->where('gender_locked', true)
+            ->get();
+
+        if ($maleUsers->isEmpty()) {
+            $this->command?->warn("スキップ: male の登録済みユーザーが見つかりません。");
+        }
+
+        if ($femaleUsers->isEmpty()) {
+            $this->command?->warn("スキップ: female の登録済みユーザーが見つかりません。");
+        }
+
         foreach (['male', 'female'] as $gender) {
-            $users = User::query()
-                ->where('gender', $gender)
-                ->where('gender_locked', true)
-                ->get();
+            $users = $gender === 'male' ? $maleUsers : $femaleUsers;
 
             if ($users->isEmpty()) {
-                $this->command?->warn("スキップ: {$gender} の登録済みユーザーが見つかりません。");
                 continue;
             }
 
-            $brokenPeriods = $this->seedMalfunctions($gender, $users);
-            $this->seedReports($gender, $users, $brokenPeriods);
+            // 故障報告の生成を行わないため、空の配列を渡す
+            $this->seedReports($gender, $users, []);
         }
-    }
-
-    /**
-     * @return array<int, array{number:int, start:Carbon, end:Carbon}>
-     */
-    private function seedMalfunctions(string $gender, $users): array
-    {
-        $comments = [
-            'お湯が出ません',
-            '水圧が弱すぎます',
-            '水が止まりません',
-            null,
-        ];
-
-        $brokenNumbers = collect(range(1, 7))->random(rand(2, 3));
-        $periods = [];
-
-        foreach ($brokenNumbers as $number) {
-            $daysAgo = rand(2, 12);
-            $brokenTime = Carbon::now()->subDays($daysAgo)->setHour(rand(7, 20))->setMinute(rand(0, 59));
-
-            ShowerMalfunctionReport::create([
-                'gender' => $gender,
-                'shower_number' => $number,
-                'status' => 'broken',
-                'user_id' => $users->random()->id,
-                'comment' => $comments[array_rand($comments)],
-                'created_at' => $brokenTime,
-                'updated_at' => $brokenTime,
-            ]);
-
-            $fixedTime = null;
-
-            if (rand(1, 10) <= 6) {
-                $candidate = $brokenTime->copy()->addDays(rand(1, 3))->setHour(rand(9, 18));
-
-                if ($candidate->lessThan(Carbon::now())) {
-                    $fixedTime = $candidate;
-
-                    ShowerMalfunctionReport::create([
-                        'gender' => $gender,
-                        'shower_number' => $number,
-                        'status' => 'fixed',
-                        'user_id' => $users->random()->id,
-                        'comment' => null,
-                        'created_at' => $fixedTime,
-                        'updated_at' => $fixedTime,
-                    ]);
-                }
-            }
-
-            // 修理完了していなければ「今も故障中」として、期間の終わりを現在時刻にする
-            $periods[] = [
-                'number' => $number,
-                'start' => $brokenTime,
-                'end' => $fixedTime ?? Carbon::now(),
-            ];
-        }
-
-        return $periods;
     }
 
     private function seedReports(string $gender, $users, array $brokenPeriods): void
@@ -99,6 +52,7 @@ class ShowerDataSeeder extends Seeder
             '特に問題ありませんでした',
         ];
 
+        // 過去13日前から今日まで（翌日以降は含まない）
         for ($daysAgo = 13; $daysAgo >= 0; $daysAgo--) {
             $date = Carbon::now()->subDays($daysAgo);
             $postCount = rand(3, 8);
@@ -109,12 +63,12 @@ class ShowerDataSeeder extends Seeder
                     ->setMinute(rand(0, 59))
                     ->setSecond(rand(0, 59));
 
-                $number = $this->pickAvailableShowerNumber($time, $brokenPeriods);
-
-                // 全番号が塞がっていた(まず無いはずだが念のため)場合はスキップ
-                if ($number === null) {
+                if ($time->greaterThan(Carbon::now())) {
                     continue;
                 }
+
+                // 1〜7の中からランダムにシャワー番号を選ぶ
+                $number = rand(1, 7);
 
                 ShowerReport::create([
                     'gender' => $gender,
@@ -129,27 +83,4 @@ class ShowerDataSeeder extends Seeder
             }
         }
     }
-
-    /**
-     * 指定した日時に「故障中でない」シャワー番号をランダムに1つ選ぶ。
-     */
-    private function pickAvailableShowerNumber(Carbon $time, array $brokenPeriods): ?int
-    {
-        $candidates = range(1, 7);
-
-        // その時刻に故障中の番号を候補から除外
-        foreach ($brokenPeriods as $period) {
-            if ($time->betweenIncluded($period['start'], $period['end'])) {
-                $candidates = array_diff($candidates, [$period['number']]);
-            }
-        }
-
-        if (empty($candidates)) {
-            return null;
-        }
-
-        return $candidates[array_rand($candidates)];
-    }
-
-    
 }

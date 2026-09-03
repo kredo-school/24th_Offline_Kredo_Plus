@@ -109,7 +109,7 @@
                     </a>
                     <a href="{{ route('carinderia.index') }}" aria-label="留学情報"
                         class="flex flex-col items-center gap-0.5 transition-colors {{ request()->routeIs('carinderia.*') ? 'text-brand-green' : 'text-slate-400 hover:text-brand-green' }}">
-                        <span class="material-symbols-outlined !text-2xl leading-none">flight</span>
+                        <span class="material-symbols-outlined !text-2xl leading-none">psychiatry</span>
                         <span class="text-[11px] font-bold whitespace-nowrap">留学情報</span>
                     </a>
                     <a href="{{ route('suggestion') }}" aria-label="目安箱"

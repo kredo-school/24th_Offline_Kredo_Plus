@@ -8,6 +8,7 @@
         points: [],
         brokenPeriods: [],
         hoveredIndex: null,
+        tooltipLeftPx: 0,
 
         async load() {
             const response = await fetch(`{{ route('shower.trend-data') }}?shower_number=${this.showerNumber}&days=${this.days}`);
@@ -162,7 +163,7 @@
                 x-show="filterOpen"
                 x-cloak
                 x-transition
-                class="absolute right-0 mt-2 z-30 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 w-72"
+                class="absolute right-0 mt-2 z-50 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 w-72"
             >
                 <p class="text-xs font-bold text-slate-500 mb-1.5 ms-1">日数</p>
                 <div class="flex gap-1.5 mb-3">
@@ -305,138 +306,136 @@
         </div>
     </div>
 
-    {{-- スマホ表示(横スクロール対応) --}}
     {{-- スマホ表示 --}}
-<div class="sm:hidden relative h-[225px] rounded-xl bg-blue-500/10">
+    <div class="sm:hidden relative h-[225px] rounded-xl bg-blue-500/10" x-ref="chartCard">
 
-    {{-- Y軸ラベル (固定) --}}
-    <div class="absolute inset-y-0 left-0 w-20 z-20">
-        <div class="absolute top-4 bottom-12 left-2 right-4
-                    flex flex-col justify-between
-                    text-right font-semibold text-slate-400
-                    text-[10px] whitespace-nowrap">
-            <span>熱い・強い</span>
-            <span>温かい・普通</span>
-            <span>ぬるい・弱い</span>
-            <span>冷たい・無し</span>
+        {{-- Y軸ラベル (固定) --}}
+        <div class="absolute inset-y-0 left-0 w-20 z-0">
+            <div class="absolute top-4 bottom-12 left-2 right-4
+                        flex flex-col justify-between
+                        text-right font-semibold text-slate-400
+                        text-[10px] whitespace-nowrap">
+                <span>熱い・強い</span>
+                <span>温かい・普通</span>
+                <span>ぬるい・弱い</span>
+                <span>冷たい・無し</span>
+            </div>
+            <div class="absolute top-4 bottom-12 right-0 border-[1px] border-r border-slate-300"></div>
         </div>
 
-        {{-- グラフ左端のY軸（固定線） --}}
-        <div class="absolute top-4 bottom-12 right-0 border-[1px] border-r border-slate-300"></div>
-    </div>
+        {{-- X軸 --}}
+        <div class="absolute right-[20px] left-20 bottom-12 border-[1px] border-t border-slate-300"></div>
 
-    {{-- X軸 --}}
-    <div class="absolute right-[20px] left-20 bottom-12 border-[1px] border-t border-slate-300"></div>
+        {{-- 横スクロールするグラフ領域 --}}
+        <div
+            class="absolute inset-y-0 left-20 right-0 overflow-x-auto"
+            @click="hoveredIndex = null"
+            @scroll="hoveredIndex = null"
+        >
 
-    {{-- 横スクロールするグラフ領域 --}}
-    <div class="absolute inset-y-0 left-20 right-0 overflow-x-auto">
+            <div class="relative h-full" style="width: 620px">
 
-        {{-- PC版の left-[200px] に相当するグラフ本体 --}}
-        <div class="relative h-full" style="width: 620px">
+                <div class="absolute top-4 bottom-12 left-0 right-5 border-slate-300">
 
-            {{-- グラフ本体 --}}
-            <div class="absolute top-4 bottom-12 left-0 right-5 border-slate-300">
-
-                {{-- グリッド --}}
-                <div class="absolute inset-0 grid grid-rows-3">
-                    @for ($i = 0; $i < 3; $i++)
-                        <div class="border-b border-r border-gray-200"></div>
-                    @endfor
-                </div>
-
-                
-
-
-                {{-- 描画コンテンツエリア（Y軸から離すための余白） --}}
-                <div class="absolute inset-0 mx-5">
-
-                    {{-- X軸ラベル --}}
-                    <div class="absolute -bottom-8 right-0 left-0 h-8">
-                        <template x-for="(point, index) in points" :key="'label-' + point.date">
-                            <span
-                                class="absolute -translate-x-1/2 whitespace-nowrap
-                                       text-center font-semibold text-slate-400 text-xs"
-                                :style="{ left: xPercent(index) + '%' }"
-                                x-text="point.date.slice(5)"
-                            ></span>
-                        </template>
+                    {{-- グリッド --}}
+                    <div class="absolute inset-0 grid grid-rows-3">
+                        @for ($i = 0; $i < 3; $i++)
+                            <div class="border-b border-r border-gray-200"></div>
+                        @endfor
                     </div>
 
+                    {{-- 描画コンテンツエリア --}}
+                    <div class="absolute inset-0 mx-5">
 
-                    {{-- 故障期間の帯 --}}
-                    <template x-for="period in brokenPeriods" :key="period.start + period.end">
-                        <div
-                            class="absolute top-0 bottom-0
-                                   bg-red-400/10
-                                   border-x border-red-300/40
-                                   flex items-start justify-center pt-1"
-                            :style="{
-                                left: `calc(${dateToPercent(period.start)}% + 6px)`,
-                                width: `calc(${dateToPercent(period.end) - dateToPercent(period.start)}% - 12px)`,
-                            }"
-                        >
-                            <span
-                                class="text-[9px] font-bold text-red-500
-                                       bg-white/80 rounded px-1 py-0.5
-                                       whitespace-nowrap"
-                            >
-                                故障
-                            </span>
+                        {{-- X軸ラベル --}}
+                        <div class="absolute -bottom-8 right-0 left-0 h-8">
+                            <template x-for="(point, index) in points" :key="'label-' + point.date">
+                                <span
+                                    class="absolute -translate-x-1/2 whitespace-nowrap text-center font-semibold text-slate-400 text-xs transition-all duration-200"
+                                    :class="hoveredIndex === index ? 'text-blue-950 font-black scale-110' : ''"
+                                    :style="{ left: xPercent(index) + '%' }"
+                                    x-text="point.date.slice(5)"
+                                ></span>
+                            </template>
                         </div>
-                    </template>
 
+                        {{-- 故障期間の帯 --}}
+                        <template x-for="period in brokenPeriods" :key="period.start + period.end">
+                            <div
+                                class="absolute top-0 bottom-0 bg-red-400/10 border-x border-red-300/40 flex items-start justify-center pt-1"
+                                :style="{
+                                    left: `calc(${dateToPercent(period.start)}% + 6px)`,
+                                    width: `calc(${dateToPercent(period.end) - dateToPercent(period.start)}% - 12px)`,
+                                }"
+                            >
+                                <span class="text-[9px] font-bold text-red-500 bg-white/80 rounded px-1 py-0.5 whitespace-nowrap">故障</span>
+                            </div>
+                        </template>
 
-                    {{-- 温度 --}}
-                    <svg
-                        viewBox="0 0 100 100"
-                        preserveAspectRatio="none"
-                        class="absolute inset-0 w-full h-full overflow-visible"
-                        x-html="segments('temperature').map(seg => `<polyline points=\'${seg}\' fill=\'none\' stroke=\'#f87171\' stroke-width=\'1.5\' vector-effect=\'non-scaling-stroke\' />`).join('')"
-                    ></svg>
+                        {{-- タップ判定エリア --}}
+                        <div class="absolute inset-0 z-10 flex pointer-events-none">
+                            <template x-for="(point, index) in points" :key="'tap-' + point.date">
+                                <div
+                                    class="absolute top-0 bottom-0 pointer-events-auto"
+                                    :style="{ left: `calc(${xPercent(index)}% - 20px)`, width: '40px' }"
+                                    @click.stop="
+                                        if (hoveredIndex === index) {
+                                            hoveredIndex = null;
+                                        } else {
+                                            hoveredIndex = index;
+                                            const rect = $event.currentTarget.getBoundingClientRect();
+                                            const cardRect = $refs.chartCard.getBoundingClientRect();
+                                            tooltipLeftPx = rect.left + rect.width / 2 - cardRect.left;
+                                        }
+                                    "
+                                ></div>
+                            </template>
+                        </div>
 
-                    {{-- 水圧 --}}
-                    <svg
-                        viewBox="0 0 100 100"
-                        preserveAspectRatio="none"
-                        class="absolute inset-0 w-full h-full overflow-visible"
-                        x-html="segments('pressure').map(seg => `<polyline points=\'${seg}\' fill=\'none\' stroke=\'#60a5fa\' stroke-width=\'1.5\' vector-effect=\'non-scaling-stroke\' />`).join('')"
-                    ></svg>
+                        <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="absolute inset-0 w-full h-full overflow-visible" x-html="segments('temperature').map(seg => `<polyline points=\'${seg}\' fill=\'none\' stroke=\'#f87171\' stroke-width=\'1.5\' vector-effect=\'non-scaling-stroke\' />`).join('')"></svg>
+                        <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="absolute inset-0 w-full h-full overflow-visible" x-html="segments('pressure').map(seg => `<polyline points=\'${seg}\' fill=\'none\' stroke=\'#60a5fa\' stroke-width=\'1.5\' vector-effect=\'non-scaling-stroke\' />`).join('')"></svg>
 
+                        <template x-for="(point, index) in points" :key="'temp-dot-' + point.date">
+                            <div
+                                class="absolute -translate-x-1/2 translate-y-1/2 rounded-full bg-red-400 border-2 border-white shadow transition-all duration-200"
+                                :class="hoveredIndex === index ? 'w-4 h-4 ring-4 ring-red-200' : 'w-2.5 h-2.5'"
+                                :style="{ left: xPercent(index) + '%', bottom: yPercent(point.temperature) + '%' }"
+                            ></div>
+                        </template>
+                        <template x-for="(point, index) in points" :key="'pressure-dot-' + point.date">
+                            <div
+                                class="absolute -translate-x-1/2 translate-y-1/2 rounded-full bg-blue-400 border-2 border-white shadow transition-all duration-200"
+                                :class="hoveredIndex === index ? 'w-4 h-4 ring-4 ring-blue-200' : 'w-2.5 h-2.5'"
+                                :style="{ left: xPercent(index) + '%', bottom: yPercent(point.pressure) + '%' }"
+                            ></div>
+                        </template>
 
-                    {{-- 温度ドット --}}
-                    <template x-for="(point, index) in points" :key="'temp-dot-' + point.date">
-                        <div
-                            class="absolute w-2.5 h-2.5
-                                   -translate-x-1/2 translate-y-1/2
-                                   rounded-full bg-red-400
-                                   border-2 border-white shadow"
-                            :style="{
-                                left: xPercent(index) + '%',
-                                bottom: yPercent(point.temperature) + '%'
-                            }"
-                        ></div>
-                    </template>
-
-
-                    {{-- 水圧ドット --}}
-                    <template x-for="(point, index) in points" :key="'pressure-dot-' + point.date">
-                        <div
-                            class="absolute w-2.5 h-2.5
-                                   -translate-x-1/2 translate-y-1/2
-                                   rounded-full bg-blue-400
-                                   border-2 border-white shadow"
-                            :style="{
-                                left: xPercent(index) + '%',
-                                bottom: yPercent(point.pressure) + '%'
-                            }"
-                        ></div>
-                    </template>
-
+                    </div>
                 </div>
-
             </div>
         </div>
+
+        {{-- ツールチップ(スクロール領域の外に配置、クリップされない) --}}
+        <template x-if="hoveredIndex !== null">
+            <div
+                class="absolute z-40 -translate-x-1/2 bg-white rounded-xl shadow-lg border border-slate-200 px-3 py-2 whitespace-nowrap pointer-events-none"
+                :style="{ left: tooltipLeftPx + 'px', top: '4px' }"
+            >
+                <p class="text-[10px] font-bold text-blue-950 mb-1 text-center" x-text="points[hoveredIndex].date.slice(5)"></p>
+                <div class="flex items-center gap-1.5 text-[10px]">
+                    <span class="w-2 h-2 rounded-full bg-red-400"></span>
+                    <span class="font-bold text-red-400">温度</span>
+                    <span class="font-semibold text-slate-600" x-text="temperatureLabel(points[hoveredIndex].temperature)"></span>
+                </div>
+                <div class="flex items-center gap-1.5 text-[10px] mt-1">
+                    <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                    <span class="font-bold text-blue-400">水圧</span>
+                    <span class="font-semibold text-slate-600" x-text="pressureLabel(points[hoveredIndex].pressure)"></span>
+                </div>
+                <div class="absolute left-1/2 -bottom-1 -translate-x-1/2 w-2 h-2 bg-white border-r border-b border-slate-200 rotate-45"></div>
+            </div>
+        </template>
+
     </div>
-</div>
 
 </div>

@@ -149,7 +149,7 @@
                 <div aria-hidden="true" class="absolute inset-y-0 left-0 w-full sm:w-3/5 bg-gradient-to-r from-slate-950/25 via-slate-950/5 to-transparent pointer-events-none"></div>
 
                 {{-- 手書き風の挨拶 + タイトル + リード文（下部はイラスト用に余白を多めに確保） --}}
-                <div class="absolute inset-x-0 bottom-0 pl-14 sm:pl-16 pr-8 sm:pr-12 pt-8 sm:pt-12 pb-8 sm:pb-12 sm:max-w-md">
+                {{-- <div class="absolute inset-x-0 bottom-0 pl-14 sm:pl-16 pr-8 sm:pr-12 pt-8 sm:pt-12 pb-8 sm:pb-12 sm:max-w-md">
                     <div class="flex items-center gap-3">
                         <span class="w-1 h-11 sm:h-12 rounded-full bg-gradient-to-b from-amber-300 to-orange-500 shadow-[0_0_12px_rgba(251,191,36,0.6)]"></span>
                         <div>
@@ -164,6 +164,31 @@
                     </div>
                     <p class="mt-4 text-white/90 leading-relaxed [text-shadow:0_1px_6px_rgba(0,0,0,0.4)]">今日も素敵な一日を始めましょう！</p>
                     <p class="text-white/70 text-sm [text-shadow:0_1px_6px_rgba(0,0,0,0.4)]">セブでの学びと生活を、もっと充実させよう。</p>
+                </div> --}}
+
+                <div class="absolute inset-x-0 top-32 -translate-y-1/2 bottom-auto
+                            px-6 sm:px-0
+                            sm:top-auto sm:bottom-0 sm:translate-y-0
+                            sm:pl-16 sm:pr-12
+                            pt-8 sm:pt-12 pb-8 sm:pb-12
+                            sm:max-w-md">
+
+                    <div class="flex items-center justify-center gap-3 sm:justify-start">
+                        <span class="w-1 h-11 sm:h-12 rounded-full bg-gradient-to-b from-amber-300 to-orange-500 shadow-[0_0_12px_rgba(251,191,36,0.6)]"></span>
+                        <div>
+                            <p class="text-amber-300 text-2xl sm:text-3xl leading-none [text-shadow:0_2px_10px_rgba(0,0,0,0.45)]"
+                               style="font-family:'Caveat',cursive;">
+                                Welcome back!
+                            </p>
+                            <h1 class="font-display font-extrabold text-3xl sm:text-4xl leading-tight text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.45)]">
+                                {{ Auth::user()->name }}!
+                            </h1>
+                        </div>
+                    </div>
+                    <div class="text-center sm:text-left">
+                        <p class="mt-2 sm:mt-4 text-white/90 leading-relaxed [text-shadow:0_1px_6px_rgba(0,0,0,0.4)]">今日も素敵な一日を始めましょう！</p>
+                        <p class="text-white/70 text-sm [text-shadow:0_1px_6px_rgba(0,0,0,0.4)]">セブでの学びと生活を、もっと充実させよう。</p>
+                    </div>
                 </div>
 
                 {{-- スマホでは矢印ボタンの代わりに、写真の左右半分をタップ/スワイプで切り替え --}}
@@ -252,12 +277,13 @@
                     </div>
 
                     <div class="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-100 to-sky-50 ring-1 ring-sky-200 flex items-center justify-center mb-5">
-                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2f5fdb" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 11h14"/>
+                        {{-- <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2f5fdb" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"> --}}
+                            {{-- <path d="M5 11h14"/>
                             <path d="M6.5 11a5.5 5.5 0 0111 0"/>
                             <path d="M4 8.5L2.5 7"/>
-                            <path d="M8 15l-.6 1.6M12 15.5v2M16 15l.6 1.6"/>
-                        </svg>
+                            <path d="M8 15l-.6 1.6M12 15.5v2M16 15l.6 1.6"/> --}}
+                        {{-- </svg> --}}
+                        <span class="material-symbols-outlined text-blue-600">shower</span>
                     </div>
                     <p class="relative max-w-[60%] text-xs font-bold text-brand-blue tracking-widest">Shower Information</p>
                     <h3 class="relative max-w-[60%] mt-1 font-bold text-lg text-slate-800">シャワー情報</h3>
@@ -408,10 +434,11 @@
                     </div>
 
                     <div class="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-100 to-amber-50 ring-1 ring-orange-200 flex items-center justify-center mb-5">
-                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                        {{-- <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M4 6a2 2 0 012-2h5.5v15H6a2 2 0 00-2 2V6z"/>
                             <path d="M20 6a2 2 0 00-2-2h-5.5v15H18a2 2 0 012 2V6z"/>
-                        </svg>
+                        </svg> --}}
+                        <span class="material-symbols-outlined text-orange-600">menu_book</span>
                     </div>
                     <p class="relative text-xs font-bold text-orange-600 tracking-widest">English Learning</p>
                     <h3 class="relative mt-1 font-bold text-lg text-slate-800">英語学習</h3>
@@ -447,11 +474,12 @@
                     </div>
 
                     <div class="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-100 to-green-50 ring-1 ring-emerald-200 flex items-center justify-center mb-5">
-                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                        {{-- <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 22v-9"/>
                             <path d="M12 13c-3-1-7-1-9-5 4-1 8 0 9 3"/>
                             <path d="M12 13c3-1 7-1 9-5-4-1-8 0-9 3"/>
-                        </svg>
+                        </svg> --}}
+                        <span class="material-symbols-outlined text-brand-green">psychiatry</span>
                     </div>
                     <p class="relative text-xs font-bold text-brand-green tracking-widest">Study Abroad Info</p>
                     <h3 class="relative mt-1 font-bold text-lg text-slate-800">留学情報</h3>
