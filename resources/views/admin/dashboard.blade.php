@@ -493,9 +493,11 @@
         </div>
 
        <!-- 右カラム：管理者伝言板 -->
-<div class="lg:col-span-1 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between">
-    <div>
-        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+<div class="lg:col-span-1 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 flex flex-col justify-between h-full max-h-full overflow-hidden">
+    <!-- 上部ヘッダー & メッセージ表示領域（カード内で高さを全消費） -->
+    <div class="flex flex-col flex-1 min-h-0">
+        <!-- ヘッダー（高さ固定） -->
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3 shrink-0">
             <div>
                 <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
                     <span class="material-symbols-outlined text-indigo-500 text-base">forum</span>
@@ -505,14 +507,15 @@
             </div>
         </div>
 
-        {{-- 投稿成功時のフラッシュメッセージ表示 --}}
+        {{-- 投稿成功時のフラッシュメッセージ表示（高さ固定） --}}
         @if (session('success'))
-            <div class="mb-3 p-2 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] rounded-lg">
+            <div class="mb-3 p-2 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] rounded-lg shrink-0">
                 {{ session('success') }}
             </div>
         @endif
 
-        <div class="space-y-2 max-h-[260px] overflow-y-auto pr-1">
+        <!-- メッセージ一覧エリア（スクロール対応：h-0 と flex-1 で余白を完全に吸収） -->
+        <div class="space-y-2 flex-1 h-0 overflow-y-auto pr-1">
             @forelse($adminMessages ?? [] as $msg)
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80 space-y-1">
                     <div class="flex items-center justify-between text-[11px]">
@@ -532,9 +535,9 @@
         </div>
     </div>
 
-    <form action="{{ route('admin.messages.store') }}" method="POST" class="mt-3 pt-3 border-t border-slate-100 flex gap-1.5">
+    <!-- 投稿フォーム（下部固定） -->
+    <form action="{{ route('admin.messages.store') }}" method="POST" class="mt-3 pt-3 border-t border-slate-100 flex gap-1.5 shrink-0">
         @csrf
-        {{-- コントローラー側で参照できるリダイレクト先指定 --}}
         <input type="hidden" name="redirect_to" value="admin.dashboard">
 
         <input type="text" name="message" placeholder="伝言を入力..." required
