@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdminMessage;
 use App\Models\Category;
 use App\Models\English\StudyLog;
 use App\Models\MainCategory;
@@ -13,6 +14,7 @@ use App\Models\Shower\ShowerMalfunctionReport;
 use App\Models\Shower\ShowerReport;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -21,7 +23,6 @@ class AdminDashboardController extends Controller
     public function index(): View
     {
         // 1. ユーザー一覧データの整形
-        // ※モーダルで一覧表示するだけの目的のため、全件取得ではなく必要なカラムに絞ってロードしています
         $users = User::withCount(['showerReports', 'posts', 'suggestions'])
             ->with([
                 'showerReports:id,user_id,created_at',
@@ -32,7 +33,6 @@ class AdminDashboardController extends Controller
             ->get()
             ->map(function ($user) {
                 return [
-                    // 基本情報
                     'id'            => $user->id,
                     'name'          => $user->name,
                     'email'         => $user->email,
@@ -48,7 +48,6 @@ class AdminDashboardController extends Controller
                     'active_hours'  => ($user->total_study_time ?? 0) . '時間',
                     'status'        => ($user->is_active ?? true) ? 'active' : 'inactive',
 
-                    // 詳細モーダル用プロパティ
                     'gender'                      => $user->gender ?? '未設定',
                     'graduation_date'             => $user->graduation_date ? $user->graduation_date->format('Y/m/d') : '未設定',
                     'preferred_temperature_label' => $user->preferred_temperature_label ?? '未設定',
@@ -56,13 +55,11 @@ class AdminDashboardController extends Controller
                     'toeic_exam_date'             => $user->toeic_exam_date ? $user->toeic_exam_date->format('Y/m/d') : '未登録',
                     'ielts_exam_date'             => $user->ielts_exam_date ? $user->ielts_exam_date->format('Y/m/d') : '未登録',
 
-                    // 英語学習アクティビティ
                     'total_xp'         => $user->total_xp ?? 0,
                     'study_streak'     => $user->study_streak ?? 0,
                     'total_study_time' => $user->total_study_time ?? 0,
                     'last_study_date'  => $user->last_study_date ? $user->last_study_date->format('Y/m/d') : '未学習',
 
-                    // その他実績（リレーションコレクション）
                     'shower_reports' => $user->showerReports,
                     'posts'          => $user->posts,
                     'suggestions'    => $user->suggestions,
@@ -171,6 +168,9 @@ class AdminDashboardController extends Controller
         // 故障中シャワーの取得
         $brokenShowers = ShowerMalfunctionReport::currentlyBroken();
 
+        // 管理者伝言板の取得（最新10件）
+        $adminMessages = AdminMessage::with('user')->latest()->take(10)->get();
+
         // 5. 留学情報管理タブ用
         $adminMainCategories = MainCategory::orderBy('sort_order')->orderBy('id')->get();
         $subCounts = Category::where('is_hidden', false)
@@ -194,25 +194,53 @@ class AdminDashboardController extends Controller
                 ['title' => 'アクティブユーザー', 'val' => (string)$todayActiveUsersCount, 'unit' => '人', 'sub' => '前日比 ' . ($activeUsersDiff >= 0 ? "+{$activeUsersDiff}" : $activeUsersDiff), 'dot' => 'bg-emerald-500', 'feat' => 'users'],
                 ['title' => '英語学習利用率', 'val' => (string)$dailyEnglishRate, 'unit' => '%', 'sub' => "アクティブ {$todayStudyActiveUsersCount}人", 'dot' => 'bg-yellow-500', 'feat' => 'english'],
                 ['title' => '情報投稿数', 'val' => (string)$todayInfoUpdates, 'unit' => '件', 'sub' => '前日比 ' . ($infoUpdatesDiff >= 0 ? "+{$infoUpdatesDiff}" : $infoUpdatesDiff), 'dot' => 'bg-lime-500', 'feat' => 'info'],
-                ['title' => 'シャワー利用率', 'val' => (string)$dailyShowerRate, 'unit' => '%', 'sub' => "投稿 {$todayShowerUpdates}件", 'dot' => 'bg-sky-500', 'feat' => 'shower'],
+                [
+                    'title' => 'シャワーレビュー数',
+                    'val'   => (string)$todayShowerUpdates,
+                    'unit'  => '件',
+                    'sub'   => "総ユーザー数 {$totalUsersCount}人",
+                    'dot'   => 'bg-sky-500',
+                    'feat'  => 'shower',
+                ],
             ],
             'weekly' => [
                 ['title' => 'WAU (週間アクティブ)', 'val' => (string)$weeklyActiveCount, 'unit' => '人', 'sub' => "アクティブ率 {$wauRate}%", 'dot' => 'bg-emerald-500', 'feat' => 'users'],
                 ['title' => '英語学習利用率', 'val' => (string)$weeklyEnglishRate, 'unit' => '%', 'sub' => "利用人数 {$weeklyEnglishUsers}人", 'dot' => 'bg-yellow-500', 'feat' => 'english'],
                 ['title' => '新規情報投稿数', 'val' => (string)$weeklyPostsCount, 'unit' => '件', 'sub' => '前週比 ' . ($weeklyPostsDiff >= 0 ? "+{$weeklyPostsDiff}" : $weeklyPostsDiff), 'dot' => 'bg-lime-500', 'feat' => 'info'],
-                ['title' => '平均レビュー数/人', 'val' => (string)$weeklyAvgShowerReviews, 'unit' => '件', 'sub' => "総投稿数 {$weeklyShowerCount}件", 'dot' => 'bg-sky-500', 'feat' => 'shower'],
+                [
+                    'title' => '週間シャワーレビュー数',
+                    'val'   => (string)$weeklyShowerCount,
+                    'unit'  => '件',
+                    'sub'   => "総ユーザー数 {$totalUsersCount}人",
+                    'dot'   => 'bg-sky-500',
+                    'feat'  => 'shower',
+                ],
             ],
             'monthly' => [
                 ['title' => 'MAU (月間アクティブ)', 'val' => (string)$monthlyActiveCount, 'unit' => '人', 'sub' => "アクティブ率 {$mauRate}%", 'dot' => 'bg-emerald-500', 'feat' => 'users'],
                 ['title' => '英語学習利用率', 'val' => (string)$monthlyEnglishRate, 'unit' => '%', 'sub' => "利用人数 {$monthlyEnglishUsers}人", 'dot' => 'bg-yellow-500', 'feat' => 'english'],
                 ['title' => '新規情報投稿数', 'val' => (string)$monthlyPostsCount, 'unit' => '件', 'sub' => '前月比 ' . ($monthlyPostsDiff >= 0 ? "+{$monthlyPostsDiff}" : $monthlyPostsDiff), 'dot' => 'bg-lime-500', 'feat' => 'info'],
-                ['title' => '平均レビュー数/人', 'val' => (string)$monthlyAvgShowerReviews, 'unit' => '件', 'sub' => "総投稿数 {$monthlyShowerCount}件", 'dot' => 'bg-sky-500', 'feat' => 'shower'],
+                [
+                    'title' => '月間シャワーレビュー数',
+                    'val'   => (string)$monthlyShowerCount,
+                    'unit'  => '件',
+                    'sub'   => "総ユーザー数 {$totalUsersCount}人",
+                    'dot'   => 'bg-sky-500',
+                    'feat'  => 'shower',
+                ],
             ],
             'yearly' => [
                 ['title' => '年間アクティブ', 'val' => (string)$yearlyActiveCount, 'unit' => '人', 'sub' => "定着率 {$retentionRate}%", 'dot' => 'bg-emerald-500', 'feat' => 'users'],
                 ['title' => '英語学習利用率', 'val' => (string)$yearlyEnglishRate, 'unit' => '%', 'sub' => "利用人数 {$yearlyEnglishUsers}人", 'dot' => 'bg-yellow-500', 'feat' => 'english'],
                 ['title' => '総情報投稿数', 'val' => (string)$yearlyPostsCount, 'unit' => '件', 'sub' => '年次累計データ', 'dot' => 'bg-lime-500', 'feat' => 'info'],
-                ['title' => '平均レビュー数/人', 'val' => (string)$yearlyAvgShowerReviews, 'unit' => '件', 'sub' => "総投稿数 {$yearlyShowerCount}件", 'dot' => 'bg-sky-500', 'feat' => 'shower'],
+                [
+                    'title' => '年間シャワーレビュー数',
+                    'val'   => (string)$yearlyShowerCount,
+                    'unit'  => '件',
+                    'sub'   => "総ユーザー数 {$totalUsersCount}人",
+                    'dot'   => 'bg-sky-500',
+                    'feat'  => 'shower',
+                ],
             ],
         ];
 
@@ -249,7 +277,7 @@ class AdminDashboardController extends Controller
         // 8. ビューで未定義エラーになりやすい変数のデフォルト値補填
         $defaults = [
             'categoryFormMode'     => 'addMain',
-            'dailyCards'           => [],
+            'dailyCards'           => $periods['daily'],
             'featureAnalyticsData' => $featureAnalyticsData,
             'periods'              => $periods,
             'categoryFormHasError' => session('categoryFormHasError', false),
@@ -259,6 +287,7 @@ class AdminDashboardController extends Controller
             compact(
                 'users',
                 'notices',
+                'adminMessages',
                 'adminMainCategories',
                 'adminCategories',
                 'brokenShowers'
@@ -267,6 +296,26 @@ class AdminDashboardController extends Controller
             $analytics,
             $defaults
         ));
+    }
+
+    /**
+     * 管理者伝言板の保存処理
+     */
+    public function storeAdminMessage(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'message' => 'required|string|max:1000',
+            'user_id' => 'nullable|exists:users,id',
+        ]);
+
+        // DB保存処理
+        AdminMessage::create([
+            'user_id' => $validated['user_id'] ?? auth()->id(),
+            'message' => $validated['message'],
+        ]);
+
+        // 明示的にダッシュボード画面（GET）にリダイレクト
+        return redirect()->route('admin.dashboard')->with('success', '伝言を投稿しました。');
     }
 
     /**

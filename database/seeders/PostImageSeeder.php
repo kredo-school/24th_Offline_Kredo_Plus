@@ -24,7 +24,6 @@ class PostImageSeeder extends Seeder
         'cafe/LINE_ALBUM_PLUS_260902_8.jpg' => ['title' => 'cafe', 'description' => null],
         'cafe/LINE_ALBUM_cafe_260902_1.jpg' => ['title' => 'cafe', 'description' => null],
         'cafe/LINE_ALBUM_cafe_260902_10.jpg' => ['title' => 'cafe', 'description' => null],
-        'cafe/LINE_ALBUM_cafe_260902_11.jpg' => ['title' => 'cafe', 'description' => null],
         'cafe/LINE_ALBUM_cafe_260902_12.jpg' => ['title' => 'cafe', 'description' => null],
         'cafe/LINE_ALBUM_cafe_260902_2.jpg' => ['title' => 'cafe', 'description' => null],
         'cafe/LINE_ALBUM_cafe_260902_3.jpg' => ['title' => 'cafe', 'description' => null],
@@ -37,7 +36,6 @@ class PostImageSeeder extends Seeder
         // ---- hospital ----
         // ---- it-park ----
         'it-park/2474B8C0-4788-4813-BEA4-660B61FC6F64.jpg' => ['title' => 'it-park', 'description' => null],
-        'it-park/386F9180-43D3-4F9D-8A19-184DFE5946BC.png' => ['title' => 'it-park', 'description' => null],
         'it-park/427F8089-ECA3-485A-BA18-BAB4612602F9.jpg' => ['title' => 'it-park', 'description' => null],
         'it-park/LINE_ALBUM_ITpark_260902_1.jpg' => ['title' => 'it-park', 'description' => null],
         'it-park/LINE_ALBUM_ITpark_260902_2.jpg' => ['title' => 'it-park', 'description' => null],
@@ -57,12 +55,9 @@ class PostImageSeeder extends Seeder
         'money-exchange/LINE_ALBUM_Other_260902_2.jpg' => ['title' => 'money-exchange', 'description' => null],
         'money-exchange/LINE_ALBUM_Other_260902_3.jpg' => ['title' => 'money-exchange', 'description' => null],
         // ---- north-area ----
-        'north-area/LINE_ALBUM_R80902_260902_10.jpg' => ['title' => 'north-area', 'description' => null],
-        'north-area/LINE_ALBUM_R80902_260902_16.jpg' => ['title' => 'north-area', 'description' => null],
         'north-area/LINE_ALBUM_R80902_260902_2.jpg' => ['title' => 'north-area', 'description' => null],
         'north-area/LINE_ALBUM_R80902_260902_6.jpg' => ['title' => 'north-area', 'description' => null],
         'north-area/LINE_ALBUM_R80902_260902_7.jpg' => ['title' => 'north-area', 'description' => null],
-        'north-area/LINE_ALBUM_R80902_260902_8.jpg' => ['title' => 'north-area', 'description' => null],
         // ---- others ----
         'others/LINE_ALBUM_Other_260902_10.jpg' => ['title' => 'others', 'description' => null],
         'others/LINE_ALBUM_Other_260902_4.jpg' => ['title' => 'others', 'description' => null],
@@ -92,7 +87,6 @@ class PostImageSeeder extends Seeder
         // ---- south-area ----
         'south-area/3884F699-1775-49DD-8C6C-ADCB09E16A5E.jpg' => ['title' => 'south-area', 'description' => null],
         'south-area/8500150D-95F8-46B2-BECE-C06991D555FF.jpg' => ['title' => 'south-area', 'description' => null],
-        'south-area/LINE_ALBUM_R80902_260902_1.jpg' => ['title' => 'south-area', 'description' => null],
         'south-area/LINE_ALBUM_R80902_260902_11.jpg' => ['title' => 'south-area', 'description' => null],
         'south-area/LINE_ALBUM_R80902_260902_12.jpg' => ['title' => 'south-area', 'description' => null],
         'south-area/LINE_ALBUM_R80902_260902_13.jpg' => ['title' => 'south-area', 'description' => null],
