@@ -291,6 +291,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::post('/notices', [AdminDashboardController::class, 'storeNotice'])->name('notices.store');
     Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
+    
+    
+    // ── ユーザー管理ルート ──
+    Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
+    Route::patch('/users/{user}', [AdminUserController::class, 'update'])->name('users.update'); // ★追加: 更新
+    Route::patch('/users/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('users.toggle-status'); // ★追加: 停止/再開
+    Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy'); // ★追加: 削除
 
     // 管理者メッセージ機能
     Route::get('/messages', function () {

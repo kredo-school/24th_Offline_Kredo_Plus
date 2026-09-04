@@ -548,329 +548,504 @@
 </div>
 
         <!-- ② ユーザー管理セクション -->
-        <div x-show="currentTab === 'users'" x-cloak
-             x-data="userManagementData({{ \Illuminate\Support\Js::from($users ?? []) }})"
-             x-init="if ({{ session('accountCreated') || $errors->any() ? 'true' : 'false' }}) { isCreateModalOpen = true; }"
-             @open-user-modal.window="openDetail($event.detail)">
+<div x-show="currentTab === 'users'" x-cloak
+     x-data="userManagementData({{ \Illuminate\Support\Js::from($users ?? []) }})"
+     x-init="if ({{ session('accountCreated') || $errors->any() ? 'true' : 'false' }}) { isCreateModalOpen = true; }"
+     @open-user-modal.window="openDetail($event.detail)">
 
-            <div class="flex flex-col gap-4 mb-6 xl:flex-row xl:items-center xl:justify-between">
-                <div>
-                    <h2 class="text-2xl font-bold text-slate-800">ユーザー管理</h2>
-                    <p class="mt-1 text-sm text-slate-500">登録留学生・管理者の利用状況やアクティビティを一元管理します。</p>
+    <div class="flex flex-col gap-4 mb-6 xl:flex-row xl:items-center xl:justify-between">
+        <div>
+            <h2 class="text-2xl font-bold text-slate-800">ユーザー管理</h2>
+            <p class="mt-1 text-sm text-slate-500">登録留学生・管理者の利用状況やアクティビティを一元管理します。</p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div class="flex flex-wrap items-center gap-2 bg-white p-2 sm:p-2.5 rounded-2xl border border-slate-200/80 shadow-sm">
+                <div class="inline-flex rounded-lg bg-slate-100/80 p-1 text-xs font-semibold text-slate-600">
+                    <button type="button" @click="selectedRole = 'all'; currentPage = 1"
+                            :class="selectedRole === 'all' ? 'bg-white text-slate-900 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700'"
+                            class="rounded-md px-3 py-1.5 transition">すべて</button>
+                    <button type="button" @click="selectedRole = 'student'; currentPage = 1"
+                            :class="selectedRole === 'student' ? 'bg-white text-slate-900 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700'"
+                            class="rounded-md px-3 py-1.5 transition">学生</button>
+                    <button type="button" @click="selectedRole = 'admin'; currentPage = 1"
+                            :class="selectedRole === 'admin' ? 'bg-white text-slate-900 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700'"
+                            class="rounded-md px-3 py-1.5 transition">管理者</button>
                 </div>
 
-                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-                    <div class="flex flex-wrap items-center gap-2 bg-white p-2 sm:p-2.5 rounded-2xl border border-slate-200/80 shadow-sm">
-                        <div class="inline-flex rounded-lg bg-slate-100/80 p-1 text-xs font-semibold text-slate-600">
-                            <button type="button" @click="selectedRole = 'all'; currentPage = 1"
-                                    :class="selectedRole === 'all' ? 'bg-white text-slate-900 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700'"
-                                    class="rounded-md px-3 py-1.5 transition">すべて</button>
-                            <button type="button" @click="selectedRole = 'student'; currentPage = 1"
-                                    :class="selectedRole === 'student' ? 'bg-white text-slate-900 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700'"
-                                    class="rounded-md px-3 py-1.5 transition">学生</button>
-                            <button type="button" @click="selectedRole = 'admin'; currentPage = 1"
-                                    :class="selectedRole === 'admin' ? 'bg-white text-slate-900 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700'"
-                                    class="rounded-md px-3 py-1.5 transition">管理者</button>
-                        </div>
+                <div class="relative min-w-[160px] flex-1 sm:flex-initial">
+                    <input type="text" x-model="searchQuery" @input="currentPage = 1" placeholder="名前・メールで検索..." 
+                           class="w-full rounded-lg border border-slate-200 bg-slate-50/50 py-1.5 pl-8 pr-3 text-xs text-slate-700 placeholder:text-slate-400 focus:bg-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 text-slate-400">
+                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
 
-                        <div class="relative min-w-[160px] flex-1 sm:flex-initial">
-                            <input type="text" x-model="searchQuery" @input="currentPage = 1" placeholder="名前・メールで検索..." 
-                                   class="w-full rounded-lg border border-slate-200 bg-slate-50/50 py-1.5 pl-8 pr-3 text-xs text-slate-700 placeholder:text-slate-400 focus:bg-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition">
-                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 text-slate-400">
-                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                </svg>
-                            </div>
-                        </div>
+                <div class="relative shrink-0">
+                    <select x-model="sortBy" @change="currentPage = 1" 
+                            class="appearance-none rounded-lg border border-slate-200 bg-white py-1.5 pl-3 pr-7 text-xs font-medium text-slate-700 hover:border-slate-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer transition">
+                        <option value="created_desc">作成日：新しい順</option>
+                        <option value="created_asc">作成日：古い順</option>
+                        <option value="active_desc">最終アクセス：最近順</option>
+                        <option value="active_asc">最終アクセス：過去順</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-slate-400">
+                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
 
-                        <div class="relative shrink-0">
-                            <select x-model="sortBy" @change="currentPage = 1" 
-                                    class="appearance-none rounded-lg border border-slate-200 bg-white py-1.5 pl-3 pr-7 text-xs font-medium text-slate-700 hover:border-slate-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer transition">
-                                <option value="created_desc">作成日：新しい順</option>
-                                <option value="created_asc">作成日：古い順</option>
-                                <option value="active_desc">最終アクセス：最近順</option>
-                                <option value="active_asc">最終アクセス：過去順</option>
+            <button type="button" @click="isCreateModalOpen = true" 
+                    class="shrink-0 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition shadow-sm flex items-center justify-center gap-2 h-full">
+                <span>＋</span> 新規アカウント発行
+            </button>
+        </div>
+    </div>
+
+    <!-- ユーザー一覧テーブル -->
+    <div class="mb-10 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse text-left text-sm">
+                <thead>
+                    <tr class="border-b border-slate-200 bg-slate-50 text-xs font-bold uppercase text-slate-500">
+                        <th class="py-3.5 px-4">ユーザー</th>
+                        <th class="py-3.5 px-4">最終アクセス</th>
+                        <th class="py-3.5 px-4">権限</th>
+                        <th class="py-3.5 px-4">状態</th>
+                        <th class="py-3.5 px-4">所属寮</th>
+                        <th class="py-3.5 px-4">作成日</th>
+                        <th class="py-3.5 px-4 text-right">操作</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
+                    <template x-for="(user, index) in paginatedUsers" :key="user.id || index">
+                        <tr class="transition hover:bg-slate-50/80">
+                            <td class="py-3.5 px-4">
+                                <a :href="`/profile/${user.id}`" class="flex items-center gap-3 group hover:opacity-80 transition">
+                                    <div class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-800 text-xs font-bold text-white group-hover:ring-2 group-hover:ring-indigo-500">
+                                        <template x-if="user.profile_photo_url || user.avatar_url">
+                                            <img :src="user.profile_photo_url || user.avatar_url" :alt="user.name" class="h-full w-full object-cover">
+                                        </template>
+                                        <template x-if="!user.profile_photo_url && !user.avatar_url">
+                                            <span x-text="user.name ? user.name.charAt(0) : '?'"></span>
+                                        </template>
+                                    </div>
+                                    <div class="truncate">
+                                        <p class="font-bold leading-tight text-slate-800 group-hover:text-indigo-600 transition" x-text="user.name || '名前未設定'"></p>
+                                        <p class="mt-0.5 text-xs text-slate-400" x-text="user.email || ''"></p>
+                                    </div>
+                                </a>
+                            </td>
+                            <td class="py-3.5 px-4 text-xs text-slate-500 whitespace-nowrap" x-text="user.last_active || user.last_login_at || '-'"></td>
+                            <td class="py-3.5 px-4 text-xs font-semibold text-slate-700 whitespace-nowrap" x-text="user.role === 'admin' || user.role_id === 1 ? '管理者' : '学生'"></td>
+                            <td class="py-3.5 px-4 whitespace-nowrap">
+                                <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold"
+                                      :class="user.is_active === false || user.status === 'inactive' ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600'">
+                                    <span class="h-1.5 w-1.5 rounded-full"
+                                          :class="user.is_active === false || user.status === 'inactive' ? 'bg-rose-500' : 'bg-emerald-500'"></span>
+                                    <span x-text="user.is_active === false || user.status === 'inactive' ? '停止中' : '正常'"></span>
+                                </span>
+                            </td>
+                            <td class="py-3.5 px-4">
+                                <p class="text-xs font-semibold text-slate-700" x-text="user.dorm || '未設定'"></p>
+                                <p class="text-[11px] text-slate-400" x-text="user.course || ''"></p>
+                            </td>
+                            <td class="py-3.5 px-4 text-xs font-semibold text-slate-600 whitespace-nowrap" x-text="user.registered_at || user.created_at || '-'"></td>
+                            <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                                <button type="button" @click="openDetail(user)"
+                                        class="inline-flex items-center rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:bg-slate-200">
+                                    詳細
+                                </button>
+                            </td>
+                        </tr>
+                    </template>
+
+                    <template x-if="paginatedUsers.length === 0">
+                        <tr>
+                            <td colspan="7" class="py-12 text-center text-xs text-slate-400">
+                                条件に一致するユーザーが見つかりませんでした。
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flex flex-col gap-3 border-t border-slate-100 bg-slate-50/50 px-4 py-3 text-xs font-medium text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                全 <span class="font-bold text-slate-800" x-text="filteredUsers.length"></span> 件中 
+                <span class="font-bold text-slate-800" x-text="filteredUsers.length > 0 ? (currentPage - 1) * perPage + 1 : 0"></span> - 
+                <span class="font-bold text-slate-800" x-text="Math.min(currentPage * perPage, filteredUsers.length)"></span> 件を表示
+            </div>
+
+            <div class="flex items-center gap-1.5 self-end sm:self-auto">
+                <button type="button" @click="prevPage()" :disabled="currentPage === 1"
+                        :class="currentPage === 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-slate-200 text-slate-700'"
+                        class="rounded-lg bg-slate-100 px-3 py-1.5 font-bold transition">前へ</button>
+                <span class="px-2 font-bold text-slate-700">
+                    <span x-text="currentPage"></span> / <span x-text="totalPages"></span>
+                </span>
+                <button type="button" @click="nextPage()" :disabled="currentPage >= totalPages"
+                        :class="currentPage >= totalPages ? 'opacity-40 cursor-not-allowed' : 'hover:bg-slate-200 text-slate-700'"
+                        class="rounded-lg bg-slate-100 px-3 py-1.5 font-bold transition">次へ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- モーダル: 新規作成 -->
+    <div x-show="isCreateModalOpen" x-cloak class="fixed inset-0 z-[9999] overflow-y-auto" role="dialog" aria-modal="true">
+        <div x-show="isCreateModalOpen" @click="isCreateModalOpen = false" 
+             class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-6">
+            <div x-show="isCreateModalOpen" 
+                 class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white p-6 text-left shadow-xl transition-all sm:p-8">
+                <button type="button" @click="isCreateModalOpen = false" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 transition">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                <div class="mb-6">
+                    <h3 class="text-xl font-bold text-slate-800">新規アカウント作成</h3>
+                    <p class="mt-1 text-sm text-slate-500">管理者が新規アカウントを発行します。</p>
+                </div>
+
+                <div class="space-y-4">
+                    @if (session('accountCreated'))
+                        <div class="space-y-1 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-xs font-bold text-emerald-800">
+                            <p>✅ アカウントを作成しました。以下の情報を学生にお伝えください。</p>
+                            <p>ID（メールアドレス）: {{ session('accountCreated')['email'] }}</p>
+                            <p>初期パスワード: {{ session('accountCreated')['password'] }}</p>
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="space-y-1 rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-bold text-rose-700">
+                            @foreach ($errors->all() as $error)
+                                <p>{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('admin.users.store') }}" class="space-y-4">
+                        @csrf
+                        <div>
+                            <label class="mb-1.5 block text-xs font-bold text-slate-700">氏名 <span class="text-rose-500">*</span></label>
+                            <input type="text" name="name" value="{{ old('name') }}" required
+                                   class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+                        </div>
+                        <div>
+                            <label class="mb-1.5 block text-xs font-bold text-slate-700">メールアドレス <span class="text-rose-500">*</span></label>
+                            <input type="email" name="email" value="{{ old('email') }}" required
+                                   class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+                        </div>
+                        <div>
+                            <label class="mb-1.5 block text-xs font-bold text-slate-700">初期パスワード（8文字以上） <span class="text-rose-500">*</span></label>
+                            <input type="text" name="password" required minlength="8"
+                                   class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+                        </div>
+                        <div>
+                            <label class="mb-1.5 block text-xs font-bold text-slate-700">権限 <span class="text-rose-500">*</span></label>
+                            <select name="role" required class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+                                <option value="student" {{ old('role') == 'student' || old('role') == 'user' ? 'selected' : '' }}>一般ユーザー（学生）</option>
+                                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>管理者</option>
                             </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-slate-400">
-                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </div>
                         </div>
-                    </div>
-
-                    <button type="button" @click="isCreateModalOpen = true" 
-                            class="shrink-0 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition shadow-sm flex items-center justify-center gap-2 h-full">
-                        <span>＋</span> 新規アカウント発行
-                    </button>
-                </div>
-            </div>
-
-            <!-- ユーザー一覧テーブル -->
-            <div class="mb-10 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                <div class="overflow-x-auto">
-                    <table class="w-full border-collapse text-left text-sm">
-                        <thead>
-                            <tr class="border-b border-slate-200 bg-slate-50 text-xs font-bold uppercase text-slate-500">
-                                <th class="py-3.5 px-4">ユーザー</th>
-                                <th class="py-3.5 px-4">最終アクセス</th>
-                                <th class="py-3.5 px-4">権限</th>
-                                <th class="py-3.5 px-4">状態</th>
-                                <th class="py-3.5 px-4">所属寮</th>
-                                <th class="py-3.5 px-4">作成日</th>
-                                <th class="py-3.5 px-4 text-right">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
-                            <template x-for="(user, index) in paginatedUsers" :key="user.id || index">
-                                <tr class="transition hover:bg-slate-50/80">
-                                    <td class="py-3.5 px-4">
-                                        <a :href="`/profile/${user.id}`" class="flex items-center gap-3 group hover:opacity-80 transition">
-                                            <div class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-800 text-xs font-bold text-white group-hover:ring-2 group-hover:ring-indigo-500">
-                                                <template x-if="user.profile_photo_url || user.avatar_url">
-                                                    <img :src="user.profile_photo_url || user.avatar_url" :alt="user.name" class="h-full w-full object-cover">
-                                                </template>
-                                                <template x-if="!user.profile_photo_url && !user.avatar_url">
-                                                    <span x-text="user.name ? user.name.charAt(0) : '?'"></span>
-                                                </template>
-                                            </div>
-                                            <div class="truncate">
-                                                <p class="font-bold leading-tight text-slate-800 group-hover:text-indigo-600 transition" x-text="user.name || '名前未設定'"></p>
-                                                <p class="mt-0.5 text-xs text-slate-400" x-text="user.email || ''"></p>
-                                            </div>
-                                        </a>
-                                    </td>
-                                    <td class="py-3.5 px-4 text-xs text-slate-500 whitespace-nowrap" x-text="user.last_active || user.last_login_at || '-'"></td>
-                                    <td class="py-3.5 px-4 text-xs font-semibold text-slate-700 whitespace-nowrap" x-text="user.role === 'admin' || user.role_id === 1 ? '管理者' : '学生'"></td>
-                                    <td class="py-3.5 px-4 whitespace-nowrap">
-                                        <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold"
-                                              :class="user.status === 'inactive' || user.is_active === false ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600'">
-                                            <span class="h-1.5 w-1.5 rounded-full"
-                                                  :class="user.status === 'inactive' || user.is_active === false ? 'bg-rose-500' : 'bg-emerald-500'"></span>
-                                            <span x-text="user.status === 'inactive' || user.is_active === false ? '停止中' : '正常'"></span>
-                                        </span>
-                                    </td>
-                                    <td class="py-3.5 px-4">
-                                        <p class="text-xs font-semibold text-slate-700" x-text="user.dorm || '未設定'"></p>
-                                        <p class="text-[11px] text-slate-400" x-text="user.course || ''"></p>
-                                    </td>
-                                    <td class="py-3.5 px-4 text-xs font-semibold text-slate-600 whitespace-nowrap" x-text="user.registered_at || user.created_at || '-'"></td>
-                                    <td class="py-3.5 px-4 text-right whitespace-nowrap">
-                                        <button type="button" @click="openDetail(user)"
-                                                class="inline-flex items-center rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:bg-slate-200">
-                                            詳細
-                                        </button>
-                                    </td>
-                                </tr>
-                            </template>
-
-                            <template x-if="paginatedUsers.length === 0">
-                                <tr>
-                                    <td colspan="7" class="py-12 text-center text-xs text-slate-400">
-                                        条件に一致するユーザーが見つかりませんでした。
-                                    </td>
-                                </tr>
-                            </template>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="flex flex-col gap-3 border-t border-slate-100 bg-slate-50/50 px-4 py-3 text-xs font-medium text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        全 <span class="font-bold text-slate-800" x-text="filteredUsers.length"></span> 件中 
-                        <span class="font-bold text-slate-800" x-text="filteredUsers.length > 0 ? (currentPage - 1) * perPage + 1 : 0"></span> - 
-                        <span class="font-bold text-slate-800" x-text="Math.min(currentPage * perPage, filteredUsers.length)"></span> 件を表示
-                    </div>
-
-                    <div class="flex items-center gap-1.5 self-end sm:self-auto">
-                        <button type="button" @click="prevPage()" :disabled="currentPage === 1"
-                                :class="currentPage === 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-slate-200 text-slate-700'"
-                                class="rounded-lg bg-slate-100 px-3 py-1.5 font-bold transition">前へ</button>
-                        <span class="px-2 font-bold text-slate-700">
-                            <span x-text="currentPage"></span> / <span x-text="totalPages"></span>
-                        </span>
-                        <button type="button" @click="nextPage()" :disabled="currentPage >= totalPages"
-                                :class="currentPage >= totalPages ? 'opacity-40 cursor-not-allowed' : 'hover:bg-slate-200 text-slate-700'"
-                                class="rounded-lg bg-slate-100 px-3 py-1.5 font-bold transition">次へ</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- モーダル: 新規作成 -->
-            <div x-show="isCreateModalOpen" x-cloak class="fixed inset-0 z-[9999] overflow-y-auto" role="dialog" aria-modal="true">
-                <div x-show="isCreateModalOpen" @click="isCreateModalOpen = false" 
-                     class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
-                <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-6">
-                    <div x-show="isCreateModalOpen" 
-                         class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white p-6 text-left shadow-xl transition-all sm:p-8">
-                        <button type="button" @click="isCreateModalOpen = false" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 transition">
-                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                        <div class="mb-6">
-                            <h3 class="text-xl font-bold text-slate-800">新規アカウント作成</h3>
-                            <p class="mt-1 text-sm text-slate-500">管理者が新規アカウントを発行します。</p>
+                        <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
+                            <button type="button" @click="isCreateModalOpen = false" class="rounded-xl border border-slate-200 px-5 py-2.5 text-xs font-bold text-slate-600 transition hover:bg-slate-50">キャンセル</button>
+                            <button type="submit" class="rounded-xl bg-slate-900 py-2.5 px-6 text-xs font-bold text-white shadow-md transition hover:bg-slate-800">アカウントを作成する</button>
                         </div>
-
-                        <div class="space-y-4">
-                            @if (session('accountCreated'))
-                                <div class="space-y-1 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-xs font-bold text-emerald-800">
-                                    <p>✅ アカウントを作成しました。以下の情報を学生にお伝えください。</p>
-                                    <p>ID（メールアドレス）: {{ session('accountCreated')['email'] }}</p>
-                                    <p>初期パスワード: {{ session('accountCreated')['password'] }}</p>
-                                </div>
-                            @endif
-
-                            @if ($errors->any())
-                                <div class="space-y-1 rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-bold text-rose-700">
-                                    @foreach ($errors->all() as $error)
-                                        <p>{{ $error }}</p>
-                                    @endforeach
-                                </div>
-                            @endif
-
-                            <form method="POST" action="{{ route('admin.users.store') }}" class="space-y-4">
-                                @csrf
-                                <div>
-                                    <label class="mb-1.5 block text-xs font-bold text-slate-700">氏名 <span class="text-rose-500">*</span></label>
-                                    <input type="text" name="name" value="{{ old('name') }}" required
-                                           class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
-                                </div>
-                                <div>
-                                    <label class="mb-1.5 block text-xs font-bold text-slate-700">メールアドレス <span class="text-rose-500">*</span></label>
-                                    <input type="email" name="email" value="{{ old('email') }}" required
-                                           class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
-                                </div>
-                                <div>
-                                    <label class="mb-1.5 block text-xs font-bold text-slate-700">初期パスワード（8文字以上） <span class="text-rose-500">*</span></label>
-                                    <input type="text" name="password" required minlength="8"
-                                           class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
-                                </div>
-                                <div>
-                                    <label class="mb-1.5 block text-xs font-bold text-slate-700">権限 <span class="text-rose-500">*</span></label>
-                                    <select name="role" required class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
-                                        <option value="student" {{ old('role') == 'student' || old('role') == 'user' ? 'selected' : '' }}>一般ユーザー（学生）</option>
-                                        <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>管理者</option>
-                                    </select>
-                                </div>
-                                <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
-                                    <button type="button" @click="isCreateModalOpen = false" class="rounded-xl border border-slate-200 px-5 py-2.5 text-xs font-bold text-slate-600 transition hover:bg-slate-50">キャンセル</button>
-                                    <button type="submit" class="rounded-xl bg-slate-900 py-2.5 px-6 text-xs font-bold text-white shadow-md transition hover:bg-slate-800">アカウントを作成する</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- モーダル: ユーザー詳細 -->
-            <div x-show="detailModalOpen" x-cloak class="fixed inset-0 z-[9999] overflow-y-auto" role="dialog" aria-modal="true">
-                <div x-show="detailModalOpen" @click="detailModalOpen = false" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
-                <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-6">
-                    <div x-show="detailModalOpen" class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white p-6 text-left shadow-xl transition-all sm:p-8">
-                        <button type="button" @click="detailModalOpen = false" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 transition">
-                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-
-                        <template x-if="selectedUser">
-                            <div class="space-y-6">
-                                <div class="flex items-center gap-4 border-b border-slate-100 pb-5">
-                                    <div class="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-800 text-xl font-bold text-white shadow-md">
-                                        <template x-if="selectedUser.avatar_url || selectedUser.avatar">
-                                            <img :src="selectedUser.avatar_url || selectedUser.avatar" :alt="selectedUser.name" class="h-full w-full object-cover">
-                                        </template>
-                                        <template x-if="!selectedUser.avatar_url && !selectedUser.avatar">
-                                            <span x-text="selectedUser.name ? selectedUser.name.charAt(0) : '?'"></span>
-                                        </template>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex items-center gap-2">
-                                            <h3 class="text-xl font-bold text-slate-800 truncate" x-text="selectedUser.name || '名前未設定'"></h3>
-                                            <span class="rounded-md px-2 py-0.5 text-[10px] font-bold"
-                                                  :class="selectedUser.role === 'admin' || selectedUser.role_id === 1 ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600'"
-                                                  x-text="selectedUser.role === 'admin' || selectedUser.role_id === 1 ? '管理者' : '一般'"></span>
-                                        </div>
-                                        <p class="text-xs text-slate-500 truncate mt-0.5" x-text="selectedUser.email || '-'"></p>
-                                        <p class="text-[10px] text-slate-400 mt-0.5">ユーザーID: <span x-text="selectedUser.id"></span></p>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">基本プロパティ</h4>
-                                    <div class="grid grid-cols-2 gap-3 text-xs">
-                                        <div class="rounded-xl bg-slate-50 p-3">
-                                            <span class="block text-slate-400 mb-0.5">性別</span>
-                                            <span class="font-bold text-slate-700" x-text="selectedUser.gender || '未設定'"></span>
-                                        </div>
-                                        <div class="rounded-xl bg-slate-50 p-3">
-                                            <span class="block text-slate-400 mb-0.5">卒業予定日</span>
-                                            <span class="font-bold text-slate-700" x-text="selectedUser.graduation_date || '未設定'"></span>
-                                        </div>
-                                        <div class="rounded-xl bg-slate-50 p-3">
-                                            <span class="block text-slate-400 mb-0.5">TOEIC 試験予定日</span>
-                                            <span class="font-bold text-slate-700" x-text="selectedUser.toeic_exam_date || '未登録'"></span>
-                                        </div>
-                                        <div class="rounded-xl bg-slate-50 p-3">
-                                            <span class="block text-slate-400 mb-0.5">IELTS 試験予定日</span>
-                                            <span class="font-bold text-slate-700" x-text="selectedUser.ielts_exam_date || '未登録'"></span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">英語学習アクティビティ</h4>
-                                    <div class="grid grid-cols-3 gap-3 mb-3">
-                                        <div class="rounded-xl bg-indigo-50 p-3 text-indigo-900">
-                                            <span class="block text-[10px] text-indigo-500 font-bold">獲得 Total XP</span>
-                                            <span class="text-base font-extrabold" x-text="(selectedUser.total_xp || 0).toLocaleString() + ' XP'"></span>
-                                        </div>
-                                        <div class="rounded-xl bg-amber-50 p-3 text-amber-900">
-                                            <span class="block text-[10px] text-amber-500 font-bold">連続学習 Streak</span>
-                                            <span class="text-base font-extrabold" x-text="(selectedUser.study_streak || 0) + ' 日'"></span>
-                                        </div>
-                                        <div class="rounded-xl bg-emerald-50 p-3 text-emerald-900">
-                                            <span class="block text-[10px] text-emerald-500 font-bold">総学習時間</span>
-                                            <span class="text-base font-extrabold" x-text="Math.floor((selectedUser.total_study_time || 0) / 60) + ' 時間'"></span>
-                                        </div>
-                                    </div>
-                                    <div class="flex justify-between items-center rounded-xl bg-slate-50 px-3 py-2.5 text-xs">
-                                        <span class="text-slate-500 font-medium">最終学習日</span>
-                                        <span class="font-bold text-slate-800" x-text="selectedUser.last_study_date || '未学習'"></span>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">その他実績</h4>
-                                    <div class="divide-y divide-slate-100 text-xs">
-                                        <div class="flex justify-between py-2">
-                                            <span class="text-slate-500">シャワー利用レポート件数</span>
-                                            <span class="font-bold text-slate-800" x-text="selectedUser.shower_reports ? selectedUser.shower_reports.length : 0"></span>
-                                        </div>
-                                        <div class="flex justify-between py-2">
-                                            <span class="text-slate-500">留学情報投稿数</span>
-                                            <span class="font-bold text-slate-800" x-text="selectedUser.posts ? selectedUser.posts.length : 0"></span>
-                                        </div>
-                                        <div class="flex justify-between py-2">
-                                            <span class="text-slate-500">目安箱への投函数</span>
-                                            <span class="font-bold text-slate-800" x-text="selectedUser.suggestions ? selectedUser.suggestions.length : 0"></span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="pt-2 flex justify-end">
-                                    <button type="button" @click="detailModalOpen = false" class="rounded-xl bg-slate-100 px-5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-200 transition">
-                                        閉じる
-                                    </button>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- モーダル: ユーザー詳細 -->
+    <div x-show="detailModalOpen" x-cloak class="fixed inset-0 z-[9999] overflow-y-auto" role="dialog" aria-modal="true">
+        <div x-show="detailModalOpen" @click="detailModalOpen = false" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-6">
+            <div x-show="detailModalOpen" class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white p-6 text-left shadow-xl transition-all sm:p-8">
+                <button type="button" @click="detailModalOpen = false" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 transition">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+
+                <template x-if="selectedUser">
+                    <div class="space-y-6">
+                        <!-- ヘッダー情報 -->
+                        <div class="flex items-center gap-4 border-b border-slate-100 pb-5">
+                            <div class="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-800 text-xl font-bold text-white shadow-md">
+                                <template x-if="selectedUser.avatar_url || selectedUser.avatar">
+                                    <img :src="selectedUser.avatar_url || selectedUser.avatar" :alt="selectedUser.name" class="h-full w-full object-cover">
+                                </template>
+                                <template x-if="!selectedUser.avatar_url && !selectedUser.avatar">
+                                    <span x-text="selectedUser.name ? selectedUser.name.charAt(0) : '?'"></span>
+                                </template>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-xl font-bold text-slate-800 truncate" x-text="selectedUser.name || '名前未設定'"></h3>
+                                    <span class="rounded-md px-2 py-0.5 text-[10px] font-bold"
+                                          :class="selectedUser.role === 'admin' || selectedUser.role_id === 1 ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600'"
+                                          x-text="selectedUser.role === 'admin' || selectedUser.role_id === 1 ? '管理者' : '一般'"></span>
+                                </div>
+                                <p class="text-xs text-slate-500 truncate mt-0.5" x-text="selectedUser.email || '-'"></p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">ユーザーID: <span x-text="selectedUser.id"></span></p>
+                            </div>
+                        </div>
+
+                        <!-- 基本プロパティ（他カードと同じ背景色 bg-slate-50 に統一） -->
+<div>
+    <div class="flex items-center justify-between mb-3">
+        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">基本プロパティ</h4>
+        <span class="text-[10px] text-slate-400">※タップして切り替え後「更新」で保存</span>
+    </div>
+    <div class="grid grid-cols-2 gap-3 text-xs">
+        <!-- 性別・所属寮カード -->
+        <button type="button" @click="toggleGenderAndDorm()" 
+                class="rounded-xl bg-slate-50 p-3 text-left transition border border-transparent hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+            <div class="flex items-center justify-between">
+                <span class="block text-slate-400 text-[10px]">性別 / 所属寮</span>
+                <span class="text-[10px] font-bold text-slate-500 bg-white px-1.5 py-0.5 rounded border border-slate-200">切替 ↺</span>
+            </div>
+            <span class="font-bold text-slate-700 text-sm block mt-1" x-text="editGender === 'female' ? '女性（女子寮）' : '男性（男子寮）'"></span>
+        </button>
+
+        <div class="rounded-xl bg-slate-50 p-3">
+            <span class="block text-slate-400 text-[10px] mb-0.5">卒業予定日</span>
+            <span class="font-bold text-slate-700" x-text="selectedUser.graduation_date || '未設定'"></span>
+        </div>
+        <div class="rounded-xl bg-slate-50 p-3">
+            <span class="block text-slate-400 text-[10px] mb-0.5">TOEIC 試験予定日</span>
+            <span class="font-bold text-slate-700" x-text="selectedUser.toeic_exam_date || '未登録'"></span>
+        </div>
+        <div class="rounded-xl bg-slate-50 p-3">
+            <span class="block text-slate-400 text-[10px] mb-0.5">IELTS 試験予定日</span>
+            <span class="font-bold text-slate-700" x-text="selectedUser.ielts_exam_date || '未登録'"></span>
+        </div>
+    </div>
+</div>
+
+<!-- 英語学習アクティビティ -->
+<div>
+    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">英語学習アクティビティ</h4>
+    <div class="grid grid-cols-3 gap-3 mb-3">
+        <div class="rounded-xl bg-indigo-50 p-3 text-indigo-900">
+            <span class="block text-[10px] text-indigo-500 font-bold">獲得 Total XP</span>
+            <span class="text-base font-extrabold" x-text="(selectedUser.total_xp || 0).toLocaleString() + ' XP'"></span>
+        </div>
+        <div class="rounded-xl bg-amber-50 p-3 text-amber-900">
+            <span class="block text-[10px] text-amber-500 font-bold">連続学習 Streak</span>
+            <span class="text-base font-extrabold" x-text="(selectedUser.study_streak || 0) + ' 日'"></span>
+        </div>
+        <div class="rounded-xl bg-emerald-50 p-3 text-emerald-900">
+            <span class="block text-[10px] text-emerald-500 font-bold">総学習時間</span>
+            <span class="text-base font-extrabold" x-text="Math.floor((selectedUser.total_study_time || 0) / 60) + ' 時間'"></span>
+        </div>
+    </div>
+    <div class="flex justify-between items-center rounded-xl bg-slate-50 px-3 py-2.5 text-xs">
+        <span class="text-slate-500 font-medium">最終学習日</span>
+        <span class="font-bold text-slate-800" x-text="selectedUser.last_study_date || '未学習'"></span>
+    </div>
+</div>
+
+<!-- その他実績 -->
+<div>
+    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">その他実績</h4>
+    <div class="divide-y divide-slate-100 text-xs">
+        <div class="flex justify-between py-2">
+            <span class="text-slate-500">シャワー利用レポート件数</span>
+            <span class="font-bold text-slate-800" x-text="selectedUser.shower_reports ? selectedUser.shower_reports.length : 0"></span>
+        </div>
+        <div class="flex justify-between py-2">
+            <span class="text-slate-500">留学情報投稿数</span>
+            <span class="font-bold text-slate-800" x-text="selectedUser.posts ? selectedUser.posts.length : 0"></span>
+        </div>
+        <div class="flex justify-between py-2">
+            <span class="text-slate-500">目安箱への投函数</span>
+            <span class="font-bold text-slate-800" x-text="selectedUser.suggestions ? selectedUser.suggestions.length : 0"></span>
+        </div>
+    </div>
+</div>
+
+<!-- アクションフッター -->
+<div class="border-t border-slate-100 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+    <div class="flex items-center gap-2 w-full sm:w-auto">
+        <!-- アカウント削除ボタン -->
+        <form method="POST" :action="`/admin/users/${selectedUser ? selectedUser.id : ''}`" @submit="detailModalOpen = false; return confirm('本当に削除しますか？')" class="flex-1 sm:flex-initial">
+            @csrf
+            @method('DELETE')
+            <button type="submit"
+                    class="w-full rounded-xl bg-slate-100 text-slate-500 hover:bg-rose-600 hover:text-white px-3 py-2.5 text-xs font-bold transition">
+                削除
+            </button>
+        </form>
+    </div>
+
+    <!-- 更新ボタンのフォーム -->
+    <form method="POST" :action="`/admin/users/${selectedUser ? selectedUser.id : ''}`" @submit="detailModalOpen = false" class="w-full sm:w-auto">
+        @csrf
+        @method('PATCH')
+        
+        <input type="hidden" name="gender" :value="editGender">
+        <input type="hidden" name="status" :value="editStatus || (selectedUser && selectedUser.is_active === false ? 'inactive' : 'active')">
+        
+        <button type="submit" 
+                class="w-full rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 text-xs font-bold transition shadow-sm">
+            更新
+        </button>
+    </form>
+</div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('userManagementData', (initialUsers = []) => ({
+        users: initialUsers,
+        searchQuery: '',
+        selectedRole: 'all',
+        sortBy: 'created_desc',
+        currentPage: 1,
+        perPage: 10,
+        isCreateModalOpen: false,
+        detailModalOpen: false,
+        selectedUser: null,
+        editGender: 'male',
+        editDorm: '男子寮',
+        csrfToken: '',
+
+        init() {
+            this.csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        },
+
+        get filteredUsers() {
+            return this.users.filter(user => {
+                const matchesRole = this.selectedRole === 'all' || 
+                    (this.selectedRole === 'student' && (user.role === 'student' || user.role_id !== 1)) ||
+                    (this.selectedRole === 'admin' && (user.role === 'admin' || user.role_id === 1));
+
+                const query = this.searchQuery.toLowerCase();
+                const matchesSearch = !query || 
+                    (user.name && user.name.toLowerCase().includes(query)) ||
+                    (user.email && user.email.toLowerCase().includes(query));
+
+                return matchesRole && matchesSearch;
+            }).sort((a, b) => {
+                if (this.sortBy === 'created_desc') return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+                if (this.sortBy === 'created_asc') return new Date(a.created_at || 0) - new Date(b.created_at || 0);
+                if (this.sortBy === 'active_desc') return new Date(b.last_active || 0) - new Date(a.last_active || 0);
+                if (this.sortBy === 'active_asc') return new Date(a.last_active || 0) - new Date(b.last_active || 0);
+                return 0;
+            });
+        },
+
+        get totalPages() {
+            return Math.ceil(this.filteredUsers.length / this.perPage) || 1;
+        },
+
+        get paginatedUsers() {
+            const start = (this.currentPage - 1) * this.perPage;
+            return this.filteredUsers.slice(start, start + this.perPage);
+        },
+
+        prevPage() {
+            if (this.currentPage > 1) this.currentPage--;
+        },
+
+        nextPage() {
+            if (this.currentPage < this.totalPages) this.currentPage++;
+        },
+
+        openDetail(user) {
+            this.selectedUser = user;
+            // 開いた時点の性別・寮を一時保持用のプロパティにセット
+            this.editGender = user.gender === 'female' ? 'female' : 'male';
+            this.editDorm = user.dorm || (this.editGender === 'female' ? '女子寮' : '男子寮');
+            this.detailModalOpen = true;
+        },
+
+        // モーダル表示内での選択状態の切り替え（まだサーバーには未送信）
+        toggleGenderAndDorm() {
+            if (this.editGender === 'female') {
+                this.editGender = 'male';
+                this.editDorm = '男子寮';
+            } else {
+                this.editGender = 'female';
+                this.editDorm = '女子寮';
+            }
+        },
+
+        // 「更新」ボタンが押されたときのみサーバーへPOST送信してDBを更新する
+        updateUser() {
+            if (!this.selectedUser) return;
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/admin/users/${this.selectedUser.id}`;
+
+            form.innerHTML = `
+                <input type="hidden" name="_token" value="${this.csrfToken}">
+                <input type="hidden" name="_method" value="PATCH">
+                <input type="hidden" name="gender" value="${this.editGender}">
+                <input type="hidden" name="dorm" value="${this.editDorm}">
+            `;
+            document.body.appendChild(form);
+            form.submit();
+        },
+
+        // 利用停止 / 再開トグル処理
+        toggleUserStatus() {
+            if (!this.selectedUser) return;
+
+            const isCurrentlyInactive = this.selectedUser.is_active === false || this.selectedUser.status === 'inactive';
+            const confirmMsg = isCurrentlyInactive 
+                ? `${this.selectedUser.name} 様のアカウントを再開しますか？`
+                : `${this.selectedUser.name} 様のアカウントを停止しますか？`;
+
+            if (confirm(confirmMsg)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/admin/users/${this.selectedUser.id}/toggle-status`;
+
+                form.innerHTML = `
+                    <input type="hidden" name="_token" value="${this.csrfToken}">
+                    <input type="hidden" name="_method" value="PATCH">
+                `;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        },
+
+        // アカウント削除処理
+        deleteUser() {
+            if (!this.selectedUser) return;
+
+            if (confirm(`【警告】${this.selectedUser.name} 様のアカウントを削除しますか？\nこの操作は戻せません。`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/admin/users/${this.selectedUser.id}`;
+
+                form.innerHTML = `
+                    <input type="hidden" name="_token" value="${this.csrfToken}">
+                    <input type="hidden" name="_method" value="DELETE">
+                `;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    }));
+});
+</script>
 
 <!-- ③ 留学情報管理セクション -->
 <div x-show="currentTab === 'posts'" x-cloak 
@@ -1302,15 +1477,94 @@
 
         <!-- ⑤ アクティブ分析セクション -->
 <div x-show="currentTab === 'analytics'" x-cloak x-data="{ showChartModal: false, selectedFeature: '' }" class="space-y-8">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <div x-data="{ 
             summaryPeriod: 'daily',
             analyticsData: {{ \Illuminate\Support\Js::from($featureAnalyticsData['analyticsData'] ?? $featureAnalyticsData ?? []) }},
+            radarChart: null,
             get currentData() { 
                 return this.analyticsData[this.summaryPeriod] || this.analyticsData['daily'] || {}; 
+            },
+            // データに応じた動的スケール最大値の計算
+            getMaxScale(data) {
+                const rates = [
+                    data?.english?.rate || 0,
+                    data?.info?.rate || 0,
+                    data?.shower?.rate || 0
+                ];
+                const maxVal = Math.max(...rates);
+                return maxVal > 100 ? Math.ceil(maxVal / 10) * 10 + 10 : 100;
             }
         }"
         x-init="
-            $nextTick(() => { window.updateRadarChart && window.updateRadarChart(summaryPeriod); });
+            $nextTick(() => {
+                const ctx = $refs.radarCanvas;
+                if (ctx) {
+                    const currentMax = getMaxScale(currentData);
+
+                    radarChart = new Chart(ctx, {
+                        type: 'radar',
+                        data: {
+                            labels: ['英語学習', '留学情報', 'シャワー'],
+                            datasets: [{
+                                label: '利用率 (%)',
+                                data: [
+                                    currentData?.english?.rate || 0,
+                                    currentData?.info?.rate || 0,
+                                    currentData?.shower?.rate || 0
+                                ],
+                                backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                                borderColor: '#0284c7',
+                                borderWidth: 2,
+                                pointBackgroundColor: '#0284c7',
+                                pointHoverRadius: 6,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                r: {
+                                    min: 0,
+                                    suggestedMax: currentMax,
+                                    ticks: { display: false },
+                                    grid: { color: '#e2e8f0' },
+                                    angleLines: { color: '#cbd5e1' },
+                                    pointLabels: {
+                                        font: { size: 11, weight: 'bold' },
+                                        color: '#334155'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: (context) => ` 利用率: ${context.raw}%`
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+
+            window.updateRadarChart = (period) => {
+                if (radarChart && analyticsData[period]) {
+                    const data = analyticsData[period];
+                    const newMax = getMaxScale(data);
+
+                    radarChart.data.datasets[0].data = [
+                        data?.english?.rate || 0,
+                        data?.info?.rate || 0,
+                        data?.shower?.rate || 0
+                    ];
+
+                    radarChart.options.scales.r.suggestedMax = newMax;
+                    radarChart.update();
+                }
+            };
+
             $watch('summaryPeriod', value => window.updateRadarChart && window.updateRadarChart(value));
         "
         class="space-y-8">
@@ -1335,81 +1589,79 @@
         </div>
 
         <!-- パフォーマンス・サマリー -->
-<div class="space-y-4">
-    <div class="border-b border-slate-200 pb-3">
-        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-            <span class="material-symbols-outlined text-red-500">space_dashboard</span>
-            パフォーマンス・サマリー
-        </h3>
-    </div>
-
-    @php
-        $parsedPeriods = is_array($periods ?? null) 
-            ? $periods 
-            : (is_string($periods ?? null) ? json_decode($periods, true) : []);
-    @endphp
-
-    @if(is_array($parsedPeriods) && count($parsedPeriods) > 0)
-        @foreach($parsedPeriods as $pKey => $cards)
-            <div x-show="summaryPeriod === '{{ $pKey }}'" x-cloak class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                @if(is_array($cards))
-                    @foreach($cards as $card)
-                        @php
-                            $title = $card['title'] ?? '';
-                            
-                            // タイトルに応じたテーマカラー・ドット色の厳密設定
-                            if (str_contains($title, 'アクティブ')) {
-                                $dotClass = 'bg-red-500';
-                                $border = $card['border'] ?? 'border-red-200';
-                                $btnColor = $card['btnColor'] ?? 'text-red-600 bg-red-50 hover:bg-red-100';
-                            } elseif (str_contains($title, '英語') || str_contains($title, '学習')) {
-                                $dotClass = 'bg-yellow-400';
-                                $border = $card['border'] ?? 'border-yellow-200';
-                                $btnColor = $card['btnColor'] ?? 'text-yellow-700 bg-yellow-50 hover:bg-yellow-100';
-                            } elseif (str_contains($title, '投稿') || str_contains($title, '情報')) {
-                                $dotClass = 'bg-lime-500';
-                                $border = $card['border'] ?? 'border-lime-200';
-                                $btnColor = $card['btnColor'] ?? 'text-lime-700 bg-lime-50 hover:bg-lime-100';
-                            } elseif (str_contains($title, 'シャワー')) {
-                                $dotClass = 'bg-sky-500';
-                                $border = $card['border'] ?? 'border-sky-200';
-                                $btnColor = $card['btnColor'] ?? 'text-sky-600 bg-sky-50 hover:bg-sky-100';
-                            } else {
-                                $dotClass = $card['dot'] ?? 'bg-slate-400';
-                                $border = $card['border'] ?? 'border-slate-200';
-                                $btnColor = $card['btnColor'] ?? 'text-slate-600 bg-slate-50 hover:bg-slate-100';
-                            }
-                        @endphp
-
-                        <div class="bg-white p-5 rounded-2xl border {{ $border }} shadow-sm hover:shadow-md transition flex flex-col justify-between">
-                            <div class="flex items-start justify-between">
-                                <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
-                                    <!-- ドット表示 -->
-                                    <span class="w-2 h-2 rounded-full {{ $dotClass }}"></span>
-                                    {{ $title ?: '指標' }}
-                                </span>
-                                <button @click="showChartModal = true; selectedFeature = '{{ $card['feat'] ?? '' }}'" class="p-1.5 {{ $btnColor }} rounded-lg transition">
-                                    <span class="material-symbols-outlined text-base">show_chart</span>
-                                </button>
-                            </div>
-                            <div class="my-3 flex items-baseline gap-1">
-                                <span class="text-3xl font-black text-slate-800 tracking-tight">{{ $card['val'] ?? '0' }}</span>
-                                <span class="text-sm font-bold text-slate-400">{{ $card['unit'] ?? '' }}</span>
-                            </div>
-                            <div class="text-[11px] text-slate-400 border-t border-slate-100 pt-2.5">
-                                {{ $card['sub'] ?? '-' }}
-                            </div>
-                        </div>
-                    @endforeach
-                @endif
+        <div class="space-y-4">
+            <div class="border-b border-slate-200 pb-3">
+                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-red-500">space_dashboard</span>
+                    パフォーマンス・サマリー
+                </h3>
             </div>
-        @endforeach
-    @else
-        <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl text-center text-xs text-slate-400">
-            サマリーデータが取得できませんでした。コントローラーの $periods の形式を確認してください。
+
+            @php
+                $parsedPeriods = is_array($periods ?? null) 
+                    ? $periods 
+                    : (is_string($periods ?? null) ? json_decode($periods, true) : []);
+            @endphp
+
+            @if(is_array($parsedPeriods) && count($parsedPeriods) > 0)
+                @foreach($parsedPeriods as $pKey => $cards)
+                    <div x-show="summaryPeriod === '{{ $pKey }}'" x-cloak class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        @if(is_array($cards))
+                            @foreach($cards as $card)
+                                @php
+                                    $title = $card['title'] ?? '';
+                                    
+                                    if (str_contains($title, 'アクティブ')) {
+                                        $dotClass = 'bg-red-500';
+                                        $border = $card['border'] ?? 'border-red-200';
+                                        $btnColor = $card['btnColor'] ?? 'text-red-600 bg-red-50 hover:bg-red-100';
+                                    } elseif (str_contains($title, '英語') || str_contains($title, '学習')) {
+                                        $dotClass = 'bg-yellow-400';
+                                        $border = $card['border'] ?? 'border-yellow-200';
+                                        $btnColor = $card['btnColor'] ?? 'text-yellow-700 bg-yellow-50 hover:bg-yellow-100';
+                                    } elseif (str_contains($title, '投稿') || str_contains($title, '情報')) {
+                                        $dotClass = 'bg-lime-500';
+                                        $border = $card['border'] ?? 'border-lime-200';
+                                        $btnColor = $card['btnColor'] ?? 'text-lime-700 bg-lime-50 hover:bg-lime-100';
+                                    } elseif (str_contains($title, 'シャワー')) {
+                                        $dotClass = 'bg-sky-500';
+                                        $border = $card['border'] ?? 'border-sky-200';
+                                        $btnColor = $card['btnColor'] ?? 'text-sky-600 bg-sky-50 hover:bg-sky-100';
+                                    } else {
+                                        $dotClass = $card['dot'] ?? 'bg-slate-400';
+                                        $border = $card['border'] ?? 'border-slate-200';
+                                        $btnColor = $card['btnColor'] ?? 'text-slate-600 bg-slate-50 hover:bg-slate-100';
+                                    }
+                                @endphp
+
+                                <div class="bg-white p-5 rounded-2xl border {{ $border }} shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                                    <div class="flex items-start justify-between">
+                                        <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5">
+                                            <span class="w-2 h-2 rounded-full {{ $dotClass }}"></span>
+                                            {{ $title ?: '指標' }}
+                                        </span>
+                                        <button @click="showChartModal = true; selectedFeature = '{{ $card['feat'] ?? '' }}'" class="p-1.5 {{ $btnColor }} rounded-lg transition">
+                                            <span class="material-symbols-outlined text-base">show_chart</span>
+                                        </button>
+                                    </div>
+                                    <div class="my-3 flex items-baseline gap-1">
+                                        <span class="text-3xl font-black text-slate-800 tracking-tight">{{ $card['val'] ?? '0' }}</span>
+                                        <span class="text-sm font-bold text-slate-400">{{ $card['unit'] ?? '' }}</span>
+                                    </div>
+                                    <div class="text-[11px] text-slate-400 border-t border-slate-100 pt-2.5">
+                                        {{ $card['sub'] ?? '-' }}
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+                @endforeach
+            @else
+                <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl text-center text-xs text-slate-400">
+                    サマリーデータが取得できませんでした。コントローラーの $periods の形式を確認してください。
+                </div>
+            @endif
         </div>
-    @endif
-</div>
 
         <!-- 機能別分析 -->
         <div>
@@ -1422,101 +1674,96 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
                 <!-- 左側：機能別の利用率とアクティブ貢献度 -->
-                <section class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                            <div>
-                                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                                    <!-- アクティブユーザー分析テーマカラー：赤 -->
-                                    <span class="material-symbols-outlined text-red-500 text-xl">bar_chart</span>
-                                    機能別の利用率とアクティブ貢献度
-                                </h3>
-                                <p class="text-xs text-slate-500 mt-0.5">どの機能がユーザーの定着を牽引しているかを示す分析 (<span x-text="currentData?.periodLabel || '今日'" class="font-bold text-slate-700"></span>)</p>
+                <section class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+                    <div class="border-b border-slate-100 pb-3">
+                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-red-500 text-xl">bar_chart</span>
+                            機能別の利用率とアクティブ貢献度
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">どの機能がユーザーの定着を牽引しているかを示す分析 (<span x-text="currentData?.periodLabel || '今日'" class="font-bold text-slate-700"></span>)</p>
+                    </div>
+
+                    <div class="divide-y divide-slate-100 flex-1 flex flex-col justify-around">
+                        <!-- 英語学習機能 -->
+                        <div class="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-center gap-3 w-48">
+                                <div class="p-2.5 rounded-xl border flex items-center justify-center bg-yellow-50 border-yellow-200">
+                                    <span class="material-symbols-outlined !text-2xl leading-none text-yellow-600">menu_book</span>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-800">英語学習機能</div>
+                                    <div class="text-[11px] text-slate-400">利用者: <span x-text="(currentData?.english?.users || 0).toLocaleString()"></span>名</div>
+                                </div>
+                            </div>
+                            <div class="flex-1 max-w-md space-y-1">
+                                <div class="flex justify-between text-xs font-bold">
+                                    <span class="text-slate-500">利用率</span>
+                                    <span class="font-extrabold text-yellow-600"><span x-text="currentData?.english?.rate || 0"></span>%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                    <div class="h-2 rounded-full bg-yellow-400 transition-all duration-500" :style="`width: ${Math.min(currentData?.english?.rate || 0, 100)}%;`"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3 text-right justify-between sm:justify-end">
+                                <div>
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase">貢献度</div>
+                                    <span class="inline-block px-2 py-0.5 font-bold text-xs rounded-md border bg-yellow-50 text-yellow-800 border-yellow-200">高 (メイン機能)</span>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="divide-y divide-slate-100">
-                            <!-- 英語学習機能（テーマカラー：黄色） -->
-                            <div class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                <div class="flex items-center gap-3 w-48">
-                                    <div class="p-2.5 rounded-xl border flex items-center justify-center bg-yellow-50 border-yellow-200">
-                                        <span class="material-symbols-outlined !text-2xl leading-none text-yellow-600">menu_book</span>
-                                    </div>
-                                    <div>
-                                        <div class="text-sm font-bold text-slate-800">英語学習機能</div>
-                                        <div class="text-[11px] text-slate-400">利用者: <span x-text="(currentData?.english?.users || 0).toLocaleString()"></span>名</div>
-                                    </div>
+                        <!-- 留学情報投稿 -->
+                        <div class="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-center gap-3 w-48">
+                                <div class="p-2.5 rounded-xl border flex items-center justify-center bg-lime-50 border-lime-200">
+                                    <span class="material-symbols-outlined !text-2xl leading-none text-lime-600">article</span>
                                 </div>
-                                <div class="flex-1 max-w-md space-y-1">
-                                    <div class="flex justify-between text-xs font-bold">
-                                        <span class="text-slate-500">利用率</span>
-                                        <span class="font-extrabold text-yellow-600"><span x-text="currentData?.english?.rate || 0"></span>%</span>
-                                    </div>
-                                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                                        <div class="h-2 rounded-full bg-yellow-400 transition-all duration-500" :style="`width: ${Math.min(currentData?.english?.rate || 0, 100)}%;`"></div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3 text-right justify-between sm:justify-end">
-                                    <div>
-                                        <div class="text-[10px] font-bold text-slate-400 uppercase">貢献度</div>
-                                        <span class="inline-block px-2 py-0.5 font-bold text-xs rounded-md border bg-yellow-50 text-yellow-800 border-yellow-200">高 (メイン機能)</span>
-                                    </div>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-800">留学情報</div>
+                                    <div class="text-[11px] text-slate-400">投稿数: <span x-text="(currentData?.info?.count || 0).toLocaleString()"></span>件</div>
                                 </div>
                             </div>
-
-                            <!-- 留学情報投稿（テーマカラー：黄緑 / lime） -->
-                            <div class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                <div class="flex items-center gap-3 w-48">
-                                    <div class="p-2.5 rounded-xl border flex items-center justify-center bg-lime-50 border-lime-200">
-                                        <span class="material-symbols-outlined !text-2xl leading-none text-lime-600">article</span>
-                                    </div>
-                                    <div>
-                                        <div class="text-sm font-bold text-slate-800">留学情報</div>
-                                        <div class="text-[11px] text-slate-400">投稿数: <span x-text="(currentData?.info?.count || 0).toLocaleString()"></span>件</div>
-                                    </div>
+                            <div class="flex-1 max-w-md space-y-1">
+                                <div class="flex justify-between text-xs font-bold">
+                                    <span class="text-slate-500">投稿アクティブ率</span>
+                                    <span class="font-extrabold text-lime-600"><span x-text="currentData?.info?.rate || 0"></span>%</span>
                                 </div>
-                                <div class="flex-1 max-w-md space-y-1">
-                                    <div class="flex justify-between text-xs font-bold">
-                                        <span class="text-slate-500">投稿アクティブ率</span>
-                                        <span class="font-extrabold text-lime-600"><span x-text="currentData?.info?.rate || 0"></span>%</span>
-                                    </div>
-                                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                                        <div class="h-2 rounded-full bg-lime-500 transition-all duration-500" :style="`width: ${Math.min(currentData?.info?.rate || 0, 100)}%;`"></div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3 text-right justify-between sm:justify-end">
-                                    <div>
-                                        <div class="text-[10px] font-bold text-slate-400 uppercase">貢献度</div>
-                                        <span class="inline-block px-2 py-0.5 font-bold text-xs rounded-md border bg-lime-50 text-lime-800 border-lime-200">中 (ナレッジ蓄積)</span>
-                                    </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                    <div class="h-2 rounded-full bg-lime-500 transition-all duration-500" :style="`width: ${Math.min(currentData?.info?.rate || 0, 100)}%;`"></div>
                                 </div>
                             </div>
+                            <div class="flex items-center gap-3 text-right justify-between sm:justify-end">
+                                <div>
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase">貢献度</div>
+                                    <span class="inline-block px-2 py-0.5 font-bold text-xs rounded-md border bg-lime-50 text-lime-800 border-lime-200">中 (ナレッジ蓄積)</span>
+                                </div>
+                            </div>
+                        </div>
 
-                            <!-- シャワー機能（テーマカラー：青 / sky） -->
-                            <div class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                <div class="flex items-center gap-3 w-48">
-                                    <div class="p-2.5 rounded-xl border flex items-center justify-center bg-sky-50 border-sky-200">
-                                        <span class="material-symbols-outlined !text-2xl leading-none text-sky-600">shower</span>
-                                    </div>
-                                    <div>
-                                        <div class="text-sm font-bold text-slate-800">シャワー機能</div>
-                                        <div class="text-[11px] text-slate-400">レビュー数: <span x-text="(currentData?.shower?.count || 0).toLocaleString()"></span>件</div>
-                                    </div>
+                        <!-- シャワー機能 -->
+                        <div class="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-center gap-3 w-48">
+                                <div class="p-2.5 rounded-xl border flex items-center justify-center bg-sky-50 border-sky-200">
+                                    <span class="material-symbols-outlined !text-2xl leading-none text-sky-600">shower</span>
                                 </div>
-                                <div class="flex-1 max-w-md space-y-1">
-                                    <div class="flex justify-between text-xs font-bold">
-                                        <span class="text-slate-500">利用率</span>
-                                        <span class="font-extrabold text-sky-600"><span x-text="currentData?.shower?.rate || 0"></span>%</span>
-                                    </div>
-                                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                                        <div class="h-2 rounded-full bg-sky-500 transition-all duration-500" :style="`width: ${Math.min(currentData?.shower?.rate || 0, 100)}%;`"></div>
-                                    </div>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-800">シャワー機能</div>
+                                    <div class="text-[11px] text-slate-400">レビュー数: <span x-text="(currentData?.shower?.count || 0).toLocaleString()"></span>件</div>
                                 </div>
-                                <div class="flex items-center gap-3 text-right justify-between sm:justify-end">
-                                    <div>
-                                        <div class="text-[10px] font-bold text-slate-400 uppercase">貢献度</div>
-                                        <span class="inline-block px-2 py-0.5 font-bold text-xs rounded-md border bg-sky-50 text-sky-800 border-sky-200">高 (生活インフラ)</span>
-                                    </div>
+                            </div>
+                            <div class="flex-1 max-w-md space-y-1">
+                                <div class="flex justify-between text-xs font-bold">
+                                    <span class="text-slate-500">利用率</span>
+                                    <span class="font-extrabold text-sky-600"><span x-text="currentData?.shower?.rate || 0"></span>%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                    <div class="h-2 rounded-full bg-sky-500 transition-all duration-500" :style="`width: ${Math.min(currentData?.shower?.rate || 0, 100)}%;`"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3 text-right justify-between sm:justify-end">
+                                <div>
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase">貢献度</div>
+                                    <span class="inline-block px-2 py-0.5 font-bold text-xs rounded-md border bg-sky-50 text-sky-800 border-sky-200">高 (生活インフラ)</span>
                                 </div>
                             </div>
                         </div>
@@ -1535,7 +1782,7 @@
                         </div>
 
                         <div class="relative w-full aspect-square max-w-[260px] mx-auto my-4 flex items-center justify-center">
-                            <canvas id="featureRadarChart"></canvas>
+                            <canvas x-ref="radarCanvas" id="featureRadarChart"></canvas>
                         </div>
                     </div>
 

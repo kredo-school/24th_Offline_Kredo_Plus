@@ -195,7 +195,7 @@ class AdminDashboardController extends Controller
                 ['title' => '英語学習利用率', 'val' => (string)$dailyEnglishRate, 'unit' => '%', 'sub' => "アクティブ {$todayStudyActiveUsersCount}人", 'dot' => 'bg-yellow-500', 'feat' => 'english'],
                 ['title' => '情報投稿数', 'val' => (string)$todayInfoUpdates, 'unit' => '件', 'sub' => '前日比 ' . ($infoUpdatesDiff >= 0 ? "+{$infoUpdatesDiff}" : $infoUpdatesDiff), 'dot' => 'bg-lime-500', 'feat' => 'info'],
                 [
-                    'title' => '本日のシャワーレビュー数',
+                    'title' => 'シャワーレビュー数',
                     'val'   => (string)$todayShowerUpdates,
                     'unit'  => '件',
                     'sub'   => "総ユーザー数 {$totalUsersCount}人",
