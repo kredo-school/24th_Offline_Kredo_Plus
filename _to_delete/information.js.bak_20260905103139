@@ -115,18 +115,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const formData = new FormData();
 
-        const postId = form.querySelector('[name="post_id"]');
         const mainCategory = form.querySelector('#mainCategorySelect');
         const category = form.querySelector('[name="category_id"]');
         const title = form.querySelector('[name="title"]');
         const description = form.querySelector('[name="description"]');
         const price = form.querySelector('[name="price"]');
         const image = form.querySelector('[name="image"]');
-
-        // 編集画面から来た場合だけ存在する。どの投稿の下書きかをサーバー側に伝える。
-        if (postId) {
-            formData.append('post_id', postId.value);
-        }
 
         if (mainCategory) {
         formData.append('main_category', mainCategory.value);
