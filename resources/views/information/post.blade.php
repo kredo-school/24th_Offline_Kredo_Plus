@@ -67,8 +67,7 @@
                 </div>
 
                 @php
-                    // 一時保存された下書きを取得
-                    $draft = session('information_draft', []);
+                    // 一時保存された下書き($draftはInformationController@createから渡される)
 
                     $selectedCategoryId = !empty($earthLocation) ? $draft['category_id'] ?? '' : '';
 

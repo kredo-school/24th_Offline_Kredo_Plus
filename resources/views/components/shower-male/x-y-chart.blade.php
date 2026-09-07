@@ -2,7 +2,7 @@
 <div
     class="bg-white rounded-2xl p-6 border-none shadow-lg"
     x-data="{
-        period: 'latest',
+        period: '24h',
         points: [],
         brokenNumbers: [],
         recommendedNumber: null,

@@ -97,11 +97,23 @@
             </a>
             <div class="flex items-center gap-5">
                 <nav class="hidden sm:flex items-center gap-4 pr-4 mr-1 border-r border-slate-200">
-                    <a href="{{ route('shower.entry') }}" aria-label="シャワー情報"
-                        class="flex flex-col items-center gap-0.5 transition-colors {{ request()->routeIs('shower.*') ? 'text-brand-blue' : 'text-slate-400 hover:text-brand-blue' }}">
-                        <span class="material-symbols-outlined !text-2xl leading-none">shower</span>
-                        <span class="text-[11px] font-bold whitespace-nowrap">シャワー情報</span>
-                    </a>
+                    @if (auth()->user()->gender_locked)
+                        <a href="{{ route('shower.entry') }}" aria-label="シャワー情報"
+                            class="flex flex-col items-center gap-0.5 transition-colors {{ request()->routeIs('shower.*') ? 'text-brand-blue' : 'text-slate-400 hover:text-brand-blue' }}">
+                            <span class="material-symbols-outlined !text-2xl leading-none">shower</span>
+                            <span class="text-[11px] font-bold whitespace-nowrap">シャワー情報</span>
+                        </a>
+                    @else
+                        <button
+                            type="button"
+                            @click="$store.genderModal.open = true"
+                            aria-label="シャワー情報"
+                            class="flex flex-col items-center gap-0.5 transition-colors text-slate-400 hover:text-brand-blue"
+                        >
+                            <span class="material-symbols-outlined !text-2xl leading-none">shower</span>
+                            <span class="text-[11px] font-bold whitespace-nowrap">シャワー情報</span>
+                        </button>
+                    @endif
                     <a href="{{ route('english.hub') }}" aria-label="英語学習"
                         class="flex flex-col items-center gap-0.5 transition-colors {{ request()->routeIs('english.*') ? 'text-brand-yellow' : 'text-slate-400 hover:text-brand-yellow' }}">
                         <span class="material-symbols-outlined !text-2xl leading-none">menu_book</span>
@@ -127,201 +139,201 @@
                 </nav>
 
                 {{-- 通知 --}}
-<div
-    class="relative flex items-center"
-    x-data="{
-        open: false,
-        notifications: [],
-        unreadCount: 0,
-
-        async load() {
-            try {
-                const response = await fetch('{{ route('notifications.data') }}');
-                const data = await response.json();
-                this.notifications = data.notifications.map(n => ({ ...n, expanded: false }));
-                this.unreadCount = data.unread_count;
-            } catch (e) {
-                console.error('Failed to load notifications:', e);
-            }
-        },
-
-        async toggle() {
-            this.open = !this.open;
-
-            if (this.open && this.unreadCount > 0) {
-                try {
-                    await fetch('{{ route('notifications.mark-seen') }}', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-                            'Accept': 'application/json',
-                        },
-                    });
-                    this.unreadCount = 0;
-                } catch (e) {
-                    console.error('Failed to mark notifications as seen:', e);
-                }
-            }
-        },
-
-        {{-- カテゴリーごとの色設定 --}}
-        getBadgeClass(category) {
-            switch(category) {
-                case '重要':
-                    return 'bg-red-50 text-red-600 border-red-200';
-                case '留学情報':
-                    return 'bg-lime-50 text-lime-700 border-lime-200';
-                case '英語学習':
-                    return 'bg-amber-50 text-amber-700 border-amber-200';
-                case 'シャワー':
-                case 'シャワー機能':
-                    return 'bg-sky-50 text-sky-600 border-sky-200';
-                default:
-                    return 'bg-slate-50 text-slate-600 border-slate-200';
-            }
-        }
-    }"
-    x-init="load()"
-    @click.outside="open = false"
->
-
-    {{-- 通知ボタン --}}
-    <button
-        @click="toggle()"
-        class="relative p-1.5 text-slate-500 hover:text-brand-blue hover:bg-slate-50 rounded-full transition-colors focus:outline-none"
-        aria-label="通知"
-    >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <path
-                d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-            />
-            <path
-                d="M13.7 21a2 2 0 01-3.4 0"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-            />
-        </svg>
-
-        <span
-            x-show="unreadCount > 0"
-            class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-white"
-        ></span>
-    </button>
-
-    {{-- 通知パネル --}}
-    <div
-        x-show="open"
-        x-cloak
-        x-transition:enter="transition ease-out duration-150"
-        x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
-        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-        x-transition:leave="transition ease-in duration-100"
-        x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-        x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
-        class="absolute right-0 top-12 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50"
-    >
-        <div class="px-4 py-3 border-b border-slate-100 font-bold text-slate-700 text-sm flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-sm z-10">
-            <span>通知</span>
-            <span x-text="notifications.length + ' 件'" class="text-xs font-normal text-slate-400"></span>
-        </div>
-
-        {{-- 縦スクロール領域 --}}
-        <div class="max-h-[340px] overflow-y-auto divide-y divide-slate-100">
-            <template x-for="notification in notifications" :key="notification.id">
                 <div
-                    class="block px-4 py-3.5 transition-colors hover:bg-slate-50 relative"
-                    :class="notification.is_unread ? 'bg-sky-50/40' : ''"
+                    class="relative flex items-center"
+                    x-data="{
+                        open: false,
+                        notifications: [],
+                        unreadCount: 0,
+
+                        async load() {
+                            try {
+                                const response = await fetch('{{ route('notifications.data') }}');
+                                const data = await response.json();
+                                this.notifications = data.notifications.map(n => ({ ...n, expanded: false }));
+                                this.unreadCount = data.unread_count;
+                            } catch (e) {
+                                console.error('Failed to load notifications:', e);
+                            }
+                        },
+
+                        async toggle() {
+                            this.open = !this.open;
+
+                            if (this.open && this.unreadCount > 0) {
+                                try {
+                                    await fetch('{{ route('notifications.mark-seen') }}', {
+                                        method: 'POST',
+                                        headers: {
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                                            'Accept': 'application/json',
+                                        },
+                                    });
+                                    this.unreadCount = 0;
+                                } catch (e) {
+                                    console.error('Failed to mark notifications as seen:', e);
+                                }
+                            }
+                        },
+
+                        {{-- カテゴリーごとの色設定 --}}
+                        getBadgeClass(category) {
+                            switch(category) {
+                                case '重要':
+                                    return 'bg-red-50 text-red-600 border-red-200';
+                                case '留学情報':
+                                    return 'bg-lime-50 text-lime-700 border-lime-200';
+                                case '英語学習':
+                                    return 'bg-amber-50 text-amber-700 border-amber-200';
+                                case 'シャワー':
+                                case 'シャワー機能':
+                                    return 'bg-sky-50 text-sky-600 border-sky-200';
+                                default:
+                                    return 'bg-slate-50 text-slate-600 border-slate-200';
+                            }
+                        }
+                    }"
+                    x-init="load()"
+                    @click.outside="open = false"
                 >
-                    <div class="flex items-start gap-2.5">
-                        {{-- 未読ポッチ --}}
-                        <template x-if="notification.is_unread">
-                            <span class="w-2 h-2 mt-1.5 rounded-full bg-brand-blue flex-shrink-0"></span>
-                        </template>
 
-                        <div class="flex-1 min-w-0">
-                            {{-- ① シャワー通知の場合（アイコン + メッセージ表示） --}}
-                            <template x-if="!notification.category || notification.category.includes('シャワー')">
-                                <a :href="notification.url || '#'" class="block">
-                                    <div class="flex items-start gap-2">
-                                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-sky-100 text-brand-blue flex-shrink-0 mt-0.5">
-                                            <span class="material-symbols-outlined !text-base leading-none">shower</span>
-                                        </span>
-                                        <h4 class="text-xs font-bold text-slate-800 leading-snug break-words" x-text="notification.message"></h4>
-                                    </div>
-                                </a>
-                            </template>
+                    {{-- 通知ボタン --}}
+                    <button
+                        @click="toggle()"
+                        class="relative p-1.5 text-slate-500 hover:text-brand-blue hover:bg-slate-50 rounded-full transition-colors focus:outline-none"
+                        aria-label="通知"
+                    >
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                            <path
+                                d="M13.7 21a2 2 0 01-3.4 0"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                            />
+                        </svg>
 
-                            {{-- ② シャワー以外の通知の場合 --}}
-                            <template x-if="notification.category && !notification.category.includes('シャワー')">
-                                <div>
-                                    {{-- ヘッダー部分 --}}
-                                    <div
-                                        @click="notification.expanded = !notification.expanded"
-                                        class="flex items-center justify-between gap-2 cursor-pointer select-none"
-                                    >
-                                        <div class="flex items-center gap-2 min-w-0 flex-1">
-                                            {{-- 動的にクラスを適用するカテゴリーバッジ --}}
-                                            <span
-                                                class="text-[10px] font-bold px-2 py-0.5 rounded-full border flex-shrink-0"
-                                                :class="getBadgeClass(notification.category)"
-                                                x-text="notification.category"
-                                            ></span>
-                                            <h4 class="text-xs font-bold text-slate-800 truncate" x-text="notification.title || 'お知らせ'"></h4>
-                                        </div>
+                        <span
+                            x-show="unreadCount > 0"
+                            class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-white"
+                        ></span>
+                    </button>
 
-                                        {{-- ＞ ボタン --}}
-                                        <button
-                                            type="button"
-                                            class="p-1 text-slate-400 hover:text-slate-600 transition-transform flex-shrink-0"
-                                            :class="notification.expanded ? 'rotate-90' : ''"
-                                            aria-label="詳細表示"
-                                        >
-                                            <span class="material-symbols-outlined !text-base leading-none">chevron_right</span>
-                                        </button>
-                                    </div>
+                    {{-- 通知パネル --}}
+                    <div
+                        x-show="open"
+                        x-cloak
+                        x-transition:enter="transition ease-out duration-150"
+                        x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+                        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-100"
+                        x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                        class="absolute right-0 top-12 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50"
+                    >
+                        <div class="px-4 py-3 border-b border-slate-100 font-bold text-slate-700 text-sm flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-sm z-10">
+                            <span>通知</span>
+                            <span x-text="notifications.length + ' 件'" class="text-xs font-normal text-slate-400"></span>
+                        </div>
 
-                                    {{-- 本文 --}}
-                                    <div
-                                        x-show="notification.expanded"
-                                        x-cloak
-                                        x-transition:enter="transition ease-out duration-100"
-                                        x-transition:enter-start="opacity-0 -translate-y-1"
-                                        x-transition:enter-end="opacity-100 translate-y-0"
-                                        class="mt-2 text-xs text-slate-600 leading-relaxed break-words bg-slate-50/80 p-2.5 rounded-xl border border-slate-100"
-                                    >
-                                        <p x-text="notification.message" class="whitespace-pre-line"></p>
-
-                                        <template x-if="notification.url">
-                                            <a :href="notification.url" class="inline-block text-xs text-brand-blue hover:underline mt-2 font-bold">
-                                                詳細を見る &rarr;
-                                            </a>
+                        {{-- 縦スクロール領域 --}}
+                        <div class="max-h-[340px] overflow-y-auto divide-y divide-slate-100">
+                            <template x-for="notification in notifications" :key="notification.id">
+                                <div
+                                    class="block px-4 py-3.5 transition-colors hover:bg-slate-50 relative"
+                                    :class="notification.is_unread ? 'bg-sky-50/40' : ''"
+                                >
+                                    <div class="flex items-start gap-2.5">
+                                        {{-- 未読ポッチ --}}
+                                        <template x-if="notification.is_unread">
+                                            <span class="w-2 h-2 mt-1.5 rounded-full bg-brand-blue flex-shrink-0"></span>
                                         </template>
+
+                                        <div class="flex-1 min-w-0">
+                                            {{-- ① シャワー通知の場合（アイコン + メッセージ表示） --}}
+                                            <template x-if="!notification.category || notification.category.includes('シャワー')">
+                                                <a :href="notification.url || '#'" class="block">
+                                                    <div class="flex items-start gap-2">
+                                                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-sky-100 text-brand-blue flex-shrink-0 mt-0.5">
+                                                            <span class="material-symbols-outlined !text-base leading-none">shower</span>
+                                                        </span>
+                                                        <h4 class="text-xs font-bold text-slate-800 leading-snug break-words" x-text="notification.message"></h4>
+                                                    </div>
+                                                </a>
+                                            </template>
+
+                                            {{-- ② シャワー以外の通知の場合 --}}
+                                            <template x-if="notification.category && !notification.category.includes('シャワー')">
+                                                <div>
+                                                    {{-- ヘッダー部分 --}}
+                                                    <div
+                                                        @click="notification.expanded = !notification.expanded"
+                                                        class="flex items-center justify-between gap-2 cursor-pointer select-none"
+                                                    >
+                                                        <div class="flex items-center gap-2 min-w-0 flex-1">
+                                                            {{-- 動的にクラスを適用するカテゴリーバッジ --}}
+                                                            <span
+                                                                class="text-[10px] font-bold px-2 py-0.5 rounded-full border flex-shrink-0"
+                                                                :class="getBadgeClass(notification.category)"
+                                                                x-text="notification.category"
+                                                            ></span>
+                                                            <h4 class="text-xs font-bold text-slate-800 truncate" x-text="notification.title || 'お知らせ'"></h4>
+                                                        </div>
+
+                                                        {{-- ＞ ボタン --}}
+                                                        <button
+                                                            type="button"
+                                                            class="p-1 text-slate-400 hover:text-slate-600 transition-transform flex-shrink-0"
+                                                            :class="notification.expanded ? 'rotate-90' : ''"
+                                                            aria-label="詳細表示"
+                                                        >
+                                                            <span class="material-symbols-outlined !text-base leading-none">chevron_right</span>
+                                                        </button>
+                                                    </div>
+
+                                                    {{-- 本文 --}}
+                                                    <div
+                                                        x-show="notification.expanded"
+                                                        x-cloak
+                                                        x-transition:enter="transition ease-out duration-100"
+                                                        x-transition:enter-start="opacity-0 -translate-y-1"
+                                                        x-transition:enter-end="opacity-100 translate-y-0"
+                                                        class="mt-2 text-xs text-slate-600 leading-relaxed break-words bg-slate-50/80 p-2.5 rounded-xl border border-slate-100"
+                                                    >
+                                                        <p x-text="notification.message" class="whitespace-pre-line"></p>
+
+                                                        <template x-if="notification.url">
+                                                            <a :href="notification.url" class="inline-block text-xs text-brand-blue hover:underline mt-2 font-bold">
+                                                                詳細を見る &rarr;
+                                                            </a>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </template>
+
+                                            {{-- 日時 --}}
+                                            <p class="text-[10px] text-slate-400 mt-1.5" x-text="notification.created_at"></p>
+                                        </div>
                                     </div>
                                 </div>
                             </template>
 
-                            {{-- 日時 --}}
-                            <p class="text-[10px] text-slate-400 mt-1.5" x-text="notification.created_at"></p>
+                            <template x-if="notifications.length === 0">
+                                <div class="px-4 py-10 text-center text-slate-400">
+                                    <span class="material-symbols-outlined text-3xl mb-1 text-slate-300 block">notifications_off</span>
+                                    <p class="text-xs">通知はありません</p>
+                                </div>
+                            </template>
                         </div>
                     </div>
-                </div>
-            </template>
 
-            <template x-if="notifications.length === 0">
-                <div class="px-4 py-10 text-center text-slate-400">
-                    <span class="material-symbols-outlined text-3xl mb-1 text-slate-300 block">notifications_off</span>
-                    <p class="text-xs">通知はありません</p>
                 </div>
-            </template>
-        </div>
-    </div>
-
-</div>
                 <div class="relative" x-data="{ open: false }" @click.outside="open = false">
                     <button @click="open = !open"
                         class="w-9 h-9 rounded-full ring-2 ring-sky-100 hover:ring-sky-200 transition-all overflow-hidden {{ Auth::user()->avatar_url ? '' : 'bg-brand-blue text-white text-sm font-bold flex items-center justify-center' }}"
@@ -366,8 +378,20 @@
             class="sm:hidden border-t border-slate-100 px-6 py-3 space-y-1" style="display: none;">
             <a href="{{ route('dashboard') }}"
                 class="block py-2 text-sm font-semibold text-slate-600 hover:text-brand-blue">{{ __('Dashboard') }}</a>
-            <a href="{{ route('shower.entry') }}"
-                class="block py-2 text-sm font-semibold {{ request()->routeIs('shower.*') ? 'text-brand-blue' : 'text-slate-600 hover:text-brand-blue' }}">シャワー情報</a>
+            @if (auth()->user()->gender_locked)
+                <a href="{{ route('shower.entry') }}"
+                    class="block py-2 text-sm font-semibold {{ request()->routeIs('shower.*') ? 'text-brand-blue' : 'text-slate-600 hover:text-brand-blue' }}">
+                    シャワー情報
+                </a>
+            @else
+                <button
+                    type="button"
+                    @click="mobileOpen = false; $store.genderModal.open = true"
+                    class="block w-full text-left py-2 text-sm font-semibold text-slate-600 hover:text-brand-blue"
+                >
+                    シャワー情報
+                </button>
+            @endif
             <a href="{{ route('english.hub') }}"
                 class="block py-2 text-sm font-semibold {{ request()->routeIs('english.*') ? 'text-brand-yellow' : 'text-slate-600 hover:text-brand-yellow' }}">英語学習</a>
             <a href="{{ route('carinderia.index') }}"

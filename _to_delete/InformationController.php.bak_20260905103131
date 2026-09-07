@@ -39,7 +39,6 @@ class InformationController extends Controller
     public function saveDraft(Request $request)
     {
         $validated = $request->validate([
-            'post_id' => ['nullable', 'exists:posts,id'],
             'category_id' => ['nullable', 'exists:categories,id'],
             'title' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
@@ -60,9 +59,6 @@ class InformationController extends Controller
 
             $draft['image'] = $this->storeImage($request->file('image'), 'drafts');
         }
-
-        // どの投稿の下書きかを記録(編集画面から来た場合はpost_idが入る。新規投稿の場合はnull)
-        $draft['post_id'] = $request->input('post_id');
 
         // テキスト系の入力内容を保存
         $draft['main_category'] = $request->input('main_category');
@@ -104,11 +100,6 @@ class InformationController extends Controller
 
         if ($request->filled('earth_location_id')) {
             $draft = session('information_draft', []);
-
-            // 編集画面(post_idあり)の下書きは新規投稿画面では使わない
-            if (!empty($draft['post_id'])) {
-                $draft = [];
-            }
         }
 
         // お楽しみ機能: ?category=egg のようなスラッグが付いていたら、
@@ -151,25 +142,8 @@ class InformationController extends Controller
             'earth_location_id' => ['nullable', 'exists:earth_locations,id'],
         ]);
 
-        // 場所を追加する前に一時保存した下書き(新規投稿用なのでpost_idは無い)を取得
-        $draft = session('information_draft', []);
-        $hasCreateDraft = !empty($draft) && empty($draft['post_id']);
-
         if ($request->hasFile('image')) {
-
-            // 新しい画像がアップロードされた場合
             $validated['image'] = $this->storeImage($request->file('image'), 'posts');
-        } elseif ($hasCreateDraft
-            && !empty($draft['image'])
-            && Storage::disk('public')->exists($draft['image'])) {
-
-            // フォーム送信時に画像は選ばれていないが、
-            // 地図で場所を追加する前に一時保存しておいた画像があればそれを本採用する。
-            // (ファイル選択欄の中身はページ遷移で必ず空になるため、この復元処理が必要)
-            $newPath = 'posts/' . basename($draft['image']);
-            Storage::disk('public')->move($draft['image'], $newPath);
-
-            $validated['image'] = $newPath;
         }
 
         $validated['user_id'] = auth()->id();
@@ -184,11 +158,6 @@ class InformationController extends Controller
 
                     $post->id,
                 ]);
-        }
-
-        // 使い終わった下書きは削除しておく
-        if ($hasCreateDraft) {
-            session()->forget('information_draft');
         }
 
         // 隠しカテゴリー(egg / St Ninoなど)に投稿した場合は、通常の一覧ではなく秘密ページへ戻す
@@ -232,14 +201,6 @@ class InformationController extends Controller
         // 投稿のカテゴリーからセクションを取得
         $section = $post->category->section ?? 'restaurant-cafe';
 
-        // 地図で場所を追加する前に一時保存した下書きがあれば復元する
-        // (この投稿に対する下書きかどうかをpost_idで確認する)
-        $draft = session('information_draft', []);
-
-        if (empty($draft['post_id']) || (int) $draft['post_id'] !== $post->id) {
-            $draft = [];
-        }
-
         return view(
             'information.edit',
             compact(
@@ -247,8 +208,7 @@ class InformationController extends Controller
                 'categories',
                 'mainCategories',
                 'section',
-                'earthLocation',
-                'draft'
+                'earthLocation'
             )
         );
     }
@@ -275,40 +235,18 @@ class InformationController extends Controller
             'image' => ['nullable', 'mimes:jpg,jpeg,png,bmp,gif,svg,webp,heic,heif', 'max:5120'],
         ]);
 
-        // この投稿に紐づく一時保存(地図で場所を追加する前に保存した下書き)があるか確認
-        $draft = session('information_draft', []);
-        $hasMatchingDraft = !empty($draft['post_id']) && (int) $draft['post_id'] === $post->id;
-
+        // 新しい画像がアップロードされた場合
         if ($request->hasFile('image')) {
 
-            // 新しい画像がアップロードされた場合
+            // 古い画像を削除
             if ($post->image) {
                 Storage::disk('public')->delete($post->image);
             }
 
             $validated['image'] = $this->storeImage($request->file('image'), 'posts');
-        } elseif ($hasMatchingDraft
-            && !empty($draft['image'])
-            && Storage::disk('public')->exists($draft['image'])) {
-
-            // フォーム送信時に新しい画像は選ばれていないが、
-            // 地図で場所を追加する前に一時保存しておいた画像があればそれを本採用する
-            $newPath = 'posts/' . basename($draft['image']);
-            Storage::disk('public')->move($draft['image'], $newPath);
-
-            if ($post->image) {
-                Storage::disk('public')->delete($post->image);
-            }
-
-            $validated['image'] = $newPath;
         }
 
         $post->update($validated);
-
-        // 使い終わった下書きは削除しておく
-        if ($hasMatchingDraft) {
-            session()->forget('information_draft');
-        }
 
         $section = $post->category->section ?? 'restaurant-cafe';
 
