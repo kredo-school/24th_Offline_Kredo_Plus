@@ -67,8 +67,10 @@ class ShowerDataSeeder extends Seeder
                     continue;
                 }
 
-                // 1〜7の中からランダムにシャワー番号を選ぶ
-                $number = rand(1, 7);
+                // 性別によってシャワー番号の範囲を変更
+                // 男子：1〜6、女子：1〜7
+                $maxShowerNumber = $gender === 'male' ? 6 : 7;
+                $number = rand(1, $maxShowerNumber);
 
                 ShowerReport::create([
                     'gender' => $gender,

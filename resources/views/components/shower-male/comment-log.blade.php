@@ -61,7 +61,7 @@
                     class="rounded-full text-xs font-bold px-3.5 py-1.5 transition-colors"
                 >すべて</button>
 
-                @for ($i = 1; $i <= 7; $i++)
+                @for ($i = 1; $i <= 6; $i++)
                     <button
                         type="button"
                         @click="showerNumber = '{{ $i }}'; load(1)"
