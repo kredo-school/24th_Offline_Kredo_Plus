@@ -352,12 +352,7 @@
                     </div>
 
                     <div class="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-100 to-sky-50 ring-1 ring-sky-200 flex items-center justify-center mb-5">
-                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2f5fdb" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 11h14"/>
-                            <path d="M6.5 11a5.5 5.5 0 0111 0"/>
-                            <path d="M4 8.5L2.5 7"/>
-                            <path d="M8 15l-.6 1.6M12 15.5v2M16 15l.6 1.6"/>
-                        </svg>
+                        <span class="material-symbols-outlined text-blue-600">shower</span>
                     </div>
                     <p class="relative max-w-[60%] text-xs font-bold text-brand-blue tracking-widest">Shower Information</p>
                     <h3 class="relative max-w-[60%] mt-1 font-bold text-lg text-slate-800">シャワー情報</h3>

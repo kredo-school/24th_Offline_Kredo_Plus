@@ -30,8 +30,8 @@
                 @csrf
 
                 <p class="text-slate-500 text-sm font-semibold">シャワー番号</p>
-                <div class="flex items-center mt-2 mb-4 gap-1">
-                    @for ($i = 1; $i <= 7; $i++)
+                <div class="flex justify-between mt-2 mb-4">
+                    @for ($i = 1; $i <= 6; $i++)
                         @php $isBroken = $brokenShowerNumbers->contains($i); @endphp
                         <div>
                             <input

@@ -108,8 +108,6 @@
         <x-shower-female.line-chart :recommendation="$recommendation" />
     </section>
 
-    {{-- trend table  トレンドテーブル --}}
-    {{-- <x-shower-female.trend-table /> --}}
 
     {{-- comments コメント欄 --}}
     <section

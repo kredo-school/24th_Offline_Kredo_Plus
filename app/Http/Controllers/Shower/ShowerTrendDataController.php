@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 
 class ShowerTrendDataController extends Controller
 {
+    private const TIMEZONE = 'Asia/Manila';
+
     public function __invoke(Request $request)
     {
         $validated = $request->validate([
@@ -17,22 +19,26 @@ class ShowerTrendDataController extends Controller
         ]);
 
         $gender = $request->user()->gender;
-        $rangeStart = now()->subDays($validated['days'] - 1)->startOfDay();
+        $rangeStart = now(self::TIMEZONE)->subDays($validated['days'] - 1)->startOfDay();
 
-        $points = ShowerReport::query()
+        $reports = ShowerReport::query()
             ->where('gender', $gender)
             ->where('shower_number', $validated['shower_number'])
-            ->where('created_at', '>=', $rangeStart)
-            ->selectRaw('DATE(created_at) as date, AVG(temperature) as temperature, AVG(pressure) as pressure')
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get()
-            ->map(fn ($row) => [
-                'date' => $row->date,
-                'temperature' => round((float) $row->temperature, 1),
-                'pressure' => round((float) $row->pressure, 1),
-            ]);
+            ->where('created_at', '>=', $rangeStart->clone()->setTimezone(config('app.timezone')))
+            ->get(['created_at', 'temperature', 'pressure']);
 
+        // Asia/Manila基準の日付でグループ化して平均を算出
+        $points = $reports
+            ->groupBy(fn ($report) => $report->created_at->copy()->setTimezone(self::TIMEZONE)->format('Y-m-d'))
+            ->map(function ($group, $date) {
+                return [
+                    'date' => $date,
+                    'temperature' => round($group->avg('temperature'), 1),
+                    'pressure' => round($group->avg('pressure'), 1),
+                ];
+            })
+            ->sortKeys()
+            ->values();
 
         $brokenPeriods = $this->brokenPeriodsWithinRange($gender, $validated['shower_number'], $rangeStart);
 
@@ -43,9 +49,6 @@ class ShowerTrendDataController extends Controller
     }
 
     /**
-     * 指定した期間内に発生した故障区間(開始日〜終了日)を返す。
-     * 現在も故障中の場合、終了日は今日になる。
-     *
      * @return array<int, array{start: string, end: string}>
      */
     private function brokenPeriodsWithinRange(string $gender, int $showerNumber, \Illuminate\Support\Carbon $rangeStart): array
@@ -60,20 +63,20 @@ class ShowerTrendDataController extends Controller
         $brokenSince = null;
 
         foreach ($reports as $report) {
+            $localTime = $report->created_at->copy()->setTimezone(self::TIMEZONE);
+
             if ($report->status === 'broken' && $brokenSince === null) {
-                $brokenSince = $report->created_at;
+                $brokenSince = $localTime;
             } elseif ($report->status === 'fixed' && $brokenSince !== null) {
-                $periods[] = ['start' => $brokenSince, 'end' => $report->created_at];
+                $periods[] = ['start' => $brokenSince, 'end' => $localTime];
                 $brokenSince = null;
             }
         }
 
-        // 現在も故障中なら、期間の終わりを「今」として扱う
         if ($brokenSince !== null) {
-            $periods[] = ['start' => $brokenSince, 'end' => now()];
+            $periods[] = ['start' => $brokenSince, 'end' => now(self::TIMEZONE)];
         }
 
-        // 指定した表示範囲(rangeStart〜今日)に重なる区間だけに絞り、日付文字列に変換
         return collect($periods)
             ->filter(fn ($period) => $period['end']->greaterThanOrEqualTo($rangeStart))
             ->map(fn ($period) => [

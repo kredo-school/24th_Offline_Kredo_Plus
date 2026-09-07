@@ -108,8 +108,6 @@
         <x-shower-male.line-chart :recommendation="$recommendation" />
     </section>
 
-    {{-- trend table  トレンドテーブル --}}
-    {{-- <x-shower-male.trend-table /> --}}
 
     {{-- comments コメント欄 --}}
     <section
@@ -197,7 +195,7 @@
                     </div>
                     
                 <div class="flex flex-wrap justify-between gap-1.5 mb-3">
-                    @for ($i = 1; $i <= 7; $i++)
+                    @for ($i = 1; $i <= 6; $i++)
                         <button
                             type="button"
                             @click="showerNumber = '{{ $i }}'; load(showingAll)"
@@ -237,7 +235,7 @@
         </div>
         
 
-        <x-shower-female.comment-log
+        <x-shower-male.comment-log
         
         />
     </section>

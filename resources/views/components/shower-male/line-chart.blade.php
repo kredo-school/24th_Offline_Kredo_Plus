@@ -135,7 +135,7 @@
             </div>
 
             <div class="flex gap-1.5 h-8">
-                @for ($i = 1; $i <= 7; $i++)
+                @for ($i = 1; $i <= 6; $i++)
                     <button
                         type="button"
                         @click="showerNumber = {{ $i }}; load()"
@@ -184,7 +184,7 @@
 
                 <p class="text-xs font-bold text-slate-500 mb-1.5 ms-1">シャワー番号</p>
                 <div class="flex flex-wrap justify-between gap-1.5">
-                    @for ($i = 1; $i <= 7; $i++)
+                    @for ($i = 1; $i <= 6; $i++)
                         <button
                             type="button"
                             @click="showerNumber = {{ $i }}; load()"
