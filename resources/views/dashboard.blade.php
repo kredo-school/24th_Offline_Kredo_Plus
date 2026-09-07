@@ -67,7 +67,7 @@
                         </label>
                     </div>
 
-                    <p class="text-sm text-slate-500 mt-3">水圧</p>
+                    <p class="text-sm text-slate-500 mt-3">水圧（水量）</p>
                     <div class="grid grid-cols-4 gap-2 my-2 text-sm font-semibold text-slate-500">
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="radio" name="pressure" id="weak" value="弱い">
