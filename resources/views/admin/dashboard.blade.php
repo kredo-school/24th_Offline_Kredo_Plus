@@ -2017,7 +2017,7 @@ document.addEventListener('alpine:init', () => {
                         name: item.name || '',
                         description: item.description || '',
                         hero_image: item.hero_image || '',
-                        sub_count: item.sub_categories_count || (item.sub_categories ? item.sub_categories.length : 0)
+                        sub_count: item.sub_count || 0
                     };
                     if (item.color) {
                         this.editMainColor = item.color;
