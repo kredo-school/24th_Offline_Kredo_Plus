@@ -69,6 +69,11 @@
     const locations = @json($locations);
 </script>
 
+<audio autoplay>
+    <source src="{{ asset('videos/misic/wearetheworld.MP4') }}" type="video/mp4">
+</audio>
+
+
 </body>
 
 </html>
