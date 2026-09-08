@@ -26,60 +26,62 @@
                 故障中ですか？
             </h2>
 
-            <form action="{{ route('shower.malfunction.store') }}" method="POST">
-                @csrf
+            <div class="flex justify-center gap-3">
+                <form action="{{ route('shower.malfunction.store') }}" method="POST">
+                    @csrf
 
-                <p class="text-slate-500 text-sm font-semibold">シャワー番号</p>
-                <div class="flex justify-between mt-2 mb-4">
-                    @for ($i = 1; $i <= 6; $i++)
-                        @php $isBroken = $brokenShowerNumbers->contains($i); @endphp
-                        <div>
-                            <input
-                                id="defected-shower-{{$i}}"
-                                type="checkbox"
-                                name="defected_shower[]"
-                                value="{{$i}}"
-                                class="peer hidden"
-                                {{ $isBroken ? 'disabled' : '' }}
-                            >
-                            <label
-                                for="defected-shower-{{$i}}"
-                                class="flex rounded-full w-10 h-10 border-2 text-md font-semibold items-center justify-center transition-transform duration-200
-                                    {{ $isBroken
-                                        ? 'border-slate-200 text-slate-300 cursor-not-allowed'
-                                        : 'border-amber-300 text-amber-300 cursor-pointer hover:scale-110 active:scale-95 peer-checked:bg-amber-300 peer-checked:text-white' }}"
-                            >{{$i}}</label>
-                        </div>
-                    @endfor
-                </div>
+                    <p class="text-slate-500 text-sm font-semibold">シャワー番号</p>
+                    <div class="flex justify-between gap-2 mt-2 mb-4">
+                        @for ($i = 1; $i <= 6; $i++)
+                            @php $isBroken = $brokenShowerNumbers->contains($i); @endphp
+                            <div>
+                                <input
+                                    id="defected-shower-{{$i}}"
+                                    type="checkbox"
+                                    name="defected_shower[]"
+                                    value="{{$i}}"
+                                    class="peer hidden"
+                                    {{ $isBroken ? 'disabled' : '' }}
+                                >
+                                <label
+                                    for="defected-shower-{{$i}}"
+                                    class="flex rounded-full w-10 h-10 border-2 text-md font-semibold items-center justify-center transition-transform duration-200
+                                        {{ $isBroken
+                                            ? 'border-slate-200 text-slate-300 cursor-not-allowed'
+                                            : 'border-amber-300 text-amber-300 cursor-pointer hover:scale-110 active:scale-95 peer-checked:bg-amber-300 peer-checked:text-white' }}"
+                                >{{$i}}</label>
+                            </div>
+                        @endfor
+                    </div>
 
-                <p class="text-slate-500 text-sm font-semibold">故障内容</p>
-                <textarea
-                    name="comment"
-                    rows="3"
-                    class="mt-2 mb-4 rounded-md border-2 border-slate-300 w-full text-sm p-2"
-                    placeholder="例: お湯が出ない、水圧が弱すぎる など"
-                ></textarea>
-                @error('comment')
-                    <p class="text-red-500 text-xs mt-1 mb-2">{{ $message }}</p>
-                @enderror
+                    <p class="text-slate-500 text-sm font-semibold">故障内容</p>
+                    <textarea
+                        name="comment"
+                        rows="3"
+                        class="mt-2 mb-4 rounded-md border-2 border-slate-300 w-full text-sm p-2"
+                        placeholder="例: お湯が出ない、水圧が弱すぎる など"
+                    ></textarea>
+                    @error('comment')
+                        <p class="text-red-500 text-xs mt-1 mb-2">{{ $message }}</p>
+                    @enderror
 
-                <div class="flex justify-center gap-2">
-                    <button
-                        type="button"
-                        @click="open = false"
-                        class="rounded-full px-5 py-2.5 text-sm font-semibold text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-600"
-                    >
-                        キャンセル
-                    </button>
+                    <div class="flex justify-center gap-2">
+                        <button
+                            type="button"
+                            @click="open = false"
+                            class="rounded-full px-5 py-2.5 text-sm font-semibold text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-600"
+                        >
+                            キャンセル
+                        </button>
 
-                    <button type="submit"
-                        class="rounded-full bg-yellow-300 px-6 py-2.5 text-sm font-semibold text-slate-600 shadow-sm transition-all hover:bg-yellow-400 hover:shadow-md"
-                    >
-                        報告する
-                    </button>
-                </div>
-            </form>
+                        <button type="submit"
+                            class="rounded-full bg-yellow-300 px-6 py-2.5 text-sm font-semibold text-slate-600 shadow-sm transition-all hover:bg-yellow-400 hover:shadow-md"
+                        >
+                            報告する
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
